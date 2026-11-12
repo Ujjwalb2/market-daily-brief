@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Today Tab Layout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..900;1,400;1,500&display=swap">
+<style>
+:root{
+  --white:#FFFFFF;--teal:#00C99A;--amber:#F0A04B;--red:#E05252;--blue:#3282E8;
+  --indigo-500:#3F5BD9;--indigo-600:#3452C9;
+  --slate-50:#F8FAFC;--slate-200:#CBD5E1;--slate-400:#8793A5;--slate-500:#7B8799;--slate-600:#63758F;
+  --navy-600:#34445B;--navy-700:#252F3F;--navy-800:#1D2432;--navy-850:#171B26;--navy-900:#101827;
+  --space-2:2px;--space-4:4px;--space-8:8px;--space-12:12px;--space-16:16px;--space-20:20px;
+  --space-24:24px;--space-32:32px;--space-48:48px;--space-64:64px;
+  --radius-6:6px;--radius-8:8px;--radius-12:12px;--radius-16:16px;--radius-20:20px;--radius-pill:9999px;
+  --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --type-display:600 48px/1.15 var(--font-sans);   --ls-display:-1px;
+  --type-headline-lg:600 36px/1.2 var(--font-sans);--ls-headline-lg:-0.7px;
+  --type-headline-md:600 24px/1.25 var(--font-sans);--ls-headline-md:-0.3px;
+  --type-title:600 18px/1.3 var(--font-sans);      --ls-title:-0.1px;
+  --type-body-lg:400 18px/1.5 var(--font-sans);
+  --type-body-md:400 14px/1.5 var(--font-sans);
+  --type-label:500 14px/1.4 var(--font-sans);
+  --type-caption:400 12px/1.4 var(--font-sans);
+  --type-data:500 14px/1.4 var(--font-sans);
+  --type-eyebrow:600 12px/1.2 var(--font-sans);    --ls-eyebrow:1.2px;
+}
+:root,:root[data-theme="dark"]{color-scheme:dark;
+  --surface-canvas:var(--navy-900);--surface-raised:var(--navy-850);--surface-elevated:var(--navy-800);
+  --surface-glass:rgba(255,255,255,.06);--surface-hover:rgba(63,91,217,.15);--surface-hover-stroke:rgba(63,91,217,.30);
+  --text-primary:var(--slate-50);--text-secondary:var(--slate-200);--text-tertiary:var(--slate-400);--text-disabled:var(--slate-600);
+  --border-decorative:var(--navy-700);--border-control:var(--slate-400);--border-glass:rgba(255,255,255,.12);
+  --focus-outer:var(--slate-200);
+  --action-primary:var(--indigo-500);--action-hover:var(--indigo-600);--action-on-primary:var(--white);
+  --fin-positive:var(--teal);--fin-negative:var(--slate-500);
+  --fin-positive-soft:rgba(0,201,154,.12);--fin-negative-soft:rgba(123,135,153,.12);
+  --fb-warning:var(--amber);--fb-error:var(--red);--fb-info:var(--blue);
+  --fb-warning-soft:rgba(240,160,75,.12);--fb-error-soft:rgba(224,82,82,.12);--fb-info-soft:rgba(50,130,232,.12);
+  --scrim:rgba(16,24,39,.72);--text-on-positive:var(--navy-900);--text-on-warning:var(--navy-900);
+  --fig-pos:var(--teal);--fig-neg:var(--slate-500);}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){color-scheme:light;
+  --surface-canvas:var(--slate-50);--surface-raised:var(--white);--surface-elevated:var(--white);
+  --text-primary:var(--navy-900);--text-secondary:var(--navy-600);--text-tertiary:var(--navy-600);--text-disabled:var(--slate-400);
+  --border-decorative:var(--slate-200);--border-control:var(--slate-600);--focus-outer:var(--indigo-500);--scrim:rgba(16,24,39,.55);
+  --fig-pos:var(--text-primary);--fig-neg:var(--text-primary);}}
+:root[data-theme="light"]{color-scheme:light;
+  --surface-canvas:var(--slate-50);--surface-raised:var(--white);--surface-elevated:var(--white);
+  --text-primary:var(--navy-900);--text-secondary:var(--navy-600);--text-tertiary:var(--navy-600);--text-disabled:var(--slate-400);
+  --border-decorative:var(--slate-200);--border-control:var(--slate-600);--focus-outer:var(--indigo-500);--scrim:rgba(16,24,39,.55);
+  --fig-pos:var(--text-primary);--fig-neg:var(--text-primary);}
+html{background:var(--surface-canvas)}
+body{margin:0;background:var(--surface-canvas);color:var(--text-primary);font:var(--type-body-md);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--focus-outer);outline-offset:2px}
+*{box-sizing:border-box}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- page frame ---------- */
+.topbar{position:sticky;top:0;z-index:20;background:var(--surface-canvas);border-bottom:1px solid var(--border-decorative)}
+.topbar-in{max-width:800px;margin:0 auto;padding:0 var(--space-16);display:flex;align-items:center;gap:var(--space-16);height:56px}
+.brand{font:var(--type-title);letter-spacing:var(--ls-title)}
+.tabs{display:flex;gap:var(--space-20);flex:1;overflow-x:auto}
+.tabs a{font:var(--type-label);color:var(--text-tertiary);text-decoration:none;padding:18px 0 16px;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs a.on{color:var(--text-primary);border-bottom-color:var(--action-primary)}
+.iconbtn{font:var(--type-label);background:none;border:1px solid var(--border-decorative);color:var(--text-secondary);border-radius:var(--radius-8);height:32px;padding:0 var(--space-12);cursor:pointer;white-space:nowrap}
+.iconbtn:hover{background:var(--surface-hover);border-color:var(--surface-hover-stroke)}
+main{max-width:800px;margin:0 auto;padding:0 var(--space-16) var(--space-64)}
+
+/* ---------- layout notes (toggle) ---------- */
+.anno{display:flex;flex-wrap:wrap;gap:var(--space-8);align-items:center;margin:var(--space-48) 0 var(--space-12);padding:var(--space-8) var(--space-12);border:1px dashed var(--fb-info);border-radius:var(--radius-8);background:var(--fb-info-soft);font:var(--type-caption);color:var(--text-secondary)}
+.anno b{font:var(--type-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--text-primary)}
+.anno code{font:var(--type-caption);font-family:var(--font-sans);font-weight:500;color:var(--text-primary)}
+body.clean .anno{display:none}
+body.clean .layer-gap{margin-top:var(--space-48)}
+
+/* ---------- shared pieces ---------- */
+.eyebrow{font:var(--type-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--text-tertiary)}
+.card{background:var(--surface-raised);border:1px solid var(--border-decorative);border-radius:var(--radius-12);padding:var(--space-16)}
+.sec-title{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-12);margin:0 0 var(--space-12)}
+.sec-title h2{font:var(--type-headline-md);letter-spacing:var(--ls-headline-md);margin:0}
+.sec-title .time{font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 12px/1.4 var(--font-sans);padding:2px 10px;border-radius:var(--radius-pill);white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.pos{background:var(--fin-positive-soft);color:var(--fig-pos)}.chip.pos::before{background:var(--teal)}
+.chip.neg{background:var(--fin-negative-soft);color:var(--fig-neg)}.chip.neg::before{background:var(--slate-500)}
+.chip.warn{background:var(--fb-warning-soft);color:var(--text-primary)}.chip.warn::before{background:var(--amber)}
+.chip.info{background:var(--fb-info-soft);color:var(--text-primary)}.chip.info::before{background:var(--blue)}
+.chip.plain{background:var(--surface-glass);color:var(--text-secondary);border:1px solid var(--border-decorative)}.chip.plain::before{display:none}
+.up{color:var(--fig-pos)}.down{color:var(--fig-neg)}
+.mark-up::before{content:"▲ ";color:var(--teal);font-size:10px}.mark-down::before{content:"▼ ";color:var(--slate-500);font-size:10px}
+.src{font:var(--type-caption);color:var(--text-tertiary)}
+.btn{font:var(--type-label);border-radius:var(--radius-8);height:40px;padding:0 var(--space-16);cursor:pointer;border:1px solid transparent}
+.btn.primary{background:var(--action-primary);color:var(--action-on-primary)}.btn.primary:hover{background:var(--action-hover)}
+.btn.secondary{background:none;border-color:var(--border-control);color:var(--text-primary)}.btn.secondary:hover{background:var(--surface-hover)}
+.next{display:flex;justify-content:space-between;align-items:center;gap:var(--space-12);margin-top:var(--space-16);padding:var(--space-12) var(--space-16);border-radius:var(--radius-12);background:var(--surface-hover);border:1px solid var(--surface-hover-stroke);color:var(--text-primary);text-decoration:none;font:var(--type-label)}
+.next span:last-child{color:var(--text-tertiary);font:var(--type-caption)}
+a.link{color:var(--text-primary);text-decoration:underline;text-decoration-color:var(--action-primary);text-underline-offset:3px}
+
+/* ---------- edition header + player ---------- */
+.edhead{padding-top:var(--space-24)}
+.edhead-row{display:flex;justify-content:space-between;align-items:center;gap:var(--space-12);flex-wrap:wrap}
+.edhead h1{font:var(--type-headline-lg);letter-spacing:var(--ls-headline-lg);margin:var(--space-4) 0 0}
+.progress{margin-top:var(--space-12);display:flex;align-items:center;gap:var(--space-12);font:var(--type-caption);color:var(--text-tertiary)}
+.progress .bar{flex:1;height:4px;border-radius:var(--radius-pill);background:var(--border-decorative);overflow:hidden}
+.progress .bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.player{position:sticky;top:57px;z-index:15;margin-top:var(--space-16);background:var(--surface-elevated);border:1px solid var(--border-decorative);border-radius:var(--radius-16);padding:var(--space-12) var(--space-16);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-12);align-items:center}
+.play{width:44px;height:44px;border-radius:50%;border:none;background:var(--action-primary);color:var(--white);cursor:pointer;font-size:16px}
+.play:hover{background:var(--action-hover)}
+.p-title{font:var(--type-label)}
+.p-sub{font:var(--type-caption);color:var(--text-tertiary)}
+.chapters{grid-column:1/-1;display:flex;gap:var(--space-4)}
+.chapters button{flex:1;height:6px;border:none;border-radius:var(--radius-pill);background:var(--border-decorative);cursor:pointer;padding:0}
+.chapters button.done{background:var(--teal)}
+.chapters button.now{background:var(--action-primary)}
+.speed{font:var(--type-label);background:none;border:1px solid var(--border-decorative);color:var(--text-secondary);border-radius:var(--radius-pill);height:32px;padding:0 var(--space-12);cursor:pointer}
+
+/* ---------- layer 1: glance ---------- */
+.dayline{font:var(--type-title);letter-spacing:var(--ls-title);margin:0 0 var(--space-12)}
+.snap{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-8)}
+.tile{background:var(--surface-raised);border:1px solid var(--border-decorative);border-radius:var(--radius-12);padding:var(--space-12)}
+.tile .v{font:600 18px/1.3 var(--font-sans);font-variant-numeric:tabular-nums;margin-top:var(--space-4)}
+.tile .d{font:var(--type-data);font-variant-numeric:tabular-nums}
+.tile svg{display:block;width:100%;height:28px;margin-top:var(--space-8)}
+
+/* ---------- layer 2: brief ---------- */
+.stories{display:grid;gap:var(--space-12)}
+.story{scroll-margin-top:150px}
+.story.playing{border-color:var(--action-primary);box-shadow:0 0 0 1px var(--action-primary)}
+.story .tag{font:var(--type-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--text-tertiary)}
+.story h3{font:var(--type-title);letter-spacing:var(--ls-title);margin:var(--space-8) 0 var(--space-12)}
+.story .hero-n{display:inline-block;font:600 20px/1.2 var(--font-sans);font-variant-numeric:tabular-nums;padding:var(--space-8) var(--space-12);border-radius:var(--radius-8);background:var(--fin-negative-soft);border-left:3px solid var(--slate-500);margin-bottom:var(--space-12)}
+.story .hero-n.pos{background:var(--fin-positive-soft);border-left-color:var(--teal)}
+.story .hero-n.info{background:var(--fb-info-soft);border-left-color:var(--blue)}
+.three{display:grid;gap:var(--space-12)}
+.three div p{margin:2px 0 0;color:var(--text-secondary)}
+.three .for-you{padding:var(--space-8) var(--space-12);border-radius:var(--radius-8);background:var(--surface-glass);border:1px solid var(--border-decorative)}
+.three .for-you p{color:var(--text-primary)}
+.story-foot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-12);flex-wrap:wrap;margin-top:var(--space-16);padding-top:var(--space-12);border-top:1px solid var(--border-decorative)}
+.listen{font:var(--type-label);background:none;border:none;color:var(--text-primary);cursor:pointer;padding:0;text-decoration:underline;text-decoration-color:var(--action-primary);text-underline-offset:3px}
+.foot-links{display:flex;gap:var(--space-16);font:var(--type-caption);color:var(--text-tertiary)}
+.quick{margin-top:var(--space-12)}
+.quick ol{margin:0;padding-left:20px;display:grid;gap:var(--space-8)}
+.quick li{color:var(--text-secondary)}
+.quick li b{color:var(--text-primary);font-weight:500}
+.bignum{margin-top:var(--space-12);border-radius:var(--radius-20);padding:var(--space-24);background:var(--surface-raised);border:1px solid var(--border-decorative);display:grid;gap:var(--space-8)}
+.bignum .n{font:var(--type-display);letter-spacing:var(--ls-display);font-variant-numeric:tabular-nums}
+.bignum p{margin:0;color:var(--text-secondary);font:var(--type-body-lg)}
+
+/* ---------- layer 3: markets desk ---------- */
+.takeaways{margin:0 0 var(--space-12);padding-left:20px;display:grid;gap:var(--space-4)}
+.desk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-8)}
+.idx .row{display:flex;justify-content:space-between;align-items:baseline}
+.idx .name{font:var(--type-label)}
+.idx svg{display:block;width:100%;height:48px;margin:var(--space-8) 0}
+.levels{border:1px dashed var(--border-control);border-radius:var(--radius-8);padding:var(--space-8);font:var(--type-caption);color:var(--text-tertiary)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-8);margin-top:var(--space-8)}
+.flows .pair{display:flex;gap:var(--space-24);margin:var(--space-8) 0}
+.flows .pair div{font:var(--type-caption);color:var(--text-tertiary)}
+.flows .pair b{display:block;font:600 18px/1.3 var(--font-sans);font-variant-numeric:tabular-nums;color:var(--text-primary)}
+.flows svg{display:block;width:100%}
+.deriv svg{display:block;width:100%;max-width:220px;height:auto;margin:var(--space-8) auto 0}
+.deriv .stats{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-8);margin-top:var(--space-8)}
+.deriv .stats div{font:var(--type-caption);color:var(--text-tertiary)}
+.deriv .stats b{display:block;font:var(--type-data);font-variant-numeric:tabular-nums;color:var(--text-primary)}
+.heat{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--surface-canvas);border-radius:var(--radius-8);overflow:hidden;margin-top:var(--space-8)}
+.heat div{padding:var(--space-8);min-height:56px;font:var(--type-caption);color:var(--text-primary)}
+.heat div b{display:block;font:var(--type-data);font-variant-numeric:tabular-nums}
+.legend{display:flex;gap:var(--space-16);margin-top:var(--space-8);font:var(--type-caption);color:var(--text-tertiary)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* ---------- rules strip ---------- */
+.notices{display:grid;gap:var(--space-8)}
+.notice{display:grid;grid-template-columns:1fr auto;gap:var(--space-4) var(--space-12);padding:var(--space-12) var(--space-16);border-radius:var(--radius-12);background:var(--surface-raised);border:1px solid var(--border-decorative);border-left:3px solid var(--blue)}
+.notice.warn{border-left-color:var(--amber)}
+.notice.done{border-left-color:var(--slate-500)}
+.notice h4{margin:0;font:var(--type-label)}
+.notice p{margin:0;grid-column:1/-1;color:var(--text-secondary)}
+.notice .when{font:var(--type-caption);color:var(--text-tertiary);grid-column:1/-1}
+
+/* ---------- IPO corner ---------- */
+.ipo-table{width:100%;border-collapse:collapse}
+.ipo-table th{font:var(--type-label);color:var(--text-tertiary);text-align:left;padding:var(--space-8);border-bottom:1px solid var(--border-decorative)}
+.ipo-table td{padding:var(--space-12) var(--space-8);border-bottom:1px solid var(--border-decorative);vertical-align:top}
+.ipo-table td.n,.ipo-table th.n{text-align:right;font-variant-numeric:tabular-nums}
+.ipo-table tr:hover td{background:var(--surface-hover)}
+.scroll-x{overflow-x:auto}
+.subbars{display:grid;gap:6px;margin-top:var(--space-12)}
+.subbars .r{display:grid;grid-template-columns:70px 1fr 48px;gap:var(--space-8);align-items:center;font:var(--type-caption);color:var(--text-tertiary)}
+.subbars .t{height:8px;border-radius:var(--radius-pill);background:var(--border-decorative);overflow:hidden}
+.subbars .t i{display:block;height:100%;background:var(--teal)}
+.subbars .r span:last-child{color:var(--text-primary);text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- deep dive ---------- */
+.deep .illus{aspect-ratio:16/7;border-radius:var(--radius-12);border:1px dashed var(--border-control);display:grid;place-items:center;color:var(--text-tertiary);font:var(--type-caption);background:var(--surface-glass);margin-bottom:var(--space-16);text-align:center;padding:var(--space-16)}
+.deep h3{font:var(--type-headline-md);letter-spacing:var(--ls-headline-md);margin:var(--space-8) 0}
+.tldr{padding:var(--space-12) var(--space-16);border-radius:var(--radius-8);background:var(--fb-info-soft);border-left:3px solid var(--blue);margin:var(--space-12) 0}
+.tldr p{margin:var(--space-4) 0 0}
+.qs{margin:var(--space-12) 0;padding-left:20px;color:var(--text-secondary);display:grid;gap:var(--space-4)}
+.chartbox{margin:var(--space-16) 0;padding:var(--space-16);border-radius:var(--radius-12);border:1px solid var(--border-decorative);background:var(--surface-canvas)}
+.chartbox h4{margin:0;font:var(--type-title);letter-spacing:var(--ls-title)}
+.chartbox .sub{margin:var(--space-4) 0 var(--space-12);color:var(--text-secondary)}
+.chartbox svg{display:block;width:100%;height:auto}
+.cwrap{overflow-x:auto}
+@media (max-width:640px){.chartbox svg{min-width:540px}}
+.chartbox .foot{display:flex;justify-content:space-between;gap:var(--space-12);margin-top:var(--space-8);font:var(--type-caption);color:var(--text-tertiary)}
+.verdict{font:var(--type-body-lg);border-left:3px solid var(--teal);padding-left:var(--space-12);margin:var(--space-16) 0}
+
+/* ---------- calendar ---------- */
+.cal{display:grid;gap:0}
+.cal .r{display:grid;grid-template-columns:72px 1fr auto;gap:var(--space-12);padding:var(--space-12) 0;border-bottom:1px solid var(--border-decorative);align-items:center}
+.cal .r:last-child{border-bottom:none}
+.cal .d{font:var(--type-label)}
+.cal .d small{display:block;font:var(--type-caption);color:var(--text-tertiary)}
+
+/* ---------- play ---------- */
+.play-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-12)}
+.quiz .q{font:var(--type-label);margin:var(--space-12) 0 var(--space-8)}
+.opts{display:grid;gap:var(--space-8)}
+.opts button{text-align:left;font:var(--type-body-md);color:var(--text-primary);background:var(--surface-canvas);border:1px solid var(--border-control);border-radius:var(--radius-8);padding:var(--space-8) var(--space-12);cursor:pointer;min-height:40px}
+.opts button:hover{background:var(--surface-hover)}
+.opts button.right{border-color:var(--teal);background:var(--fin-positive-soft)}
+.opts button.wrong{border-color:var(--slate-500);background:var(--fin-negative-soft)}
+.qnav{display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-12);font:var(--type-caption);color:var(--text-tertiary)}
+.poll .opts button{position:relative;overflow:hidden}
+.poll .opts button i{position:absolute;inset:0 auto 0 0;background:var(--surface-hover);width:0;transition:width .4s}
+.poll .opts button span{position:relative;display:flex;justify-content:space-between}
+.teaser{margin-top:var(--space-12);border-radius:var(--radius-20);padding:var(--space-24);background:var(--surface-elevated);border:1px solid var(--border-glass);display:flex;justify-content:space-between;align-items:center;gap:var(--space-16);flex-wrap:wrap}
+.teaser h3{margin:var(--space-4) 0 0;font:var(--type-title)}
+
+/* ---------- archive ---------- */
+.search{width:100%;height:40px;border-radius:var(--radius-8);border:1px solid var(--border-control);background:var(--surface-raised);color:var(--text-primary);padding:0 var(--space-12);font:var(--type-body-md);margin-bottom:var(--space-12)}
+.arch .r{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-12);padding:var(--space-12) 0;border-bottom:1px solid var(--border-decorative);align-items:baseline}
+.arch .r:last-child{border-bottom:none}
+.arch .no{font:var(--type-data);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.arch .t{font:var(--type-label)}
+.arch .t small{display:block;font:var(--type-caption);color:var(--text-tertiary);margin-top:2px}
+.topics{display:flex;flex-wrap:wrap;gap:var(--space-8);margin-top:var(--space-12)}
+
+footer{max-width:800px;margin:0 auto;padding:var(--space-24) var(--space-16) var(--space-48);border-top:1px solid var(--border-decorative);font:var(--type-caption);color:var(--text-tertiary)}
+.sample-banner{max-width:800px;margin:var(--space-16) auto 0;padding:0 var(--space-16)}
+.sample-banner div{padding:var(--space-8) var(--space-12);border-radius:var(--radius-8);background:var(--fb-warning-soft);border-left:3px solid var(--amber);font:var(--type-caption);color:var(--text-primary)}
+
+/* ---------- responsive ---------- */
+@media (max-width:640px){
+  .edhead h1{font:var(--type-headline-md);letter-spacing:var(--ls-headline-md)}
+  .snap{grid-template-columns:repeat(2,1fr)}
+  .desk-grid{grid-template-columns:1fr}
+  .duo,.play-grid{grid-template-columns:1fr}
+  .heat{grid-template-columns:repeat(3,1fr)}
+  .bignum .n{font:var(--type-headline-lg);letter-spacing:var(--ls-headline-lg)}
+  .tabs a:not(.on){display:none}
+  .player{top:57px}
+}
+@media (min-width:900px){
+  .stories{grid-template-columns:1fr 1fr}
+  .stories .story:first-child{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">Springpad</div>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#" class="on">Today</a><a href="#">IPO Pulse</a><a href="#">Research</a><a href="#">Archive</a>
+    </nav>
+    <button class="iconbtn" id="notesBtn" aria-pressed="true">Hide notes</button>
+    <button class="iconbtn" id="themeBtn">Light</button>
+  </div>
+</header>
+
+<div class="sample-banner"><div><b>Layout preview.</b> Every company, number and story here is sample content to show placement only. Blue dashed boxes are layout notes (toggle "Hide notes").</div></div>
+
+<main>
+
+  <!-- ===== EDITION HEADER + PLAYER ===== -->
+  <div class="anno"><b>Edition header + sticky player</b> Always visible · player follows the scroll · <code>edition no., date, streak</code></div>
+  <section class="edhead" aria-label="Edition">
+    <div class="edhead-row">
+      <div class="eyebrow">Today · Edition 143 · Published 7:30 am IST</div>
+      <span class="chip pos">6-day streak</span>
+    </div>
+    <h1>Wednesday, 11 November</h1>
+    <div class="progress"><span>You've covered</span><div class="bar"><i id="progBar"></i></div><span id="progTxt" class="num">0% of today</span></div>
+  </section>
+
+  <div class="player" role="region" aria-label="Audio briefing">
+    <button class="play" id="playBtn" aria-label="Play today's brief">▶</button>
+    <div>
+      <div class="p-title" id="pTitle">Today's brief · 4:12</div>
+      <div class="p-sub" id="pSub">6 chapters · tap a card's "Listen" to jump</div>
+    </div>
+    <button class="speed" id="speedBtn">1x</button>
+    <div class="chapters" id="chapters" aria-label="Chapters"></div>
+  </div>
+
+  <!-- ===== LAYER 1: GLANCE ===== -->
+  <div class="anno"><b>Layer 1 · Glance</b> ~1 min · the gist for a 10-second visit · <code>/indices</code> <code>/commodities</code></div>
+  <section aria-label="Glance">
+    <p class="dayline">Markets slipped for a fourth day as foreign investors kept selling; banks held up better than the rest.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <span class="chip warn">Mood: Cautious</span>
+      <span class="chip plain">Markets reopen after Diwali holiday</span>
+    </div>
+    <div class="snap" id="snap"></div>
+    <p class="src" style="margin-top:8px">Previous close · delayed data · Source: exchange data via IndianAPI</p>
+  </section>
+
+  <!-- ===== LAYER 2: THE BRIEF ===== -->
+  <div class="anno"><b>Layer 2 · The brief</b> ~4 min · 5 cards, fixed order: happened → matters → for you · each card = one audio chapter · <code>/news</code> <code>/company_news</code> <code>/recent_announcements</code></div>
+  <section aria-label="Top stories">
+    <div class="sec-title"><h2>Top 5 stories</h2><span class="time">4 min read · or listen</span></div>
+    <div class="stories" id="stories"></div>
+
+    <div class="card quick">
+      <div class="sec-title"><h2 style="font:var(--type-title)">Quick hits</h2><span class="time">1 min</span></div>
+      <ol>
+        <li><b>Meridian Bank</b> raises ₹2,000 crore through bonds to fund home loans. <span class="src">Source: filing</span></li>
+        <li><b>Gold</b> edges up 0.4% on MCX as the rupee weakens. <span class="src">Source: MCX</span></li>
+        <li><b>Aster Motors</b> monthly sales up 9% year on year. <span class="src">Source: company</span></li>
+        <li><b>Telecom</b>: regulator opens consultation on satellite spectrum pricing. <span class="src">Source: regulator</span></li>
+        <li><b>Lumen Foods</b> board approves 1:2 bonus issue. <span class="src">Source: exchange</span></li>
+      </ol>
+    </div>
+
+    <div class="bignum" aria-label="The big number">
+      <div class="eyebrow">The big number</div>
+      <div class="n">₹2,140 cr</div>
+      <p>Foreign investors' net selling yesterday: the fourth straight day, and the most since August.</p>
+      <div class="src">Share this · auto-made image with our link</div>
+    </div>
+    <a class="next" href="#desk"><span>See the flows and levels behind today's move →</span><span>Markets desk · 2 min</span></a>
+  </section>
+
+  <!-- ===== LAYER 3: MARKETS DESK ===== -->
+  <div class="anno" id="desk"><b>Layer 3 · Markets desk</b> ~2 min · SAHI-style data screens · data only, no calls · <code>/indices</code> <code>/historical_data</code> · FII/DII + OI/PCR need NSE reports</div>
+  <section aria-label="Markets desk">
+    <div class="sec-title"><h2>Markets desk</h2><span class="time">2 min</span></div>
+    <ol class="takeaways">
+      <li>Foreign investors sold for a fourth day; domestic funds bought most of it back.</li>
+      <li>Banks and IT held up; metals and realty fell the most.</li>
+    </ol>
+    <div class="desk-grid" id="idxGrid"></div>
+
+    <div class="duo">
+      <div class="card flows">
+        <div class="eyebrow">Institutional flows · cash · ₹ crore</div>
+        <div class="pair">
+          <div>FIIs<b class="num"><span class="mark-down"></span>−2,140</b></div>
+          <div>DIIs<b class="num"><span class="mark-up"></span>+1,860</b></div>
+        </div>
+        <svg id="flowBars" viewBox="0 0 300 90" role="img" aria-label="FII net flows, last 10 days"></svg>
+        <div class="src">FII net flows, last 10 sessions · teal = buying, grey = selling</div>
+      </div>
+      <div class="card deriv">
+        <div class="eyebrow">Derivatives snapshot · Nifty</div>
+        <svg viewBox="0 0 200 110" role="img" aria-label="Put-call ratio gauge at 0.92">
+          <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="var(--border-decorative)" stroke-width="12" stroke-linecap="round"/>
+          <path d="M20 100 A80 80 0 0 1 100 20" fill="none" stroke="var(--slate-500)" stroke-width="12" stroke-linecap="round" opacity=".6"/>
+          <path d="M100 20 A80 80 0 0 1 180 100" fill="none" stroke="var(--teal)" stroke-width="12" stroke-linecap="round" opacity=".6"/>
+          <line x1="100" y1="100" x2="62" y2="40" stroke="var(--text-primary)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="6" fill="var(--text-primary)"/>
+          <text x="20" y="108" font-size="10" fill="var(--text-tertiary)" font-family="Inter">0 · more puts</text>
+          <text x="180" y="108" font-size="10" fill="var(--text-tertiary)" font-family="Inter" text-anchor="end">2 · more calls</text>
+        </svg>
+        <div class="stats">
+          <div>Put-call ratio<b>0.92</b></div>
+          <div>India VIX<b><span class="mark-up"></span>13.4</b></div>
+          <div>Futures OI<b><span class="mark-up"></span>+3.1%</b></div>
+          <div>Max OI strikes<b>25,000 C · 24,500 P</b></div>
+        </div>
+        <div class="src" style="margin-top:8px">Tap any term for a 1-line explainer</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:8px">
+      <div class="eyebrow">Sectors today</div>
+      <div class="heat" id="heat"></div>
+      <div class="legend"><span><i style="background:var(--teal)"></i>teal = up</span><span><i style="background:var(--slate-500)"></i>grey = down</span><span>stronger colour = bigger move</span></div>
+    </div>
+    <a class="next" href="#deep"><span>Why are foreign investors selling? The 2-min explainer →</span><span>Deep dive · 2 min</span></a>
+  </section>
+
+  <!-- ===== KNOW BEFORE YOU TRADE ===== -->
+  <div class="anno"><b>Know before you trade</b> FYERS-style notices, broker-neutral · status chip + date + "for you" line · <code>/corporate_actions</code> + NSE/BSE/MCX/SEBI circulars</div>
+  <section aria-label="Know before you trade">
+    <div class="sec-title"><h2>Know before you trade</h2><span class="time">30 sec</span></div>
+    <div class="notices">
+      <div class="notice warn"><h4>Weekly Nifty options expire tomorrow</h4><span class="chip warn">Upcoming</span><p>Expiry days can be volatile. Holding options? Check your positions before 3:30 pm.</p><span class="when">Thursday, 12 November · NSE</span></div>
+      <div class="notice"><h4>Lot sizes changed for 34 F&amp;O stocks</h4><span class="chip info">Rule change</span><p>27 stocks have bigger lots, 7 smaller. The same trade may now need more margin.</p><span class="when">Effective 28 October · NSE circular</span></div>
+      <div class="notice done"><h4>Markets were shut on 10 November</h4><span class="chip neg">Done</span><p>Diwali Balipratipada holiday. Commodities traded only in the evening session.</p><span class="when">Tuesday, 10 November · NSE, MCX</span></div>
+    </div>
+  </section>
+
+  <!-- ===== IPO CORNER ===== -->
+  <div class="anno"><b>IPO corner</b> our strongest topic · links to IPO Pulse · <code>/ipo/v2</code> <code>/ipo/{id}</code></div>
+  <section aria-label="IPO corner">
+    <div class="sec-title"><h2>IPO corner</h2><a class="link" href="#" style="font:var(--type-label)">Open IPO Pulse →</a></div>
+    <div class="card">
+      <div class="scroll-x">
+        <table class="ipo-table">
+          <thead><tr><th>Company</th><th>Status</th><th class="n">Size</th><th class="n">Price band</th><th class="n">Subscribed</th></tr></thead>
+          <tbody>
+            <tr><td><b>Northwind Logistics</b><div class="src">Mainboard · logistics</div></td><td><span class="chip pos">Open · day 1</span></td><td class="n">₹1,200 cr</td><td class="n">₹410–432</td><td class="n">0.6x</td></tr>
+            <tr><td><b>Lumen Foods</b><div class="src">Mainboard · FMCG</div></td><td><span class="chip warn">Closes today</span></td><td class="n">₹640 cr</td><td class="n">₹180–190</td><td class="n">4.2x</td></tr>
+            <tr><td><b>Kestrel Energy</b><div class="src">Mainboard · renewables</div></td><td><span class="chip info">Lists Friday</span></td><td class="n">₹2,050 cr</td><td class="n">₹96–101</td><td class="n">38.5x</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="subbars" aria-label="Kestrel Energy subscription by investor type">
+        <div class="src">Kestrel Energy · subscription by investor type</div>
+        <div class="r"><span>Institutions</span><div class="t"><i style="width:100%"></i></div><span>71.2x</span></div>
+        <div class="r"><span>HNIs</span><div class="t"><i style="width:52%"></i></div><span>37.0x</span></div>
+        <div class="r"><span>Retail</span><div class="t"><i style="width:17%"></i></div><span>12.1x</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LAYER 4: DEEP DIVE ===== -->
+  <div class="anno" id="deep"><b>Layer 4 · Deep dive</b> ~2 min · Zerodha-style: insight title, TL;DR, questions, annotated chart, verdict · <code>/historical_data</code> <code>/statement</code></div>
+  <section class="deep card" aria-label="Deep dive">
+    <div class="illus">House-style illustration goes here<br>(one per deep dive, same look every day)</div>
+    <div class="eyebrow">Deep dive · 2 min · Written by A. Sharma, edited by R. Iyer</div>
+    <h3>Foreign investors are selling India, but not for the reason you think</h3>
+    <div class="tldr"><div class="eyebrow">TL;DR</div><p>Foreign funds have sold ₹9,800 crore in four sessions. Most of it is money moving to cheaper markets, not a loss of faith in Indian companies.</p></div>
+    <ol class="qs">
+      <li>How much have they sold, and is it unusual?</li>
+      <li>Where is the money going?</li>
+      <li>Who has been buying what they sell?</li>
+    </ol>
+    <div class="chartbox">
+      <h4>FIIs sold for 4 straight days, the longest run since August</h4>
+      <p class="sub">Net FII flows in the cash market, ₹ crore, last 20 sessions</p>
+      <div class="cwrap"><svg id="deepChart" viewBox="0 0 640 220" role="img" aria-label="FII net flows over 20 sessions, with the last four days of selling annotated"></svg></div>
+      <div class="foot"><span>Teal = net buying, grey = net selling · Source: NSE</span><span style="font-weight:600;color:var(--text-secondary)">Springpad</span></div>
+    </div>
+    <p class="verdict">The verdict: this is a price story, not a faith story. Watch whether domestic funds keep absorbing the selling.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn primary">Read the full story · 6 min</button>
+      <button class="btn secondary">Story so far · 3 earlier days</button>
+    </div>
+  </section>
+
+  <!-- ===== CALENDAR ===== -->
+  <div class="anno"><b>This week</b> results, RBI, data releases, IPO dates · <code>/corporate_actions</code> + RBI/MoSPI calendars</div>
+  <section aria-label="This week">
+    <div class="sec-title"><h2>This week</h2><span class="time">Add to calendar</span></div>
+    <div class="card cal">
+      <div class="r"><div class="d">Wed 11<small>Today</small></div><div>India retail inflation (October), 4 pm</div><span class="chip info">Data</span></div>
+      <div class="r"><div class="d">Thu 12</div><div>Weekly Nifty expiry · Lumen Foods results</div><span class="chip warn">Expiry</span></div>
+      <div class="r"><div class="d">Fri 13</div><div>Kestrel Energy listing</div><span class="chip pos">IPO</span></div>
+      <div class="r"><div class="d">Mon 16</div><div>Northwind Logistics IPO closes</div><span class="chip pos">IPO</span></div>
+    </div>
+  </section>
+
+  <!-- ===== LAYER 5: PLAY ===== -->
+  <div class="anno"><b>Layer 5 · Play</b> ~1 min · quiz + poll + tomorrow teaser · results revealed next edition (stored in history)</div>
+  <section aria-label="Play">
+    <div class="sec-title"><h2>Your 1-minute check</h2><span class="time">3 questions</span></div>
+    <div class="play-grid">
+      <div class="card quiz">
+        <div class="eyebrow">Quiz</div>
+        <div class="q" id="qText"></div>
+        <div class="opts" id="qOpts"></div>
+        <div class="qnav"><span id="qCount"></span><span id="qScore">Score 0</span></div>
+      </div>
+      <div class="card poll">
+        <div class="eyebrow">Poll · results tomorrow</div>
+        <div class="q" style="font:var(--type-label);margin:12px 0 8px">Will the RBI cut rates at its December meeting?</div>
+        <div class="opts" id="pollOpts">
+          <button data-p="58"><i></i><span><span>Yes</span><span class="pct"></span></span></button>
+          <button data-p="31"><i></i><span><span>No</span><span class="pct"></span></span></button>
+          <button data-p="11"><i></i><span><span>Not sure</span><span class="pct"></span></span></button>
+        </div>
+        <div class="src" style="margin-top:12px">Yesterday's poll: 64% expected markets to fall after the holiday. They did.</div>
+      </div>
+    </div>
+    <div class="teaser">
+      <div><div class="eyebrow">Tomorrow in Edition 144</div><h3>Today's inflation number: what it means for your home-loan EMI</h3></div>
+      <button class="btn primary">Notify me at 7:30 am</button>
+    </div>
+  </section>
+
+  <!-- ===== ARCHIVE ===== -->
+  <div class="anno"><b>Archive + history</b> every edition at its own URL · search · topic pages · <code>edition history store</code></div>
+  <section aria-label="Archive">
+    <div class="sec-title"><h2>Past editions</h2><a class="link" href="#" style="font:var(--type-label)">All editions →</a></div>
+    <input class="search" type="search" placeholder="Search every edition: a company, a topic, a date" aria-label="Search editions">
+    <div class="card arch">
+      <div class="r"><span class="no">#142</span><div class="t">Markets dip into the Diwali break<small>Mon, 9 Nov</small></div><span class="src">4:05</span></div>
+      <div class="r"><span class="no">#141</span><div class="t">Samvat 2083 opens: your Muhurat trading guide<small>Sun, 8 Nov · Muhurat special</small></div><span class="src">4:20</span></div>
+      <div class="r"><span class="no">#140</span><div class="t">Kestrel Energy IPO: who is really bidding?<small>Fri, 6 Nov · IPO deep dive</small></div><span class="src">4:31</span></div>
+      <div class="r"><span class="no">#139</span><div class="t">The bank that stopped chasing deposits<small>Thu, 5 Nov</small></div><span class="src">3:58</span></div>
+    </div>
+    <div class="topics">
+      <span class="chip plain">Everything on Reliance</span><span class="chip plain">RBI rate cycle</span><span class="chip plain">IPO deep dives</span><span class="chip plain">A year ago today</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Springpad Today is for education and information only. It is not investment advice or a recommendation to buy or sell any security. Prices are delayed. Sources are listed on every card.
+</footer>
+
+<script>
+/* ---------- theme + notes toggles ---------- */
+const root=document.documentElement;
+const themeBtn=document.getElementById('themeBtn');
+function curTheme(){return root.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}
+function setTheme(t){root.dataset.theme=t;themeBtn.textContent=t==='dark'?'Light':'Dark';try{localStorage.setItem('today-theme',t)}catch(e){}}
+try{const s=localStorage.getItem('today-theme');if(s)root.dataset.theme=s}catch(e){}
+themeBtn.textContent=curTheme()==='dark'?'Light':'Dark';
+themeBtn.onclick=()=>setTheme(curTheme()==='dark'?'light':'dark');
+const notesBtn=document.getElementById('notesBtn');
+notesBtn.onclick=()=>{const on=document.body.classList.toggle('clean');notesBtn.textContent=on?'Show notes':'Hide notes';notesBtn.setAttribute('aria-pressed',String(!on))};
+
+/* ---------- helpers ---------- */
+const NS='http://www.w3.org/2000/svg';
+function spark(vals,w,h,pad=2){const mn=Math.min(...vals),mx=Math.max(...vals);const x=i=>pad+i*(w-2*pad)/(vals.length-1),y=v=>h-pad-(v-mn)/(mx-mn||1)*(h-2*pad);
+  const d=vals.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('');const up=vals.at(-1)>=vals[0];
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="${up?'var(--teal)':'var(--slate-500)'}" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`}
+function walk(n,start,drift,seed){let v=start,s=seed,out=[];for(let i=0;i<n;i++){s=(s*9301+49297)%233280;v+=drift+(s/233280-.5)*start*.006;out.push(v)}return out}
+
+/* ---------- layer 1 snapshot ---------- */
+const snap=[['Nifty 50','24,870','−0.8%',-1,1],['Sensex','81,560','−0.7%',-1,2],['Bank Nifty','53,210','−0.3%',-1,3],['USD-INR','84.62','+0.1%',1,4],['Gold (MCX)','₹77,900','+0.4%',1,5],['Crude (MCX)','₹6,180','−1.2%',-1,6]];
+document.getElementById('snap').innerHTML=snap.map(([n,v,d,s,seed])=>`<div class="tile"><div class="eyebrow">${n}</div><div class="v">${v}</div><div class="d ${s>0?'up mark-up':'down mark-down'}">${d}</div>${spark(walk(30,100,s*.06,seed),120,28)}</div>`).join('');
+
+/* ---------- layer 2 story cards ---------- */
+const stories=[
+ {tag:'Markets',h:'Nifty slips 0.8% as foreign investors sell ₹2,140 crore',n:'−0.8%',cls:'',hap:'Nifty fell for a fourth session; metals and realty led the drop.',why:'Foreign selling is now the longest run since August.',you:'Investing monthly through SIPs? Dips like this buy more units; no action needed.',src:'NSE',dur:'0:48'},
+ {tag:'Your money · Banking',h:'Meridian Bank cuts FD rates by 0.25% from Monday',n:'−0.25%',cls:'',hap:'1–2 year fixed deposits now pay 6.75%, down from 7%.',why:'Banks cut deposit rates when they expect RBI rate cuts.',you:'Planning an FD? Booking before Monday locks in the old rate.',src:'Bank notice',dur:'0:41'},
+ {tag:'IPO',h:'Northwind Logistics IPO opens: ₹1,200 crore at ₹410–432',n:'Opens today',cls:'info',hap:'The 3-day issue opened this morning; 0.6x subscribed so far.',why:'It is the largest logistics IPO this year.',you:'Applying? The minimum bid is 34 shares, about ₹14,700.',src:'RHP, NSE',dur:'0:52'},
+ {tag:'Autos',h:'Aster Motors raises car prices by up to 2% from 1 December',n:'+2% max',cls:'pos',hap:'Prices rise across models; the second hike this year.',why:'Steel and other input costs are up; watch whether rivals follow.',you:'Buying a car? Booking before 1 December avoids the hike.',src:'Company filing',dur:'0:39'},
+ {tag:'Global',h:'US inflation cools to 2.6%; Indian IT watches closely',n:'2.6%',cls:'info',hap:'US consumer prices rose 2.6% in October, below forecasts.',why:'Cooler inflation can mean lower US rates and more tech spending.',you:'Hold IT stocks or US funds? This is a mild positive, not a reason to act.',src:'US BLS',dur:'0:44'}];
+const chapters=[{t:'Market in 30 seconds',s:-1},...stories.map((s,i)=>({t:s.h,s:i}))];
+document.getElementById('stories').innerHTML=stories.map((s,i)=>`
+ <article class="card story" id="story${i}">
+  <div class="tag">${s.tag}</div>
+  <h3>${s.h}</h3>
+  <div class="hero-n ${s.cls}">${s.n}</div>
+  <div class="three">
+   <div><div class="eyebrow">What happened</div><p>${s.hap}</p></div>
+   <div><div class="eyebrow">Why it matters</div><p>${s.why}</p></div>
+   <div class="for-you"><div class="eyebrow">For you</div><p>${s.you}</p></div>
+  </div>
+  <div class="story-foot">
+   <button class="listen" data-ch="${i+1}">Listen · chapter ${i+2} · ${s.dur}</button>
+   <div class="foot-links"><span>Story so far</span><span>Share</span><span>Source: ${s.src}</span></div>
+  </div>
+ </article>`).join('');
+
+/* ---------- player (simulated) ---------- */
+const chEl=document.getElementById('chapters');
+chEl.innerHTML=chapters.map((c,i)=>`<button title="${c.t}" aria-label="Chapter ${i+1}: ${c.t}"></button>`).join('');
+let cur=-1,playing=false,timer=null,speeds=['1x','1.25x','1.5x'],sp=0;
+function setChapter(i){cur=i;[...chEl.children].forEach((b,j)=>{b.className=j<i?'done':j===i?'now':''});
+  document.querySelectorAll('.story').forEach(s=>s.classList.remove('playing'));
+  const c=chapters[i];document.getElementById('pTitle').textContent=`Chapter ${i+1} of ${chapters.length}`;
+  document.getElementById('pSub').textContent=c.t;
+  if(c.s>=0){const el=document.getElementById('story'+c.s);el.classList.add('playing')}
+  updateProgress()}
+function play(on){playing=on;document.getElementById('playBtn').textContent=on?'❚❚':'▶';clearInterval(timer);
+  if(on){if(cur<0)setChapter(0);timer=setInterval(()=>{if(cur<chapters.length-1)setChapter(cur+1);else play(false)},3500)}}
+document.getElementById('playBtn').onclick=()=>play(!playing);
+chEl.onclick=e=>{const i=[...chEl.children].indexOf(e.target);if(i>=0){setChapter(i);play(true)}};
+document.getElementById('stories').onclick=e=>{const b=e.target.closest('.listen');if(b){setChapter(+b.dataset.ch);play(true)}};
+document.getElementById('speedBtn').onclick=e=>{sp=(sp+1)%3;e.target.textContent=speeds[sp]};
+
+/* ---------- progress (scroll + listening) ---------- */
+function updateProgress(){const h=document.documentElement;const sc=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+  const au=cur<0?0:(cur+1)/chapters.length;const p=Math.round(Math.min(1,Math.max(sc,au))*100);
+  document.getElementById('progBar').style.width=p+'%';document.getElementById('progTxt').textContent=p+'% of today'}
+addEventListener('scroll',updateProgress,{passive:true});
+
+/* ---------- layer 3 desk ---------- */
+const idx=[['Nifty 50','24,870','−0.8%',-1,11],['Sensex','81,560','−0.7%',-1,12],['Bank Nifty','53,210','−0.3%',-1,13]];
+document.getElementById('idxGrid').innerHTML=idx.map(([n,v,d,s,seed])=>`<div class="card idx"><div class="row"><span class="name">${n}</span><span class="d num down mark-down">${d}</span></div><div class="num" style="font:600 18px/1.3 var(--font-sans);font-variant-numeric:tabular-nums">${v}</div>${spark(walk(60,100,s*.03,seed),200,48)}<div class="levels">Support / resistance levels: placeholder until SEBI check is done</div></div>`).join('');
+(function(){const v=[620,-340,880,1210,-450,310,-980,-1650,-1320,-2140],w=300,h=90,mid=45,mx=2200,bw=22;
+  let s=`<line x1="0" x2="${w}" y1="${mid}" y2="${mid}" stroke="var(--border-decorative)"/>`;
+  v.forEach((x,i)=>{const bh=Math.abs(x)/mx*40,X=6+i*29;s+=`<rect x="${X}" y="${x>0?mid-bh:mid}" width="${bw}" height="${bh}" rx="2" fill="${x>0?'var(--teal)':'var(--slate-500)'}"/>`});
+  s+=`<text x="${6+9*29+bw}" y="${mid-30}" font-size="10" fill="var(--text-tertiary)" font-family="Inter" text-anchor="end">today</text>`;
+  document.getElementById('flowBars').innerHTML=s})();
+const heat=[['Banks',0.4],['IT',0.2],['FMCG',-0.3],['Pharma',-0.5],['Auto',-0.7],['Energy',-0.9],['Infra',-1.1],['Media',-1.4],['Realty',-2.1],['Metals',-2.6]];
+function heatColor(v){const a=Math.min(1,Math.abs(v)/2.5),steps=[.12,.3,.5,.75,1],st=steps.find(x=>x>=a)||1;
+  return v>=0?`rgba(0,201,154,${st})`:`rgba(123,135,153,${st})`}
+document.getElementById('heat').innerHTML=heat.map(([n,v])=>{const bg=heatColor(v),strong=Math.abs(v)/2.5>.6;
+  return `<div style="background:${bg};color:${strong?(v>=0?'var(--navy-900)':'var(--white)'):'var(--text-primary)'}">${n}<b>${v>0?'+':''}${v.toFixed(1)}%</b></div>`}).join('');
+
+/* ---------- deep-dive chart (annotated, Zerodha grammar) ---------- */
+(function(){const v=[410,-220,530,760,180,-90,640,880,-310,450,720,-150,390,560,240,-60,-980,-1650,-1320,-2140];
+  const W=640,H=220,L=48,R=16,T=24,B=28,mx=2400,x=i=>L+i*(W-L-R)/v.length,y=val=>T+(mx-val)/(2*mx)*(H-T-B),bw=(W-L-R)/v.length-6;
+  let s='';[2000,1000,0,-1000,-2000].forEach(g=>{s+=`<line x1="${L}" x2="${W-R}" y1="${y(g)}" y2="${y(g)}" stroke="var(--border-decorative)" ${g===0?'':'stroke-dasharray="2 3"'}/><text x="${L-8}" y="${y(g)+4}" font-size="11" fill="var(--text-tertiary)" font-family="Inter" text-anchor="end">${g.toLocaleString('en-IN')}</text>`});
+  v.forEach((val,i)=>{const top=val>0?y(val):y(0),hh=Math.abs(y(val)-y(0));s+=`<rect x="${x(i)+3}" y="${top}" width="${bw}" height="${hh}" rx="2" fill="${val>0?'var(--teal)':'var(--slate-500)'}" ${i>=16?'':'opacity=".55"'}/>`});
+  const a=x(16)+3,b=x(19)+3+bw;s+=`<path d="M${a} ${y(-2250)}H${b}" stroke="var(--text-primary)" stroke-width="1"/><text x="${(a+b)/2}" y="${y(-2250)+14}" font-size="11" fill="var(--text-primary)" font-family="Inter" text-anchor="middle" font-weight="600">4 days · −₹6,090 cr</text>`;
+  s+=`<text x="${x(19)+3+bw}" y="${y(0)-8}" font-size="11" fill="var(--text-primary)" font-family="Inter" text-anchor="end" font-weight="600">today −2,140</text>`;
+  s+=`<text x="${x(7)+3+bw/2}" y="${y(880)-6}" font-size="11" fill="var(--text-tertiary)" font-family="Inter" text-anchor="middle">peak buying</text>`;
+  s+=`<text x="${L}" y="${H-6}" font-size="11" fill="var(--text-tertiary)" font-family="Inter">14 Oct</text><text x="${W-R}" y="${H-6}" font-size="11" fill="var(--text-tertiary)" font-family="Inter" text-anchor="end">11 Nov</text>`;
+  document.getElementById('deepChart').innerHTML=s})();
+const cw=document.querySelector('.cwrap');cw.scrollLeft=cw.scrollWidth;
+
+/* ---------- quiz ---------- */
+const quiz=[{q:'How many days in a row have foreign investors sold?',o:['Two','Four','Seven'],a:1},{q:'Which sector fell the most today?',o:['Metals','IT','Banks'],a:0},{q:'Northwind Logistics IPO price band is…',o:['₹180–190','₹410–432','₹96–101'],a:1}];
+let qi=0,score=0;
+function renderQ(){const q=quiz[qi];document.getElementById('qText').textContent=q.q;document.getElementById('qCount').textContent=`Question ${qi+1} of ${quiz.length}`;
+  const box=document.getElementById('qOpts');box.innerHTML=q.o.map((o,i)=>`<button data-i="${i}">${o}</button>`).join('');
+  box.onclick=e=>{const b=e.target.closest('button');if(!b||box.dataset.done)return;box.dataset.done=1;const i=+b.dataset.i;
+    b.classList.add(i===q.a?'right':'wrong');box.children[q.a].classList.add('right');if(i===q.a)score++;
+    document.getElementById('qScore').textContent='Score '+score;setTimeout(()=>{if(qi<quiz.length-1){qi++;delete box.dataset.done;renderQ()}else{document.getElementById('qText').textContent=`Done: ${score} of ${quiz.length}. Streak kept.`;box.innerHTML=''}},1100)}}
+renderQ();
+document.getElementById('pollOpts').onclick=e=>{const b=e.target.closest('button');if(!b)return;const box=e.currentTarget;if(box.dataset.done)return;box.dataset.done=1;
+  [...box.children].forEach(x=>{x.querySelector('i').style.width=x.dataset.p+'%';x.querySelector('.pct').textContent=x.dataset.p+'%'});b.style.borderColor='var(--action-primary)'};
+</script>
+</body>
+</html>

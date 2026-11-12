@@ -1,0 +1,33 @@
+{
+  "duration": 283.19,
+  "chapters": [
+    {
+      "title": "Market in 30 seconds",
+      "start": 0.0
+    },
+    {
+      "title": "Foreign investors are back",
+      "start": 39.85
+    },
+    {
+      "title": "Banks lead, IT lags",
+      "start": 85.79
+    },
+    {
+      "title": "Oil slips below 90 dollars",
+      "start": 130.26
+    },
+    {
+      "title": "Silver and gold climb",
+      "start": 171.51
+    },
+    {
+      "title": "Anthropic's giant IPO",
+      "start": 201.59
+    },
+    {
+      "title": "Quick hits, term of the day, sign-off",
+      "start": 236.06
+    }
+  ]
+}
