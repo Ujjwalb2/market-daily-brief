@@ -331,6 +331,16 @@ body{padding-bottom:68px}
 .dock .chapters{margin-top:5px}
 .dock .speed,.dock .iconbtn{height:28px!important;font-size:12px}
 @media (min-width:1400px){.rail{bottom:60px!important}}
+/* rail controls sit on solid surfaces so page lines never show through */
+.lr-nav{background:var(--surface-raised);border:1px solid var(--border-decorative);border-radius:var(--radius-pill);padding:4px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.lr-nav .round{border:none;background:transparent}.lr-nav .round:hover{background:var(--surface-hover)}
+.lr-head{background:var(--surface-canvas);border-radius:var(--radius-8);padding:4px}
+.rail .rail-hint{background:var(--surface-canvas);border-radius:var(--radius-8);padding:4px 6px}
+/* wide screens: tab-bar divider only under the centre column, not through the side rails */
+@media (min-width:1400px){
+  nav.stabs{border-bottom-color:transparent!important}
+  nav.stabs::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);width:min(1200px,calc(100vw - 520px));height:1px;background:var(--border-decorative);pointer-events:none}
+}
 /* ---------- live ticker ---------- */
 .ticker{position:sticky;top:0;z-index:35;height:36px;display:flex;align-items:center;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative);overflow:hidden}
 .tk-status{flex:none;display:flex;align-items:center;gap:8px;height:100%;padding:0 var(--space-16);border-right:1px solid var(--border-decorative);background:var(--surface-raised);z-index:2;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
