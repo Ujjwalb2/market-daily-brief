@@ -333,6 +333,20 @@ body > .ticker{top:55px;z-index:39}
 .mvx-foot{margin-top:auto;font:var(--type-caption);color:var(--text-tertiary)}.mvx-foot b{color:var(--text-secondary)}
 
 @media (min-width:1400px) and (max-height:920px){.mvx-r{padding:1px 0}.mvx{gap:6px}}
+/* less text on Home: the full brief keeps the long copy */
+.home .dayline,.home .mood-mini .src,.home .idx-src,.hl .lviz .cap{display:none!important}
+.tc-sig{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.tc-sig li{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-decorative);font:500 13px/1.2 var(--font-sans);color:var(--text-primary)}
+.tc-sig li:last-child{border-bottom:none}
+.tc-sig i{font-style:normal;font:700 10px/1 var(--font-sans);display:grid;place-items:center;width:18px;height:18px;border-radius:5px}
+.tc-sig i.dn{background:var(--surface-glass);color:var(--slate-500)}
+.tc-sig i.wa{background:var(--fb-warning-soft);color:var(--amber)}
+.tc-sig b{font:600 12px/1 var(--font-sans);color:var(--text-secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.tc-lvl{display:none}
+@media (min-width:1400px){.tc-lvl{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-height:0}.tc-lvl svg{width:100%;height:auto;max-height:170px}}
+@media (min-width:1400px) and (max-height:880px){.tc-lvl{display:none}}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -389,17 +403,21 @@ body=f"""</style>
       <div class="hc-head"><span class="eyebrow">Trade calls</span><span class="tc-tag">Research advice</span></div>
       <div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">Latest call</span>
         <div class="top"><b>SWIGGY · Put spread</b><span class="tc-act">Active</span></div>
-        <div class="meta">Swing · 1 month · Risk medium · new today</div></div>
+        <div class="meta">Swing · 1 month · Medium risk</div></div>
       <div class="tc-more">
         <div class="tc-legs2"><div><i class="b">Buy</i>PUT 185<b>₹4.22</b></div><div><i class="s">Sell</i>PUT 180<b>₹2.35</b></div></div>
         <div class="tc-lv4"><div>Entry<b>₹1.87</b></div><div>Target<b class="up">₹5.80</b></div><div>Stop loss<b class="dn">₹0.25</b></div><div>LTP<b>₹1.92</b></div></div>
         <div class="tc-cap"><span>Approx capital</span><b>₹21,000</b></div>
-        <div class="tc-meta2">1,825 qty · expiry 23 Nov 2026</div>
       </div>
       <p class="tc-why">Bearish continuation after a failed relief rally into the 20 EMA. Full analysis in Trade Calls.</p>
-      <div class="tc-an"><span class="eyebrow" style="color:var(--text-tertiary)">Analysis</span><p>SWIGGY is at 186.28 on the daily chart, in a steep downtrend from the 305 high to the October low of 174.20. The 20, 50, 100 and 200 EMAs are stacked above price in bearish order, all sloping down, and the daily SuperTrend is red. The bounce from 174 to about 200 stalled at the 20 EMA and the Bollinger midline, and the latest candle shows a clear rejection with an upper wick to 194.36. The setup is a bearish continuation after a failed relief rally. The main risk is a sharp short-covering bounce; a close above 198 invalidates the idea.</p></div>
-      <div class="tc-others"><span class="eyebrow" style="color:var(--text-tertiary)">Also active</span><p>2 more calls · open Trade Calls to see them</p></div>
-      <div class="hc-foot"><span>Research advice</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
+      <div class="tc-an"><span class="eyebrow" style="color:var(--text-tertiary)">Why this call</span><ul class="tc-sig">
+        <li><i class="dn">▼</i><span>Downtrend</span><b>305 → 186</b></li>
+        <li><i class="dn">▼</i><span>Below all EMAs</span><b>20 to 200</b></li>
+        <li><i class="dn">▼</i><span>Bounce rejected</span><b>at 20 EMA</b></li>
+        <li><i class="wa">!</i><span>Idea fails</span><b>close above 198</b></li>
+      </ul></div>
+      <div class="tc-lvl"><span class="eyebrow" style="color:var(--text-tertiary)">Stock levels · SWIGGY</span><svg viewBox="0 0 260 150" role="img" aria-label="SWIGGY levels: idea fails above 198, rejected at 194.36, now 186.28, October low 174.20"><rect x="64" y="19.3" width="196" height="110.5" fill="var(--surface-glass)"/><line x1="64" x2="260" y1="19.3" y2="19.3" stroke="var(--amber)" stroke-width="1" stroke-dasharray="3 3"/><text x="56" y="23.3" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--amber)">198</text><text x="256" y="15.3" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--amber)">Idea fails above</text><line x1="64" x2="260" y1="36.2" y2="36.2" stroke="var(--text-tertiary)" stroke-width="1" stroke-dasharray="3 3"/><text x="56" y="40.2" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--text-tertiary)">194.36</text><text x="256" y="32.2" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--text-tertiary)">Rejected (wick)</text><line x1="64" x2="260" y1="73.7" y2="73.7" stroke="var(--text-primary)" stroke-width="1.6"/><text x="56" y="77.7" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--text-primary)">186.28</text><text x="256" y="69.7" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--text-primary)">Now</text><line x1="64" x2="260" y1="129.8" y2="129.8" stroke="var(--text-tertiary)" stroke-width="1" stroke-dasharray="3 3"/><text x="56" y="133.8" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--text-tertiary)">174.2</text><text x="256" y="125.80000000000001" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--text-tertiary)">October low</text><circle cx="64" cy="73.7" r="4" fill="var(--text-primary)"/></svg></div>
+      <div class="hc-foot"><span>+2 more active</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
     </article>
     <article class="card hg-tl" aria-label="Today's market timeline">
       <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><button class="linkbtn" data-go="calendar">Calendar →</button></div>
@@ -407,7 +425,6 @@ body=f"""</style>
       <div class="tl-bar"><i id="tlFill"></i></div>
       <ul class="tl" id="tl"></ul>
       <div class="tl-next"><span class="eyebrow">Coming up</span><ul id="tlNext"></ul></div>
-      <div class="hc-foot"><span>IST · amber = today's events</span></div>
     </article>
     <article class="card lcard hl hg-one" id="learnCard" aria-label="Today's learning">
       <div class="hc-head"><span class="eyebrow" id="hlKind">Learn</span><span class="num" id="hlCount" style="font:var(--type-caption);color:var(--text-tertiary)">1 / 3</span></div>
@@ -422,9 +439,9 @@ body=f"""</style>
     <article class="card hg-bk" aria-label="Baskets">
       <div class="hc-head"><span class="eyebrow">Baskets</span><a class="bk-build" href="https://dev.alphapad.in/baskets">+ Build basket</a></div>
       <ul class="bk-list">
-        <li><div><b>Updated Momentum Basket</b><small>Momentum · Medium risk · 2 stocks · min ₹4,500</small></div><span class="bk-r up">+17.26%<small>1Y</small></span></li>
-        <li><div><b>All Weather Alpha</b><small>Momentum · High risk · 5 stocks · min ₹2,000</small></div><span class="bk-r up">+8.87%<small>1Y</small></span></li>
-        <li><div><b>Alphapad Smart Factor Plus</b><small>Momentum · High risk · 5 stocks · min ₹2,000</small></div><span class="bk-r up">+2.46%<small>1Y</small></span></li>
+        <li><div><b>Updated Momentum Basket</b><small>Medium risk · 2 stocks</small></div><span class="bk-r up">+17.26%<small>1Y</small></span></li>
+        <li><div><b>All Weather Alpha</b><small>High risk · 5 stocks</small></div><span class="bk-r up">+8.87%<small>1Y</small></span></li>
+        <li><div><b>Alphapad Smart Factor Plus</b><small>High risk · 5 stocks</small></div><span class="bk-r up">+2.46%<small>1Y</small></span></li>
       </ul>
       <div class="hc-foot"><span>Not investment advice</span><a href="https://dev.alphapad.in/baskets">All baskets →</a></div>
     </article>
@@ -464,7 +481,7 @@ const MVS={MV_DATA},SECS={SEC_DATA};
 function renderMvx(m){{const rows=m==='x'?SECS:MVS,mx=Math.max(...rows.map(r=>Math.abs(r.v)));
   $('#mvx').innerHTML=rows.map(r=>{{const w=(Math.abs(r.v)/mx*100).toFixed(1),up=r.v>=0;
     return `<div class="mvx-r ${{up?'u':'d'}}"><span class="n">${{r.n}}</span><span class="b"><i class="l">${{up?'':`<em style="width:${{w}}%"></em>`}}</i><i class="r">${{up?`<em style="width:${{w}}%"></em>`:''}}</i></span><b>${{up?'+':'−'}}${{Math.abs(r.v).toFixed(2)}}%</b></div>`}}).join('');
-  $('#mvxFoot').innerHTML=m==='x'?'Sector indices · Sources: Kotak Securities, DSIJ':'Nifty 100 itself <b>+0.86%</b> · 72 of 100 rose · NSE closing';
+  $('#mvxFoot').innerHTML=m==='x'?'Sector indices · Wed close':'Nifty 100 <b>+0.86%</b> · 72 of 100 rose';
   $$('.seg2 button').forEach(b=>{{const on=b.dataset.m===m;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))}})}}
 $('.seg2').addEventListener('click',e=>{{const b=e.target.closest('button');if(b)renderMvx(b.dataset.m)}});
 renderMvx('s');
@@ -481,9 +498,9 @@ addEventListener('resize',()=>{{clearTimeout(window._tlr);window._tlr=setTimeout
 /* ================= ONE LEARNING CARD AT A TIME ================= */
 const LVIZ={LVIZ};
 const LEARN=[
- {{id:'term',kind:'Term of the day',h:'Short covering',one:'When traders who <b>bet on a fall buy back</b> to close those bets, that buying itself pushes prices up. Most FII shorts have now been covered.'}},
- {{id:'relation',kind:'Relation of the day',h:'Cheaper crude, relief for India',one:'India imports most of its oil, so <b>every drop in crude ripples outward</b>: fewer dollars spent, softer prices at home, lower costs for companies that burn or use oil.'}},
- {{id:'learning',kind:'Learning of the day',h:'Broad rallies beat narrow ones',one:'When <b>smaller companies rise more than the big index</b>, buying is spread widely, not just in a few heavyweights. That usually makes a rally sturdier.'}}];
+ {{id:'term',kind:'Term of the day',h:'Short covering',one:'Traders who <b>bet on a fall buy back</b>, and that buying lifts the price.'}},
+ {{id:'relation',kind:'Relation of the day',h:'Cheaper crude, relief for India',one:'India imports most of its oil, so <b>cheaper crude eases costs</b> at home.'}},
+ {{id:'learning',kind:'Learning of the day',h:'Broad rallies beat narrow ones',one:'When <b>smaller stocks beat the index</b>, buying is wide and the rally sturdier.'}}];
 let hi=Math.max(0,LEARN.findIndex(x=>!LRN.has(x.id)));
 function hlShow(i,anim){{hi=(i+LEARN.length)%LEARN.length;const x=LEARN[hi],b=$('#hlBody');
   $('#hlKind').textContent=x.kind;$('#hlCount').textContent=`${{hi+1}} / ${{LEARN.length}}`;
