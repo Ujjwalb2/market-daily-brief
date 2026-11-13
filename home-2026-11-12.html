@@ -1243,6 +1243,34 @@ body > .ticker{top:55px;z-index:39}
 .ixc-val .vix{font:600 13px/1 var(--font-sans);color:var(--amber)}.ixc-val .dn2{font:600 13px/1 var(--font-sans);color:var(--red)}
 .ixc-rng b.vixb{color:var(--amber)}
 
+/* OI buildup view */
+.oib{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;height:100%}
+.oib-q{display:flex;flex-direction:column;gap:1px;justify-content:center;padding:4px 8px;border-radius:var(--radius-8);background:var(--surface-glass);border:1px solid var(--border-decorative);border-left:3px solid var(--teal);min-width:0;overflow:hidden}
+.oib-q.d{border-left-color:var(--slate-500)}
+.oib-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.oib-h b{font:600 12.5px/1.2 var(--font-sans)}
+.oib-n{font:700 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.oib-s{font:500 10.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.oib-t{font:500 11px/1.3 var(--font-sans);color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oib-t em{font-style:normal;color:var(--text-tertiary)}
+.mvx .seg2{flex:none}.mvx .seg2 button{padding:5px 8px;font-size:11px;white-space:nowrap}
+/* daily poll */
+.poll{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.poll-q{font:600 13px/1 var(--font-sans);color:var(--text-primary)}.poll-q b{font-weight:700}
+.poll button{border:1px solid var(--border-decorative);background:var(--surface-raised);color:var(--text-primary);font:600 12px/1 var(--font-sans);padding:7px 10px;border-radius:var(--radius-pill);cursor:pointer}
+.poll button:hover{border-color:var(--action-primary)}
+.poll-bar{display:flex;width:90px;height:8px;border-radius:4px;overflow:hidden;background:var(--surface-glass)}
+.poll-bar i{display:block;height:100%;opacity:.45}.poll-bar i.me{opacity:1}
+.poll-bar .up{background:var(--teal)}.poll-bar .flat{background:var(--slate-400,#94a3b8)}.poll-bar .down{background:var(--red)}
+.poll-r{font:500 12px/1 var(--font-sans);color:var(--text-secondary)}.poll-r small{color:var(--text-tertiary)}
+@media (max-width:1799px){.poll-bar,.poll-t,.poll-r small{display:none}.home .stk-strip{gap:16px}.poll button{padding:6px 8px}}
+@media (max-width:1599px){.home .stk-strip .ss-n span em+*,.home .stk-strip .ss-ms{display:none}}
+@media (max-width:1399px){.poll .poll-bar,.poll-r{display:none}.home .stk-strip .ss-days{display:none}}
+/* what is this? */
+.ibtn{flex:none;display:inline-grid;place-items:center;width:16px;height:16px;margin-left:6px;margin-right:auto;border-radius:50%;border:1px solid var(--border-decorative);background:none;color:var(--text-tertiary);font:italic 700 10px/1 Georgia,serif;cursor:pointer;padding:0}
+.ibtn:hover,.ibtn[aria-expanded=true]{color:var(--action-primary);border-color:var(--action-primary)}
+.ipop{position:fixed;z-index:200;width:min(320px,calc(100vw - 16px));padding:12px 14px;border-radius:var(--radius-12);background:var(--surface-raised);border:1px solid var(--border-decorative);box-shadow:0 12px 32px rgba(0,0,0,.35);font:var(--type-caption);color:var(--text-secondary)}
+.ipop b{display:block;margin-bottom:4px;font:600 13px/1.3 var(--font-sans);color:var(--text-primary)}.ipop p{margin:0 0 6px;line-height:1.5}.ipop small{color:var(--text-tertiary)}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -1384,7 +1412,7 @@ body > .ticker{top:55px;z-index:39}
       <div class="hc-foot"><div class="lnav"><button class="round" id="hlPrev" aria-label="Previous idea">←</button><span class="hl-dots" id="hlDots"><i></i><i></i><i></i></span><button class="round" id="hlNext" aria-label="Next idea">→</button></div><a class="hl-all" href="today-demo-2026-11-12.html#learn">Read all 3 in full →</a><button class="got" id="hlGot" data-learn="term">✓ Got it</button></div>
     </article>
     <article class="card hg-dl mvx" aria-label="Today's movers">
-      <div class="hc-head"><span class="eyebrow">Movers · Wed 11 Nov</span><div class="seg2" role="tablist"><button class="on" data-m="s" role="tab" aria-selected="true">Nifty 100</button><button data-m="x" role="tab" aria-selected="false">Sectors</button></div></div>
+      <div class="hc-head"><span class="eyebrow">Movers</span><div class="seg2" role="tablist"><button class="on" data-m="s" role="tab" aria-selected="true">Nifty 100</button><button data-m="x" role="tab" aria-selected="false">Sectors</button><button data-m="o" role="tab" aria-selected="false">OI buildup</button></div></div>
       <div class="mvx-list" id="mvx" aria-live="polite"></div>
       <div class="mvx-foot" id="mvxFoot"></div>
     </article>
@@ -1603,19 +1631,54 @@ $('#calModal').addEventListener('click',e=>{if(e.target.id==='calModal')closeCal
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#calModal').hidden)closeCal()});
 
 const MVS=[{"n": "Bank of Baroda", "v": 5.77}, {"n": "Mahindra & Mahindra", "v": 5.3}, {"n": "Samvardhana Motherson", "v": 4.81}, {"n": "Adani Ports", "v": -1.84}, {"n": "LTM", "v": -2.16}, {"n": "Adani Green Energy", "v": -3.26}],SECS=[{"n": "PSU Bank", "v": 2.94}, {"n": "Private Bank", "v": 1.14}, {"n": "Auto", "v": 1.14}, {"n": "Pharma", "v": -0.41}, {"n": "Realty", "v": -0.42}, {"n": "IT", "v": -0.53}];
-function renderMvx(m){const rows=m==='x'?SECS:MVS,mx=Math.max(...rows.map(r=>Math.abs(r.v)));
+const OIB={"lb": {"n": 64, "top": [{"s": "COROMANDEL", "p": 6.49, "o": 91.2}, {"s": "NAVINFLUOR", "p": 5.79, "o": 68.8}, {"s": "CUB", "p": 3.08, "o": 17.3}]}, "sb": {"n": 44, "top": [{"s": "COCHINSHIP", "p": -8.16, "o": 39.6}, {"s": "AMBER", "p": -1.37, "o": 12.8}, {"s": "BPCL", "p": -0.14, "o": 11.3}]}, "sc": {"n": 75, "top": [{"s": "RBLBANK", "p": 2.3, "o": -8.2}, {"s": "POWERINDIA", "p": 2.81, "o": -7.1}, {"s": "NAM-INDIA", "p": 0.75, "o": -6.0}]}, "lu": {"n": 28, "top": [{"s": "ICICIBANK", "p": -0.83, "o": -7.5}, {"s": "IREDA", "p": -0.28, "o": -6.5}, {"s": "ADANIGREEN", "p": -2.69, "o": -5.8}]}};
+const OIQ=[['lb','Long buildup','Price ▲ · OI ▲','u'],['sb','Short buildup','Price ▼ · OI ▲','d'],['sc','Short covering','Price ▲ · OI ▼','u'],['lu','Long unwinding','Price ▼ · OI ▼','d']];
+function renderOib(){$('#mvx').innerHTML=`<div class="oib">${OIQ.map(([k,t,h,c])=>`<div class="oib-q ${c}"><div class="oib-h"><b>${t}</b><span class="oib-n">${OIB[k].n}</span></div><span class="oib-s">${h}</span><span class="oib-t">Top: ${OIB[k].top.slice(0,1).map(x=>`${x.s} <em>${x.p>0?'+':'−'}${Math.abs(x.p).toFixed(1)}%</em>`).join('')}</span></div>`).join('')}</div>`;
+  $('#mvxFoot').innerHTML='211 stock futures · OI across expiries · NSE 11 Nov';
+  $$('.seg2 button').forEach(b=>{const on=b.dataset.m==='o';b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))})}
+function renderMvx(m){if(m==='o')return renderOib();const rows=m==='x'?SECS:MVS,mx=Math.max(...rows.map(r=>Math.abs(r.v)));
   $('#mvx').innerHTML=rows.map(r=>{const w=(Math.abs(r.v)/mx*100).toFixed(1),up=r.v>=0;
     return `<div class="mvx-r ${up?'u':'d'}"><span class="n">${r.n}</span><span class="b"><i class="l">${up?'':`<em style="width:${w}%"></em>`}</i><i class="r">${up?`<em style="width:${w}%"></em>`:''}</i></span><b>${up?'+':'−'}${Math.abs(r.v).toFixed(2)}%</b></div>`}).join('');
-  $('#mvxFoot').innerHTML=m==='x'?'Sector indices · Wed close':'Nifty 100 <b>+0.86%</b> · 72 of 100 rose';
+  $('#mvxFoot').innerHTML=m==='x'?'Sector indices · 11 Nov close':'Nifty 100 <b>+0.86%</b> · 72 of 100 rose · 11 Nov';
   $$('.seg2 button').forEach(b=>{const on=b.dataset.m===m;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))})}
 $('.seg2').addEventListener('click',e=>{const b=e.target.closest('button');if(b)renderMvx(b.dataset.m)});
 renderMvx('s');
+function lockMvx(){const l=$('#mvx'),cur=($$('.seg2 button.on')[0]||{}).dataset?.m||'s';l.style.height='';renderMvx('s');l.style.height=l.offsetHeight+'px';renderMvx(cur)}
+lockMvx();addEventListener('resize',lockMvx);
 /* switches between Nifty 100 and Sectors every 5 s; pauses while the reader hovers or uses the card */
 {let mvMode='s',mvHold=false;const c=$('.hg-dl');c.addEventListener('mouseenter',()=>mvHold=true);c.addEventListener('mouseleave',()=>mvHold=false);
   c.addEventListener('focusin',()=>mvHold=true);c.addEventListener('focusout',()=>mvHold=false);
   $('.seg2').addEventListener('click',e=>{const b=e.target.closest('button');if(b)mvMode=b.dataset.m});
-  setInterval(()=>{if(mvHold||document.hidden)return;mvMode=mvMode==='s'?'x':'s';renderMvx(mvMode);const l=$('#mvx');l.classList.remove('in');void l.offsetWidth;l.classList.add('in')},5000)}
+  setInterval(()=>{if(mvHold||document.hidden)return;mvMode={s:'x',x:'o',o:'s'}[mvMode];renderMvx(mvMode);const l=$('#mvx');l.classList.remove('in');void l.offsetWidth;l.classList.add('in')},5000)}
 renderToday();setInterval(renderToday,30000);
+
+/* ================= DAILY POLL: where will Nifty close today? ================= */
+{const K='sp-poll-2026-11-12',CROWD={up:58,flat:17,down:25};/* sample split for the demo */
+  const L={up:'▲ Up',flat:'Flat',down:'▼ Down'};
+  {const g=$('#stkGoal');if(g&&!$('#poll')){const el=document.createElement('div');el.className='poll';el.id='poll';el.setAttribute('role','group');el.setAttribute('aria-label','Daily poll: where will Nifty close today?');g.before(el)}}
+  const get=()=>{try{return localStorage.getItem(K)}catch(e){return null}};
+  function draw(){const v=get(),el=$('#poll');if(!el)return;
+    if(!v){el.innerHTML=`<span class="poll-q">Nifty today?</span>${Object.keys(L).map(k=>`<button data-v="${k}">${L[k]}</button>`).join('')}`;return}
+    el.innerHTML=`<span class="poll-q">You: <b>${L[v]}</b></span><span class="poll-bar" title="Sample split for the demo">${Object.keys(L).map(k=>`<i class="${k}${k===v?' me':''}" style="width:${CROWD[k]}%"></i>`).join('')}</span><span class="poll-r">${CROWD[v]}% agree <small>(sample)</small><span class="poll-t"> · result 3:30 pm</span></span>`}
+  $('#poll')?.addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;try{localStorage.setItem(K,b.dataset.v)}catch(e){}draw()});
+  draw()}
+
+/* ================= WHAT IS THIS? one short explainer per card ================= */
+const INFO=[
+ ['.hg-tc .hc-head .eyebrow','Trade calls','Research calls from the AlphaPad desk. Each shows the option legs, entry, target, stop loss and last price, plus the payoff worked out from the legs and quantity: max profit, max loss, and capital (approximate margin needed). A ratio spread can lose more than it costs, so its max loss can read “unlimited”.','Source: AlphaPad Trade Calls · Prices are indicative'],
+ ['.hg-fo .hc-head .eyebrow','F&O levels','From yesterday’s Nifty option open interest for the nearest expiry. Support is the strike with the most put OI near spot; resistance is the strike with the most call OI near spot. Max pain is the strike where option buyers as a whole would lose the most at expiry. Levels are a guide, not a forecast.','Source: NSE F&O bhavcopy, 11 Nov close · Updates each evening'],
+ ['.hg-c .hero-side .head .eyebrow','Markets','One month of daily closing values for the index you pick. India VIX measures expected volatility: when it rises, traders expect bigger swings, so it is shown in amber, not green. Breadth counts NSE stocks that rose versus fell.','Source: NSE daily index files and bhavcopy, 11 Nov close'],
+ ['.mood-mini .head .eyebrow','Market mood','This is a demo score. The live version will combine market breadth, India VIX, FII/DII flows, momentum and sector participation, and this note will show each factor’s weight and today’s reading before launch.','Status: method under review'],
+ ['.hg-tl .hc-head .eyebrow','Today','Market events for today in IST: before the open, market hours and after the close. Amber marks today’s scheduled releases. Open the calendar for the full week ahead.','Source: AlphaPad market calendar'],
+ ['.hg-one .hc-head .eyebrow','Learning','Three short ideas a day, each tied to what moved the market. Tap “Got it” on all three to keep your streak. The full lessons are in the brief and in LMS.','Learn more: dev.alphapad.in/lms'],
+ ['.hg-dl .hc-head .eyebrow','Movers','Nifty 100: the biggest gainers and losers. Sectors: sector index moves. OI buildup sorts stock futures by how price and open interest moved together: long buildup (price ▲ OI ▲), short buildup (▼ ▲), short covering (▲ ▼), long unwinding (▼ ▼).','Source: NSE closing data and F&O bhavcopy, 11 Nov'],
+ ['.hg-bk .hc-head .eyebrow','Baskets','Curated stock baskets from the AlphaPad Marketplace with their one-year return. Benchmark comparison and maximum drawdown are being added so returns can be judged in context.','Source: AlphaPad Baskets · Not investment advice']];
+{const pop=document.createElement('div');pop.className='ipop';pop.id='ipop';pop.setAttribute('role','dialog');pop.hidden=true;document.body.appendChild(pop);let openBtn=null;
+  const close=()=>{pop.hidden=true;if(openBtn){openBtn.setAttribute('aria-expanded','false');openBtn=null}};
+  INFO.forEach(([sel,t,b,src],i)=>{const h=$(sel);if(!h)return;const btn=document.createElement('button');btn.className='ibtn';btn.type='button';btn.textContent='i';btn.setAttribute('aria-label','What is '+t+'?');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-controls','ipop');h.after(btn);
+    btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(openBtn===btn){close();return}close();pop.innerHTML=`<b>${t}</b><p>${b}</p><small>${src}</small>`;pop.hidden=false;openBtn=btn;btn.setAttribute('aria-expanded','true');
+      const r=btn.getBoundingClientRect(),w=pop.offsetWidth,hh=pop.offsetHeight;let x=Math.min(Math.max(8,r.left-12),innerWidth-w-8),y=r.bottom+8;if(y+hh>innerHeight-8)y=Math.max(8,r.top-hh-8);pop.style.left=x+'px';pop.style.top=y+'px'})});
+  document.addEventListener('click',e=>{if(!pop.hidden&&!pop.contains(e.target))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});addEventListener('resize',close);addEventListener('scroll',close,true)}
 
 /* ================= MARKETS CARD: one-month index chart, tabs switch every 5 s ================= */
 const IDX=[{"n": "Nifty 50", "pts": "+210.40", "pct": "+0.84%", "up": true, "vix": false, "d": [["12 Oct", 22363.35], ["13 Oct", 22721.95], ["14 Oct", 22622.7], ["15 Oct", 22997.35], ["16 Oct", 23146.15], ["19 Oct", 22888.95], ["21 Oct", 22811.35], ["22 Oct", 22687.65], ["23 Oct", 22600.0], ["26 Oct", 22753.2], ["27 Oct", 22749.75], ["28 Oct", 22698.85], ["29 Oct", 22936.75], ["30 Oct", 23053.1], ["02 Nov", 23440.8], ["03 Nov", 23810.85], ["04 Nov", 23960.6], ["05 Nov", 24536.6], ["06 Nov", 25030.35], ["09 Nov", 25044.65], ["11 Nov", 25255.05]]}, {"n": "Nifty Bank", "pts": "+1,051.15", "pct": "+1.76%", "up": true, "vix": false, "d": [["12 Oct", 54918.0], ["13 Oct", 55481.05], ["14 Oct", 55316.0], ["15 Oct", 55810.5], ["16 Oct", 55844.0], ["19 Oct", 55488.1], ["21 Oct", 54976.9], ["22 Oct", 54925.7], ["23 Oct", 54287.35], ["26 Oct", 54366.7], ["27 Oct", 53974.9], ["28 Oct", 54267.4], ["29 Oct", 54909.65], ["30 Oct", 54686.95], ["02 Nov", 55002.2], ["03 Nov", 55540.05], ["04 Nov", 55913.6], ["05 Nov", 57773.65], ["06 Nov", 59086.0], ["09 Nov", 59741.25], ["11 Nov", 60792.4]]}, {"n": "Midcap 100", "pts": "+496.55", "pct": "+0.81%", "up": true, "vix": false, "d": [["12 Oct", 58834.55], ["13 Oct", 59459.2], ["14 Oct", 59409.1], ["15 Oct", 59197.25], ["16 Oct", 59129.75], ["19 Oct", 58487.95], ["21 Oct", 57565.85], ["22 Oct", 57063.95], ["23 Oct", 55800.65], ["26 Oct", 56465.4], ["27 Oct", 57029.9], ["28 Oct", 57274.7], ["29 Oct", 57841.65], ["30 Oct", 57301.25], ["02 Nov", 57983.4], ["03 Nov", 58596.25], ["04 Nov", 59505.5], ["05 Nov", 60620.9], ["06 Nov", 60606.65], ["09 Nov", 61022.55], ["11 Nov", 61519.1]]}, {"n": "Smallcap 100", "pts": "+304.30", "pct": "+1.59%", "up": true, "vix": false, "d": [["12 Oct", 19425.8], ["13 Oct", 19447.4], ["14 Oct", 19384.8], ["15 Oct", 19131.7], ["16 Oct", 19129.8], ["19 Oct", 18935.75], ["21 Oct", 18487.3], ["22 Oct", 18275.9], ["23 Oct", 17739.45], ["26 Oct", 17985.0], ["27 Oct", 18468.7], ["28 Oct", 18634.9], ["29 Oct", 18811.35], ["30 Oct", 18463.6], ["02 Nov", 18595.3], ["03 Nov", 18652.85], ["04 Nov", 19026.4], ["05 Nov", 19132.45], ["06 Nov", 18975.05], ["09 Nov", 19185.05], ["11 Nov", 19489.35]]}, {"n": "India VIX", "pts": "+0.14", "pct": "+0.77%", "up": true, "vix": true, "d": [["12 Oct", 15.25], ["13 Oct", 14.12], ["14 Oct", 14.63], ["15 Oct", 14.03], ["16 Oct", 14.06], ["19 Oct", 14.77], ["21 Oct", 15.68], ["22 Oct", 15.76], ["23 Oct", 16.86], ["26 Oct", 17.16], ["27 Oct", 16.4], ["28 Oct", 16.25], ["29 Oct", 15.12], ["30 Oct", 15.3], ["02 Nov", 15.5], ["03 Nov", 15.72], ["04 Nov", 15.19], ["05 Nov", 15.58], ["06 Nov", 17.47], ["09 Nov", 17.42], ["11 Nov", 17.56]]}, {"n": "Nifty 500", "pts": "+212.30", "pct": "+0.90%", "up": true, "vix": false, "d": [["12 Oct", 21822.75], ["13 Oct", 22090.0], ["14 Oct", 22038.0], ["15 Oct", 22180.8], ["16 Oct", 22270.05], ["19 Oct", 22041.6], ["21 Oct", 21837.9], ["22 Oct", 21696.55], ["23 Oct", 21427.6], ["26 Oct", 21608.75], ["27 Oct", 21734.9], ["28 Oct", 21727.45], ["29 Oct", 21941.5], ["30 Oct", 21895.9], ["02 Nov", 22241.4], ["03 Nov", 22520.35], ["04 Nov", 22769.2], ["05 Nov", 23224.7], ["06 Nov", 23456.95], ["09 Nov", 23567.0], ["11 Nov", 23779.3]]}, {"n": "Nifty Next 50", "pts": "+696.75", "pct": "+0.96%", "up": true, "vix": false, "d": [["12 Oct", 68351.7], ["13 Oct", 68927.95], ["14 Oct", 68999.3], ["15 Oct", 68671.6], ["16 Oct", 68988.6], ["19 Oct", 68695.85], ["21 Oct", 67655.3], ["22 Oct", 67354.15], ["23 Oct", 65828.6], ["26 Oct", 66477.15], ["27 Oct", 67343.95], ["28 Oct", 67303.7], ["29 Oct", 68121.6], ["30 Oct", 67709.1], ["02 Nov", 68962.65], ["03 Nov", 69624.35], ["04 Nov", 70795.0], ["05 Nov", 71768.65], ["06 Nov", 71657.8], ["09 Nov", 72789.45], ["11 Nov", 73486.2]]}, {"n": "Fin Services", "pts": "+278.50", "pct": "+1.02%", "up": true, "vix": false, "d": [["12 Oct", 24866.35], ["13 Oct", 25228.55], ["14 Oct", 24948.7], ["15 Oct", 25364.2], ["16 Oct", 25387.1], ["19 Oct", 24987.1], ["21 Oct", 24691.45], ["22 Oct", 24657.7], ["23 Oct", 24403.0], ["26 Oct", 24454.35], ["27 Oct", 24303.75], ["28 Oct", 24418.25], ["29 Oct", 24704.55], ["30 Oct", 24712.2], ["02 Nov", 24899.05], ["03 Nov", 25357.9], ["04 Nov", 25580.6], ["05 Nov", 26600.45], ["06 Nov", 27283.95], ["09 Nov", 27384.9], ["11 Nov", 27663.4]]}, {"n": "Nifty IT", "pts": "−173.30", "pct": "−0.53%", "up": false, "vix": false, "d": [["12 Oct", 28349.6], ["13 Oct", 29830.1], ["14 Oct", 30171.0], ["15 Oct", 30719.8], ["16 Oct", 31924.1], ["19 Oct", 31516.3], ["21 Oct", 32422.5], ["22 Oct", 32081.25], ["23 Oct", 31995.5], ["26 Oct", 32273.05], ["27 Oct", 32189.45], ["28 Oct", 31553.4], ["29 Oct", 31866.4], ["30 Oct", 32606.9], ["02 Nov", 32442.5], ["03 Nov", 32551.6], ["04 Nov", 32061.9], ["05 Nov", 32837.85], ["06 Nov", 32977.9], ["09 Nov", 32468.9], ["11 Nov", 32295.6]]}];
