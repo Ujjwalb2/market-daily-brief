@@ -11,6 +11,9 @@ ticker=cut('<div class="ticker"','\n\n<header')
 strip=cut('<div class="stk-strip"','\n\n  <!-- ===== HERO')
 hero=cut('<section class="hero"','</section>',True)
 modal=cut('<div class="calmodal" id="stkModal"','<!-- ===== DOCKED PLAYER')
+calmodal=cut('<div class="calmodal" id="calModal"','<div class="calmodal" id="stkModal"')
+js_cal=cut('/* ================= CALENDAR','/* ================= MINI CALENDAR')
+js_cal_open=cut('function openCal(){','/* ================= STREAK')
 dock=cut('<div class="dock"','\n\n<script>')
 js_helpers=cut('/* ================= helpers','/* ================= hero')
 js_ticker=cut('/* ================= LIVE TICKER','/* ================= SIDE RAILS')
@@ -398,7 +401,7 @@ body=f"""</style>
       <div class="hc-foot"><span>Research advice</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
     </article>
     <article class="card hg-tl" aria-label="Today's market timeline">
-      <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><a class="linkbtn" href="{BRIEF}#calendar">Calendar →</a></div>
+      <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><button class="linkbtn" data-go="calendar">Calendar →</button></div>
       <div class="tl-st"><b id="tlCount">–</b><span id="tlSub"></span></div>
       <div class="tl-bar"><i id="tlFill"></i></div>
       <ul class="tl" id="tl"></ul>
@@ -430,13 +433,14 @@ body=f"""</style>
   <div style="height:8px"></div>
 </main>
 
-{modal}{dock}
+{calmodal}{modal}{dock}
 
 <script>
 const TODAY=new Date(2026,10,12);
 {js_helpers}
 /* any [data-go] link (ticker items, Markets desk…) opens that part of the full brief */
 document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();
+  if(g.dataset.go==='calendar'){{openCal();return}}
   if(g.dataset.go==='learn'){{const c=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');c.scrollIntoView({{behavior:'smooth',block:'nearest'}});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}}
   location.href='{BRIEF}#'+g.dataset.go}});
 
@@ -453,6 +457,8 @@ document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(
 function renderNext(){{const up=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,3);
   $('#tlNext').innerHTML=up.map(e=>`<li class="${{TYPES[e.t].c}}"><span class="t">${{fmt(e.d).replace(/ [A-Za-z]+$/,'')}}</span><span>${{e.title}}</span></li>`).join('')}}
 renderNext();
+{js_cal}
+{js_cal_open}
 const MVS={MV_DATA},SECS={SEC_DATA};
 function renderMvx(m){{const rows=m==='x'?SECS:MVS,mx=Math.max(...rows.map(r=>Math.abs(r.v)));
   $('#mvx').innerHTML=rows.map(r=>{{const w=(Math.abs(r.v)/mx*100).toFixed(1),up=r.v>=0;

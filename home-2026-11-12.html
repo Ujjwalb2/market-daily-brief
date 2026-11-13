@@ -1252,7 +1252,7 @@ body > .ticker{top:55px;z-index:39}
       <div class="hc-foot"><span>Research advice</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
     </article>
     <article class="card hg-tl" aria-label="Today's market timeline">
-      <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><a class="linkbtn" href="today-demo-2026-11-12.html#calendar">Calendar →</a></div>
+      <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><button class="linkbtn" data-go="calendar">Calendar →</button></div>
       <div class="tl-st"><b id="tlCount">–</b><span id="tlSub"></span></div>
       <div class="tl-bar"><i id="tlFill"></i></div>
       <ul class="tl" id="tl"></ul>
@@ -1283,6 +1283,22 @@ body > .ticker{top:55px;z-index:39}
 
   <div style="height:8px"></div>
 </main>
+
+<div class="calmodal" id="calModal" role="dialog" aria-modal="true" aria-label="Market calendar" hidden>
+  <div class="cm-box">
+    <div class="cm-head"><div><span class="eyebrow">IPOs · results · expiries · holidays · economy</span><h2>Market calendar</h2></div><button class="iconbtn" id="calClose">Close ✕</button></div>
+  <div class="calbar">
+    <div class="month"><button class="round" id="calPrev" aria-label="Previous">←</button><h2 class="h2" id="calTitle">November 2026</h2><button class="round" id="calNext" aria-label="Next">→</button><button class="btn ghost" id="calToday">Today</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="seg" id="viewSeg"><button data-v="month" aria-pressed="true">Month</button><button data-v="week" aria-pressed="false">Week</button><button data-v="list" aria-pressed="false">List</button></div><button class="btn secondary" id="icsBtn" style="height:32px">+ Add to my calendar</button></div>
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="calwrap" id="calwrap">
+    <div id="calMain"></div>
+    <aside class="card dayp" id="dayPanel"></aside>
+  </div>
+
+  </div>
+</div>
 
 <div class="calmodal" id="stkModal" role="dialog" aria-modal="true" aria-label="Your streak" hidden>
   <div class="cm-box stk-box">
@@ -1339,6 +1355,7 @@ themeBtn.onclick=()=>{const t=curTheme()==='dark'?'light':'dark';root.dataset.th
 
 /* any [data-go] link (ticker items, Markets desk…) opens that part of the full brief */
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();
+  if(g.dataset.go==='calendar'){openCal();return}
   if(g.dataset.go==='learn'){const c=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');c.scrollIntoView({behavior:'smooth',block:'nearest'});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}
   location.href='today-demo-2026-11-12.html#'+g.dataset.go});
 
@@ -1425,6 +1442,47 @@ const EVENTS=[
 function renderNext(){const up=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,3);
   $('#tlNext').innerHTML=up.map(e=>`<li class="${TYPES[e.t].c}"><span class="t">${fmt(e.d).replace(/ [A-Za-z]+$/,'')}</span><span>${e.title}</span></li>`).join('')}
 renderNext();
+/* ================= CALENDAR ================= */
+let cur=new Date(2026,10,1),sel=new Date(TODAY),view='month',filters=new Set(Object.keys(TYPES));
+function renderFilters(){$('#filters').innerHTML=Object.entries(TYPES).map(([k,v])=>{const c=EVENTS.filter(e=>e.t===k&&e.d.getMonth()===cur.getMonth()&&e.d.getFullYear()===cur.getFullYear()).length;
+  return `<button class="filter ${v.c}" data-k="${k}" aria-pressed="${filters.has(k)}">${v.n} <span class="c">${c}</span></button>`}).join('')}
+$('#filters').onclick=e=>{const b=e.target.closest('.filter');if(!b)return;const k=b.dataset.k;
+  if(filters.size===Object.keys(TYPES).length)filters=new Set([k]);else if(filters.has(k)){filters.delete(k);if(!filters.size)filters=new Set(Object.keys(TYPES))}else filters.add(k);renderCal()};
+function renderCal(){$('#calTitle').textContent=view==='week'?`Week of ${fmt(weekStart(sel))}`:`${MON[cur.getMonth()]} ${cur.getFullYear()}`;renderFilters();
+  const m=$('#calMain');$('#calwrap').classList.toggle('wide',view==='week');
+  if(view==='month'){m.innerHTML=`<div class="month-grid">${DOW.map(d=>`<div class="dow">${d}</div>`).join('')}${monthCells(cur).map(d=>{const ev=evOn(d,filters),out=d.getMonth()!==cur.getMonth(),wk=[0,6].includes(d.getDay()),hol=EVENTS.some(e=>e.t==='hol'&&same(e.d,d)&&e.title.includes('holiday'));
+      return `<button class="cell ${out?'out':''} ${wk?'wknd':''} ${same(d,TODAY)?'today':''} ${same(d,sel)?'sel':''} ${hol?'holiday':''}" data-day="${key(d)}" aria-label="${fmt(d)}, ${ev.length} events"><span class="dn">${d.getDate()}</span>${ev.slice(0,2).map(e=>`<span class="pill ${TYPES[e.t].c}">${e.title}</span>`).join('')}${ev.length>2?`<span class="more">+${ev.length-2} more</span>`:''}<span class="mdots">${ev.map(e=>`<i class="${TYPES[e.t].c}"></i>`).join('')}</span></button>`}).join('')}</div>`}
+  else if(view==='week'){const ws=weekStart(sel);let h='';for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const ev=evOn(d,filters);
+      h+=`<div class="week-col ${same(d,TODAY)?'today':''}"><h4>${DOW[i]} ${d.getDate()}<small>${same(d,TODAY)?'Today':MON[d.getMonth()].slice(0,3)}</small></h4>${ev.map(e=>`<div class="ev-card ${TYPES[e.t].c}"><b>${e.title}</b>${e.note?`<p class="src">${e.note}</p>`:''}</div>`).join('')||'<span class="src">No events</span>'}</div>`}
+    m.innerHTML=`<div class="week-grid">${h}</div>`}
+  else{const ev=EVENTS.filter(e=>filters.has(e.t)&&e.d.getMonth()===cur.getMonth()&&e.d.getFullYear()===cur.getFullYear()),by=new Map();ev.forEach(e=>{const k=key(e.d);by.set(k,[...(by.get(k)||[]),e])});
+    m.innerHTML=`<div class="agenda">${[...by.values()].map(list=>`<div><h4>${same(list[0].d,TODAY)?'Today · ':''}${fmt(list[0].d)}</h4><div class="list">${list.map(e=>`<div class="evrow ${TYPES[e.t].c}"><span class="when">${TYPES[e.t].n}</span><div class="what">${e.title}<small>${e.note||''}</small></div><span></span></div>`).join('')}</div></div>`).join('')||'<div class="empty">No events for these filters</div>'}</div>`}
+  renderDay()}
+function renderDay(){const ev=evOn(sel,filters);
+  $('#dayPanel').innerHTML=`<div class="eyebrow">${same(sel,TODAY)?'Today':'Selected day'}</div><h3>${fmt(sel)}</h3><div class="src">${ev.length} event${ev.length===1?'':'s'}</div>
+   <div class="evs">${ev.length?ev.map(e=>`<div class="ev-card ${TYPES[e.t].c}"><span class="k">${TYPES[e.t].n}</span><b>${e.title}</b>${e.note?`<p>${e.note}</p>`:''}</div>`).join(''):'<div class="empty">Nothing scheduled.</div>'}</div>
+   <div style="margin-top:12px"><button class="btn secondary" id="dayRemind" style="height:32px" ${ev.length?'':'disabled'}>Remind me about this day</button></div>`;
+  const r=$('#dayRemind');if(r)r.onclick=()=>ics(ev)}
+$('#calMain').onclick=e=>{const c=e.target.closest('.cell');if(!c)return;sel=fromKey(c.dataset.day);if(sel.getMonth()!==cur.getMonth())cur=new Date(sel.getFullYear(),sel.getMonth(),1);renderCal();
+  if(innerWidth<860)$('#dayPanel').scrollIntoView({behavior:'smooth',block:'nearest'})};
+function shift(n){if(view==='week'){sel=new Date(sel.getFullYear(),sel.getMonth(),sel.getDate()+7*n);cur=new Date(sel.getFullYear(),sel.getMonth(),1)}else cur=new Date(cur.getFullYear(),cur.getMonth()+n,1);renderCal()}
+$('#calPrev').onclick=()=>shift(-1);$('#calNext').onclick=()=>shift(1);
+$('#calToday').onclick=()=>{sel=new Date(TODAY);cur=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);renderCal()};
+$('#viewSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;$$('#viewSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderCal()};
+function ics(list){const p=n=>String(n).padStart(2,'0');
+  const body=list.map((e,i)=>{const d=`${e.d.getFullYear()}${p(e.d.getMonth()+1)}${p(e.d.getDate())}`;return `BEGIN:VEVENT\r\nUID:springpad-${d}-${i}@sample\r\nDTSTAMP:20261111T000000Z\r\nDTSTART;VALUE=DATE:${d}\r\nSUMMARY:${e.title}\r\nDESCRIPTION:${e.note||''} (Springpad Today sample)\r\nEND:VEVENT`}).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Springpad//Today//EN\r\n${body}\r\nEND:VCALENDAR`],{type:'text/calendar'}));
+  a.download='springpad-market-calendar.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$('#icsBtn').onclick=()=>ics(EVENTS.filter(e=>filters.has(e.t)&&e.d>=TODAY));
+renderCal();
+
+
+function openCal(){$('#calModal').hidden=false;renderCal();document.body.style.overflow='hidden';$('#calClose').focus()}
+function closeCal(){$('#calModal').hidden=true;document.body.style.overflow=''}
+$('#calClose').onclick=closeCal;
+$('#calModal').addEventListener('click',e=>{if(e.target.id==='calModal')closeCal()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#calModal').hidden)closeCal()});
+
 const MVS=[{"n": "Bank of Baroda", "v": 5.77}, {"n": "Mahindra & Mahindra", "v": 5.3}, {"n": "Samvardhana Motherson", "v": 4.81}, {"n": "Adani Ports", "v": -1.84}, {"n": "LTM", "v": -2.16}, {"n": "Adani Green Energy", "v": -3.26}],SECS=[{"n": "PSU Bank", "v": 2.94}, {"n": "Private Bank", "v": 1.14}, {"n": "Auto", "v": 1.14}, {"n": "Pharma", "v": -0.41}, {"n": "Realty", "v": -0.42}, {"n": "IT", "v": -0.53}];
 function renderMvx(m){const rows=m==='x'?SECS:MVS,mx=Math.max(...rows.map(r=>Math.abs(r.v)));
   $('#mvx').innerHTML=rows.map(r=>{const w=(Math.abs(r.v)/mx*100).toFixed(1),up=r.v>=0;
