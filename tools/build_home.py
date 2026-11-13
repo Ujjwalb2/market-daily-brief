@@ -661,7 +661,7 @@ const TODAY=new Date(2026,10,12);
 /* any [data-go] link (ticker items, Markets desk…) opens that part of the full brief */
 document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();
   if(g.dataset.go==='calendar'){{openCal();return}}
-  if(g.dataset.go==='learn'){{const c=$('#learnCard');if(!c||!c.offsetParent){{location.href='{BRIEF}#learn';return}}const k=LEARN.findIndex(x=>!LRN.has(x.id));if(k>=0)hlShow(k,true);c.scrollIntoView({{behavior:'smooth',block:'nearest'}});c.classList.remove('spot');void c.offsetWidth;c.classList.add('spot');setTimeout(()=>$('#hlGot').focus({{preventScroll:true}}),50);return}}
+  if(g.dataset.go==='learn'){{location.href='{BRIEF}#learn';return}}  /* same place as “Read all 3 in full” */
   location.href='{BRIEF}#'+g.dataset.go}});
 
 {js_ticker}
