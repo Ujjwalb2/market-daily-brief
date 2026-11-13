@@ -1211,7 +1211,7 @@ body > .ticker{top:55px;z-index:39}
 .tc-risk>div{display:flex!important;flex-direction:column;gap:3px;min-width:0;align-items:stretch!important}.tc-risk>div>b,.tc-risk>div>span{display:block!important;width:auto!important;max-width:100%;text-align:left!important}
 .tc-risk span{font:600 9.5px/1 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.6)}
 .tc-risk b{font:600 13.5px/1.15 var(--font-sans);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:visible;padding-left:1px}
-.tc-risk b.up{color:#5fd3b5}.tc-risk b.dn{color:#ff8a8a}.tc-risk b.x{font-size:12px}
+.tc-risk b.rk-up{color:#5fd3b5}.tc-risk b.rk-dn{color:#ff8a8a}.tc-risk b.x{font-size:12px}
 .tc-flag{display:inline-grid;place-items:center;width:13px;height:13px;margin-left:3px;border-radius:50%;background:var(--amber);color:#1a1a1a;font:700 9px/1 var(--font-sans);font-style:normal;vertical-align:1px;cursor:help}
 .tc-note{margin:0;font:var(--type-caption);color:var(--amber)}
 
@@ -1596,7 +1596,7 @@ function tcShow(i,anim){ti=(i+CALLS.length)%CALLS.length;const c=CALLS[ti],b=$('
     <div class="top"><b>${c.n} · ${c.k}</b><span class="tc-act">Active</span></div><div class="meta">${c.meta}</div></div>
     <div class="tc-more"><div class="tc-legs2">${c.legs.map(l=>`<div><i class="${l[0]}">${l[0]==='b'?'Buy':'Sell'}</i><span>${l[1]}${l[3]>1?` <small>×${l[3]}</small>`:''}</span><b>${l[2]}</b></div>`).join('')}</div>
     <div class="tc-lv4"><div>Entry<b>${c.lv[0]}</b></div><div>Target<b class="up">${c.lv[1]}${c.tflag?`<i class="tc-flag" title="${c.tflag}" aria-label="${c.tflag}">!</i>`:''}</b></div><div>Stop loss<b class="dn">${c.lv[2]}</b></div><div>LTP<b>${c.lv[3]}</b></div></div>
-    <div class="tc-risk"><div><span>Max profit</span><b class="up">${c.mp}</b></div><div><span>Max loss</span><b class="dn${c.mlx?' x':''}">${c.ml}</b></div><div><span>Capital</span><b>${c.cap}</b></div></div></div>`;
+    <div class="tc-risk"><div><span>Max profit</span><b class="rk-up">${c.mp}</b></div><div><span>Max loss</span><b class="rk-dn${c.mlx?' x':''}">${c.ml}</b></div><div><span>Capital</span><b>${c.cap}</b></div></div></div>`;
   [...$('#tcDots').children].forEach((d,j)=>d.classList.toggle('on',j===ti));
   if(anim){b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}
 tcShow(0,false);
