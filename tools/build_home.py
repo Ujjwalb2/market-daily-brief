@@ -1,0 +1,325 @@
+import re
+import os
+B=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")+"/"
+s=open(B+"today-demo-2026-11-12.html",encoding="utf-8").read()
+BRIEF="today-demo-2026-11-12.html"
+def cut(a,b,inc_b=False):
+    i=s.index(a); j=s.index(b,i); return s[i:j+(len(b) if inc_b else 0)]
+
+head=s[:s.index("</style>")].replace("<title>Springpad Today Demo</title>","<title>AlphaPad Home Demo</title>")
+ticker=cut('<div class="ticker"','\n\n<header')
+strip=cut('<div class="stk-strip"','\n\n  <!-- ===== HERO')
+hero=cut('<section class="hero"','</section>',True)
+modal=cut('<div class="calmodal" id="stkModal"','<!-- ===== DOCKED PLAYER')
+dock=cut('<div class="dock"','\n\n<script>')
+js_helpers=cut('/* ================= helpers','/* ================= hero')
+js_ticker=cut('/* ================= LIVE TICKER','/* ================= SIDE RAILS')
+js_day=cut('const DAY=[','function renderClock')
+js_streak=cut('/* ================= STREAK','renderStreak();\n\n/* RIGHT RAIL')
+
+# hero tweaks: CTA row instead of chips; links go to the full brief
+hero=re.sub(r'<div class="chips">.*?</div>',
+  '<div class="home-cta"><button class="btn primary" id="listenBtn">▶ Listen · 4:46</button>'
+  f'<a class="btn ghost" href="{BRIEF}#brief">Read today\'s full brief →</a></div>'
+  '<div class="top-story"><span class="eyebrow">Top story</span><a href="'+BRIEF+'#brief">Foreign investors return as buyers after the Diwali break</a></div>',hero,count=1,flags=re.S)
+hero=hero.replace('<span class="src">Today\'s numbers arrive after the 3:30 pm close</span>','')
+hero=hero.replace('href="#markets" data-go="markets"',f'href="{BRIEF}#markets"')
+strip=strip.replace('<button class="linkbtn" id="stkOpen">','<button class="linkbtn" id="stkOpen">')
+
+CSS="""
+/* ---------- home (landing) ---------- */
+.home-cta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:var(--space-16)}
+.home-cta .btn{text-decoration:none}
+.top-story{display:flex;gap:10px;align-items:baseline;margin-top:var(--space-12);font:var(--type-label)}
+.top-story a{color:var(--text-primary);text-decoration:none}.top-story a:hover{text-decoration:underline}
+.home-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:var(--space-16);margin-top:var(--space-16);align-items:stretch}
+.home-row>.card{display:flex;flex-direction:column;gap:10px;padding:var(--space-16) var(--space-20)}
+.hc-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hc-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;font:var(--type-caption);color:var(--text-tertiary)}
+.hc-foot a{font:var(--type-label);color:var(--action-primary);text-decoration:none;white-space:nowrap}
+/* trade calls (advice: kept visually apart from the education cards) */
+.tc{border-top:3px solid var(--amber)}
+.tc-tag{font:600 10px/1 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;padding:4px 7px;border-radius:var(--radius-pill);background:var(--fb-warning-soft);color:var(--text-primary)}
+.tc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tc-stats div{padding:6px 8px;border-radius:var(--radius-8);background:var(--surface-glass);border:1px solid var(--border-decorative);font:500 10px/1.2 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary)}
+.tc-stats b{display:block;margin-top:3px;font:600 16px/1 var(--font-sans);letter-spacing:0;text-transform:none;color:var(--text-primary)}
+.tc-call{padding:10px 12px;border-radius:var(--radius-8);border:1px solid var(--border-decorative);display:grid;gap:6px}
+.tc-call .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tc-call .top b{font:var(--type-title)}
+.tc-call .meta{font:var(--type-caption);color:var(--text-tertiary)}
+.tc-legs{display:flex;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
+.tc-legs span b{font-weight:600;color:var(--teal)}.tc-legs span.s b{color:var(--slate-500)}
+.tc-lv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font:var(--type-caption);color:var(--text-tertiary)}
+.tc-lv b{display:block;font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.tc-act{font:600 10px/1 var(--font-sans);letter-spacing:.5px;text-transform:uppercase;padding:4px 7px;border-radius:var(--radius-pill);background:var(--fin-positive-soft);color:var(--text-primary)}
+/* today's timeline */
+.tl-st{display:flex;align-items:baseline;gap:8px}
+.tl-st b{font:600 18px/1.2 var(--font-sans)}
+.tl-st span{font:var(--type-caption);color:var(--text-tertiary)}
+.tl-bar{height:6px;border-radius:3px;background:var(--border-decorative);overflow:hidden}.tl-bar i{display:block;height:100%;background:var(--teal)}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.tl li{display:grid;grid-template-columns:44px 8px 1fr;gap:8px;align-items:center;font:var(--type-caption);color:var(--text-secondary)}
+.tl li .t{font-variant-numeric:tabular-nums;color:var(--text-tertiary)}
+.tl li .d{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--text-tertiary)}
+.tl li.ev .d{border-color:var(--amber);background:var(--amber)}
+.tl li.past{opacity:.5}
+.tl li.next{color:var(--text-primary);font-weight:600}.tl li.next .d{box-shadow:0 0 0 3px var(--indigo-soft);border-color:var(--action-primary)}
+/* one learning card at a time */
+.hl .term{margin:0;font:var(--type-title)}
+.hl .one{margin:0;font:var(--type-body-md);color:var(--text-secondary)}
+.hl .one b{color:var(--text-primary)}
+.hl-body{display:grid;gap:8px}
+.hl-body.in{animation:hlIn .35s ease}
+@keyframes hlIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hl-body.in{animation:none}}
+.hl .lnav{display:flex;align-items:center;gap:8px}
+.hl .lnav .round{width:28px;height:28px;font-size:13px}
+.hl.pulse{animation:lrPulse 1.2s ease 2}
+.home .hero{margin-top:var(--space-16)}
+
+/* ---------- current Trade Calls dashboard (kept as it is, below the Today summary) ---------- */
+.tc-new{display:grid;gap:4px}.tc-new .top{display:flex;justify-content:space-between;align-items:center;gap:8px}.tc-new .top b{font:var(--type-title)}
+.tc-new .meta{font:var(--type-caption);color:var(--text-tertiary)}
+.tc-why{margin:0;font:var(--type-caption);color:var(--text-secondary)}
+.calls{margin-top:var(--space-32);padding-top:var(--space-24);border-top:1px solid var(--border-decorative);scroll-margin-top:100px}
+.calls-h{display:flex;justify-content:space-between;align-items:center}.calls-h h2{margin:0;font:var(--type-headline-md)}
+.calls-h .round{width:32px;height:32px}
+.cs-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-12);margin:var(--space-16) 0 var(--space-24)}
+.cs-tiles>div{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--radius-12);background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.cs-tiles .ic{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--fb-info-soft);font-size:13px}
+.cs-tiles .ic.up{background:var(--fin-positive-soft)}.cs-tiles .ic.dn{background:var(--fb-error-soft)}.cs-tiles .ic.td{background:var(--fb-warning-soft)}
+.cs-tiles span:last-child{font:500 11px/1.2 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:var(--text-tertiary)}
+.cs-tiles b{display:block;margin-top:2px;font:600 20px/1 var(--font-sans);letter-spacing:0;color:var(--text-primary)}
+.calls-grid{display:grid;grid-template-columns:260px 1fr;gap:var(--space-24);align-items:start}
+.cf{display:grid;gap:14px;padding:var(--space-16)}
+.cf-g{display:grid;gap:6px}.cf-g>span{font:var(--type-caption);color:var(--text-tertiary)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.seg.two{grid-template-columns:repeat(2,1fr)}
+.seg button{height:30px;border-radius:var(--radius-6);border:1px solid var(--border-decorative);background:var(--surface-raised);color:var(--text-primary);font:var(--type-label);font-size:12px;cursor:pointer}
+.seg button.on{border-color:var(--amber);background:var(--fb-warning-soft)}
+.seg.tabs{display:inline-grid;grid-template-columns:auto auto;margin-left:8px}.seg.tabs button{padding:0 12px}
+.cl-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cl-t{display:flex;align-items:center;gap:6px}.cl-t b{font:var(--type-title)}.cl-t>span{font:var(--type-caption);color:var(--text-tertiary)}
+.cl-pg{display:flex;align-items:center;gap:8px;font:var(--type-label)}.cl-pg .round{width:28px;height:28px}
+.call{position:relative;overflow:hidden;padding:var(--space-20) var(--space-24);border-left:4px solid var(--amber);background:linear-gradient(180deg,var(--fb-warning-soft),transparent 55%),var(--surface-raised)}
+.call .hot{position:absolute;top:14px;right:-30px;transform:rotate(45deg);background:var(--amber);color:var(--navy-900);font:600 10px/1 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;padding:5px 34px}
+.call-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:var(--space-16)}
+.call-id{display:flex;gap:14px}.call-id .logo{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--amber);color:var(--navy-900);font:700 18px var(--font-sans)}
+.call-id h3{margin:0;font:var(--type-title)}.call-id .sym{font:var(--type-caption);color:var(--text-tertiary);margin:2px 0 6px}
+.call-chips{display:flex;gap:6px;flex-wrap:wrap}.call-chips span{font:500 11px/1 var(--font-sans);padding:4px 7px;border-radius:var(--radius-6);border:1px solid var(--amber);color:var(--text-primary)}
+.call-chips .q{border-color:var(--blue)}
+.call-st{display:grid;justify-items:end;gap:8px;margin-right:28px}.call-st .t{font:var(--type-caption);color:var(--text-tertiary)}
+.legs{border:1px solid var(--border-decorative);border-radius:var(--radius-8);overflow:hidden;background:var(--surface-raised)}
+.lg{display:grid;grid-template-columns:40px 1fr 1.6fr 1.4fr 60px;gap:8px;padding:10px 14px;border-top:1px solid var(--border-decorative);font:var(--type-body-md);align-items:center}
+.lg span:last-child{text-align:right}
+.lg.h{border-top:none;font:600 11px/1 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:var(--text-tertiary);background:var(--surface-glass)}
+.lg i{font-style:normal;font:600 11px/1 var(--font-sans);padding:4px 8px;border-radius:var(--radius-6)}
+.lg i.b{background:var(--fin-positive-soft)}.lg i.s{background:var(--fb-error-soft)}
+.lv4{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border-decorative)}
+.lv4>div{padding:10px;text-align:center;font:600 11px/1.2 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary);border-left:1px solid var(--border-decorative)}
+.lv4>div:first-child{border-left:none}.lv4 .ltp{border-left:2px solid var(--amber)}
+.lv4 b{display:block;margin:4px 0 2px;font:600 16px/1.2 var(--font-sans);letter-spacing:0;text-transform:none;color:var(--text-primary)}
+.lv4 b.up{color:var(--teal)}.lv4 b.dn{color:var(--red)}.lv4 small{font:500 11px/1 var(--font-sans);letter-spacing:0;text-transform:none}
+.cap-req{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:12px 16px;border-radius:var(--radius-8);background:var(--navy-900);color:var(--white)}
+.cap-req span{font:600 12px/1 var(--font-sans);letter-spacing:1.2px;text-transform:uppercase}.cap-req b{font:600 20px/1 var(--font-sans)}
+.analysis{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;margin-top:14px}
+.analysis p{margin:0;font:var(--type-body-md);color:var(--text-secondary)}.analysis p b{color:var(--text-primary)}
+.analysis .exp{font:var(--type-caption);padding:4px 8px;border-radius:var(--radius-6);border:1px solid var(--border-decorative);white-space:nowrap}
+.calls-more{font:var(--type-caption);color:var(--text-tertiary);margin:10px 0 0}
+
+/* ---------- AlphaPad header, as on dev.alphapad.in ---------- */
+.ap-bar{position:sticky;top:0;z-index:40;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative)}
+.ap-bar .wrap{display:flex;align-items:center;justify-content:space-between;height:54px}
+.ap-logo{font:700 26px/1 var(--font-sans);letter-spacing:-.5px;color:var(--text-primary);text-decoration:none}
+.ap-logo .a{font-style:italic;font-weight:800;margin-right:1px}.ap-logo .p{color:var(--blue)}
+.ap-nav{display:flex;align-items:center;gap:8px}
+.ap-btn{position:relative;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px;border-radius:var(--radius-6);border:1px solid var(--border-decorative);background:var(--surface-raised);color:var(--text-primary);font:600 12.5px/1 var(--font-sans);text-decoration:none;cursor:pointer}
+.ap-btn:hover{background:var(--surface-hover)}
+.ap-ic{width:34px;padding:0;justify-content:center;font-size:16px}
+.ap-badge{position:absolute;top:-8px;right:-8px;min-width:20px;height:18px;padding:0 4px;border-radius:9px;background:var(--red);color:var(--white);font:700 10px/18px var(--font-sans);text-align:center}
+.ap-more{position:relative}
+.ap-menu{position:absolute;right:0;top:40px;min-width:190px;display:grid;padding:6px;border-radius:var(--radius-8);background:var(--surface-elevated);border:1px solid var(--border-glass);box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.ap-menu a,.ap-menu button{display:block;text-align:left;padding:8px 10px;border-radius:var(--radius-6);border:0;background:none;color:var(--text-primary);font:var(--type-label);text-decoration:none;cursor:pointer}
+.ap-menu a:hover,.ap-menu button:hover{background:var(--surface-hover)}
+.ap-menu[hidden]{display:none}
+
+/* fit the landing page on one screen */
+.home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
+.home .hero-main{padding:var(--space-16) var(--space-20)}
+.home .hero h1{font:600 30px/1.2 var(--font-sans);margin:4px 0 8px}
+.home .asof{margin:0 0 8px}
+.home .dayline{font:var(--type-body-md);margin:0}
+.home .home-cta{margin-top:var(--space-12)}
+.home .top-story{margin-top:8px}
+.home .hero-row{margin-top:var(--space-12)}
+.home .mood-mini .mood-read{margin:2px 0 6px}.home .mood-mini .mood-read b{font:600 22px/1 var(--font-sans)}
+.home .mood-scale,.home .mood-why{display:none}
+.home .idx-card .idx-strip{grid-template-columns:repeat(3,1fr)}
+.home .idx-card .ix{padding:6px 10px}
+.home .idx-card .ix .lv{font:600 16px/1.25 var(--font-sans);margin:2px 0}
+.tc-stats-line{font:var(--type-caption);color:var(--text-secondary)}.tc-stats-line b{color:var(--text-primary)}
+.home .tl{gap:3px}
+.home .lcard.hl.learned,.home .lcard.hl.learned *{opacity:1;filter:none}
+.hl-done{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-8);background:var(--fin-positive-soft);font:var(--type-caption);color:var(--text-primary)}
+@media (max-height:820px){.home .top-story{display:none}.home .hero-row{margin-top:8px}.home .stk-strip{margin-top:8px}.hl .one{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.hl-body>a.linkbtn,.home .hc-foot>span{display:none}.home-row>.card{padding:12px 16px;gap:8px}.hl-done{padding:5px 8px}}
+.home .ix .ch{white-space:nowrap}.home .ix .pt{display:none}
+.home .idx-card .ix .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:1100px){.home .stk-strip{margin-top:10px;padding:8px 16px}}
+@media (max-width:1100px){.home-row{grid-template-columns:1fr 1fr}.home-row .tc{grid-column:1/-1}}
+"""
+
+body=f"""</style>
+</head>
+<body>
+{ticker}
+
+<header class="ap-bar">
+  <div class="wrap">
+    <a class="ap-logo" href="home-2026-11-12.html" aria-label="AlphaPad home"><span class="a">α</span>lpha<span class="p">Pad</span></a>
+    <nav class="ap-nav" aria-label="AlphaPad">
+      <button class="ap-btn ap-ic" aria-label="Notifications, 9+ new"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="ap-badge">9+</span></button>
+      <a class="ap-btn" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="3.2"/><circle cx="7" cy="16" r="3.2"/><circle cx="17" cy="16" r="3.2"/></svg>Baskets</a>
+      <a class="ap-btn" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>Option Studio</a>
+      <a class="ap-btn" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10 12 5l10 5-10 5z"/><path d="M6 12v4c3 2 9 2 12 0v-4"/></svg>LMS</a>
+      <button class="ap-btn" aria-label="Account"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>TRADER</button>
+      <div class="ap-more"><button class="ap-btn ap-ic" id="apMore" aria-haspopup="true" aria-expanded="false" aria-label="More">⋮</button>
+        <div class="ap-menu" id="apMenu" hidden><a href="{BRIEF}#brief">Today's full brief</a><a href="#calls">Trade calls</a><button id="themeBtn">Light</button></div></div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap home">
+  {strip}
+
+  {hero}
+
+  <section class="home-row" aria-label="Today at a glance">
+    <article class="card tc" aria-label="Trade calls">
+      <div class="hc-head"><span class="eyebrow">Trade calls</span><span class="tc-tag">Research advice</span></div>
+      <div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">Latest call</span>
+        <div class="top"><b>SWIGGY · Put spread</b><span class="tc-act">Active</span></div>
+        <div class="meta">Swing · 1 month · Risk medium · new today</div></div>
+      <p class="tc-why">Bearish continuation after a failed relief rally into the 20 EMA. Full levels and analysis below.</p>
+      <div class="hc-foot"><span>Your dashboard, as today</span><a href="#calls" class="tc-jump">See today's calls ↓</a></div>
+    </article>
+
+    <article class="card" aria-label="Today's market timeline">
+      <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><a class="linkbtn" href="{BRIEF}#calendar">Calendar →</a></div>
+      <div class="tl-st"><b id="tlCount">–</b><span id="tlSub"></span></div>
+      <div class="tl-bar"><i id="tlFill"></i></div>
+      <ul class="tl" id="tl"></ul>
+      <div class="hc-foot"><span>IST · amber = today's events</span></div>
+    </article>
+
+    <article class="card lcard hl" id="learnCard" aria-label="Today's learning">
+      <div class="hc-head"><span class="eyebrow" id="hlKind">Learn</span><span class="num" id="hlCount" style="font:var(--type-caption);color:var(--text-tertiary)">1 / 3</span></div>
+      <div class="hl-body" id="hlBody" aria-live="polite"></div>
+      <div class="hc-foot"><div class="lnav"><button class="round" id="hlPrev" aria-label="Previous idea">←</button><button class="round" id="hlNext" aria-label="Next idea">→</button></div><button class="got" id="hlGot" data-learn="term">✓ Got it</button></div>
+    </article>
+  </section>
+
+  <section class="calls" id="calls" aria-label="Trade calls">
+    <div class="calls-h"><h2>Trade Calls</h2><button class="round" aria-label="Refresh calls">↻</button></div>
+    <div class="cs-tiles">
+      <div><span class="ic">▥</span><span>Total<b>3</b></span></div>
+      <div><span class="ic up">↗</span><span>Buy<b>3</b></span></div>
+      <div><span class="ic dn">↘</span><span>Sell<b>0</b></span></div>
+      <div><span class="ic td">◉</span><span>Today<b>2</b></span></div>
+    </div>
+    <div class="calls-grid">
+      <aside class="card cf" aria-label="Filters">
+        <div class="eyebrow">⛉ Filters</div>
+        <div class="cf-g"><span>Market</span><div class="seg" data-g="m"><button class="on">All</button><button>Equity</button><button>MCX</button></div></div>
+        <div class="cf-g"><span>Asset</span><div class="seg two" data-g="a"><button class="on">All</button><button>Equity</button><button>Future</button><button>Option</button></div></div>
+        <div class="cf-g"><span>Trade type</span><div class="seg" data-g="t"><button class="on">All</button><button>Intraday</button><button>Swing</button></div></div>
+        <div class="cf-g"><span>Direction</span><div class="seg" data-g="d"><button class="on">All</button><button>Buy</button><button>Sell</button></div></div>
+      </aside>
+      <div>
+        <div class="cl-bar"><div class="cl-t"><b>Calls</b><span>(3)</span><div class="seg tabs" data-g="s"><button class="on">Active</button><button>Past</button></div></div>
+          <div class="cl-pg"><button class="round" disabled>‹</button><span>1 / 1</span><button class="round" disabled>›</button></div></div>
+        <article class="card call">
+          <span class="hot">Hot</span>
+          <div class="call-top">
+            <div class="call-id"><span class="logo">S</span><div><h3>SWIGGY</h3><div class="sym">Symbol: SWIGGY SPREAD</div>
+              <div class="call-chips"><span>Swing · 1 month</span><span>Risk: Medium</span><span class="q">1,825 qty</span></div></div></div>
+            <div class="call-st"><span class="tc-act">● Active</span><span class="t">12 Nov 2:01 pm</span></div>
+          </div>
+          <div class="legs">
+            <div class="lg h"><span>#</span><span>Action</span><span>Option strike</span><span>Entry price</span><span>Lots</span></div>
+            <div class="lg"><span>1</span><span><i class="b">Buy</i></span><span>PUT 185</span><span>₹4.22</span><span>1</span></div>
+            <div class="lg"><span>2</span><span><i class="s">Sell</i></span><span>PUT 180</span><span>₹2.35</span><span>1</span></div>
+            <div class="lv4"><div>Entry<b>₹1.87</b><small>Net debit</small></div><div>Target<b class="up">₹5.80</b><small>+34.15%</small></div><div>Stop loss<b class="dn">₹0.25</b><small>−14.08%</small></div><div class="ltp">LTP<b>₹1.92</b><small>+0.43%</small></div></div>
+          </div>
+          <div class="cap-req"><span>Approx capital required</span><b>₹21,000</b></div>
+          <div class="analysis"><p><b>Analysis:</b> SWIGGY is at 186.28 on the daily chart, in a steep downtrend from the 305 high to the October low of 174.20. The 20 EMA (197.01), 50 EMA (221.98), 100 EMA (243.36) and 200 EMA (273.03) are stacked above price in bearish order, all sloping down. The daily SuperTrend (206.54) is red and has not flipped. The recent bounce from 174 to about 200 stalled at the 20 EMA and the Bollinger midline (192.81). The latest candle is a large red one with an upper wick to 194.36, a clear rejection from this resistance. The stock is now drifting back toward the 180 to 185 shelf, which held during the late-October base. The setup is a bearish continuation after a failed relief rally into the 20 EMA. The main risk is that the stock is extended below its averages, and a sharp short-covering bounce is possible. A close above 198 invalidates the idea.</p><span class="exp">Expiry: 23 Nov 2026</span></div>
+        </article>
+        <p class="calls-more">2 more active calls load here from the calls API.</p>
+      </div>
+    </div>
+  </section>
+  <div style="height:8px"></div>
+</main>
+
+{modal}{dock}
+
+<script>
+const TODAY=new Date(2026,10,12);
+{js_helpers}
+/* any [data-go] link (ticker items, Markets desk…) opens that part of the full brief */
+document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();
+  if(g.dataset.go==='learn'){{const c=$('#learnCard');c.scrollIntoView({{behavior:'smooth',block:'nearest'}});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}}
+  location.href='{BRIEF}#'+g.dataset.go}});
+
+{js_ticker}
+/* ================= TODAY TIMELINE (same day list as the brief's left rail) ================= */
+{js_day}function renderToday(){{const ist=istNow(),now=ist.getHours()*60+ist.getMinutes(),wd=ist.getDay(),trading=wd>0&&wd<6;
+  const OPEN=555,CLOSE=930,open=trading&&now>=OPEN&&now<CLOSE;
+  $('#tlCount').textContent=!trading?'Weekend':open?`Closes in ${{dur(CLOSE-now)}}`:now<OPEN?`Opens in ${{dur(OPEN-now)}}`:'Closed for today';
+  $('#tlSub').textContent=open?'Market open':now<OPEN?'Pre-market':'After market';
+  $('#tlFill').style.width=`${{Math.max(0,Math.min(100,(now-OPEN)/(CLOSE-OPEN)*100))}}%`;
+  const nxt=DAY.find(d=>mins(d.t)>now),ni=nxt?DAY.indexOf(nxt):DAY.length,from=Math.max(0,Math.min(ni-1,DAY.length-6));
+  $('#tl').innerHTML=DAY.slice(from,from+6).map(d=>`<li class="${{mins(d.t)<=now?'past':''}} ${{d===nxt?'next':''}} ${{d.ev?'ev':''}}"><span class="t">${{d.t}}</span><span class="d"></span><span>${{d.b}}</span></li>`).join('')}}
+renderToday();setInterval(renderToday,30000);
+
+{js_streak}renderStreak();
+
+/* ================= ONE LEARNING CARD AT A TIME ================= */
+const LEARN=[
+ {{id:'term',kind:'Term of the day',h:'Short covering',one:'When traders who <b>bet on a fall buy back</b> to close those bets, that buying itself pushes prices up. Most FII shorts have now been covered.'}},
+ {{id:'relation',kind:'Relation of the day',h:'Cheaper crude, relief for India',one:'India imports most of its oil, so <b>every drop in crude ripples outward</b>: fewer dollars spent, softer prices at home, lower costs for companies that burn or use oil.'}},
+ {{id:'learning',kind:'Learning of the day',h:'Broad rallies beat narrow ones',one:'When <b>smaller companies rise more than the big index</b>, buying is spread widely, not just in a few heavyweights. That usually makes a rally sturdier.'}}];
+let hi=Math.max(0,LEARN.findIndex(x=>!LRN.has(x.id)));
+function hlShow(i,anim){{hi=(i+LEARN.length)%LEARN.length;const x=LEARN[hi],b=$('#hlBody');
+  $('#hlKind').textContent=x.kind;$('#hlCount').textContent=`${{hi+1}} / ${{LEARN.length}}`;
+  b.innerHTML=(doneToday()?`<div class="hl-done">✓ All 3 ideas learned · streak kept for today</div>`:'')+`<h3 class="term">${{x.h}}</h3><p class="one">${{x.one}}</p><a class="linkbtn" href="{BRIEF}#learn" style="font:var(--type-caption)">See the picture in the full brief →</a>`;
+  $('#hlGot').dataset.learn=x.id;renderStreak();
+  if(anim){{b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}}}
+$('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,true);
+/* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
+$('#hlGot').addEventListener('click',()=>setTimeout(()=>{{if(doneToday()){{hlShow(hi,true);return}}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)}},0));
+hlShow(hi,false);
+
+document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{{const b=e.target.closest('button');if(!b)return;g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))}}));
+document.addEventListener('click',e=>{{const m=$('#apMenu'),b=$('#apMore');if(b.contains(e.target)){{m.hidden=!m.hidden;b.setAttribute('aria-expanded',String(!m.hidden))}}else if(!m.contains(e.target)||e.target.closest('a')){{m.hidden=true;b.setAttribute('aria-expanded','false')}}}});
+$$('.tc-jump,.ap-menu a[href="#calls"]').forEach(a=>a.onclick=e=>{{e.preventDefault();$('#calls').scrollIntoView({{behavior:'smooth'}})}});
+/* ================= AUDIO (same file and chapters as the full brief) ================= */
+const AUD=new Audio('demo/springpad-today-2026-11-12.m4a');AUD.preload='metadata';
+const CH=[{{t:'Market in 30 seconds',start:0}},{{t:'Foreign investors are back',start:39.85}},{{t:'Banks lead, IT lags',start:85.79}},{{t:'Oil slips below 90 dollars',start:133.37}},{{t:'Silver and gold climb',start:174.62}},{{t:"Anthropic's giant IPO",start:204.7}},{{t:'Quick hits, term of the day, sign-off',start:239.17}}];
+$('#chapters').innerHTML=CH.map((c,i)=>`<button aria-label="Chapter ${{i+1}}: ${{c.t}}"></button>`).join('');
+let ch=-1,playing=false,sp=0;const mmss=t=>`${{Math.floor(t/60)}}:${{String(Math.floor(t%60)).padStart(2,'0')}}`;
+function showChapter(i){{if(i===ch)return;ch=i;[...$('#chapters').children].forEach((b,j)=>b.className=j<i?'done':j===i?'now':'');$('#pSub').textContent=CH[i].t}}
+function play(on){{playing=on;$('#playBtn').textContent=on?'❚❚':'▶';$('#listenBtn').textContent=on?'❚❚ Pause':'▶ Listen · 4:46';if(on){{if(ch<0)showChapter(0);AUD.play()}}else AUD.pause()}}
+AUD.addEventListener('timeupdate',()=>{{const t=AUD.currentTime;let i=0;CH.forEach((c,j)=>{{if(t>=c.start)i=j}});showChapter(i);
+  $('#pTitle').textContent=`Chapter ${{i+1}} of ${{CH.length}} · ${{mmss(t)}} / ${{mmss(AUD.duration||286)}}`}});
+AUD.addEventListener('ended',()=>play(false));
+$('#playBtn').onclick=()=>play(!playing);$('#listenBtn').onclick=()=>play(!playing);
+$('#chapters').onclick=e=>{{const i=[...$('#chapters').children].indexOf(e.target);if(i>=0){{AUD.currentTime=CH[i].start+.05;ch=-1;showChapter(i);play(true)}}}};
+$('#speedBtn').onclick=e=>{{sp=(sp+1)%3;AUD.playbackRate=[1,1.25,1.5][sp];e.target.textContent=['1x','1.25x','1.5x'][sp]}};
+</script>
+</body>
+</html>
+"""
+out=head+CSS+body
+# the dock's Transcript button points at the brief
+out=out.replace('<button class="iconbtn" data-go="brief">Transcript</button>',f'<a class="iconbtn" href="{BRIEF}#brief" style="text-decoration:none">Full brief</a>')
+open(B+"home-2026-11-12.html","w",encoding="utf-8").write(out)
+print("written",len(out))

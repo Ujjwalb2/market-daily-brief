@@ -944,6 +944,22 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .analysis .exp{font:var(--type-caption);padding:4px 8px;border-radius:var(--radius-6);border:1px solid var(--border-decorative);white-space:nowrap}
 .calls-more{font:var(--type-caption);color:var(--text-tertiary);margin:10px 0 0}
 
+/* ---------- AlphaPad header, as on dev.alphapad.in ---------- */
+.ap-bar{position:sticky;top:0;z-index:40;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative)}
+.ap-bar .wrap{display:flex;align-items:center;justify-content:space-between;height:54px}
+.ap-logo{font:700 26px/1 var(--font-sans);letter-spacing:-.5px;color:var(--text-primary);text-decoration:none}
+.ap-logo .a{font-style:italic;font-weight:800;margin-right:1px}.ap-logo .p{color:var(--blue)}
+.ap-nav{display:flex;align-items:center;gap:8px}
+.ap-btn{position:relative;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px;border-radius:var(--radius-6);border:1px solid var(--border-decorative);background:var(--surface-raised);color:var(--text-primary);font:600 12.5px/1 var(--font-sans);text-decoration:none;cursor:pointer}
+.ap-btn:hover{background:var(--surface-hover)}
+.ap-ic{width:34px;padding:0;justify-content:center;font-size:16px}
+.ap-badge{position:absolute;top:-8px;right:-8px;min-width:20px;height:18px;padding:0 4px;border-radius:9px;background:var(--red);color:var(--white);font:700 10px/18px var(--font-sans);text-align:center}
+.ap-more{position:relative}
+.ap-menu{position:absolute;right:0;top:40px;min-width:190px;display:grid;padding:6px;border-radius:var(--radius-8);background:var(--surface-elevated);border:1px solid var(--border-glass);box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.ap-menu a,.ap-menu button{display:block;text-align:left;padding:8px 10px;border-radius:var(--radius-6);border:0;background:none;color:var(--text-primary);font:var(--type-label);text-decoration:none;cursor:pointer}
+.ap-menu a:hover,.ap-menu button:hover{background:var(--surface-hover)}
+.ap-menu[hidden]{display:none}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:var(--space-16) var(--space-20)}
@@ -976,11 +992,18 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
   <div class="tk-src" id="tkSrc">Demo feed</div>
 </div>
 
-<header class="topbar">
+<header class="ap-bar">
   <div class="wrap">
-    <a class="brand" href="home-2026-11-12.html" style="text-decoration:none;color:inherit">AlphaPad</a>
-    <nav class="prod" aria-label="Sections"><a href="home-2026-11-12.html" class="on">Home</a><a href="today-demo-2026-11-12.html#brief">Today's brief</a><a href="#calls">Trade Calls</a><a href="#">Baskets</a><a href="#">Option Studio</a><a href="#">LMS</a></nav>
-    <button class="iconbtn" id="themeBtn">Light</button>
+    <a class="ap-logo" href="home-2026-11-12.html" aria-label="AlphaPad home"><span class="a">α</span>lpha<span class="p">Pad</span></a>
+    <nav class="ap-nav" aria-label="AlphaPad">
+      <button class="ap-btn ap-ic" aria-label="Notifications, 9+ new"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="ap-badge">9+</span></button>
+      <a class="ap-btn" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="3.2"/><circle cx="7" cy="16" r="3.2"/><circle cx="17" cy="16" r="3.2"/></svg>Baskets</a>
+      <a class="ap-btn" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>Option Studio</a>
+      <a class="ap-btn" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10 12 5l10 5-10 5z"/><path d="M6 12v4c3 2 9 2 12 0v-4"/></svg>LMS</a>
+      <button class="ap-btn" aria-label="Account"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>TRADER</button>
+      <div class="ap-more"><button class="ap-btn ap-ic" id="apMore" aria-haspopup="true" aria-expanded="false" aria-label="More">⋮</button>
+        <div class="ap-menu" id="apMenu" hidden><a href="today-demo-2026-11-12.html#brief">Today's full brief</a><a href="#calls">Trade calls</a><button id="themeBtn">Light</button></div></div>
+    </nav>
   </div>
 </header>
 
@@ -1262,7 +1285,8 @@ $('#hlGot').addEventListener('click',()=>setTimeout(()=>{if(doneToday()){hlShow(
 hlShow(hi,false);
 
 document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))}));
-$$('.tc-jump').forEach(a=>a.onclick=e=>{e.preventDefault();$('#calls').scrollIntoView({behavior:'smooth'})});
+document.addEventListener('click',e=>{const m=$('#apMenu'),b=$('#apMore');if(b.contains(e.target)){m.hidden=!m.hidden;b.setAttribute('aria-expanded',String(!m.hidden))}else if(!m.contains(e.target)||e.target.closest('a')){m.hidden=true;b.setAttribute('aria-expanded','false')}});
+$$('.tc-jump,.ap-menu a[href="#calls"]').forEach(a=>a.onclick=e=>{e.preventDefault();$('#calls').scrollIntoView({behavior:'smooth'})});
 /* ================= AUDIO (same file and chapters as the full brief) ================= */
 const AUD=new Audio('demo/springpad-today-2026-11-12.m4a');AUD.preload='metadata';
 const CH=[{t:'Market in 30 seconds',start:0},{t:'Foreign investors are back',start:39.85},{t:'Banks lead, IT lags',start:85.79},{t:'Oil slips below 90 dollars',start:133.37},{t:'Silver and gold climb',start:174.62},{t:"Anthropic's giant IPO",start:204.7},{t:'Quick hits, term of the day, sign-off',start:239.17}];
