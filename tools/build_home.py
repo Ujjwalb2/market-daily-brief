@@ -374,7 +374,9 @@ body > .ticker{top:55px;z-index:39}
 @media (min-width:1400px) and (max-height:920px){.fo-k small{display:none}.hg-fo .hc-foot>span{display:none}}
 
 /* rotating cards never resize the grid: their size comes from the row, not their content */
-@media (min-width:1400px){.hg>.hg-tc,.hg>.hg-one,.hg>.mvx{contain:size;overflow:hidden}}
+@media (min-width:1400px){.hg>.hg-one{contain:size;overflow:hidden}}
+@media (min-width:1400px){.hg-one .lviz .cause .chg,.hg-one .lviz .fan{display:none}.hg-one .lviz .effects{gap:4px}.hg-one .lviz .effect{font-size:11px;padding:4px 7px;line-height:1.25}}
+@media (min-width:1400px){#hlBody{flex:1 1 0;min-height:0;overflow:hidden}.hg-one>.hc-foot{flex:none;margin-top:0}}
 /* Trade Calls rotation */
 .tc-body{display:flex;flex-direction:column;gap:10px;flex:1 1 auto;min-height:0}
 .tc-body.in{animation:hlIn .35s ease}
