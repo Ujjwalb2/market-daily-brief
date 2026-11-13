@@ -54,7 +54,7 @@ hero=re.sub(r'<div class="chips">.*?</div>',
   '<button class="btn ghost listen-cta" id="listenBtn">▶ Listen · 4:46</button></div>'
   '<div class="toc"><div class="toc-h"><span class="eyebrow">In today\'s brief</span><span>5 stories · tap one to hear it</span></div><ol id="toc"></ol></div>',hero,count=1,flags=re.S)
 hero=hero.replace('<span class="src">Today\'s numbers arrive after the 3:30 pm close</span>','')
-hero=hero.replace('<div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div>','<div class="breadth"><div class="br-h"><span class="eyebrow">NSE breadth · stocks that rose vs fell</span><b>2.5 : 1</b></div><div class="br-bar" role="img" aria-label="2,085 rose, 24 unchanged, 835 fell"><i class="u" style="width:70.8%"></i><i class="f" style="width:0.8%"></i><i class="d" style="width:28.4%"></i></div><div class="br-l"><span>▲ 2,085 rose</span><span>24 flat</span><span>▼ 835 fell</span></div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data and bhavcopy</div>')
+hero=hero.replace('<div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div>','<div class="breadth"><div class="br-h"><span class="eyebrow">Breadth · rose vs fell</span><b>2.5 : 1</b></div><div class="br-bar" role="img" aria-label="2,085 rose, 24 unchanged, 835 fell"><i class="u" style="width:70.8%"></i><i class="f" style="width:0.8%"></i><i class="d" style="width:28.4%"></i></div><div class="br-l"><span>▲ 2,085 rose</span><span>24 flat</span><span>▼ 835 fell</span></div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data and bhavcopy</div>')
 hero=hero.replace('href="#markets" data-go="markets"',f'href="{BRIEF}#markets"')
 strip=strip.replace('<button class="linkbtn" id="stkOpen">','<button class="linkbtn" id="stkOpen">')
 
@@ -134,7 +134,7 @@ CSS="""
 .tc-more,.tc-others,.tl .grp-h{display:none}
 @media (min-width:1400px){
   .home.wrap,.ap-bar .wrap{max-width:min(1760px,calc(100vw - 48px))!important}
-  .hg{grid-template-columns:minmax(280px,18%) minmax(0,1fr) minmax(0,1fr) minmax(250px,16%);grid-template-areas:"s s s s" "tc c c tl" "tc one dl bk"}
+  .hg{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"s s s s" "tc c mk tl" "tc one dl bk"}
   .hg-dl{display:flex!important}
   .hg-ln{display:none!important}
   .hg-ln .card{padding:var(--space-16) var(--space-20)}
@@ -380,7 +380,31 @@ body > .ticker{top:55px;z-index:39}
 @media (max-width:1100px){.hg{grid-template-columns:1fr 1fr;grid-template-areas:"s s" "c c" "tc tc" "tl one"}}
 """
 
-body=f"""</style>
+body=f"""@media (min-width:1800px){{.home .hero .hero-main h1{{font-size:30px!important;letter-spacing:-.3px;white-space:nowrap}}}}
+/* even grid: summary and markets become two separate, equal cards (no card inside a card) */
+@media (min-width:1400px){{
+  .hg-c,.hg-c .hero{{display:contents}}
+  .hg-c .hero-main,.hg-c .hero-side{{background:var(--surface-raised);border:1px solid var(--border-decorative);border-radius:var(--radius-12);min-width:0;height:auto}}
+  .hg-c .hero-main{{grid-area:c}}
+  .hg-tc>.tc-an{{margin-top:auto}}
+  .hg-c .hero-side .idx-card{{min-width:0;width:100%}}
+  .hg-c .idx-strip{{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+  .hg-c .idx-strip .ix{{min-width:0}}
+  .hg-c .idx-card .head{{display:flex!important;flex-wrap:nowrap!important;justify-content:space-between;align-items:center;gap:8px}}.hg-c .idx-card .head .linkbtn{{white-space:nowrap;flex:none}}
+  .hg-c .idx-card .head .eyebrow{{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}}
+  .hg-c .hero-main .asof-pill{{white-space:normal}}
+}}
+@media (min-width:1400px) and (max-width:1799px){{
+  .home .hero .hero-main h1{{font-size:26px!important;margin:4px 0 10px!important}}
+  .hg-c .idx-strip .lv{{font-size:16px!important}}
+  .home .hero-main .home-cta .btn{{padding:10px 14px!important;font-size:13px!important}}
+  .hg-tc .tc-sig li{{padding:10px 0}}
+  .hg-c .hero-side{{grid-area:mk;display:flex}}
+  .hg-c .hero-side .idx-card{{flex:1;height:auto;padding:var(--space-16) var(--space-20)}}
+  .home .hero .hero-main h1{{font:600 32px/1.15 var(--font-sans);letter-spacing:-.4px;margin:6px 0 12px}}
+  .home .hero-main .home-cta .btn{{padding:12px 18px;font-size:14px}}
+}}
+</style>
 </head>
 <body>
 <header class="ap-bar">
@@ -424,7 +448,6 @@ body=f"""</style>
         <li><i class="dn">▼</i><span>Bounce rejected</span><b>at 20 EMA</b></li>
         <li><i class="wa">!</i><span>Idea fails</span><b>close above 198</b></li>
       </ul></div>
-      <div class="tc-lvl"><span class="eyebrow" style="color:var(--text-tertiary)">Stock levels · SWIGGY</span><svg viewBox="0 0 260 150" role="img" aria-label="SWIGGY levels: idea fails above 198, rejected at 194.36, now 186.28, October low 174.20"><rect x="64" y="19.3" width="196" height="110.5" fill="var(--surface-glass)"/><line x1="64" x2="260" y1="19.3" y2="19.3" stroke="var(--amber)" stroke-width="1" stroke-dasharray="3 3"/><text x="56" y="23.3" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--amber)">198</text><text x="256" y="15.3" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--amber)">Idea fails above</text><line x1="64" x2="260" y1="36.2" y2="36.2" stroke="var(--text-tertiary)" stroke-width="1" stroke-dasharray="3 3"/><text x="56" y="40.2" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--text-tertiary)">194.36</text><text x="256" y="32.2" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--text-tertiary)">Rejected (wick)</text><line x1="64" x2="260" y1="73.7" y2="73.7" stroke="var(--text-primary)" stroke-width="1.6"/><text x="56" y="77.7" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--text-primary)">186.28</text><text x="256" y="69.7" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--text-primary)">Now</text><line x1="64" x2="260" y1="129.8" y2="129.8" stroke="var(--text-tertiary)" stroke-width="1" stroke-dasharray="3 3"/><text x="56" y="133.8" text-anchor="end" font-size="11" font-family="Inter" font-weight="600" fill="var(--text-tertiary)">174.2</text><text x="256" y="125.80000000000001" text-anchor="end" font-size="10.5" font-family="Inter" fill="var(--text-tertiary)">October low</text><circle cx="64" cy="73.7" r="4" fill="var(--text-primary)"/></svg></div>
       <div class="hc-foot"><span>+2 more active</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
     </article>
     <article class="card hg-tl" aria-label="Today's market timeline">
