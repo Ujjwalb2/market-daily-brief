@@ -1,4 +1,4 @@
-import re
+import re, json
 import os
 B=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")+"/"
 s=open(B+"today-demo-2026-11-12.html",encoding="utf-8").read()
@@ -16,6 +16,10 @@ js_helpers=cut('/* ================= helpers','/* ================= hero')
 js_ticker=cut('/* ================= LIVE TICKER','/* ================= SIDE RAILS')
 js_day=cut('const DAY=[','function renderClock')
 js_streak=cut('/* ================= STREAK','renderStreak();\n\n/* RIGHT RAIL')
+js_events=cut('const TYPES=','const STORIES=')
+import re as _re
+STORY_TOC=json.dumps([{'h':h,'d':d} for h,d in _re.findall(r"h:'([^']*)',n:.*?dur:'([^']*)'", cut('const STORIES=[','\n];'))],ensure_ascii=False)
+
 import json
 def lviz_for(lid):
     j = s.index('data-learn="%s"' % lid)
@@ -35,8 +39,9 @@ LVIZ = json.dumps({x: lviz_for(x) for x in ['term', 'relation', 'learning']}, en
 hero=re.sub(r'<div class="chips">.*?</div>',
   '<div class="home-cta"><button class="btn primary" id="listenBtn">▶ Listen · 4:46</button>'
   f'<a class="btn ghost" href="{BRIEF}#brief">Read today\'s full brief →</a></div>'
-  '<div class="top-story"><span class="eyebrow">Top story</span><a href="'+BRIEF+'#brief">Foreign investors return as buyers after the Diwali break</a></div>',hero,count=1,flags=re.S)
+  '<div class="toc"><div class="toc-h"><span class="eyebrow">In today\'s brief</span><span>5 stories · tap one to hear it</span></div><ol id="toc"></ol></div>',hero,count=1,flags=re.S)
 hero=hero.replace('<span class="src">Today\'s numbers arrive after the 3:30 pm close</span>','')
+hero=hero.replace('<div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div>','<div class="breadth"><div class="br-h"><span class="eyebrow">NSE breadth · stocks that rose vs fell</span><b>2.5 : 1</b></div><div class="br-bar" role="img" aria-label="2,085 rose, 24 unchanged, 835 fell"><i class="u" style="width:70.8%"></i><i class="f" style="width:0.8%"></i><i class="d" style="width:28.4%"></i></div><div class="br-l"><span>▲ 2,085 rose</span><span>24 flat</span><span>▼ 835 fell</span></div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data and bhavcopy</div>')
 hero=hero.replace('href="#markets" data-go="markets"',f'href="{BRIEF}#markets"')
 strip=strip.replace('<button class="linkbtn" id="stkOpen">','<button class="linkbtn" id="stkOpen">')
 
@@ -123,7 +128,7 @@ CSS="""
   .hg-c{display:flex}.hg-c .hero{flex:1;align-items:stretch}.hg-c .hero-main,.hg-c .hero-side,.hg-c .idx-card{height:100%}
   .tc-more,.tc-others{display:grid;gap:8px}
   .tl .grp-h{display:block;margin-top:6px;font:600 10px/1 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;color:var(--text-tertiary)}
-  .hg-tl .tl{gap:6px}
+  .hg-tl .tl{gap:3px}
 }
 .tc-legs2{display:grid;gap:6px}
 .tc-legs2>div{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-8);border:1px solid var(--border-decorative);font:var(--type-label)}
@@ -158,7 +163,7 @@ CSS="""
 .lr3 .effects>*{padding:4px 5px!important;font-size:10.5px;line-height:1.25}
 .lr3 .meter-l{font-size:10.5px}
 
-@media (min-width:1400px) and (max-height:920px){
+@media (min-width:1400px) and (max-height:1000px){
   .hg-tc .tc-why{display:none}
   .lr3 .one{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .lr3 .lviz{zoom:.8}
@@ -182,14 +187,36 @@ body > .ticker{top:55px;z-index:39}
 /* centre cards: no empty band at the bottom */
 .hg-c .hero-main{display:flex;flex-direction:column}
 .hg-c .hero-main .hero-row{margin-top:auto}
-.hg-c .idx-card .idx-strip{grid-auto-rows:1fr}
-.hg-c .idx-card .ix{display:flex;flex-direction:column;justify-content:center}
 .hg-c .idx-card .idx-src{margin-top:8px}
 
+/* fill: story list, breadth, coming up */
+.toc{margin-top:10px;display:grid;gap:4px}
+.toc-h{display:flex;align-items:baseline;gap:10px}.toc-h>span:last-child{font:var(--type-caption);color:var(--text-tertiary)}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.toc button{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;width:100%;padding:2px 6px;border:0;border-radius:var(--radius-6);background:none;color:var(--text-primary);font:500 13px/1.35 var(--font-sans);text-align:left;cursor:pointer}
+.toc button:hover{background:var(--surface-hover)}
+.toc .n{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--surface-glass);border:1px solid var(--border-decorative);font:600 11px/1 var(--font-sans);color:var(--text-secondary)}
+.toc .h{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc .d{font:var(--type-caption);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.breadth{grid-column:1/-1;margin-top:auto;padding-top:10px;display:grid;gap:6px}
+.br-h{display:flex;justify-content:space-between;align-items:baseline}.br-h b{font:600 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.br-bar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px}
+.br-bar .u{background:var(--teal)}.br-bar .f{background:var(--border-control)}.br-bar .d{background:var(--slate-500)}
+.br-l{display:flex;justify-content:space-between;font:var(--type-caption);color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.home .idx-card .idx-src{margin-top:8px}
+.tl-next{margin-top:auto;padding-top:10px;border-top:1px solid var(--border-decorative);display:grid;gap:6px}
+.tl-next ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.tl-next li{display:grid;grid-template-columns:44px 1fr;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
+.tl-next li .t{color:var(--text-tertiary)}
+.tl-next .linkbtn{font:var(--type-caption)}
+.hg-tl .tl-next+.hc-foot{margin-top:6px}
+@media (max-width:1399px){.home .toc,.home .breadth,.home .tl-next{display:none}}
+
+@media (min-width:1400px) and (max-height:920px){.home .tl-next{display:none}.toc li:nth-child(n+4){display:none}.toc-h>span:last-child{display:none}}
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
-.home .hero-main{padding:var(--space-16) var(--space-20)}
-.home .hero h1{font:600 30px/1.2 var(--font-sans);margin:4px 0 8px}
+.home .hero-main{padding:14px var(--space-20)}
+.home .hero h1{font:600 28px/1.2 var(--font-sans);margin:2px 0 6px}
 .home .asof{margin:0 0 8px}
 .home .dayline{font:var(--type-body-md);margin:0}
 .home .home-cta{margin-top:var(--space-12)}
@@ -258,6 +285,7 @@ body=f"""</style>
       <div class="tl-st"><b id="tlCount">–</b><span id="tlSub"></span></div>
       <div class="tl-bar"><i id="tlFill"></i></div>
       <ul class="tl" id="tl"></ul>
+      <div class="tl-next"><span class="eyebrow">Coming up</span><ul id="tlNext"></ul></div>
       <div class="hc-foot"><span>IST · amber = today's events</span></div>
     </article>
     <article class="card lcard hl hg-one" id="learnCard" aria-label="Today's learning">
@@ -290,6 +318,10 @@ document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(
   $('#tlFill').style.width=`${{Math.max(0,Math.min(100,(now-OPEN)/(CLOSE-OPEN)*100))}}%`;
   const wide=matchMedia('(min-width:1400px)').matches,nxt=DAY.find(d=>mins(d.t)>now),ni=nxt?DAY.indexOf(nxt):DAY.length,from=wide?0:Math.max(0,Math.min(ni-1,DAY.length-6));let grp='';
   $('#tl').innerHTML=DAY.slice(from,wide?DAY.length:from+6).map(d=>(d.g!==grp?(grp=d.g,`<li class="grp-h">${{d.g}}</li>`):'')+`<li class="${{mins(d.t)<=now?'past':''}} ${{d===nxt?'next':''}} ${{d.ev?'ev':''}}"><span class="t">${{d.t}}</span><span class="d"></span><span>${{d.b}}</span></li>`).join('')}}
+{js_events}
+function renderNext(){{const up=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,3);
+  $('#tlNext').innerHTML=up.map(e=>`<li class="${{TYPES[e.t].c}}"><span class="t">${{fmt(e.d).replace(/ [A-Za-z]+$/,'')}}</span><span>${{e.title}}</span></li>`).join('')}}
+renderNext();
 renderToday();setInterval(renderToday,30000);
 addEventListener('resize',()=>{{clearTimeout(window._tlr);window._tlr=setTimeout(renderToday,150)}});
 
@@ -310,6 +342,9 @@ $('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,
 /* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
 $('#hlGot').addEventListener('click',()=>setTimeout(()=>{{if(doneToday()){{hlShow(hi,true);return}}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)}},0));
 hlShow(hi,false);
+if(location.hash==='#learn')setTimeout(()=>{{const t=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');t.scrollIntoView({{behavior:'smooth',block:'center'}});t.classList.add('pulse')}},400);
+const TOC={STORY_TOC};
+$('#toc').innerHTML=TOC.map((x,i)=>`<li><button data-ch="${{i+1}}"><span class="n">${{i+1}}</span><span class="h">${{x.h}}</span><span class="d">${{x.d}}</span></button></li>`).join('');
 const LVIZ={LVIZ};
 $('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${{x.kind}}</span></div><div class="lr3-b"><div class="lr3-t"><h3 class="term">${{x.h}}</h3><p class="one">${{x.one}}</p></div>${{LVIZ[x.id]||''}}</div><div class="hc-foot"><a class="linkbtn" href="{BRIEF}#learn" style="font:var(--type-caption)">Open in the full brief →</a><button class="got" data-learn="${{x.id}}">✓ Got it</button></div></article>`).join('');
 renderStreak();
@@ -327,6 +362,7 @@ AUD.addEventListener('timeupdate',()=>{{const t=AUD.currentTime;let i=0;CH.forEa
 AUD.addEventListener('ended',()=>play(false));
 $('#playBtn').onclick=()=>play(!playing);$('#listenBtn').onclick=()=>play(!playing);
 $('#chapters').onclick=e=>{{const i=[...$('#chapters').children].indexOf(e.target);if(i>=0){{AUD.currentTime=CH[i].start+.05;ch=-1;showChapter(i);play(true)}}}};
+$('#toc').addEventListener('click',e=>{{const b=e.target.closest('[data-ch]');if(!b)return;const i=+b.dataset.ch;AUD.currentTime=CH[i].start+.05;ch=-1;showChapter(i);play(true)}});
 $('#speedBtn').onclick=e=>{{sp=(sp+1)%3;AUD.playbackRate=[1,1.25,1.5][sp];e.target.textContent=['1x','1.25x','1.5x'][sp]}};
 </script>
 </body>

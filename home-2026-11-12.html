@@ -383,6 +383,34 @@ body.brief .brief-sum{display:grid;gap:10px;margin-top:var(--space-12);padding:v
 .bs-top .bs-home{margin-left:auto;font:var(--type-caption)}
 body.brief .brief-sum .dayline{margin:0;font:500 17px/1.45 var(--font-sans);color:var(--text-primary);max-width:none}
 body.brief .brief-sum .chips{margin:0}
+
+/* ---------- full brief side columns: Institutional activity on the left, market-day timeline on the right.
+   Learning lives on Home, so the brief drops its learning rail and Learn section. ---------- */
+.inst-rail{display:none}
+body.brief #p-learn,body.brief .stab[data-tab="learn"],body.brief .rail.right{display:none!important}
+@media (min-width:1400px){
+  body.brief{--rw:clamp(240px,15.5vw,300px);--rx:max(16px,calc(50vw - min(600px,50vw - var(--rw) - 40px) - var(--rw) - 24px))}
+  body.brief .wrap{max-width:min(1200px,calc(100vw - 2 * var(--rw) - 80px))}
+  body.brief .rail{width:var(--rw)}
+  body.brief .inst-rail{display:flex;left:var(--rx);overflow-y:auto}
+  body.brief .rail.left{left:auto;right:var(--rx)}
+  body.brief nav.stabs::after{width:min(1200px,calc(100vw - 2 * var(--rw) - 80px))}
+  .inst-rail .card.inst{padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+  .inst-rail .card.inst>.head{flex-direction:column;align-items:flex-start;gap:4px}
+  .inst-rail .card.inst>.head .src{font-size:10.5px;line-height:1.35}
+  .inst-rail .inst-grid{grid-template-columns:1fr!important;gap:12px}
+  .inst-rail .flows{gap:12px}
+  .inst-rail .ipanel{border-left:none!important;padding-left:0!important;border-top:1px solid var(--border-decorative);padding-top:12px;gap:6px}
+  .inst-rail .tw-v{font-size:11px}.inst-rail .tw-v b{font-size:14px}
+  .inst-rail .oir{grid-template-columns:62px 1fr 56px;gap:8px}
+  .inst-rail .pcr-g{max-width:190px}
+  .inst-rail .pcr-v b{font-size:20px}
+}
+
+.rk-next ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.rk-next li{display:grid;grid-template-columns:44px 1fr;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
+.rk-next li .t{color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.rk-next li small{display:block;color:var(--text-tertiary);font-size:11px}
 /* ---------- live ticker ---------- */
 .ticker{position:sticky;top:0;z-index:35;height:36px;display:flex;align-items:center;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative);overflow:hidden}
 .tk-status{flex:none;display:flex;align-items:center;gap:8px;height:100%;padding:0 var(--space-16);border-right:1px solid var(--border-decorative);background:var(--surface-raised);z-index:2;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
@@ -936,7 +964,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
   .hg-c{display:flex}.hg-c .hero{flex:1;align-items:stretch}.hg-c .hero-main,.hg-c .hero-side,.hg-c .idx-card{height:100%}
   .tc-more,.tc-others{display:grid;gap:8px}
   .tl .grp-h{display:block;margin-top:6px;font:600 10px/1 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;color:var(--text-tertiary)}
-  .hg-tl .tl{gap:6px}
+  .hg-tl .tl{gap:3px}
 }
 .tc-legs2{display:grid;gap:6px}
 .tc-legs2>div{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-8);border:1px solid var(--border-decorative);font:var(--type-label)}
@@ -971,7 +999,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .lr3 .effects>*{padding:4px 5px!important;font-size:10.5px;line-height:1.25}
 .lr3 .meter-l{font-size:10.5px}
 
-@media (min-width:1400px) and (max-height:920px){
+@media (min-width:1400px) and (max-height:1000px){
   .hg-tc .tc-why{display:none}
   .lr3 .one{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .lr3 .lviz{zoom:.8}
@@ -995,14 +1023,36 @@ body > .ticker{top:55px;z-index:39}
 /* centre cards: no empty band at the bottom */
 .hg-c .hero-main{display:flex;flex-direction:column}
 .hg-c .hero-main .hero-row{margin-top:auto}
-.hg-c .idx-card .idx-strip{grid-auto-rows:1fr}
-.hg-c .idx-card .ix{display:flex;flex-direction:column;justify-content:center}
 .hg-c .idx-card .idx-src{margin-top:8px}
 
+/* fill: story list, breadth, coming up */
+.toc{margin-top:10px;display:grid;gap:4px}
+.toc-h{display:flex;align-items:baseline;gap:10px}.toc-h>span:last-child{font:var(--type-caption);color:var(--text-tertiary)}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.toc button{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;width:100%;padding:2px 6px;border:0;border-radius:var(--radius-6);background:none;color:var(--text-primary);font:500 13px/1.35 var(--font-sans);text-align:left;cursor:pointer}
+.toc button:hover{background:var(--surface-hover)}
+.toc .n{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--surface-glass);border:1px solid var(--border-decorative);font:600 11px/1 var(--font-sans);color:var(--text-secondary)}
+.toc .h{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc .d{font:var(--type-caption);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.breadth{grid-column:1/-1;margin-top:auto;padding-top:10px;display:grid;gap:6px}
+.br-h{display:flex;justify-content:space-between;align-items:baseline}.br-h b{font:600 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.br-bar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px}
+.br-bar .u{background:var(--teal)}.br-bar .f{background:var(--border-control)}.br-bar .d{background:var(--slate-500)}
+.br-l{display:flex;justify-content:space-between;font:var(--type-caption);color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.home .idx-card .idx-src{margin-top:8px}
+.tl-next{margin-top:auto;padding-top:10px;border-top:1px solid var(--border-decorative);display:grid;gap:6px}
+.tl-next ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.tl-next li{display:grid;grid-template-columns:44px 1fr;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
+.tl-next li .t{color:var(--text-tertiary)}
+.tl-next .linkbtn{font:var(--type-caption)}
+.hg-tl .tl-next+.hc-foot{margin-top:6px}
+@media (max-width:1399px){.home .toc,.home .breadth,.home .tl-next{display:none}}
+
+@media (min-width:1400px) and (max-height:920px){.home .tl-next{display:none}.toc li:nth-child(n+4){display:none}.toc-h>span:last-child{display:none}}
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
-.home .hero-main{padding:var(--space-16) var(--space-20)}
-.home .hero h1{font:600 30px/1.2 var(--font-sans);margin:4px 0 8px}
+.home .hero-main{padding:14px var(--space-20)}
+.home .hero h1{font:600 28px/1.2 var(--font-sans);margin:2px 0 6px}
 .home .asof{margin:0 0 8px}
 .home .dayline{font:var(--type-body-md);margin:0}
 .home .home-cta{margin-top:var(--space-12)}
@@ -1063,7 +1113,7 @@ body > .ticker{top:55px;z-index:39}
       <h1>Thursday, 12 November</h1>
       <div class="asof"><span class="asof-pill"><i></i>Yesterday's market · Wednesday 11 Nov close</span></div>
       <p class="dayline">Markets bounced back after the Diwali break as foreign investors returned in size and banks led the way.</p>
-      <div class="home-cta"><button class="btn primary" id="listenBtn">▶ Listen · 4:46</button><a class="btn ghost" href="today-demo-2026-11-12.html#brief">Read today's full brief →</a></div><div class="top-story"><span class="eyebrow">Top story</span><a href="today-demo-2026-11-12.html#brief">Foreign investors return as buyers after the Diwali break</a></div>
+      <div class="home-cta"><button class="btn primary" id="listenBtn">▶ Listen · 4:46</button><a class="btn ghost" href="today-demo-2026-11-12.html#brief">Read today's full brief →</a></div><div class="toc"><div class="toc-h"><span class="eyebrow">In today's brief</span><span>5 stories · tap one to hear it</span></div><ol id="toc"></ol></div>
       <div class="hero-row">
         <a class="mood-mini" href="today-demo-2026-11-12.html#markets" aria-label="Market mood: Optimistic, demo score 62 out of 100">
           <div class="head" style="margin:0"><span class="eyebrow">Market mood</span><span class="src">VIX rising, so not greedy</span></div>
@@ -1075,7 +1125,7 @@ body > .ticker{top:55px;z-index:39}
       </div>
     </div>
     <div class="hero-side">
-      <div class="card idx-card"><div class="head" style="margin:0 0 8px"><span class="eyebrow">Markets · Wed 11 Nov close</span><button class="linkbtn" data-go="markets">Markets desk →</button></div><div class="idx-strip" role="list" aria-label="Index closes"><div class="ix ixu"><div class="nm">Nifty 50</div><div class="lv">25,255.05</div><div class="ch">▲ +0.84%<span class=pt>+210.40</span></div></div><div class="ix ixu"><div class="nm">Sensex</div><div class="lv">81,879.40</div><div class="ch">▲ +0.95%<span class=pt>+772.75</span></div></div><div class="ix ixu"><div class="nm">Nifty Bank</div><div class="lv">60,792.40</div><div class="ch">▲ +1.76%<span class=pt>+1,051.15</span></div></div><div class="ix ixu"><div class="nm">Midcap 100</div><div class="lv">61,519.10</div><div class="ch">▲ +0.81%</div></div><div class="ix ixu"><div class="nm">Smallcap 100</div><div class="lv">19,489.35</div><div class="ch">▲ +1.59%</div></div><div class="ix ixu"><div class="nm">India VIX</div><div class="lv">17.56</div><div class="ch">▲ +0.77%</div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div></div></div>
+      <div class="card idx-card"><div class="head" style="margin:0 0 8px"><span class="eyebrow">Markets · Wed 11 Nov close</span><button class="linkbtn" data-go="markets">Markets desk →</button></div><div class="idx-strip" role="list" aria-label="Index closes"><div class="ix ixu"><div class="nm">Nifty 50</div><div class="lv">25,255.05</div><div class="ch">▲ +0.84%<span class=pt>+210.40</span></div></div><div class="ix ixu"><div class="nm">Sensex</div><div class="lv">81,879.40</div><div class="ch">▲ +0.95%<span class=pt>+772.75</span></div></div><div class="ix ixu"><div class="nm">Nifty Bank</div><div class="lv">60,792.40</div><div class="ch">▲ +1.76%<span class=pt>+1,051.15</span></div></div><div class="ix ixu"><div class="nm">Midcap 100</div><div class="lv">61,519.10</div><div class="ch">▲ +0.81%</div></div><div class="ix ixu"><div class="nm">Smallcap 100</div><div class="lv">19,489.35</div><div class="ch">▲ +1.59%</div></div><div class="ix ixu"><div class="nm">India VIX</div><div class="lv">17.56</div><div class="ch">▲ +0.77%</div></div><div class="breadth"><div class="br-h"><span class="eyebrow">NSE breadth · stocks that rose vs fell</span><b>2.5 : 1</b></div><div class="br-bar" role="img" aria-label="2,085 rose, 24 unchanged, 835 fell"><i class="u" style="width:70.8%"></i><i class="f" style="width:0.8%"></i><i class="d" style="width:28.4%"></i></div><div class="br-l"><span>▲ 2,085 rose</span><span>24 flat</span><span>▼ 835 fell</span></div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data and bhavcopy</div></div></div>
     </div>
   </section>
     </div>
@@ -1099,6 +1149,7 @@ body > .ticker{top:55px;z-index:39}
       <div class="tl-st"><b id="tlCount">–</b><span id="tlSub"></span></div>
       <div class="tl-bar"><i id="tlFill"></i></div>
       <ul class="tl" id="tl"></ul>
+      <div class="tl-next"><span class="eyebrow">Coming up</span><ul id="tlNext"></ul></div>
       <div class="hc-foot"><span>IST · amber = today's events</span></div>
     </article>
     <article class="card lcard hl hg-one" id="learnCard" aria-label="Today's learning">
@@ -1228,6 +1279,31 @@ function renderToday(){const ist=istNow(),now=ist.getHours()*60+ist.getMinutes()
   $('#tlFill').style.width=`${Math.max(0,Math.min(100,(now-OPEN)/(CLOSE-OPEN)*100))}%`;
   const wide=matchMedia('(min-width:1400px)').matches,nxt=DAY.find(d=>mins(d.t)>now),ni=nxt?DAY.indexOf(nxt):DAY.length,from=wide?0:Math.max(0,Math.min(ni-1,DAY.length-6));let grp='';
   $('#tl').innerHTML=DAY.slice(from,wide?DAY.length:from+6).map(d=>(d.g!==grp?(grp=d.g,`<li class="grp-h">${d.g}</li>`):'')+`<li class="${mins(d.t)<=now?'past':''} ${d===nxt?'next':''} ${d.ev?'ev':''}"><span class="t">${d.t}</span><span class="d"></span><span>${d.b}</span></li>`).join('')}
+const TYPES={ipo:{n:'IPOs',c:'t-ipo'},earn:{n:'Results',c:'t-earn'},fno:{n:'F&O expiry',c:'t-fno'},hol:{n:'Holidays & sessions',c:'t-hol'},eco:{n:'Economy & RBI',c:'t-eco'}};
+const E=(y,m,d,t,title,note)=>({d:new Date(y,m-1,d),t,title,note});
+const EVENTS=[
+ E(2026,10,27,'fno','Nifty monthly expiry','October series ends'),E(2026,10,29,'fno','Sensex monthly expiry','BSE'),
+ E(2026,11,3,'fno','Nifty weekly expiry','NSE · Tuesday'),E(2026,11,4,'ipo','Kestrel Energy IPO opens','₹2,050 cr · ₹96–101'),
+ E(2026,11,5,'fno','Sensex weekly expiry','BSE · Thursday'),E(2026,11,6,'ipo','Kestrel Energy IPO closes','Final: 38.5x subscribed'),
+ E(2026,11,8,'hol','Muhurat trading','Sunday special session, 2:20–3:30 pm · Samvat 2083'),
+ E(2026,11,9,'fno','Nifty weekly expiry (moved)','Shifted from Tuesday for the holiday'),E(2026,11,9,'ipo','Lumen Foods IPO opens','₹640 cr · ₹180–190'),
+ E(2026,11,10,'hol','Trading holiday','Diwali Balipratipada · MCX evening session only'),
+ E(2026,11,11,'ipo','Northwind Logistics IPO opens','₹1,200 cr · ₹410–432 · 3 days'),E(2026,11,11,'ipo','Lumen Foods IPO closes','4.2x so far'),E(2026,11,11,'earn','Aster Motors Q2 results','After market hours'),
+ E(2026,11,12,'eco','CPI inflation (October)','4:00 pm · MoSPI'),E(2026,11,12,'ipo','Kestrel Energy lists','NSE & BSE'),E(2026,11,12,'fno','Sensex weekly expiry','BSE'),
+ E(2026,11,13,'ipo','Northwind Logistics IPO closes','Bidding ends 5 pm'),E(2026,11,13,'eco','Industrial output (IIP)','September data'),E(2026,11,13,'earn','Harbor Cement Q2 results',''),
+ E(2026,11,16,'ipo','Lumen Foods lists','NSE & BSE'),E(2026,11,16,'ipo','Northwind allotment','Check status after 6 pm'),E(2026,11,16,'earn','Solace Hospitals Q2 results',''),
+ E(2026,11,17,'fno','Nifty weekly expiry','NSE'),E(2026,11,18,'ipo','Northwind Logistics lists','NSE & BSE'),
+ E(2026,11,19,'fno','Sensex weekly expiry','BSE'),E(2026,11,20,'ipo','Orion Pharma IPO opens','₹900 cr · price band soon'),
+ E(2026,11,24,'fno','Nifty monthly expiry','November series ends'),E(2026,11,24,'ipo','Orion Pharma IPO closes',''),
+ E(2026,11,26,'fno','Sensex monthly expiry','BSE'),E(2026,11,27,'eco','GDP growth, July–September','5:30 pm · MoSPI'),
+ E(2026,12,1,'eco','Auto sales (November)','Company releases'),E(2026,12,1,'fno','Nifty weekly expiry','NSE'),
+ E(2026,12,4,'eco','RBI policy decision','10:00 am · repo rate'),E(2026,12,8,'fno','Nifty weekly expiry','NSE'),
+ E(2026,12,10,'eco','US Fed decision','Late night IST'),E(2026,12,14,'eco','CPI inflation (November)','4:00 pm'),
+ E(2026,12,25,'hol','Trading holiday','Christmas')];
+
+function renderNext(){const up=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,3);
+  $('#tlNext').innerHTML=up.map(e=>`<li class="${TYPES[e.t].c}"><span class="t">${fmt(e.d).replace(/ [A-Za-z]+$/,'')}</span><span>${e.title}</span></li>`).join('')}
+renderNext();
 renderToday();setInterval(renderToday,30000);
 addEventListener('resize',()=>{clearTimeout(window._tlr);window._tlr=setTimeout(renderToday,150)});
 
@@ -1291,6 +1367,9 @@ $('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,
 /* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
 $('#hlGot').addEventListener('click',()=>setTimeout(()=>{if(doneToday()){hlShow(hi,true);return}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)},0));
 hlShow(hi,false);
+if(location.hash==='#learn')setTimeout(()=>{const t=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('pulse')},400);
+const TOC=[{"h": "Foreign investors return as buyers after the Diwali break", "d": "0:46"}, {"h": "Banks lead the bounce; PSU banks jump almost 3%", "d": "0:44"}, {"h": "Brent dips below $90 for the first time since August", "d": "0:41"}, {"h": "Silver jumps almost 3%; gold up 0.75% on MCX", "d": "0:30"}, {"h": "Anthropic opens IPO roadshow at $70–78 a share", "d": "0:34"}];
+$('#toc').innerHTML=TOC.map((x,i)=>`<li><button data-ch="${i+1}"><span class="n">${i+1}</span><span class="h">${x.h}</span><span class="d">${x.d}</span></button></li>`).join('');
 const LVIZ={"term": "<div class=\"lviz\">\n        <svg viewBox=\"0 0 320 150\" role=\"img\" aria-label=\"Price falls while traders bet on a fall, then rises as they buy back\">\n          <line x1=\"8\" x2=\"312\" y1=\"138\" y2=\"138\" stroke=\"var(--border-decorative)\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30 L312 138 L150 138 Z\" fill=\"var(--teal)\" opacity=\".12\"/>\n          <path d=\"M10 40 L60 54 L110 80 L150 104\" fill=\"none\" stroke=\"var(--slate-500)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30\" fill=\"none\" stroke=\"var(--teal)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <circle cx=\"18\" cy=\"42\" r=\"5\" fill=\"var(--slate-500)\"/>\n          <circle cx=\"150\" cy=\"104\" r=\"5\" fill=\"var(--amber)\"/>\n          <circle cx=\"306\" cy=\"31\" r=\"5\" fill=\"var(--teal)\"/>\n          <text x=\"28\" y=\"30\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\">1 · Bet on a fall</text>\n          <text x=\"150\" y=\"126\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\" text-anchor=\"middle\">2 · Buy back to close</text>\n          <text x=\"304\" y=\"100\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-primary)\" font-weight=\"600\" text-anchor=\"end\">3 · Buying lifts price</text>\n        </svg>\n        <div class=\"cap\"><button class=\"linkbtn\" data-go=\"markets\">Today's FII short covering, in numbers: Markets desk →</button></div>\n      </div>", "relation": "<div class=\"lviz\">\n        <div class=\"cause\">\n          <div><span class=\"lbl\">Cause · Brent crude</span><b>$117 → ~$93</b><span class=\"chg\">▼ ~20% from late-Oct peak</span></div>\n          <svg viewBox=\"0 0 120 44\" aria-hidden=\"true\"><path d=\"M2 6 L18 4 L30 10 L44 14 L58 22 L70 26 L84 34 L98 38 L108 34 L118 32\" fill=\"none\" stroke=\"var(--amber)\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>\n        </div>\n        <svg class=\"fan\" viewBox=\"0 0 300 28\" preserveAspectRatio=\"none\" aria-hidden=\"true\">\n          <defs><marker id=\"fanArrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"var(--text-tertiary)\"/></marker></defs>\n          <path d=\"M150 0 C150 14 50 10 50 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 L150 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 C150 14 250 10 250 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n        </svg>\n        <div class=\"effects\">\n          <div class=\"effect\">Oil import bill<span class=\"d good\">▼ smaller</span></div>\n          <div class=\"effect\">Rupee &amp; inflation<span class=\"d good\">▼ less pressure</span></div>\n          <div class=\"effect\">Airlines, paints, tyres<span class=\"d good\">▲ cheaper inputs</span></div>\n        </div>\n      </div>", "learning": "<div class=\"lviz\">\n        <div class=\"cap\">Wednesday's move by index</div>\n        <div class=\"lrow\"><span>Nifty 50</span><div class=\"t\"><i style=\"width:52%;background:var(--teal);opacity:.55\"></i></div><b>+0.84%</b></div>\n        <div class=\"lrow\"><span>Midcap 100</span><div class=\"t\"><i style=\"width:50%;background:var(--teal);opacity:.55\"></i></div><b>+0.81%</b></div>\n        <div class=\"lrow hi\"><span>Smallcap 100</span><div class=\"t\"><i style=\"width:100%;background:var(--teal)\"></i></div><b>+1.59%</b></div>\n        <div class=\"cap\" style=\"margin-top:6px\">So Wednesday's rally was</div>\n        <div class=\"meter\" role=\"img\" aria-label=\"Rally breadth: broad\"><i></i><i></i><i></i><i></i><i></i><span class=\"pin\" style=\"left:82%\"></span></div>\n        <div class=\"meter-l\"><span>Narrow · a few giants</span><span><b style=\"color:var(--text-primary)\">Broad</b> · most stocks</span></div>\n      </div>"};
 $('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${x.kind}</span></div><div class="lr3-b"><div class="lr3-t"><h3 class="term">${x.h}</h3><p class="one">${x.one}</p></div>${LVIZ[x.id]||''}</div><div class="hc-foot"><a class="linkbtn" href="today-demo-2026-11-12.html#learn" style="font:var(--type-caption)">Open in the full brief →</a><button class="got" data-learn="${x.id}">✓ Got it</button></div></article>`).join('');
 renderStreak();
@@ -1308,6 +1387,7 @@ AUD.addEventListener('timeupdate',()=>{const t=AUD.currentTime;let i=0;CH.forEac
 AUD.addEventListener('ended',()=>play(false));
 $('#playBtn').onclick=()=>play(!playing);$('#listenBtn').onclick=()=>play(!playing);
 $('#chapters').onclick=e=>{const i=[...$('#chapters').children].indexOf(e.target);if(i>=0){AUD.currentTime=CH[i].start+.05;ch=-1;showChapter(i);play(true)}};
+$('#toc').addEventListener('click',e=>{const b=e.target.closest('[data-ch]');if(!b)return;const i=+b.dataset.ch;AUD.currentTime=CH[i].start+.05;ch=-1;showChapter(i);play(true)});
 $('#speedBtn').onclick=e=>{sp=(sp+1)%3;AUD.playbackRate=[1,1.25,1.5][sp];e.target.textContent=['1x','1.25x','1.5x'][sp]};
 </script>
 </body>

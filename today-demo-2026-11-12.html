@@ -383,6 +383,34 @@ body.brief .brief-sum{display:grid;gap:10px;margin-top:var(--space-12);padding:v
 .bs-top .bs-home{margin-left:auto;font:var(--type-caption)}
 body.brief .brief-sum .dayline{margin:0;font:500 17px/1.45 var(--font-sans);color:var(--text-primary);max-width:none}
 body.brief .brief-sum .chips{margin:0}
+
+/* ---------- full brief side columns: Institutional activity on the left, market-day timeline on the right.
+   Learning lives on Home, so the brief drops its learning rail and Learn section. ---------- */
+.inst-rail{display:none}
+body.brief #p-learn,body.brief .stab[data-tab="learn"],body.brief .rail.right{display:none!important}
+@media (min-width:1400px){
+  body.brief{--rw:clamp(240px,15.5vw,300px);--rx:max(16px,calc(50vw - min(600px,50vw - var(--rw) - 40px) - var(--rw) - 24px))}
+  body.brief .wrap{max-width:min(1200px,calc(100vw - 2 * var(--rw) - 80px))}
+  body.brief .rail{width:var(--rw)}
+  body.brief .inst-rail{display:flex;left:var(--rx);overflow-y:auto}
+  body.brief .rail.left{left:auto;right:var(--rx)}
+  body.brief nav.stabs::after{width:min(1200px,calc(100vw - 2 * var(--rw) - 80px))}
+  .inst-rail .card.inst{padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+  .inst-rail .card.inst>.head{flex-direction:column;align-items:flex-start;gap:4px}
+  .inst-rail .card.inst>.head .src{font-size:10.5px;line-height:1.35}
+  .inst-rail .inst-grid{grid-template-columns:1fr!important;gap:12px}
+  .inst-rail .flows{gap:12px}
+  .inst-rail .ipanel{border-left:none!important;padding-left:0!important;border-top:1px solid var(--border-decorative);padding-top:12px;gap:6px}
+  .inst-rail .tw-v{font-size:11px}.inst-rail .tw-v b{font-size:14px}
+  .inst-rail .oir{grid-template-columns:62px 1fr 56px;gap:8px}
+  .inst-rail .pcr-g{max-width:190px}
+  .inst-rail .pcr-v b{font-size:20px}
+}
+
+.rk-next ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.rk-next li{display:grid;grid-template-columns:44px 1fr;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
+.rk-next li .t{color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.rk-next li small{display:block;color:var(--text-tertiary);font-size:11px}
 /* ---------- live ticker ---------- */
 .ticker{position:sticky;top:0;z-index:35;height:36px;display:flex;align-items:center;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative);overflow:hidden}
 .tk-status{flex:none;display:flex;align-items:center;gap:8px;height:100%;padding:0 var(--space-16);border-right:1px solid var(--border-decorative);background:var(--surface-raised);z-index:2;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
@@ -1153,6 +1181,7 @@ FII/DII figures are provisional. Rupee close and put-call ratio were not availab
 </main>
 
 <!-- ===== SIDE RAILS (wide screens only) ===== -->
+<aside class="rail inst-rail" aria-label="Institutional activity" id="instRail"></aside>
 <aside class="rail left" aria-label="Market day clock">
   <div class="rcard">
     <div class="rk-head"><span class="eyebrow">Market day</span><span class="clk-st" id="clkSt"><i></i><span id="clkStTxt">Closed</span></span></div>
@@ -1161,6 +1190,7 @@ FII/DII figures are provisional. Rupee close and put-call ratio were not availab
     <div class="sess"><div class="sess-bar"><i id="sessFill"></i></div><div class="sess-l"><span>9:15 open</span><span>3:30 close</span></div></div>
     <div id="clk"></div>
   </div>
+  <div class="rcard rk-next"><div class="rk-head"><span class="eyebrow">Coming up</span><button class="linkbtn" data-go="calendar">Calendar →</button></div><ul id="railNext"></ul></div>
   <div class="rail-hint">IST · amber = today's events</div>
 </aside>
 <aside class="rail right" aria-label="Today's learning">
@@ -1285,7 +1315,7 @@ const TABS=['brief','markets','ipos','learn','archive'];
 const NAV_H=142;let jumpUntil=0;
 function mark(tab){$$('.stab').forEach(b=>{const on=b.dataset.tab===tab;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;if(on)b.classList.add('visited')});
   visited.add(tab);try{history.replaceState(null,'','#'+tab)}catch(e){}}
-function show(tab,instant){const sm=document.getElementById('stkModal');if(sm&&!sm.hidden){sm.hidden=true;document.body.style.overflow=''}if(tab==='calendar'){openCal();return}if(tab==='learn'&&document.body.classList.contains('learn-rail')){const r=document.querySelector('.rail.right');lrShow(lrNextOpen());r.classList.remove('lr-pulse');void r.offsetWidth;r.classList.add('lr-pulse');return}const el=$('#p-'+tab);if(!el)return;mark(tab);jumpUntil=Date.now()+800;
+function show(tab,instant){if(tab==='learn'&&document.body.classList.contains('brief')){location.href='home-2026-11-12.html#learn';return}const sm=document.getElementById('stkModal');if(sm&&!sm.hidden){sm.hidden=true;document.body.style.overflow=''}if(tab==='calendar'){openCal();return}if(tab==='learn'&&document.body.classList.contains('learn-rail')){const r=document.querySelector('.rail.right');lrShow(lrNextOpen());r.classList.remove('lr-pulse');void r.offsetWidth;r.classList.add('lr-pulse');return}const el=$('#p-'+tab);if(!el)return;mark(tab);jumpUntil=Date.now()+800;
   scrollTo({top:el.getBoundingClientRect().top+scrollY-NAV_H+1,behavior:instant?'auto':'smooth'})}
 function spy(){if(Date.now()<jumpUntil)return;let cur='brief';
   for(const t of TABS){const p=$('#p-'+t);if(!p.offsetParent)continue;if(p.getBoundingClientRect().top<=NAV_H+140)cur=t}
@@ -1537,6 +1567,8 @@ function renderClock(){const ist=istNow(),now=ist.getHours()*60+ist.getMinutes()
     html+=`<li class="${mins(d.t)<=now?'past':''} ${d===nxt?'next':''} ${d.ev?'ev':''}"><span class="t">${d.t}</span><span class="d"></span><span>${d.b}</span></li>`});
   if(!placed)html+=nowRow;html+='</ul></div>';$('#clk').innerHTML=html}
 renderClock();setInterval(renderClock,30000);
+/* Coming up: the next market days' events from the calendar feed */
+$('#railNext').innerHTML=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,6).map(e=>`<li class="${TYPES[e.t].c}"><span class="t">${fmt(e.d).replace(/ [A-Za-z]+$/,'')}</span><span>${e.title}${e.note?`<small>${e.note}</small>`:''}</span></li>`).join('');
 
 
 function openCal(){$('#calModal').hidden=false;renderCal();document.body.style.overflow='hidden';$('#calClose').focus()}
@@ -1600,7 +1632,7 @@ function lrShow(i){const prev=lrI;lrI=(i+LCARDS.length)%LCARDS.length;const r=ra
   [...$('#lrDots').children].forEach((d,j)=>{d.classList.toggle('on',j===lrI);d.classList.toggle('done',LRN.has(LEARN_IDS[j]))})}
 function lrPlace(){const r=LR_MQ.matches;document.body.classList.toggle('learn-rail',r);
   LCARDS.forEach(c=>{c.classList.remove('lr-off');c.inert=false;(r?$('#lrStage'):LGRID).appendChild(c)});
-  $('#p-ipos .up-next').textContent=r?'Next: Archive ↓':'Next: Learn ↓';$('#p-archive .sechead .no').textContent=r?'04':'05';lrShow(lrI)}
+  $('#p-ipos .up-next').textContent=r||document.body.classList.contains('brief')?'Next: Archive ↓':'Next: Learn ↓';$('#p-archive .sechead .no').textContent=r||document.body.classList.contains('brief')?'04':'05';lrShow(lrI)}
 const lrNextOpen=()=>{const k=LEARN_IDS.findIndex(x=>!LRN.has(x));return k<0?lrI:k};
 $('#lrPrev').onclick=()=>lrShow(lrI-1);$('#lrNext').onclick=()=>lrShow(lrI+1);
 const RR=$('.rail.right');RR.addEventListener('mouseenter',()=>lrHold=true);RR.addEventListener('mouseleave',()=>lrHold=false);
@@ -1611,7 +1643,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('.got');if(!b||!L
   const k=lrNextOpen();
   if(railMode()){if(b.closest('.rail.right'))setTimeout(()=>lrShow(k),450)}
   else{const c=LCARDS[k];setTimeout(()=>{c.classList.remove('lc-next');void c.offsetWidth;c.classList.add('lc-next');c.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});c.querySelector('.got').focus({preventScroll:true});setTimeout(()=>c.classList.remove('lc-next'),1400)},250)}});
-const lrSync=()=>{if(LR_MQ.matches!==railMode()){lrPlace();spy()}};
+const INST=$('.card.inst'),INST_HOME=INST.parentElement,INST_NEXT=INST.nextElementSibling;
+function instPlace(){if(!document.body.classList.contains('brief'))return;if(LR_MQ.matches)$('#instRail').appendChild(INST);else INST_HOME.insertBefore(INST,INST_NEXT)}
+instPlace();
+const lrSync=()=>{instPlace();if(LR_MQ.matches!==railMode()){lrPlace();spy()}};
 LR_MQ.addEventListener('change',lrSync);addEventListener('resize',lrSync);lrPlace();
 
 /* ================= start ================= */
