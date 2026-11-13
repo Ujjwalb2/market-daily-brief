@@ -54,6 +54,19 @@ hero=re.sub(r'<div class="chips">.*?</div>',
   '<button class="btn ghost listen-cta" id="listenBtn">▶ Listen · 4:46</button></div>'
   '<div class="toc"><div class="toc-h"><span class="eyebrow">In today\'s brief</span><span>5 stories · tap one to hear it</span></div><ol id="toc"></ol></div>',hero,count=1,flags=re.S)
 hero=hero.replace('<span class="src">Today\'s numbers arrive after the 3:30 pm close</span>','')
+def _bal(h, start):
+    k = h.index(start); depth = 0
+    for m in re.finditer(r'<div\b|</div>', h[k:]):
+        depth += 1 if m.group().startswith('<div') else -1
+        if depth == 0: return h[k:k + m.end()]
+_strip = _bal(hero, '<div class="idx-strip"')
+_br = re.search(r'<div class="idx-src">.*?</div>', _strip).group(0)  # becomes the breadth bar below
+hero = hero.replace(_strip, '''<div class="ixc">
+  <div class="ixc-top"><div class="seg2 ixc-tabs" role="tablist" aria-label="Index"><button class="on" data-i="0" role="tab" aria-selected="true">Nifty 50</button><button data-i="1" role="tab" aria-selected="false">Nifty 500</button><button data-i="2" role="tab" aria-selected="false">Nifty Bank</button></div><span class="ixc-rng" id="ixM">1M</span></div>
+  <div class="ixc-val"><b id="ixVal">–</b><span class="up" id="ixChg"></span></div>
+  <div class="ixc-ch" id="ixCh" role="img" aria-label="One-month chart"></div>
+  <div class="ixc-chips"><span>Sensex <b class="up">+0.95%</b></span><span>Midcap <b class="up">+0.81%</b></span><span>Smallcap <b class="up">+1.59%</b></span><span class="vix" title="VIX up means traders expect bigger swings">VIX 17.56 <b>▲0.77%</b></span></div>
+</div>''' + _br, 1)
 hero=hero.replace('<div class="eyebrow">Good morning · Edition 144</div>','<div class="eyebrow">Good morning · FIIs back, banks led</div>')
 hero=hero.replace('<span class="eyebrow">Markets · Wed 11 Nov close</span>','<span class="eyebrow">Markets · 11 Nov close</span>')
 hero=hero.replace('<div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div>','<div class="breadth"><div class="br-h"><span class="eyebrow">Breadth · rose vs fell</span><b>2.5 : 1</b></div><div class="br-bar" role="img" aria-label="2,085 rose, 24 unchanged, 835 fell"><i class="u" style="width:70.8%"></i><i class="f" style="width:0.8%"></i><i class="d" style="width:28.4%"></i></div><div class="br-l"><span>▲ 2,085 rose</span><span>24 flat</span><span>▼ 835 fell</span></div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data and bhavcopy</div>')
@@ -394,6 +407,26 @@ body > .ticker{top:55px;z-index:39}
 .tc-flag{display:inline-grid;place-items:center;width:13px;height:13px;margin-left:3px;border-radius:50%;background:var(--amber);color:#1a1a1a;font:700 9px/1 var(--font-sans);font-style:normal;vertical-align:1px;cursor:help}
 .tc-note{margin:0;font:var(--type-caption);color:var(--amber)}
 
+/* Markets card: tabbed one-month chart */
+.ixc{display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-height:0}
+.ixc-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ixc-rng{font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
+.ixc-val{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.ixc-val b{font:600 22px/1.1 var(--font-sans);font-variant-numeric:tabular-nums}
+.ixc-val .up{font:600 13px/1 var(--font-sans);color:var(--teal)}
+.ixc-tabs button{white-space:nowrap}.ixc-rng{min-width:0;flex:none}
+@media (min-width:1400px) and (max-width:1799px){.ixc-rng .dc{display:none}.ixc-tabs button{padding:6px 8px}}
+.ixc-rng b.up{color:var(--teal)}.ixc-rng b.dn2{color:var(--red)}
+.ixc-ch{position:relative;flex:1 1 0;min-height:64px;margin-bottom:14px}
+.ixc-ch svg{position:absolute;inset:0;width:100%;height:100%}
+.ixc-ch .yl{position:absolute;right:0;transform:translateY(-50%);font:500 10px/1 var(--font-sans);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.ixc-ch .tag{position:absolute;right:0;transform:translateY(-50%);padding:3px 5px;border-radius:4px;font:700 10.5px/1 var(--font-sans);color:#fff;font-variant-numeric:tabular-nums;z-index:1}
+.ixc-ch .xl{position:absolute;bottom:-14px;transform:translateX(-50%);font:500 10px/1 var(--font-sans);color:var(--text-tertiary);white-space:nowrap}
+.ixc-chips{display:flex;flex-wrap:wrap;gap:4px 10px;font:500 11.5px/1.3 var(--font-sans);color:var(--text-secondary)}
+.ixc-chips b{font-weight:600}.ixc-chips b.up{color:var(--teal)}.ixc-chips .vix b{color:var(--amber)}
+.hg-c .hero-side .breadth{margin-top:0}
+@media (max-width:1399px){.ixc-ch{min-height:110px}}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -562,6 +595,34 @@ renderMvx('s');
   $('.seg2').addEventListener('click',e=>{{const b=e.target.closest('button');if(b)mvMode=b.dataset.m}});
   setInterval(()=>{{if(mvHold||document.hidden)return;mvMode=mvMode==='s'?'x':'s';renderMvx(mvMode);const l=$('#mvx');l.classList.remove('in');void l.offsetWidth;l.classList.add('in')}},5000)}}
 renderToday();setInterval(renderToday,30000);
+
+/* ================= MARKETS CARD: one-month index chart, tabs switch every 5 s ================= */
+const IDX=[{{"k": "n50", "n": "Nifty 50", "pts": "+210.40", "pct": "+0.84%", "d": [["12 Oct", 22363.35], ["13 Oct", 22721.95], ["14 Oct", 22622.7], ["15 Oct", 22997.35], ["16 Oct", 23146.15], ["19 Oct", 22888.95], ["21 Oct", 22811.35], ["22 Oct", 22687.65], ["23 Oct", 22600.0], ["26 Oct", 22753.2], ["27 Oct", 22749.75], ["28 Oct", 22698.85], ["29 Oct", 22936.75], ["30 Oct", 23053.1], ["02 Nov", 23440.8], ["03 Nov", 23810.85], ["04 Nov", 23960.6], ["05 Nov", 24536.6], ["06 Nov", 25030.35], ["09 Nov", 25044.65], ["11 Nov", 25255.05]]}}, {{"k": "n500", "n": "Nifty 500", "pts": "+212.30", "pct": "+0.90%", "d": [["12 Oct", 21822.75], ["13 Oct", 22090.0], ["14 Oct", 22038.0], ["15 Oct", 22180.8], ["16 Oct", 22270.05], ["19 Oct", 22041.6], ["21 Oct", 21837.9], ["22 Oct", 21696.55], ["23 Oct", 21427.6], ["26 Oct", 21608.75], ["27 Oct", 21734.9], ["28 Oct", 21727.45], ["29 Oct", 21941.5], ["30 Oct", 21895.9], ["02 Nov", 22241.4], ["03 Nov", 22520.35], ["04 Nov", 22769.2], ["05 Nov", 23224.7], ["06 Nov", 23456.95], ["09 Nov", 23567.0], ["11 Nov", 23779.3]]}}, {{"k": "bank", "n": "Nifty Bank", "pts": "+1,051.15", "pct": "+1.76%", "d": [["12 Oct", 54918.0], ["13 Oct", 55481.05], ["14 Oct", 55316.0], ["15 Oct", 55810.5], ["16 Oct", 55844.0], ["19 Oct", 55488.1], ["21 Oct", 54976.9], ["22 Oct", 54925.7], ["23 Oct", 54287.35], ["26 Oct", 54366.7], ["27 Oct", 53974.9], ["28 Oct", 54267.4], ["29 Oct", 54909.65], ["30 Oct", 54686.95], ["02 Nov", 55002.2], ["03 Nov", 55540.05], ["04 Nov", 55913.6], ["05 Nov", 57773.65], ["06 Nov", 59086.0], ["09 Nov", 59741.25], ["11 Nov", 60792.4]]}}];
+let ixI=0,ixHold=false;
+function ixDraw(i){{ixI=i;const x=IDX[i],d=x.d,W=380,H=150,P=[6,52,16,4];/* top,right,bottom,left */
+  const v=d.map(p=>p[1]),lo=Math.min(...v),hi=Math.max(...v),pad=(hi-lo)*.08,y0=lo-pad,y1=hi+pad;
+  const X=j=>P[3]+j*(W-P[1]-P[3])/(d.length-1),Y=val=>P[0]+(y1-val)/(y1-y0)*(H-P[0]-P[2]);
+  const pts=d.map((p,j)=>`${{X(j).toFixed(1)}},${{Y(p[1]).toFixed(1)}}`).join(' ');
+  const last=v[v.length-1],m1=(last/v[0]-1)*100,col=m1>=0?'var(--teal)':'var(--red)';
+  const ticks=[0,.5,1].map(f=>y0+pad+(hi-lo)*f);
+  const fmt=n=>n.toLocaleString('en-IN',{{maximumFractionDigits:0}});
+  const xl=[0,Math.round((d.length-1)/2),d.length-1];
+  $('#ixCh').innerHTML=`<svg viewBox="0 0 ${{W}} ${{H}}" preserveAspectRatio="none"><defs><linearGradient id="ixG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${{col}}" stop-opacity=".28"/><stop offset="1" stop-color="${{col}}" stop-opacity="0"/></linearGradient></defs>
+    ${{ticks.map(t=>`<line x1="${{P[3]}}" x2="${{W-P[1]}}" y1="${{Y(t).toFixed(1)}}" y2="${{Y(t).toFixed(1)}}" stroke="var(--border-decorative)" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>`).join('')}}
+    <polygon points="${{P[3]}},${{H-P[2]}} ${{pts}} ${{X(d.length-1).toFixed(1)}},${{H-P[2]}}" fill="url(#ixG)"/>
+    <polyline points="${{pts}}" fill="none" stroke="${{col}}" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
+    ${{ticks.map(t=>`<span class="yl" style="top:${{(Y(t)/H*100).toFixed(1)}}%">${{fmt(t)}}</span>`).join('')}}
+    <span class="tag" style="top:${{(Y(last)/H*100).toFixed(1)}}%;background:${{col}}">${{last.toLocaleString('en-IN',{{minimumFractionDigits:2}})}}</span>
+    ${{xl.map(j=>`<span class="xl" style="left:${{(X(j)/W*100).toFixed(1)}}%;transform:${{j===0?'none':'translateX(-50%)'}}">${{d[j][0]}}</span>`).join('')}}`;
+  $('#ixVal').textContent=last.toLocaleString('en-IN',{{minimumFractionDigits:2}});
+  $('#ixChg').textContent=`▲ ${{x.pts}} (${{x.pct}})`;
+  $('#ixM').innerHTML=`1M <b class="${{m1>=0?'up':'dn2'}}">${{m1>=0?'+':''}}${{m1.toFixed(1)}}%</b><span class="dc"> · daily close</span>`;
+  $$('.ixc-tabs button').forEach((b,j)=>{{b.classList.toggle('on',j===i);b.setAttribute('aria-selected',String(j===i))}});
+  $('#ixCh').setAttribute('aria-label',`${{x.n}}, one month of daily closes, ${{d[0][0]}} to ${{d[d.length-1][0]}}: ${{fmt(v[0])}} to ${{fmt(last)}}`)}}
+ixDraw(0);
+$('.ixc-tabs').addEventListener('click',e=>{{const b=e.target.closest('button');if(b)ixDraw(+b.dataset.i)}});
+{{const c=$('.hg-c .hero-side');['mouseenter','focusin'].forEach(ev=>c.addEventListener(ev,()=>ixHold=true));['mouseleave','focusout'].forEach(ev=>c.addEventListener(ev,()=>ixHold=false));
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(()=>{{if(!ixHold&&!document.hidden)ixDraw((ixI+1)%IDX.length)}},5000)}}
 
 /* ================= TRADE CALLS: one call at a time, switches every 5 s ================= */
 const CALLS=[
