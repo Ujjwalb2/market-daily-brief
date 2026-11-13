@@ -54,6 +54,7 @@ hero=re.sub(r'<div class="chips">.*?</div>',
   '<button class="btn ghost listen-cta" id="listenBtn">▶ Listen · 4:46</button></div>'
   '<div class="toc"><div class="toc-h"><span class="eyebrow">In today\'s brief</span><span>5 stories · tap one to hear it</span></div><ol id="toc"></ol></div>',hero,count=1,flags=re.S)
 hero=hero.replace('<span class="src">Today\'s numbers arrive after the 3:30 pm close</span>','')
+hero=hero.replace('<span class="eyebrow">Markets · Wed 11 Nov close</span>','<span class="eyebrow">Markets · 11 Nov close</span>')
 hero=hero.replace('<div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div>','<div class="breadth"><div class="br-h"><span class="eyebrow">Breadth · rose vs fell</span><b>2.5 : 1</b></div><div class="br-bar" role="img" aria-label="2,085 rose, 24 unchanged, 835 fell"><i class="u" style="width:70.8%"></i><i class="f" style="width:0.8%"></i><i class="d" style="width:28.4%"></i></div><div class="br-l"><span>▲ 2,085 rose</span><span>24 flat</span><span>▼ 835 fell</span></div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data and bhavcopy</div>')
 hero=hero.replace('href="#markets" data-go="markets"',f'href="{BRIEF}#markets"')
 strip=strip.replace('<button class="linkbtn" id="stkOpen">','<button class="linkbtn" id="stkOpen">')
@@ -380,7 +381,8 @@ body > .ticker{top:55px;z-index:39}
 @media (max-width:1100px){.hg{grid-template-columns:1fr 1fr;grid-template-areas:"s s" "c c" "tc tc" "tl one"}}
 """
 
-body=f"""@media (min-width:1800px){{.home .hero .hero-main h1{{font-size:30px!important;letter-spacing:-.3px;white-space:nowrap}}}}
+body=f"""@media (min-width:1800px){{.hg-c .idx-strip .nm{{font:600 12.5px/1.2 var(--font-sans)!important;letter-spacing:0!important;text-transform:none!important}}}}
+@media (min-width:1800px){{.home .hero .hero-main h1{{font-size:30px!important;letter-spacing:-.3px;white-space:nowrap}}}}
 /* even grid: summary and markets become two separate, equal cards (no card inside a card) */
 @media (min-width:1400px){{
   .hg-c,.hg-c .hero{{display:contents}}
@@ -397,6 +399,10 @@ body=f"""@media (min-width:1800px){{.home .hero .hero-main h1{{font-size:30px!im
 @media (min-width:1400px) and (max-width:1799px){{
   .home .hero .hero-main h1{{font-size:26px!important;margin:4px 0 10px!important}}
   .hg-c .idx-strip .lv{{font-size:16px!important}}
+  .hg-c .hero-side .idx-card{{padding:14px 14px!important}}
+  .hg-c .idx-strip{{gap:6px!important}}
+  .hg-c .idx-strip .ix{{padding:6px 8px!important}}
+  .hg-c .idx-strip .nm{{font:600 11.5px/1.2 var(--font-sans)!important;letter-spacing:0!important;text-transform:none!important;overflow:visible!important;text-overflow:clip!important}}
   .home .hero-main .home-cta .btn{{padding:10px 14px!important;font-size:13px!important}}
   .hg-tc .tc-sig li{{padding:10px 0}}
   .hg-c .hero-side{{grid-area:mk;display:flex}}
