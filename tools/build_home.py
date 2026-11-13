@@ -121,6 +121,10 @@ CSS="""
 .hl .lnav{display:flex;align-items:center;gap:8px}
 .hl .lnav .round{width:28px;height:28px;font-size:13px}
 .hl.pulse{animation:lrPulse 1.2s ease 2}
+.hl.spot{animation:hlSpot 1.8s ease}
+@keyframes hlSpot{0%,40%{box-shadow:0 0 0 3px var(--action-primary),0 0 24px rgba(99,102,241,.45)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.hl.spot{animation:none;box-shadow:0 0 0 3px var(--action-primary)}}
+#hlGot:focus-visible{outline:2px solid var(--action-primary);outline-offset:2px}
 .home .hero{margin-top:var(--space-16)}
 
 
@@ -657,7 +661,7 @@ const TODAY=new Date(2026,10,12);
 /* any [data-go] link (ticker items, Markets desk…) opens that part of the full brief */
 document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();
   if(g.dataset.go==='calendar'){{openCal();return}}
-  if(g.dataset.go==='learn'){{const c=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');c.scrollIntoView({{behavior:'smooth',block:'nearest'}});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}}
+  if(g.dataset.go==='learn'){{const c=$('#learnCard');if(!c||!c.offsetParent){{location.href='{BRIEF}#learn';return}}const k=LEARN.findIndex(x=>!LRN.has(x.id));if(k>=0)hlShow(k,true);c.scrollIntoView({{behavior:'smooth',block:'nearest'}});c.classList.remove('spot');void c.offsetWidth;c.classList.add('spot');setTimeout(()=>$('#hlGot').focus({{preventScroll:true}}),50);return}}
   location.href='{BRIEF}#'+g.dataset.go}});
 
 {js_ticker}
