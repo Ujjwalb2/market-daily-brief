@@ -129,7 +129,7 @@ CSS="""
 .tc-more,.tc-others,.tl .grp-h{display:none}
 @media (min-width:1400px){
   .home.wrap,.ap-bar .wrap{max-width:min(1760px,calc(100vw - 48px))!important}
-  .hg{grid-template-columns:minmax(280px,18%) minmax(0,1fr) minmax(0,1fr) minmax(250px,16%);grid-template-areas:"s s s s" "tc c c tl" "tc one dl tl"}
+  .hg{grid-template-columns:minmax(280px,18%) minmax(0,1fr) minmax(0,1fr) minmax(250px,16%);grid-template-areas:"s s s s" "tc c c tl" "tc one dl bk"}
   .hg-dl{display:flex!important}
   .hg-ln{display:none!important}
   .hg-ln .card{padding:var(--space-16) var(--space-20)}
@@ -290,6 +290,25 @@ body > .ticker{top:55px;z-index:39}
   .hg-dl .heat div b{font-size:11.5px}
 }
 
+/* Baskets (bottom right) */
+.hg-bk{grid-area:bk}.hg>.hg-bk{display:none}
+.bk-sub{margin:-4px 0 0;font:var(--type-caption);color:var(--text-tertiary)}
+.bk-list{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.bk-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-decorative)}.bk-list li:last-child{border-bottom:none}
+.bk-build{font:600 12px/1 var(--font-sans);padding:7px 10px;border-radius:var(--radius-6);background:#E8762B;color:#fff;text-decoration:none;white-space:nowrap}
+.bk-ic{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;font:700 11px/1 var(--font-sans);color:var(--text-primary)}
+.bk-list b{display:block;font:var(--type-label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk-list small{display:block;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk-r{text-align:right;font:600 15px/1.2 var(--font-sans);font-variant-numeric:tabular-nums}.bk-r.up{color:var(--teal)}.bk-r.dn{color:var(--red)}
+.bk-r small{font-size:10px;text-align:right}
+.bk-tabs{display:flex;gap:6px;flex-wrap:wrap}.bk-tabs span{font:500 11px/1 var(--font-sans);padding:5px 8px;border-radius:var(--radius-pill);border:1px solid var(--border-decorative);color:var(--text-secondary)}
+@media (min-width:1400px){
+  .hg>.hg-bk{display:flex}
+  .hg-tl .tl-next li:nth-child(n+3){display:none}
+}
+@media (min-width:1400px) and (max-height:920px){.bk-tabs,.bk-sub{display:none}.home .hg-tl .tl-next{display:none!important}.bk-list small{display:none}.hg-bk .hc-foot>span{display:none}}
+
+@media (min-width:1400px) and (max-width:1700px){.hg-dl .mv-row,.hg-dl .mv-ref{grid-template-columns:12px minmax(0,1fr) 20% 50px;gap:6px}.hg-dl.movers{grid-template-columns:minmax(0,1fr) 132px!important}.hg-dl .heat div{padding:3px 5px}}
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -376,6 +395,15 @@ body=f"""</style>
       {MV_LIST}
       <div class="mv-sec"><div class="hc-head"><span class="eyebrow">Sectors</span><a class="linkbtn" href="{BRIEF}#brief">Full brief →</a></div><div class="heat" id="heat" style="grid-template-columns:repeat(6,1fr)"></div></div>
     </article>
+    <article class="card hg-bk" aria-label="Baskets">
+      <div class="hc-head"><span class="eyebrow">Baskets</span><a class="bk-build" href="https://dev.alphapad.in/baskets">+ Build basket</a></div>
+      <ul class="bk-list">
+        <li><div><b>Updated Momentum Basket</b><small>Momentum · Medium risk · 2 stocks · min ₹4,500</small></div><span class="bk-r up">+17.26%<small>1Y</small></span></li>
+        <li><div><b>All Weather Alpha</b><small>Momentum · High risk · 5 stocks · min ₹2,000</small></div><span class="bk-r up">+8.87%<small>1Y</small></span></li>
+        <li><div><b>Alphapad Smart Factor Plus</b><small>Momentum · High risk · 5 stocks · min ₹2,000</small></div><span class="bk-r up">+2.46%<small>1Y</small></span></li>
+      </ul>
+      <div class="hc-foot"><span>Not investment advice</span><a href="https://dev.alphapad.in/baskets">All baskets →</a></div>
+    </article>
     <section class="hg-ln" id="learnRow" aria-label="Today's three ideas"></section>
   </div>
 
@@ -399,7 +427,7 @@ document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(
   $('#tlCount').textContent=!trading?'Weekend':open?`Closes in ${{dur(CLOSE-now)}}`:now<OPEN?`Opens in ${{dur(OPEN-now)}}`:'Closed for today';
   $('#tlSub').textContent=open?'Market open':now<OPEN?'Pre-market':'After market';
   $('#tlFill').style.width=`${{Math.max(0,Math.min(100,(now-OPEN)/(CLOSE-OPEN)*100))}}%`;
-  const wide=matchMedia('(min-width:1400px)').matches,nxt=DAY.find(d=>mins(d.t)>now),ni=nxt?DAY.indexOf(nxt):DAY.length,from=wide?0:Math.max(0,Math.min(ni-1,DAY.length-6));let grp='';
+  const wide=matchMedia('(min-width:1400px)').matches&&innerHeight>920,nxt=DAY.find(d=>mins(d.t)>now),ni=nxt?DAY.indexOf(nxt):DAY.length,from=wide?0:Math.max(0,Math.min(ni-1,DAY.length-6));let grp='';
   $('#tl').innerHTML=DAY.slice(from,wide?DAY.length:from+6).map(d=>(d.g!==grp?(grp=d.g,`<li class="grp-h">${{d.g}}</li>`):'')+`<li class="${{mins(d.t)<=now?'past':''}} ${{d===nxt?'next':''}} ${{d.ev?'ev':''}}"><span class="t">${{d.t}}</span><span class="d"></span><span>${{d.b}}</span></li>`).join('')}}
 {js_events}
 function renderNext(){{const up=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,3);
