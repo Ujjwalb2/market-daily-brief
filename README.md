@@ -6,7 +6,6 @@ Desktop prototype of Springpad's "Today" tab: a daily market brief page plus a 3
 - `today-tab-layout.html`: layout template with sample data
 - `today-tab-layout-v1-scroll.html`: earlier single-scroll version
 - `demo/`: audio briefing, script and chapter timings
-- `reference/`: reference transcripts
 
 Run locally:
 
