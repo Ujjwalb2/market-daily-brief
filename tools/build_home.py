@@ -17,6 +17,14 @@ js_ticker=cut('/* ================= LIVE TICKER','/* ================= SIDE RAIL
 js_day=cut('const DAY=[','function renderClock')
 js_streak=cut('/* ================= STREAK','renderStreak();\n\n/* RIGHT RAIL')
 js_events=cut('const TYPES=','const STORIES=')
+def _block(start):
+    k=s.index(start);depth=0
+    for m in re.finditer(r'<div\b|</div>', s[k:]):
+        depth += 1 if m.group().startswith('<div') else -1
+        if depth==0: return s[k:k+m.end()]
+MV_LIST=_block('<div class="mv-list"')
+js_heat=s[s.index("$('#heat').innerHTML="):s.index(".join('');",s.index("$('#heat').innerHTML="))+len(".join('');")]
+
 import re as _re
 STORY_TOC=json.dumps([{'h':h,'d':d} for h,d in _re.findall(r"h:'([^']*)',n:.*?dur:'([^']*)'", cut('const STORIES=[','\n];'))],ensure_ascii=False)
 
@@ -259,7 +267,28 @@ body > .ticker{top:55px;z-index:39}
   .dl3 li>div{display:flex;gap:8px;align-items:baseline}
   .dl3 li>div small{display:inline;min-width:0}
 }
-@media (min-width:1400px) and (max-height:920px){.tc-an p{-webkit-line-clamp:5}.home .toc li:nth-child(n+4){display:none!important}.hg-one .lviz{display:none}.hg-one .hl-grid{grid-template-columns:1fr}.dl3 li>div small{display:none!important}.dl3{gap:6px}.hg-dl .hc-head .src{display:none}}
+@media (min-width:1400px) and (max-height:920px){.tc-an p{-webkit-line-clamp:5}.home .toc li:nth-child(n+4){display:none!important}.hg-one .lviz{display:none}.hg-one .hl-grid{grid-template-columns:1fr}.hg-dl .mv-ref{display:none}.hg-dl .hc-head .src{display:none}}
+
+/* movers + sectors in the bottom slot (compact) */
+.hg-dl.movers{gap:6px}
+.hg-dl .mv-list{margin-top:0}
+.hg-dl .mv-row,.hg-dl .mv-ref{padding:3px 0;grid-template-columns:12px minmax(0,1fr) 38% 54px;gap:8px}
+.hg-dl .mv-row{font:500 13px/1.3 var(--font-sans)}
+.hg-dl .mv-row .bar{height:9px}
+.hg-dl .mv-sec{margin-top:4px;padding-top:8px;border-top:1px solid var(--border-decorative);display:grid;gap:4px}
+.hg-dl .heat{margin-top:2px}
+.hg-dl .heat div{min-height:0;padding:5px 6px;font-size:11px}
+.hg-dl .heat div b{font-size:12.5px}
+@media (min-width:1400px){
+  .hg-dl.movers{display:grid!important;grid-template-columns:minmax(0,1fr) 156px;grid-template-rows:auto 1fr auto;column-gap:16px;row-gap:6px;align-content:start}
+  .hg-dl.movers>.hc-head:first-child{grid-column:1/-1}
+  .hg-dl .mv-list{grid-column:1;grid-row:2}
+  .hg-dl .mv-sec{grid-column:2;grid-row:2;margin:0;padding:0 0 0 14px;border-top:none;border-left:1px solid var(--border-decorative);align-content:start}
+  .hg-dl .mv-sec .linkbtn{display:none}
+  .hg-dl .heat{grid-template-columns:1fr!important;gap:2px}
+  .hg-dl .heat div{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:3px 7px;white-space:nowrap;font-size:11px}
+  .hg-dl .heat div b{font-size:11.5px}
+}
 
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
@@ -342,14 +371,10 @@ body=f"""</style>
       <div class="hl-body" id="hlBody" aria-live="polite"></div>
       <div class="hc-foot"><div class="lnav"><button class="round" id="hlPrev" aria-label="Previous idea">←</button><span class="hl-dots" id="hlDots"><i></i><i></i><i></i></span><button class="round" id="hlNext" aria-label="Next idea">→</button></div><a class="hl-all" href="{BRIEF}#learn">Read all 3 in full →</a><button class="got" id="hlGot" data-learn="term">✓ Got it</button></div>
     </article>
-    <article class="card hg-dl" aria-label="Big money moves">
-      <div class="hc-head"><span class="eyebrow">Big money · bulk &amp; block deals</span><span class="src">NSE · 12 Nov, after close</span></div>
-      <ul class="dl3">
-        <li><div><b>Kalyan Jewellers</b><small>Graviton Research bought and sold the same day</small></div><span class="dk t">Trading</span><span class="bar"><i style="width:100%"></i></span><b class="v">₹374 cr</b></li>
-        <li><div><b>Gallantt Ispat</b><small>Santosh Kumar Agrawal bought from Dinesh R Agarwal</small></div><span class="dk k">Block</span><span class="bar"><i style="width:54%"></i></span><b class="v">₹201 cr</b></li>
-        <li><div><b>Man Coat Metal</b><small>Growvia Trade bought 20.4 lakh shares</small></div><span class="dk b">Buy</span><span class="bar"><i style="width:9%"></i></span><b class="v">₹34.1 cr</b></li>
-      </ul>
-      <div class="hc-foot"><span>134 bulk · 1 block deal on NSE</span><a href="{BRIEF}#brief">All deals in the brief →</a></div>
+    <article class="card hg-dl movers" aria-label="Nifty 100 movers and sectors">
+      <div class="hc-head"><span class="eyebrow">Nifty 100 movers · Wed 11 Nov</span><span class="src">NSE, closing</span></div>
+      {MV_LIST}
+      <div class="mv-sec"><div class="hc-head"><span class="eyebrow">Sectors</span><a class="linkbtn" href="{BRIEF}#brief">Full brief →</a></div><div class="heat" id="heat" style="grid-template-columns:repeat(6,1fr)"></div></div>
     </article>
     <section class="hg-ln" id="learnRow" aria-label="Today's three ideas"></section>
   </div>
@@ -380,6 +405,7 @@ document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(
 function renderNext(){{const up=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,3);
   $('#tlNext').innerHTML=up.map(e=>`<li class="${{TYPES[e.t].c}}"><span class="t">${{fmt(e.d).replace(/ [A-Za-z]+$/,'')}}</span><span>${{e.title}}</span></li>`).join('')}}
 renderNext();
+{js_heat}
 renderToday();setInterval(renderToday,30000);
 addEventListener('resize',()=>{{clearTimeout(window._tlr);window._tlr=setTimeout(renderToday,150)}});
 
