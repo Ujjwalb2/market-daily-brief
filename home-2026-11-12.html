@@ -851,7 +851,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .top-story{display:flex;gap:10px;align-items:baseline;margin-top:var(--space-12);font:var(--type-label)}
 .top-story a{color:var(--text-primary);text-decoration:none}.top-story a:hover{text-decoration:underline}
 .home-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:var(--space-16);margin-top:var(--space-16);align-items:stretch}
-.home-row>.card{display:flex;flex-direction:column;gap:10px;padding:var(--space-16) var(--space-20)}
+.hg>.card,.hg-ln>.card{display:flex;flex-direction:column;gap:10px;padding:var(--space-16) var(--space-20)}
 .hc-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .hc-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;font:var(--type-caption);color:var(--text-tertiary)}
 .hc-foot a{font:var(--type-label);color:var(--action-primary);text-decoration:none;white-space:nowrap}
@@ -912,6 +912,41 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .ap-menu a:hover,.ap-menu button:hover{background:var(--surface-hover)}
 .ap-menu[hidden]{display:none}
 
+/* ---------- layout: narrow = summary then 3 cards; wide (1400px+) = timeline | summary | calls, ideas along the bottom ---------- */
+.hg{display:grid;gap:var(--space-16);margin-top:12px;grid-template-columns:1.2fr 1fr 1fr;grid-template-areas:"s s s" "c c c" "tc tl one";align-items:stretch}
+.hg-s{grid-area:s;min-width:0}.hg-c{grid-area:c;min-width:0}.hg-s .stk-strip{margin-top:0!important}.hg-c .hero{margin-top:0!important}
+.hg-tc{grid-area:tc}.hg-tl{grid-area:tl}.hg-one{grid-area:one}
+.hg-ln{grid-area:ln;display:none}
+.tc-more,.tc-others,.tl .grp-h{display:none}
+@media (min-width:1400px){
+  .home.wrap,.ap-bar .wrap{max-width:min(1760px,calc(100vw - 48px))!important}
+  .hg{grid-template-columns:minmax(250px,16%) minmax(0,1fr) minmax(300px,20%);grid-template-areas:"s s s" "tl c tc" "ln ln ln"}
+  .hg>.hg-one{display:none}
+  .hg-ln{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-16)}
+  .hg-ln .card{padding:var(--space-16) var(--space-20)}
+  .tc-more,.tc-others{display:grid;gap:8px}
+  .tl .grp-h{display:block;margin-top:6px;font:600 10px/1 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;color:var(--text-tertiary)}
+  .hg-tl .tl{gap:6px}
+}
+.tc-legs2{display:grid;gap:6px}
+.tc-legs2>div{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-8);border:1px solid var(--border-decorative);font:var(--type-label)}
+.tc-legs2 i{font-style:normal;font:600 10px/1 var(--font-sans);text-transform:uppercase;padding:4px 6px;border-radius:var(--radius-6);text-align:center}
+.tc-legs2 i.b{background:var(--fin-positive-soft)}.tc-legs2 i.s{background:var(--fb-error-soft)}
+.tc-legs2 b{font-variant-numeric:tabular-nums}
+.tc-lv4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center;font:500 10px/1.2 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary)}
+.tc-lv4 b{display:block;margin-top:3px;font:600 14px/1.2 var(--font-sans);letter-spacing:0;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.tc-lv4 b.up{color:var(--teal)}.tc-lv4 b.dn{color:var(--red)}
+.tc-cap{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:var(--radius-8);background:var(--navy-900);color:var(--white);font:600 11px/1 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.tc-cap b{font:600 16px/1 var(--font-sans);letter-spacing:0}
+.tc-meta2{font:var(--type-caption);color:var(--text-tertiary)}
+.tc-others p{margin:0;font:var(--type-caption);color:var(--text-secondary)}
+.lr3 .term{margin:0;font:var(--type-title)}.lr3 .one{margin:0;font:var(--type-body-md);color:var(--text-secondary)}.lr3 .one b{color:var(--text-primary)}
+
+@media (min-width:1400px) and (max-height:920px){
+  .tc-others,.tc-meta2,.hg-tl .hc-foot>span{display:none!important}
+  .hg-ln .card{padding:12px 16px;gap:6px}
+  .home .top-story{display:none}
+}
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:var(--space-16) var(--space-20)}
@@ -930,11 +965,11 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .home .tl{gap:3px}
 .home .lcard.hl.learned,.home .lcard.hl.learned *{opacity:1;filter:none}
 .hl-done{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-8);background:var(--fin-positive-soft);font:var(--type-caption);color:var(--text-primary)}
-@media (max-height:820px){.home .top-story{display:none}.home .hero-row{margin-top:8px}.home .stk-strip{margin-top:8px}.hl .one{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.hl-body>a.linkbtn,.home .hc-foot>span{display:none}.home-row>.card{padding:12px 16px;gap:8px}.hl-done{padding:5px 8px}}
+@media (max-height:820px){.home .top-story{display:none}.home .hero-row{margin-top:8px}.home .stk-strip{margin-top:8px}.hl .one{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.hl-body>a.linkbtn,.home .hc-foot>span{display:none}.hg>.card{padding:12px 16px;gap:8px}.hl-done{padding:5px 8px}}
 .home .ix .ch{white-space:nowrap}.home .ix .pt{display:none}
 .home .idx-card .ix .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (min-width:1100px){.home .stk-strip{margin-top:10px;padding:8px 16px}}
-@media (max-width:1100px){.home-row{grid-template-columns:1fr 1fr}.home-row .tc{grid-column:1/-1}}
+@media (max-width:1100px){.hg{grid-template-columns:1fr 1fr;grid-template-areas:"s s" "c c" "tc tc" "tl one"}}
 </style>
 </head>
 <body>
@@ -960,6 +995,8 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 </header>
 
 <main class="wrap home">
+  <div class="hg">
+    <div class="hg-s">
   <div class="stk-strip" role="region" aria-label="Your streak">
     <span class="flame" id="stkFlame" title="Lights up when you finish today's learning"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="fo" d="M12 1.5c1.2 3.9 5.6 6.2 5.6 11.4a5.6 5.6 0 0 1-11.2 0c0-2.6 1.2-4.3 2.5-5.6.3 2 1.3 3.2 2.5 3.7 0-3.7.6-6.8.6-9.5z"/><path class="fi" d="M12 12.2c.5 1.6 2.3 2.6 2.3 4.6a2.3 2.3 0 0 1-4.6 0c0-1.2.6-2 1.2-2.6.1.8.5 1.3 1 1.5 0-1.3.1-2.4.1-3.5z"/></svg></span>
     <div class="ss-n"><b id="stkN">6</b><span><em class="ss-hi">Welcome back, Trader</em>market days in a row</span></div>
@@ -967,7 +1004,8 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
     <div class="stk-goal" id="stkGoal"><span id="stkGoalTxt"></span><span class="pips" id="stkPips"><i></i><i></i><i></i></span></div>
     <div class="ss-end"><button class="linkbtn" id="stkOpen">Streak details →</button><span class="ss-ms" id="stkNext"></span></div>
   </div>
-
+    </div>
+    <div class="hg-c">
   <section class="hero" aria-label="Today's edition">
     <div class="hero-main">
       <div class="eyebrow">Good morning · Edition 144</div>
@@ -989,31 +1027,36 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
       <div class="card idx-card"><div class="head" style="margin:0 0 8px"><span class="eyebrow">Markets · Wed 11 Nov close</span><button class="linkbtn" data-go="markets">Markets desk →</button></div><div class="idx-strip" role="list" aria-label="Index closes"><div class="ix ixu"><div class="nm">Nifty 50</div><div class="lv">25,255.05</div><div class="ch">▲ +0.84%<span class=pt>+210.40</span></div></div><div class="ix ixu"><div class="nm">Sensex</div><div class="lv">81,879.40</div><div class="ch">▲ +0.95%<span class=pt>+772.75</span></div></div><div class="ix ixu"><div class="nm">Nifty Bank</div><div class="lv">60,792.40</div><div class="ch">▲ +1.76%<span class=pt>+1,051.15</span></div></div><div class="ix ixu"><div class="nm">Midcap 100</div><div class="lv">61,519.10</div><div class="ch">▲ +0.81%</div></div><div class="ix ixu"><div class="nm">Smallcap 100</div><div class="lv">19,489.35</div><div class="ch">▲ +1.59%</div></div><div class="ix ixu"><div class="nm">India VIX</div><div class="lv">17.56</div><div class="ch">▲ +0.77%</div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div></div></div>
     </div>
   </section>
-
-  <section class="home-row" aria-label="Today at a glance">
-    <article class="card tc" aria-label="Trade calls">
+    </div>
+    <article class="card tc hg-tc" aria-label="Trade calls">
       <div class="hc-head"><span class="eyebrow">Trade calls</span><span class="tc-tag">Research advice</span></div>
       <div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">Latest call</span>
         <div class="top"><b>SWIGGY · Put spread</b><span class="tc-act">Active</span></div>
         <div class="meta">Swing · 1 month · Risk medium · new today</div></div>
-      <p class="tc-why">Bearish continuation after a failed relief rally into the 20 EMA. Full levels and analysis in Trade Calls.</p>
+      <div class="tc-more">
+        <div class="tc-legs2"><div><i class="b">Buy</i>PUT 185<b>₹4.22</b></div><div><i class="s">Sell</i>PUT 180<b>₹2.35</b></div></div>
+        <div class="tc-lv4"><div>Entry<b>₹1.87</b></div><div>Target<b class="up">₹5.80</b></div><div>Stop loss<b class="dn">₹0.25</b></div><div>LTP<b>₹1.92</b></div></div>
+        <div class="tc-cap"><span>Approx capital</span><b>₹21,000</b></div>
+        <div class="tc-meta2">1,825 qty · expiry 23 Nov 2026</div>
+      </div>
+      <p class="tc-why">Bearish continuation after a failed relief rally into the 20 EMA. Full analysis in Trade Calls.</p>
+      <div class="tc-others"><span class="eyebrow" style="color:var(--text-tertiary)">Also active</span><p>2 more calls · open Trade Calls to see them</p></div>
       <div class="hc-foot"><span>Research advice</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
     </article>
-
-    <article class="card" aria-label="Today's market timeline">
+    <article class="card hg-tl" aria-label="Today's market timeline">
       <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><a class="linkbtn" href="today-demo-2026-11-12.html#calendar">Calendar →</a></div>
       <div class="tl-st"><b id="tlCount">–</b><span id="tlSub"></span></div>
       <div class="tl-bar"><i id="tlFill"></i></div>
       <ul class="tl" id="tl"></ul>
       <div class="hc-foot"><span>IST · amber = today's events</span></div>
     </article>
-
-    <article class="card lcard hl" id="learnCard" aria-label="Today's learning">
+    <article class="card lcard hl hg-one" id="learnCard" aria-label="Today's learning">
       <div class="hc-head"><span class="eyebrow" id="hlKind">Learn</span><span class="num" id="hlCount" style="font:var(--type-caption);color:var(--text-tertiary)">1 / 3</span></div>
       <div class="hl-body" id="hlBody" aria-live="polite"></div>
       <div class="hc-foot"><div class="lnav"><button class="round" id="hlPrev" aria-label="Previous idea">←</button><button class="round" id="hlNext" aria-label="Next idea">→</button></div><button class="got" id="hlGot" data-learn="term">✓ Got it</button></div>
     </article>
-  </section>
+    <section class="hg-ln" id="learnRow" aria-label="Today's three ideas"></section>
+  </div>
 
   <div style="height:8px"></div>
 </main>
@@ -1132,9 +1175,10 @@ function renderToday(){const ist=istNow(),now=ist.getHours()*60+ist.getMinutes()
   $('#tlCount').textContent=!trading?'Weekend':open?`Closes in ${dur(CLOSE-now)}`:now<OPEN?`Opens in ${dur(OPEN-now)}`:'Closed for today';
   $('#tlSub').textContent=open?'Market open':now<OPEN?'Pre-market':'After market';
   $('#tlFill').style.width=`${Math.max(0,Math.min(100,(now-OPEN)/(CLOSE-OPEN)*100))}%`;
-  const nxt=DAY.find(d=>mins(d.t)>now),ni=nxt?DAY.indexOf(nxt):DAY.length,from=Math.max(0,Math.min(ni-1,DAY.length-6));
-  $('#tl').innerHTML=DAY.slice(from,from+6).map(d=>`<li class="${mins(d.t)<=now?'past':''} ${d===nxt?'next':''} ${d.ev?'ev':''}"><span class="t">${d.t}</span><span class="d"></span><span>${d.b}</span></li>`).join('')}
+  const wide=matchMedia('(min-width:1400px)').matches,nxt=DAY.find(d=>mins(d.t)>now),ni=nxt?DAY.indexOf(nxt):DAY.length,from=wide?0:Math.max(0,Math.min(ni-1,DAY.length-6));let grp='';
+  $('#tl').innerHTML=DAY.slice(from,wide?DAY.length:from+6).map(d=>(d.g!==grp?(grp=d.g,`<li class="grp-h">${d.g}</li>`):'')+`<li class="${mins(d.t)<=now?'past':''} ${d===nxt?'next':''} ${d.ev?'ev':''}"><span class="t">${d.t}</span><span class="d"></span><span>${d.b}</span></li>`).join('')}
 renderToday();setInterval(renderToday,30000);
+addEventListener('resize',()=>{clearTimeout(window._tlr);window._tlr=setTimeout(renderToday,150)});
 
 /* ================= STREAK =================
    Rule: a market day counts when the reader finishes that day's 3 Learn cards ("Got it").
@@ -1196,6 +1240,8 @@ $('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,
 /* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
 $('#hlGot').addEventListener('click',()=>setTimeout(()=>{if(doneToday()){hlShow(hi,true);return}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)},0));
 hlShow(hi,false);
+$('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${x.kind}</span></div><h3 class="term">${x.h}</h3><p class="one">${x.one}</p><div class="hc-foot"><a class="linkbtn" href="today-demo-2026-11-12.html#learn" style="font:var(--type-caption)">See the picture →</a><button class="got" data-learn="${x.id}">✓ Got it</button></div></article>`).join('');
+renderStreak();
 
 document.addEventListener('click',e=>{const m=$('#apMenu'),b=$('#apMore');if(b.contains(e.target)){m.hidden=!m.hidden;b.setAttribute('aria-expanded',String(!m.hidden))}else if(!m.contains(e.target)||e.target.closest('a')){m.hidden=true;b.setAttribute('aria-expanded','false')}});
 /* ================= AUDIO (same file and chapters as the full brief) ================= */
