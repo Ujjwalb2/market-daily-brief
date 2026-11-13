@@ -106,36 +106,37 @@ button{font-family:var(--font-sans)}
 .idx-card .ix{padding:var(--space-8) var(--space-12)}
 .idx-card .ix .lv{font:600 18px/1.25 var(--font-sans);margin:4px 0 2px}
 .idx-card .idx-src{margin-top:2px}
-/* institutional activity: buy/sell bars from a zero line + shrinking FII short */
-.inst-grid{display:grid;grid-template-columns:1.25fr 1.25fr 1fr;gap:var(--space-24)}
-.flp{display:grid;gap:18px;align-content:start}
-.flp-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:var(--type-caption);color:var(--text-tertiary)}
-.flp-h b{font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
-.flr{display:grid;grid-template-columns:34px 1fr 1fr 78px;align-items:center}
-.flr .who{font:var(--type-label)}
-.flr .sell,.flr .buy{height:22px;display:flex}
-.flr .sell{justify-content:flex-end;border-right:2px solid var(--text-secondary)}
-.flr .sell i,.flr .buy i{display:block;height:100%}
-.flr .sell i{background:var(--slate-500);border-radius:3px 0 0 3px}
-.flr .buy i{background:var(--teal);border-radius:0 3px 3px 0}
-.flr .v{text-align:right;font:600 15px/1.2 var(--font-sans);font-variant-numeric:tabular-nums}
-.flr .v small{display:block;font:500 11px/1.2 var(--font-sans);color:var(--text-tertiary)}
-.flx{display:grid;grid-template-columns:34px 1fr 1fr 78px;font:500 10px/1 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary)}
-.flx span:nth-child(2){text-align:right;padding-right:6px}.flx span:nth-child(3){padding-left:6px}
-.dvp{border-left:1px solid var(--border-decorative);padding-left:var(--space-24);display:grid;gap:8px;align-content:start}
-.oir{display:grid;grid-template-columns:72px 1fr 64px;gap:10px;align-items:center;font:var(--type-caption);color:var(--text-secondary)}
+/* institutional activity: one tug-of-war bar per period, futures shorts, put-call gauge */
+.inst-grid{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:var(--space-24)}
+.flows{display:grid;gap:18px;align-content:start}
+.tw-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:var(--type-caption);color:var(--text-tertiary);margin-bottom:6px}
+.tw-h b{font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.tw-bar{display:grid;grid-template-columns:1fr 1fr;height:20px}
+.tw-bar .l{display:flex;justify-content:flex-end;border-right:2px solid var(--text-secondary)}
+.tw-bar i{display:block;height:100%}
+.tw-bar .l i{background:var(--slate-500);border-radius:4px 0 0 4px}
+.tw-bar .r i{background:var(--teal);border-radius:0 4px 4px 0}
+.tw-v{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font:var(--type-caption);color:var(--text-secondary)}
+.tw-v b{font:600 15px/1.2 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.ipanel{border-left:1px solid var(--border-decorative);padding-left:var(--space-24);display:grid;gap:8px;align-content:start}
+.ipanel .tw-h{margin-bottom:2px}
+.oir{display:grid;grid-template-columns:68px 1fr 60px;gap:10px;align-items:center;font:var(--type-caption);color:var(--text-secondary)}
 .oir .bar{height:14px;border-radius:3px;background:var(--border-decorative);overflow:hidden}
 .oir .bar i{display:block;height:100%;background:var(--slate-500)}
 .oir b{text-align:right;font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
-.dvp .note{font:var(--type-caption);color:var(--text-secondary)}
-.dvp .kv{display:flex;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid var(--border-decorative);font:var(--type-caption);color:var(--text-secondary)}
-.dvp .kv b{font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
-.dvp .kv small{display:block;font:500 11px/1.3 var(--font-sans);color:var(--text-tertiary)}
-.dvp .pcr{border-top:none;padding-top:0}
-.pcr-scale{position:relative;display:flex;justify-content:space-between;padding-top:12px;font:500 10px/1 var(--font-sans);color:var(--text-tertiary)}
-.pcr-scale::before{content:"";position:absolute;left:0;right:0;top:3px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--slate-500),var(--border-decorative) 50%,var(--teal))}
-.pcr-scale i{position:absolute;top:0;width:3px;height:10px;margin-left:-1px;border-radius:2px;background:var(--text-primary)}
-@media (max-width:1100px){.inst-grid{grid-template-columns:1fr 1fr}.dvp{grid-column:1/-1;border-left:none;padding-left:0;border-top:1px solid var(--border-decorative);padding-top:var(--space-16)}}
+.ipanel .note{font:var(--type-caption);color:var(--text-secondary)}
+.ipanel .kv{display:flex;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid var(--border-decorative);font:var(--type-caption);color:var(--text-secondary)}
+.ipanel .kv b{font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.pcr-g{width:100%;max-width:210px;justify-self:center;display:block}
+.pcr-g path{fill:none;stroke-width:14;stroke-linecap:butt}
+.pcr-g .needle{stroke:var(--text-primary);stroke-width:3;stroke-linecap:round}
+.pcr-g .hub{fill:var(--text-primary)}
+.pcr-g text{font:500 10px var(--font-sans);fill:var(--text-tertiary)}
+.pcr-v{text-align:center;margin-top:-6px}
+.pcr-v b{display:block;font:600 22px/1.1 var(--font-sans);font-variant-numeric:tabular-nums}
+.pcr-v span{font:var(--type-caption);color:var(--text-tertiary)}
+.pcr-z{display:flex;justify-content:space-between;font:500 10px/1 var(--font-sans);color:var(--text-tertiary)}
+@media (max-width:1100px){.inst-grid{grid-template-columns:1fr 1fr}.flows{grid-column:1/-1}.ipanel:nth-child(2){border-left:none;padding-left:0}}
 .au{color:var(--teal);font-size:11px}.ad{color:var(--slate-500);font-size:11px}
 .mb{display:block;height:6px;border-radius:var(--radius-pill);background:var(--border-decorative);overflow:hidden;margin-top:4px}
 .mb i{display:block;height:100%;border-radius:var(--radius-pill)}
@@ -973,24 +974,39 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
     <div class="card inst span3">
       <div class="head" style="margin:0 0 10px"><span class="eyebrow">Institutional activity · Wed 11 Nov</span><span class="src">NSE · cash ₹ cr provisional · F&amp;O participant OI, bhavcopy</span></div>
       <div class="inst-grid">
-        <div class="flp">
-          <div class="flp-h"><span>Wednesday</span><span>Net <b>+4,128</b></span></div>
-          <div class="flx" aria-hidden="true"><span></span><span>Sold</span><span>Bought</span><span></span></div>
-          <div class="flr"><span class="who">FIIs</span><span class="sell"><i style="width:0%"></i></span><span class="buy"><i style="width:100%"></i></span><span class="v">+12,563<small>net bought</small></span></div><div class="flr"><span class="who">DIIs</span><span class="sell"><i style="width:67%"></i></span><span class="buy"><i style="width:0%"></i></span><span class="v">−8,435<small>net sold</small></span></div>
+        <div class="flows">
+          <div>
+            <div class="tw-h"><span>Wednesday · cash, ₹ crore</span><span>Net <b>+4,128</b></span></div>
+            <div class="tw-bar" role="img" aria-label="Wednesday · cash, ₹ crore: DIIs sold −8,435, FIIs bought +12,563 crore"><span class="l"><i style="width:67%"></i></span><span class="r"><i style="width:100%"></i></span></div>
+            <div class="tw-v"><span><b>−8,435</b> DIIs sold</span><span>FIIs bought <b>+12,563</b></span></div>
+          </div>
+          <div>
+            <div class="tw-h"><span>November so far</span></div>
+            <div class="tw-bar" role="img" aria-label="November so far: DIIs sold −40,504, FIIs bought +65,735 crore"><span class="l"><i style="width:62%"></i></span><span class="r"><i style="width:100%"></i></span></div>
+            <div class="tw-v"><span><b>−40,504</b> DIIs sold</span><span>FIIs bought <b>+65,735</b></span></div>
+          </div>
         </div>
-        <div class="flp">
-          <div class="flp-h"><span>November so far</span></div>
-          <div class="flx" aria-hidden="true"><span></span><span>Sold</span><span>Bought</span><span></span></div>
-          <div class="flr"><span class="who">FIIs</span><span class="sell"><i style="width:0%"></i></span><span class="buy"><i style="width:100%"></i></span><span class="v">+65,735<small>net bought</small></span></div><div class="flr"><span class="who">DIIs</span><span class="sell"><i style="width:62%"></i></span><span class="buy"><i style="width:0%"></i></span><span class="v">−40,504<small>net sold</small></span></div>
-        </div>
-        <div class="dvp">
-          <div class="flp-h"><span>FII net short · Nifty futures</span><span>contracts</span></div>
+        <div class="ipanel">
+          <div class="tw-h"><span>FII net short · Nifty futures</span><span>contracts</span></div>
           <div class="oir"><span>30 Oct</span><span class="bar"><i style="width:100%"></i></span><b>2.4 lakh</b></div>
           <div class="oir"><span>Wed 11 Nov</span><span class="bar"><i style="width:29%"></i></span><b>70,000</b></div>
           <div class="note">Down about 70%: foreign funds closed most of their bets against the Nifty.</div>
           <div class="kv"><span>Clients net long, Nifty futures</span><b>67,000</b></div>
-          <div class="kv pcr"><span>Put-call ratio · Nifty options<small>all expiries · 1.15 on Mon 9 Nov</small></span><b>0.98</b></div>
-          <div class="pcr-scale" aria-hidden="true" title="Scale 0.5 to 1.5"><i style="left:48%"></i><span>more calls</span><span>balanced 1.0</span><span>more puts</span></div>
+        </div>
+        <div class="ipanel">
+          <div class="tw-h"><span>Put-call ratio · Nifty options</span><span>all expiries</span></div>
+          <svg class="pcr-g" viewBox="0 0 200 118" role="img" aria-label="Put-call ratio 0.98 on a scale from 0.5 to 1.5; 1.0 is balanced">
+            <path d="M26.0 96.0 A74 74 0 0 1 66.4 30.1" stroke="var(--slate-500)"/>
+            <path d="M70.6 28.1 A74 74 0 0 1 129.4 28.1" stroke="var(--border-control)" opacity=".45"/>
+            <path d="M133.6 30.1 A74 74 0 0 1 174.0 96.0" stroke="var(--teal)"/>
+            <line x1="100" y1="96" x2="96.4" y2="38.1" class="needle"/>
+            <circle cx="100" cy="96" r="5" class="hub"/>
+            <text x="26.0" y="112" text-anchor="middle">0.5</text>
+            <text x="100" y="9" text-anchor="middle">1.0</text>
+            <text x="174.0" y="112" text-anchor="middle">1.5</text>
+          </svg>
+          <div class="pcr-z"><span>more calls</span><span>more puts</span></div>
+          <div class="pcr-v"><b>0.98</b><span>balanced · 1.15 on Mon 9 Nov</span></div>
         </div>
       </div>
     </div>
