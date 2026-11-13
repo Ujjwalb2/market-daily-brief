@@ -1195,6 +1195,13 @@ body > .ticker{top:55px;z-index:39}
 @media (min-width:1400px) and (max-width:1799px){.fo-k small,.fo-lg span:last-child{display:none}.fo-k b{font-size:15px}.fo-k>div{padding:6px 7px}}
 @media (min-width:1400px) and (max-height:920px){.fo-k small{display:none}.hg-fo .hc-foot>span{display:none}}
 
+/* Trade Calls rotation */
+.tc-body{display:flex;flex-direction:column;gap:10px;flex:1 1 auto;min-height:0}
+.tc-body.in{animation:hlIn .35s ease}
+@media (prefers-reduced-motion:reduce){.tc-body.in{animation:none}}
+.tc-legs2 small{font:600 11px/1 var(--font-sans);color:var(--text-tertiary);margin-left:2px;white-space:nowrap}.tc-legs2>div{white-space:nowrap}
+.tc-dots{display:flex!important}.tc-dots i{cursor:pointer}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -1306,15 +1313,8 @@ body > .ticker{top:55px;z-index:39}
     </div>
     <article class="card tc hg-tc" aria-label="Trade calls">
       <div class="hc-head"><span class="eyebrow">Trade calls</span><span class="tc-tag">Research advice</span></div>
-      <div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">Latest call</span>
-        <div class="top"><b>SWIGGY · Put spread</b><span class="tc-act">Active</span></div>
-        <div class="meta">Swing · 1 month · Medium risk</div></div>
-      <div class="tc-more">
-        <div class="tc-legs2"><div><i class="b">Buy</i>PUT 185<b>₹4.22</b></div><div><i class="s">Sell</i>PUT 180<b>₹2.35</b></div></div>
-        <div class="tc-lv4"><div>Entry<b>₹1.87</b></div><div>Target<b class="up">₹5.80</b></div><div>Stop loss<b class="dn">₹0.25</b></div><div>LTP<b>₹1.92</b></div></div>
-        <div class="tc-cap"><span>Approx capital</span><b>₹21,000</b></div>
-      </div>
-            <div class="hc-foot"><span>+2 more active</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
+      <div class="tc-body" id="tcBody" aria-live="polite"></div>
+      <div class="hc-foot"><span class="hl-dots tc-dots" id="tcDots"></span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
     </article>
     <article class="card hg-fo" aria-label="Nifty F&amp;O levels">
       <div class="hc-head"><span class="eyebrow">F&amp;O levels · Nifty</span><span class="fo-exp">Expiry Tue 17 Nov</span></div>
@@ -1571,6 +1571,25 @@ renderMvx('s');
   $('.seg2').addEventListener('click',e=>{const b=e.target.closest('button');if(b)mvMode=b.dataset.m});
   setInterval(()=>{if(mvHold||document.hidden)return;mvMode=mvMode==='s'?'x':'s';renderMvx(mvMode);const l=$('#mvx');l.classList.remove('in');void l.offsetWidth;l.classList.add('in')},5000)}
 renderToday();setInterval(renderToday,30000);
+
+/* ================= TRADE CALLS: one call at a time, switches every 5 s ================= */
+const CALLS=[
+ {n:'SWIGGY',k:'Put spread',when:'Posted today',meta:'Swing · 1 month · Medium risk',legs:[['b','PUT 185','₹4.22',1],['s','PUT 180','₹2.35',1]],lv:['₹1.87','₹5.80','₹0.25','₹1.92'],cap:'₹21,000'},
+ {n:'FEDERALBNK',k:'Call spread',when:'Posted 11 Nov',meta:'Swing · 1 week · High risk',legs:[['b','CALL 360','₹5.55',1],['s','CALL 380','₹1.40',2]],lv:['₹2.75','₹5.90','₹1.40','₹3.95'],cap:'₹1,14,000'}];
+let ti=0,tcHold=false;
+$('#tcDots').innerHTML=CALLS.map(()=>'<i></i>').join('');
+function tcShow(i,anim){ti=(i+CALLS.length)%CALLS.length;const c=CALLS[ti],b=$('#tcBody');
+  b.innerHTML=`<div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">${c.when} · ${ti+1} of ${CALLS.length} active</span>
+    <div class="top"><b>${c.n} · ${c.k}</b><span class="tc-act">Active</span></div><div class="meta">${c.meta}</div></div>
+    <div class="tc-more"><div class="tc-legs2">${c.legs.map(l=>`<div><i class="${l[0]}">${l[0]==='b'?'Buy':'Sell'}</i><span>${l[1]}${l[3]>1?` <small>×${l[3]}</small>`:''}</span><b>${l[2]}</b></div>`).join('')}</div>
+    <div class="tc-lv4"><div>Entry<b>${c.lv[0]}</b></div><div>Target<b class="up">${c.lv[1]}</b></div><div>Stop loss<b class="dn">${c.lv[2]}</b></div><div>LTP<b>${c.lv[3]}</b></div></div>
+    <div class="tc-cap"><span>Approx capital</span><b>${c.cap}</b></div></div>`;
+  [...$('#tcDots').children].forEach((d,j)=>d.classList.toggle('on',j===ti));
+  if(anim){b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}
+tcShow(0,false);
+$('#tcDots').addEventListener('click',e=>{const d=e.target.closest('i');if(d)tcShow([...$('#tcDots').children].indexOf(d),true)});
+{const card=$('.hg-tc');['mouseenter','focusin'].forEach(ev=>card.addEventListener(ev,()=>tcHold=true));['mouseleave','focusout'].forEach(ev=>card.addEventListener(ev,()=>tcHold=false));
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(()=>{if(!tcHold&&!document.hidden)tcShow(ti+1,true)},5000)}
 addEventListener('resize',()=>{clearTimeout(window._tlr);window._tlr=setTimeout(renderToday,150)});
 
 /* ================= STREAK =================
