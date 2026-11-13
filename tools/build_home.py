@@ -23,6 +23,8 @@ def _block(start):
         depth += 1 if m.group().startswith('<div') else -1
         if depth==0: return s[k:k+m.end()]
 MV_LIST=_block('<div class="mv-list"')
+MV_DATA=json.dumps([{'n':n.replace('&amp;','&'),'v':float(v.replace('−','-').replace('%','').replace('+',''))} for n,v in re.findall(r'class="nm">([^<]*)</span>.*?<b>([^<]*)</b>', MV_LIST)],ensure_ascii=False)
+SEC_DATA=json.dumps([{'n':n,'v':float(v)} for n,v in re.findall(r"\['([^']+)',(-?[\d.]+)\]", s[s.index("$('#heat').innerHTML="):s.index(".join('');",s.index("$('#heat').innerHTML="))])])
 js_heat=s[s.index("$('#heat').innerHTML="):s.index(".join('');",s.index("$('#heat').innerHTML="))+len(".join('');")]
 
 import re as _re
@@ -309,6 +311,24 @@ body > .ticker{top:55px;z-index:39}
 @media (min-width:1400px) and (max-height:920px){.bk-tabs,.bk-sub{display:none}.home .hg-tl .tl-next{display:none!important}.bk-list small{display:none}.hg-bk .hc-foot>span{display:none}}
 
 @media (min-width:1400px) and (max-width:1700px){.hg-dl .mv-row,.hg-dl .mv-ref{grid-template-columns:12px minmax(0,1fr) 20% 50px;gap:6px}.hg-dl.movers{grid-template-columns:minmax(0,1fr) 132px!important}.hg-dl .heat div{padding:3px 5px}}
+/* movers v2: one chart, Nifty 100 / Sectors switch, bars from a zero line */
+.mvx{gap:8px}
+.seg2{display:inline-flex;padding:2px;border-radius:var(--radius-pill);background:var(--surface-glass);border:1px solid var(--border-decorative)}
+.seg2 button{border:0;background:none;color:var(--text-secondary);font:600 11.5px/1 var(--font-sans);padding:6px 10px;border-radius:var(--radius-pill);cursor:pointer}
+.seg2 button.on{background:var(--surface-raised);color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.mvx-list{display:grid;gap:2px}
+.mvx-r{display:grid;grid-template-columns:minmax(0,1fr) minmax(90px,34%) 56px;gap:10px;align-items:center;padding:3px 0;font:500 13px/1.3 var(--font-sans)}
+.mvx-r .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary)}
+.mvx-r .b{display:grid;grid-template-columns:1fr 1fr;height:12px}
+.mvx-r .b i{display:flex}.mvx-r .b .l{justify-content:flex-end;border-right:1.5px solid var(--text-tertiary)}
+.mvx-r .b em{display:block;height:100%}
+.mvx-r.u .b em{background:var(--teal);border-radius:0 3px 3px 0}
+.mvx-r.d .b em{background:var(--slate-500);border-radius:3px 0 0 3px}
+.mvx-r b{text-align:right;font:600 13px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.mvx-r.u b{color:var(--teal)}
+.mvx-foot{margin-top:auto;font:var(--type-caption);color:var(--text-tertiary)}.mvx-foot b{color:var(--text-secondary)}
+
+@media (min-width:1400px) and (max-height:920px){.mvx-r{padding:1px 0}.mvx{gap:6px}}
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -390,10 +410,10 @@ body=f"""</style>
       <div class="hl-body" id="hlBody" aria-live="polite"></div>
       <div class="hc-foot"><div class="lnav"><button class="round" id="hlPrev" aria-label="Previous idea">←</button><span class="hl-dots" id="hlDots"><i></i><i></i><i></i></span><button class="round" id="hlNext" aria-label="Next idea">→</button></div><a class="hl-all" href="{BRIEF}#learn">Read all 3 in full →</a><button class="got" id="hlGot" data-learn="term">✓ Got it</button></div>
     </article>
-    <article class="card hg-dl movers" aria-label="Nifty 100 movers and sectors">
-      <div class="hc-head"><span class="eyebrow">Nifty 100 movers · Wed 11 Nov</span><span class="src">NSE, closing</span></div>
-      {MV_LIST}
-      <div class="mv-sec"><div class="hc-head"><span class="eyebrow">Sectors</span><a class="linkbtn" href="{BRIEF}#brief">Full brief →</a></div><div class="heat" id="heat" style="grid-template-columns:repeat(6,1fr)"></div></div>
+    <article class="card hg-dl mvx" aria-label="Today's movers">
+      <div class="hc-head"><span class="eyebrow">Movers · Wed 11 Nov</span><div class="seg2" role="tablist"><button class="on" data-m="s" role="tab" aria-selected="true">Nifty 100</button><button data-m="x" role="tab" aria-selected="false">Sectors</button></div></div>
+      <div class="mvx-list" id="mvx" aria-live="polite"></div>
+      <div class="mvx-foot" id="mvxFoot"></div>
     </article>
     <article class="card hg-bk" aria-label="Baskets">
       <div class="hc-head"><span class="eyebrow">Baskets</span><a class="bk-build" href="https://dev.alphapad.in/baskets">+ Build basket</a></div>
@@ -433,7 +453,14 @@ document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(
 function renderNext(){{const up=EVENTS.filter(e=>e.d>TODAY).sort((a,b)=>a.d-b.d).slice(0,3);
   $('#tlNext').innerHTML=up.map(e=>`<li class="${{TYPES[e.t].c}}"><span class="t">${{fmt(e.d).replace(/ [A-Za-z]+$/,'')}}</span><span>${{e.title}}</span></li>`).join('')}}
 renderNext();
-{js_heat}
+const MVS={MV_DATA},SECS={SEC_DATA};
+function renderMvx(m){{const rows=m==='x'?SECS:MVS,mx=Math.max(...rows.map(r=>Math.abs(r.v)));
+  $('#mvx').innerHTML=rows.map(r=>{{const w=(Math.abs(r.v)/mx*100).toFixed(1),up=r.v>=0;
+    return `<div class="mvx-r ${{up?'u':'d'}}"><span class="n">${{r.n}}</span><span class="b"><i class="l">${{up?'':`<em style="width:${{w}}%"></em>`}}</i><i class="r">${{up?`<em style="width:${{w}}%"></em>`:''}}</i></span><b>${{up?'+':'−'}}${{Math.abs(r.v).toFixed(2)}}%</b></div>`}}).join('');
+  $('#mvxFoot').innerHTML=m==='x'?'Sector indices · Sources: Kotak Securities, DSIJ':'Nifty 100 itself <b>+0.86%</b> · 72 of 100 rose · NSE closing';
+  $$('.seg2 button').forEach(b=>{{const on=b.dataset.m===m;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))}})}}
+$('.seg2').addEventListener('click',e=>{{const b=e.target.closest('button');if(b)renderMvx(b.dataset.m)}});
+renderMvx('s');
 renderToday();setInterval(renderToday,30000);
 addEventListener('resize',()=>{{clearTimeout(window._tlr);window._tlr=setTimeout(renderToday,150)}});
 
