@@ -1139,7 +1139,7 @@ FII/DII figures are provisional. Rupee close and put-call ratio were not availab
   <div class="wrap">
     <button class="play" id="playBtn" aria-label="Play today's brief">▶</button>
     <div style="min-width:0">
-      <div class="p-title" id="pTitle">Today's brief · 4:43</div>
+      <div class="p-title" id="pTitle">Today's brief · 4:46</div>
       <div class="p-sub" id="pSub">7 chapters · keeps playing on every tab</div>
       <div class="chapters" id="chapters"></div>
     </div>
@@ -1381,7 +1381,7 @@ function renderAr(){$('#arTitle').textContent=`${MON[arCur.getMonth()]} ${arCur.
   $('#arGrid').innerHTML=DOW.map(d=>`<div class="dow">${d}</div>`).join('')+monthCells(arCur).map(d=>{const ed=EDS.find(e=>same(e.d,d)),out=d.getMonth()!==arCur.getMonth()||d>TODAY;
     return `<button class="ed-cell ${out?'out':''} ${ed&&!out?'has':''} ${same(d,TODAY)?'today':''} ${same(d,arSel)?'sel':''}" data-day="${key(d)}" ${out||!ed?'disabled':''} aria-label="${fmt(d)}${ed?', edition '+ed.n:''}"><span class="dn">${d.getDate()}</span>${ed&&!out?`<span class="no">#${ed.n}</span>`:''}</button>`}).join('');
   const ed=EDS.find(e=>same(e.d,arSel));
-  $('#arPanel').innerHTML=ed?`<div class="eyebrow">Edition #${ed.n}${same(ed.d,TODAY)?' · today':''}</div><h3 style="margin:4px 0;font:var(--type-title)">${ed.title}</h3><div class="src">${fmt(ed.d)} · 5 stories · ${same(ed.d,TODAY)?'4:43':'4:'+(10+ed.n%40)} audio</div>
+  $('#arPanel').innerHTML=ed?`<div class="eyebrow">Edition #${ed.n}${same(ed.d,TODAY)?' · today':''}</div><h3 style="margin:4px 0;font:var(--type-title)">${ed.title}</h3><div class="src">${fmt(ed.d)} · 5 stories · ${same(ed.d,TODAY)?'4:46':'4:'+(10+ed.n%40)} audio</div>
     <div style="margin-top:12px;display:grid;gap:8px"><button class="btn primary">Open this edition</button><button class="btn secondary">▶ Play its audio</button></div>`:'<div class="empty">No edition this day</div>'}
 $('#arGrid').onclick=e=>{const c=e.target.closest('.ed-cell');if(!c||c.disabled)return;arSel=fromKey(c.dataset.day);renderAr()};
 $('#arPrev').onclick=()=>{arCur=new Date(arCur.getFullYear(),arCur.getMonth()-1,1);renderAr()};
@@ -1391,7 +1391,7 @@ renderAr();
 /* ================= docked player (real audio) ================= */
 const AUD=new Audio('demo/springpad-today-2026-11-12.m4a');AUD.preload='metadata';
 fetch('demo/springpad-today-2026-11-12.m4a').then(r=>r.ok?r.blob():null).then(bl=>{if(bl){const t=AUD.currentTime;AUD.src=URL.createObjectURL(bl);AUD.currentTime=t}}).catch(()=>{});
-const CH=[{t:'Market in 30 seconds',start:0,s:-1},{t:STORIES[0].h,start:39.85,s:0},{t:STORIES[1].h,start:85.79,s:1},{t:STORIES[2].h,start:130.26,s:2},{t:STORIES[3].h,start:171.51,s:3},{t:STORIES[4].h,start:201.59,s:4},{t:'Quick hits, term of the day, sign-off',start:236.06,s:-1}];
+const CH=[{t:'Market in 30 seconds',start:0,s:-1},{t:STORIES[0].h,start:39.85,s:0},{t:STORIES[1].h,start:85.79,s:1},{t:STORIES[2].h,start:133.37,s:2},{t:STORIES[3].h,start:174.62,s:3},{t:STORIES[4].h,start:204.7,s:4},{t:'Quick hits, term of the day, sign-off',start:239.17,s:-1}];
 $('#chapters').innerHTML=CH.map((c,i)=>`<button aria-label="Chapter ${i+1}: ${c.t}"></button>`).join('');
 let ch=-1,playing=false,sp=0;const mmss=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
 function showChapter(i){if(i===ch)return;ch=i;[...$('#chapters').children].forEach((b,j)=>b.className=j<i?'done':j===i?'now':'');
@@ -1401,7 +1401,7 @@ function setChapter(i){AUD.currentTime=CH[i].start+0.05;ch=-1;showChapter(i)}
 function play(on){playing=on;$('#playBtn').textContent=on?'❚❚':'▶';$('#playBtn').setAttribute('aria-label',on?'Pause':'Play today\'s brief');
   if(on){if(ch<0)showChapter(0);AUD.play();$('#carousel').classList.toggle('playing',CH[ch].s>=0)}else{AUD.pause();$('#carousel').classList.remove('playing')}}
 AUD.addEventListener('timeupdate',()=>{const t=AUD.currentTime;let i=0;CH.forEach((c,j)=>{if(t>=c.start)i=j});showChapter(i);
-  $('#pTitle').textContent=`Chapter ${i+1} of ${CH.length} · ${mmss(t)} / ${mmss(AUD.duration||283)}`});
+  $('#pTitle').textContent=`Chapter ${i+1} of ${CH.length} · ${mmss(t)} / ${mmss(AUD.duration||286)}`});
 AUD.addEventListener('ended',()=>{play(false);visited.add('brief')});
 $('#playBtn').onclick=()=>play(!playing);
 $('#chapters').onclick=e=>{const i=[...$('#chapters').children].indexOf(e.target);if(i>=0){setChapter(i);play(true)}};
