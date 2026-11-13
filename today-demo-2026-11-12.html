@@ -279,6 +279,11 @@ body.learn-rail #p-learn,body.learn-rail .stab[data-tab="learn"]{display:none!im
 .lr-head,.lr-nav,.rail.right .rail-hint{flex:none}
 .lr-stage{display:grid;grid-template-columns:minmax(0,1fr);flex:0 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;border-radius:var(--radius-12)}
 .lr-stage .lcard{grid-area:1/1;min-width:0;transition:opacity .3s}
+.lr-stage .lcard.lr-in{animation:lrIn .35s ease}
+@keyframes lrIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.learn .lcard.lc-next{animation:lcNext 1.1s ease;outline:2px solid var(--action-primary);outline-offset:2px}
+@keyframes lcNext{0%{transform:scale(.98)}40%{transform:scale(1.01)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.lr-stage .lcard.lr-in,.learn .lcard.lc-next{animation:none}}
 .lr-stage .lviz svg{max-width:100%}
 .lr-stage .lcard .term,.lr-stage .one{overflow-wrap:anywhere}
 @media (max-height:760px){.lr-stage .lviz .cap,.lr-stage .lhead .chip,.rail.right .rail-hint{display:none}.lr-stage .lcard{gap:8px;padding:10px 14px}.lr-stage .lviz{padding:8px}.lr-stage .one{font-size:12px;line-height:1.45}}.lr-stage .lcard.lr-off{visibility:hidden;opacity:0}
@@ -1528,7 +1533,8 @@ renderStreak();
 const LR_MQ=matchMedia('(min-width:1400px)'),LCARDS=[...document.querySelectorAll('#p-learn .lcard')],LGRID=$('#p-learn .learn');
 let lrI=0,lrHold=false;
 const railMode=()=>document.body.classList.contains('learn-rail');
-function lrShow(i){lrI=(i+LCARDS.length)%LCARDS.length;const r=railMode();
+function lrShow(i){const prev=lrI;lrI=(i+LCARDS.length)%LCARDS.length;const r=railMode();
+  if(r&&prev!==lrI){const c=LCARDS[lrI];c.classList.remove('lr-in');void c.offsetWidth;c.classList.add('lr-in')}
   LCARDS.forEach((c,j)=>{c.classList.toggle('lr-off',r&&j!==lrI);c.inert=r&&j!==lrI});$('#lrCount').textContent=`${lrI+1} / ${LCARDS.length}`;
   [...$('#lrDots').children].forEach((d,j)=>{d.classList.toggle('on',j===lrI);d.classList.toggle('done',LRN.has(LEARN_IDS[j]))})}
 function lrPlace(){const r=LR_MQ.matches;document.body.classList.toggle('learn-rail',r);
@@ -1539,7 +1545,11 @@ $('#lrPrev').onclick=()=>lrShow(lrI-1);$('#lrNext').onclick=()=>lrShow(lrI+1);
 const RR=$('.rail.right');RR.addEventListener('mouseenter',()=>lrHold=true);RR.addEventListener('mouseleave',()=>lrHold=false);
 RR.addEventListener('focusin',()=>lrHold=true);RR.addEventListener('focusout',()=>lrHold=false);
 setInterval(()=>{if(railMode()&&!lrHold&&!document.hidden)lrShow(lrI+1)},12000);
-RR.addEventListener('click',e=>{if(e.target.closest('.got'))setTimeout(()=>{lrShow(lrI);if(LRN.has(LEARN_IDS[lrI])&&!doneToday())lrShow(lrNextOpen())},900)});
+/* Got it → the next card not yet learned comes up by itself */
+document.addEventListener('click',e=>{const b=e.target.closest('.got');if(!b||!LRN.has(b.dataset.learn)||doneToday())return;
+  const k=lrNextOpen();
+  if(railMode()){if(b.closest('.rail.right'))setTimeout(()=>lrShow(k),450)}
+  else{const c=LCARDS[k];setTimeout(()=>{c.classList.remove('lc-next');void c.offsetWidth;c.classList.add('lc-next');c.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});c.querySelector('.got').focus({preventScroll:true});setTimeout(()=>c.classList.remove('lc-next'),1400)},250)}});
 const lrSync=()=>{if(LR_MQ.matches!==railMode()){lrPlace();spy()}};
 LR_MQ.addEventListener('change',lrSync);addEventListener('resize',lrSync);lrPlace();
 
