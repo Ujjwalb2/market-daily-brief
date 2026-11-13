@@ -387,7 +387,7 @@ body.brief .brief-sum .chips{margin:0}
 /* ---------- full brief side columns: Institutional activity on the left, market-day timeline on the right.
    Learning lives on Home, so the brief drops its learning rail and Learn section. ---------- */
 .inst-rail{display:none}
-body.brief #p-learn,body.brief .stab[data-tab="learn"],body.brief .rail.right{display:none!important}
+body.brief .rail.right{display:none!important}
 @media (min-width:1400px){
   body.brief{--rw:clamp(240px,15.5vw,300px);--rx:max(16px,calc(50vw - min(600px,50vw - var(--rw) - 40px) - var(--rw) - 24px))}
   body.brief .wrap{max-width:min(1200px,calc(100vw - 2 * var(--rw) - 80px))}
@@ -1315,7 +1315,7 @@ const TABS=['brief','markets','ipos','learn','archive'];
 const NAV_H=142;let jumpUntil=0;
 function mark(tab){$$('.stab').forEach(b=>{const on=b.dataset.tab===tab;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;if(on)b.classList.add('visited')});
   visited.add(tab);try{history.replaceState(null,'','#'+tab)}catch(e){}}
-function show(tab,instant){if(tab==='learn'&&document.body.classList.contains('brief')){location.href='home-2026-11-12.html#learn';return}const sm=document.getElementById('stkModal');if(sm&&!sm.hidden){sm.hidden=true;document.body.style.overflow=''}if(tab==='calendar'){openCal();return}if(tab==='learn'&&document.body.classList.contains('learn-rail')){const r=document.querySelector('.rail.right');lrShow(lrNextOpen());r.classList.remove('lr-pulse');void r.offsetWidth;r.classList.add('lr-pulse');return}const el=$('#p-'+tab);if(!el)return;mark(tab);jumpUntil=Date.now()+800;
+function show(tab,instant){const sm=document.getElementById('stkModal');if(sm&&!sm.hidden){sm.hidden=true;document.body.style.overflow=''}if(tab==='calendar'){openCal();return}if(tab==='learn'&&document.body.classList.contains('learn-rail')){const r=document.querySelector('.rail.right');lrShow(lrNextOpen());r.classList.remove('lr-pulse');void r.offsetWidth;r.classList.add('lr-pulse');return}const el=$('#p-'+tab);if(!el)return;mark(tab);jumpUntil=Date.now()+800;
   scrollTo({top:el.getBoundingClientRect().top+scrollY-NAV_H+1,behavior:instant?'auto':'smooth'})}
 function spy(){if(Date.now()<jumpUntil)return;let cur='brief';
   for(const t of TABS){const p=$('#p-'+t);if(!p.offsetParent)continue;if(p.getBoundingClientRect().top<=NAV_H+140)cur=t}
@@ -1625,14 +1625,14 @@ renderStreak();
    (the Learn section and tab hide, so nothing repeats); on narrower screens they go back into the page. */
 const LR_MQ=matchMedia('(min-width:1400px)'),LCARDS=[...document.querySelectorAll('#p-learn .lcard')],LGRID=$('#p-learn .learn');
 let lrI=0,lrHold=false;
-const railMode=()=>document.body.classList.contains('learn-rail');
+const railMode=()=>document.body.classList.contains('learn-rail');const lrWanted=()=>LR_MQ.matches&&!document.body.classList.contains('brief');
 function lrShow(i){const prev=lrI;lrI=(i+LCARDS.length)%LCARDS.length;const r=railMode();
   if(r&&prev!==lrI){const c=LCARDS[lrI];c.classList.remove('lr-in');void c.offsetWidth;c.classList.add('lr-in')}
   LCARDS.forEach((c,j)=>{c.classList.toggle('lr-off',r&&j!==lrI);c.inert=r&&j!==lrI});$('#lrCount').textContent=`${lrI+1} / ${LCARDS.length}`;
   [...$('#lrDots').children].forEach((d,j)=>{d.classList.toggle('on',j===lrI);d.classList.toggle('done',LRN.has(LEARN_IDS[j]))})}
-function lrPlace(){const r=LR_MQ.matches;document.body.classList.toggle('learn-rail',r);
+function lrPlace(){const r=LR_MQ.matches&&!document.body.classList.contains('brief');document.body.classList.toggle('learn-rail',r);
   LCARDS.forEach(c=>{c.classList.remove('lr-off');c.inert=false;(r?$('#lrStage'):LGRID).appendChild(c)});
-  $('#p-ipos .up-next').textContent=r||document.body.classList.contains('brief')?'Next: Archive ↓':'Next: Learn ↓';$('#p-archive .sechead .no').textContent=r||document.body.classList.contains('brief')?'04':'05';lrShow(lrI)}
+  $('#p-ipos .up-next').textContent=r?'Next: Archive ↓':'Next: Learn ↓';$('#p-archive .sechead .no').textContent=r?'04':'05';lrShow(lrI)}
 const lrNextOpen=()=>{const k=LEARN_IDS.findIndex(x=>!LRN.has(x));return k<0?lrI:k};
 $('#lrPrev').onclick=()=>lrShow(lrI-1);$('#lrNext').onclick=()=>lrShow(lrI+1);
 const RR=$('.rail.right');RR.addEventListener('mouseenter',()=>lrHold=true);RR.addEventListener('mouseleave',()=>lrHold=false);
@@ -1646,7 +1646,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('.got');if(!b||!L
 const INST=$('.card.inst'),INST_HOME=INST.parentElement,INST_NEXT=INST.nextElementSibling;
 function instPlace(){if(!document.body.classList.contains('brief'))return;if(LR_MQ.matches)$('#instRail').appendChild(INST);else INST_HOME.insertBefore(INST,INST_NEXT)}
 instPlace();
-const lrSync=()=>{instPlace();if(LR_MQ.matches!==railMode()){lrPlace();spy()}};
+const lrSync=()=>{instPlace();if(lrWanted()!==railMode()){lrPlace();spy()}};
 LR_MQ.addEventListener('change',lrSync);addEventListener('resize',lrSync);lrPlace();
 
 /* ================= start ================= */

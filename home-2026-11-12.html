@@ -387,7 +387,7 @@ body.brief .brief-sum .chips{margin:0}
 /* ---------- full brief side columns: Institutional activity on the left, market-day timeline on the right.
    Learning lives on Home, so the brief drops its learning rail and Learn section. ---------- */
 .inst-rail{display:none}
-body.brief #p-learn,body.brief .stab[data-tab="learn"],body.brief .rail.right{display:none!important}
+body.brief .rail.right{display:none!important}
 @media (min-width:1400px){
   body.brief{--rw:clamp(240px,15.5vw,300px);--rx:max(16px,calc(50vw - min(600px,50vw - var(--rw) - 40px) - var(--rw) - 24px))}
   body.brief .wrap{max-width:min(1200px,calc(100vw - 2 * var(--rw) - 80px))}
@@ -957,9 +957,9 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .tc-more,.tc-others,.tl .grp-h{display:none}
 @media (min-width:1400px){
   .home.wrap,.ap-bar .wrap{max-width:min(1760px,calc(100vw - 48px))!important}
-  .hg{grid-template-columns:minmax(250px,16%) minmax(0,1fr) minmax(300px,20%);grid-template-areas:"s s s" "tl c tc" "ln ln ln"}
-  .hg>.hg-one{display:none}
-  .hg-ln{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-16)}
+  .hg{grid-template-columns:minmax(280px,18%) minmax(0,1fr) minmax(0,1fr) minmax(250px,16%);grid-template-areas:"s s s s" "tc c c tl" "tc one dl tl"}
+  .hg-dl{display:flex!important}
+  .hg-ln{display:none!important}
   .hg-ln .card{padding:var(--space-16) var(--space-20)}
   .hg-c{display:flex}.hg-c .hero{flex:1;align-items:stretch}.hg-c .hero-main,.hg-c .hero-side,.hg-c .idx-card{height:100%}
   .tc-more,.tc-others{display:grid;gap:8px}
@@ -1049,6 +1049,54 @@ body > .ticker{top:55px;z-index:39}
 @media (max-width:1399px){.home .toc,.home .breadth,.home .tl-next{display:none}}
 
 @media (min-width:1400px) and (max-height:920px){.home .tl-next{display:none}.toc li:nth-child(n+4){display:none}.toc-h>span:last-child{display:none}}
+/* ---------- v3: merged summary block, highlighted Read, deals card, rotating learning ---------- */
+.hg-dl{grid-area:dl;display:none}
+.hg-c .hero{background:var(--surface-raised);border:1px solid var(--border-decorative);border-radius:var(--radius-20);gap:0;overflow:hidden}
+.hg-c .hero-main{border:none;border-radius:0;background:none}
+.hg-c .hero-side{border-left:1px solid var(--border-decorative);gap:0}
+.hg-c .idx-card{border:none;box-shadow:none;background:none;border-radius:0;padding:var(--space-16) var(--space-20)}
+.read-cta{height:44px;padding:0 22px;font:600 15px/1 var(--font-sans);box-shadow:0 6px 18px rgba(63,91,217,.35);display:inline-flex;align-items:center}
+.read-cta:hover{transform:translateY(-1px)}
+.listen-cta{height:44px}
+.hl-grid{display:grid;gap:10px}
+.hl-t{display:grid;gap:6px;align-content:start}
+.hl .lviz{min-height:0;padding:8px 10px;gap:5px}
+.hl .lviz .cap{font-size:11px}.hl .lviz .cap .linkbtn{font:inherit}
+.hl .lviz svg{max-height:120px}
+.hl .lrow{grid-template-columns:72px 1fr 50px;font-size:11px}
+.hl .cause{grid-template-columns:1fr;padding:5px 8px}.hl .cause svg{display:none}.hl .cause b{font-size:14px}
+.hl .effects{grid-template-columns:repeat(3,1fr);gap:4px}.hl .lviz>svg:not(:first-child){display:none}
+.hl .effects>*{padding:4px 5px!important;font-size:10.5px;line-height:1.25}
+.hl-dots{display:flex;gap:4px}.hl-dots i{width:8px;height:8px;border-radius:50%;background:var(--border-decorative)}
+.hl-dots i.done{background:var(--teal)}.hl-dots i.on{box-shadow:0 0 0 2px var(--action-primary)}
+.hl-all{font:600 12.5px/1 var(--font-sans);color:var(--action-primary);text-decoration:none;white-space:nowrap}
+.hl .hc-foot{gap:10px}
+.dl3{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.dl3 li{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who k" "bar v";gap:4px 10px;align-items:center}
+.dl3 li>div{grid-area:who;min-width:0}.dl3 li>div b{font:var(--type-label)}.dl3 li>div small{display:block;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl3 .dk{grid-area:k;font:600 10px/1 var(--font-sans);text-transform:uppercase;letter-spacing:.5px;padding:4px 6px;border-radius:var(--radius-6)}
+.dl3 .dk.t{background:var(--surface-glass);border:1px solid var(--border-decorative)}.dl3 .dk.k{background:var(--fb-info-soft)}.dl3 .dk.b{background:var(--fin-positive-soft)}
+.dl3 .bar{grid-area:bar;height:8px;border-radius:4px;background:var(--border-decorative);overflow:hidden}.dl3 .bar i{display:block;height:100%;background:var(--blue)}
+.dl3 .v{grid-area:v;font:var(--type-data);font-variant-numeric:tabular-nums;text-align:right}
+@media (min-width:1400px){
+  .hl-grid{grid-template-columns:minmax(0,1fr) minmax(200px,48%);align-items:start}
+  .hg-tc .tc-why,.hg-tc .tc-others,.hg-tc .tc-meta2{display:grid!important}
+  .home .tl-next{display:grid!important}
+  .toc li{display:list-item!important}
+}
+@media (max-width:1399px){.hl .lviz,.hl-all,.hl-dots{display:none}.hg>.hg-dl{display:none}}
+
+.tc-an{display:none}
+@media (min-width:1400px){
+  .hg-tc .tc-why{display:none!important}
+  .tc-an{display:grid;gap:4px}.tc-an p{margin:0;font:var(--type-caption);line-height:1.5;color:var(--text-secondary);display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;overflow:hidden}
+  .hg-one .lviz{zoom:.82}
+  .dl3{gap:8px}
+  .dl3 li>div{display:flex;gap:8px;align-items:baseline}
+  .dl3 li>div small{display:inline;min-width:0}
+}
+@media (min-width:1400px) and (max-height:920px){.tc-an p{-webkit-line-clamp:5}.home .toc li:nth-child(n+4){display:none!important}.hg-one .lviz{display:none}.hg-one .hl-grid{grid-template-columns:1fr}.dl3 li>div small{display:none!important}.dl3{gap:6px}.hg-dl .hc-head .src{display:none}}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -1113,7 +1161,7 @@ body > .ticker{top:55px;z-index:39}
       <h1>Thursday, 12 November</h1>
       <div class="asof"><span class="asof-pill"><i></i>Yesterday's market · Wednesday 11 Nov close</span></div>
       <p class="dayline">Markets bounced back after the Diwali break as foreign investors returned in size and banks led the way.</p>
-      <div class="home-cta"><button class="btn primary" id="listenBtn">▶ Listen · 4:46</button><a class="btn ghost" href="today-demo-2026-11-12.html#brief">Read today's full brief →</a></div><div class="toc"><div class="toc-h"><span class="eyebrow">In today's brief</span><span>5 stories · tap one to hear it</span></div><ol id="toc"></ol></div>
+      <div class="home-cta"><a class="btn primary read-cta" href="today-demo-2026-11-12.html#brief">Read today's full brief →</a><button class="btn ghost listen-cta" id="listenBtn">▶ Listen · 4:46</button></div><div class="toc"><div class="toc-h"><span class="eyebrow">In today's brief</span><span>5 stories · tap one to hear it</span></div><ol id="toc"></ol></div>
       <div class="hero-row">
         <a class="mood-mini" href="today-demo-2026-11-12.html#markets" aria-label="Market mood: Optimistic, demo score 62 out of 100">
           <div class="head" style="margin:0"><span class="eyebrow">Market mood</span><span class="src">VIX rising, so not greedy</span></div>
@@ -1141,6 +1189,7 @@ body > .ticker{top:55px;z-index:39}
         <div class="tc-meta2">1,825 qty · expiry 23 Nov 2026</div>
       </div>
       <p class="tc-why">Bearish continuation after a failed relief rally into the 20 EMA. Full analysis in Trade Calls.</p>
+      <div class="tc-an"><span class="eyebrow" style="color:var(--text-tertiary)">Analysis</span><p>SWIGGY is at 186.28 on the daily chart, in a steep downtrend from the 305 high to the October low of 174.20. The 20, 50, 100 and 200 EMAs are stacked above price in bearish order, all sloping down, and the daily SuperTrend is red. The bounce from 174 to about 200 stalled at the 20 EMA and the Bollinger midline, and the latest candle shows a clear rejection with an upper wick to 194.36. The setup is a bearish continuation after a failed relief rally. The main risk is a sharp short-covering bounce; a close above 198 invalidates the idea.</p></div>
       <div class="tc-others"><span class="eyebrow" style="color:var(--text-tertiary)">Also active</span><p>2 more calls · open Trade Calls to see them</p></div>
       <div class="hc-foot"><span>Research advice</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
     </article>
@@ -1155,7 +1204,16 @@ body > .ticker{top:55px;z-index:39}
     <article class="card lcard hl hg-one" id="learnCard" aria-label="Today's learning">
       <div class="hc-head"><span class="eyebrow" id="hlKind">Learn</span><span class="num" id="hlCount" style="font:var(--type-caption);color:var(--text-tertiary)">1 / 3</span></div>
       <div class="hl-body" id="hlBody" aria-live="polite"></div>
-      <div class="hc-foot"><div class="lnav"><button class="round" id="hlPrev" aria-label="Previous idea">←</button><button class="round" id="hlNext" aria-label="Next idea">→</button></div><button class="got" id="hlGot" data-learn="term">✓ Got it</button></div>
+      <div class="hc-foot"><div class="lnav"><button class="round" id="hlPrev" aria-label="Previous idea">←</button><span class="hl-dots" id="hlDots"><i></i><i></i><i></i></span><button class="round" id="hlNext" aria-label="Next idea">→</button></div><a class="hl-all" href="today-demo-2026-11-12.html#learn">Read all 3 in full →</a><button class="got" id="hlGot" data-learn="term">✓ Got it</button></div>
+    </article>
+    <article class="card hg-dl" aria-label="Big money moves">
+      <div class="hc-head"><span class="eyebrow">Big money · bulk &amp; block deals</span><span class="src">NSE · 12 Nov, after close</span></div>
+      <ul class="dl3">
+        <li><div><b>Kalyan Jewellers</b><small>Graviton Research bought and sold the same day</small></div><span class="dk t">Trading</span><span class="bar"><i style="width:100%"></i></span><b class="v">₹374 cr</b></li>
+        <li><div><b>Gallantt Ispat</b><small>Santosh Kumar Agrawal bought from Dinesh R Agarwal</small></div><span class="dk k">Block</span><span class="bar"><i style="width:54%"></i></span><b class="v">₹201 cr</b></li>
+        <li><div><b>Man Coat Metal</b><small>Growvia Trade bought 20.4 lakh shares</small></div><span class="dk b">Buy</span><span class="bar"><i style="width:9%"></i></span><b class="v">₹34.1 cr</b></li>
+      </ul>
+      <div class="hc-foot"><span>134 bulk · 1 block deal on NSE</span><a href="today-demo-2026-11-12.html#brief">All deals in the brief →</a></div>
     </article>
     <section class="hg-ln" id="learnRow" aria-label="Today's three ideas"></section>
   </div>
@@ -1353,6 +1411,7 @@ $('#stkShare').onclick=()=>{const t=`I've kept up with the market for ${counts()
 renderStreak();
 
 /* ================= ONE LEARNING CARD AT A TIME ================= */
+const LVIZ={"term": "<div class=\"lviz\">\n        <svg viewBox=\"0 0 320 150\" role=\"img\" aria-label=\"Price falls while traders bet on a fall, then rises as they buy back\">\n          <line x1=\"8\" x2=\"312\" y1=\"138\" y2=\"138\" stroke=\"var(--border-decorative)\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30 L312 138 L150 138 Z\" fill=\"var(--teal)\" opacity=\".12\"/>\n          <path d=\"M10 40 L60 54 L110 80 L150 104\" fill=\"none\" stroke=\"var(--slate-500)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30\" fill=\"none\" stroke=\"var(--teal)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <circle cx=\"18\" cy=\"42\" r=\"5\" fill=\"var(--slate-500)\"/>\n          <circle cx=\"150\" cy=\"104\" r=\"5\" fill=\"var(--amber)\"/>\n          <circle cx=\"306\" cy=\"31\" r=\"5\" fill=\"var(--teal)\"/>\n          <text x=\"28\" y=\"30\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\">1 · Bet on a fall</text>\n          <text x=\"150\" y=\"126\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\" text-anchor=\"middle\">2 · Buy back to close</text>\n          <text x=\"304\" y=\"100\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-primary)\" font-weight=\"600\" text-anchor=\"end\">3 · Buying lifts price</text>\n        </svg>\n        <div class=\"cap\"><button class=\"linkbtn\" data-go=\"markets\">Today's FII short covering, in numbers: Markets desk →</button></div>\n      </div>", "relation": "<div class=\"lviz\">\n        <div class=\"cause\">\n          <div><span class=\"lbl\">Cause · Brent crude</span><b>$117 → ~$93</b><span class=\"chg\">▼ ~20% from late-Oct peak</span></div>\n          <svg viewBox=\"0 0 120 44\" aria-hidden=\"true\"><path d=\"M2 6 L18 4 L30 10 L44 14 L58 22 L70 26 L84 34 L98 38 L108 34 L118 32\" fill=\"none\" stroke=\"var(--amber)\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>\n        </div>\n        <svg class=\"fan\" viewBox=\"0 0 300 28\" preserveAspectRatio=\"none\" aria-hidden=\"true\">\n          <defs><marker id=\"fanArrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"var(--text-tertiary)\"/></marker></defs>\n          <path d=\"M150 0 C150 14 50 10 50 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 L150 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 C150 14 250 10 250 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n        </svg>\n        <div class=\"effects\">\n          <div class=\"effect\">Oil import bill<span class=\"d good\">▼ smaller</span></div>\n          <div class=\"effect\">Rupee &amp; inflation<span class=\"d good\">▼ less pressure</span></div>\n          <div class=\"effect\">Airlines, paints, tyres<span class=\"d good\">▲ cheaper inputs</span></div>\n        </div>\n      </div>", "learning": "<div class=\"lviz\">\n        <div class=\"cap\">Wednesday's move by index</div>\n        <div class=\"lrow\"><span>Nifty 50</span><div class=\"t\"><i style=\"width:52%;background:var(--teal);opacity:.55\"></i></div><b>+0.84%</b></div>\n        <div class=\"lrow\"><span>Midcap 100</span><div class=\"t\"><i style=\"width:50%;background:var(--teal);opacity:.55\"></i></div><b>+0.81%</b></div>\n        <div class=\"lrow hi\"><span>Smallcap 100</span><div class=\"t\"><i style=\"width:100%;background:var(--teal)\"></i></div><b>+1.59%</b></div>\n        <div class=\"cap\" style=\"margin-top:6px\">So Wednesday's rally was</div>\n        <div class=\"meter\" role=\"img\" aria-label=\"Rally breadth: broad\"><i></i><i></i><i></i><i></i><i></i><span class=\"pin\" style=\"left:82%\"></span></div>\n        <div class=\"meter-l\"><span>Narrow · a few giants</span><span><b style=\"color:var(--text-primary)\">Broad</b> · most stocks</span></div>\n      </div>"};
 const LEARN=[
  {id:'term',kind:'Term of the day',h:'Short covering',one:'When traders who <b>bet on a fall buy back</b> to close those bets, that buying itself pushes prices up. Most FII shorts have now been covered.'},
  {id:'relation',kind:'Relation of the day',h:'Cheaper crude, relief for India',one:'India imports most of its oil, so <b>every drop in crude ripples outward</b>: fewer dollars spent, softer prices at home, lower costs for companies that burn or use oil.'},
@@ -1360,17 +1419,21 @@ const LEARN=[
 let hi=Math.max(0,LEARN.findIndex(x=>!LRN.has(x.id)));
 function hlShow(i,anim){hi=(i+LEARN.length)%LEARN.length;const x=LEARN[hi],b=$('#hlBody');
   $('#hlKind').textContent=x.kind;$('#hlCount').textContent=`${hi+1} / ${LEARN.length}`;
-  b.innerHTML=(doneToday()?`<div class="hl-done">✓ All 3 ideas learned · streak kept for today</div>`:'')+`<h3 class="term">${x.h}</h3><p class="one">${x.one}</p><a class="linkbtn" href="today-demo-2026-11-12.html#learn" style="font:var(--type-caption)">See the picture in the full brief →</a>`;
+  b.innerHTML=(doneToday()?`<div class="hl-done">✓ All 3 ideas learned · streak kept for today</div>`:'')+`<div class="hl-grid"><div class="hl-t"><h3 class="term">${x.h}</h3><p class="one">${x.one}</p></div>${LVIZ[x.id]||''}</div>`;
+  [...$('#hlDots').children].forEach((d,j)=>{d.classList.toggle('on',j===hi);d.classList.toggle('done',LRN.has(LEARN[j].id))});
   $('#hlGot').dataset.learn=x.id;renderStreak();
   if(anim){b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}
 $('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,true);
 /* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
 $('#hlGot').addEventListener('click',()=>setTimeout(()=>{if(doneToday()){hlShow(hi,true);return}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)},0));
 hlShow(hi,false);
+/* changes idea every 8 s; pauses while the reader hovers or uses the card */
+{let hold=false;const c=$('#learnCard');c.addEventListener('mouseenter',()=>hold=true);c.addEventListener('mouseleave',()=>hold=false);
+  c.addEventListener('focusin',()=>hold=true);c.addEventListener('focusout',()=>hold=false);
+  setInterval(()=>{if(!hold&&!document.hidden)hlShow(hi+1,true)},8000)}
 if(location.hash==='#learn')setTimeout(()=>{const t=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('pulse')},400);
 const TOC=[{"h": "Foreign investors return as buyers after the Diwali break", "d": "0:46"}, {"h": "Banks lead the bounce; PSU banks jump almost 3%", "d": "0:44"}, {"h": "Brent dips below $90 for the first time since August", "d": "0:41"}, {"h": "Silver jumps almost 3%; gold up 0.75% on MCX", "d": "0:30"}, {"h": "Anthropic opens IPO roadshow at $70–78 a share", "d": "0:34"}];
 $('#toc').innerHTML=TOC.map((x,i)=>`<li><button data-ch="${i+1}"><span class="n">${i+1}</span><span class="h">${x.h}</span><span class="d">${x.d}</span></button></li>`).join('');
-const LVIZ={"term": "<div class=\"lviz\">\n        <svg viewBox=\"0 0 320 150\" role=\"img\" aria-label=\"Price falls while traders bet on a fall, then rises as they buy back\">\n          <line x1=\"8\" x2=\"312\" y1=\"138\" y2=\"138\" stroke=\"var(--border-decorative)\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30 L312 138 L150 138 Z\" fill=\"var(--teal)\" opacity=\".12\"/>\n          <path d=\"M10 40 L60 54 L110 80 L150 104\" fill=\"none\" stroke=\"var(--slate-500)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30\" fill=\"none\" stroke=\"var(--teal)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <circle cx=\"18\" cy=\"42\" r=\"5\" fill=\"var(--slate-500)\"/>\n          <circle cx=\"150\" cy=\"104\" r=\"5\" fill=\"var(--amber)\"/>\n          <circle cx=\"306\" cy=\"31\" r=\"5\" fill=\"var(--teal)\"/>\n          <text x=\"28\" y=\"30\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\">1 · Bet on a fall</text>\n          <text x=\"150\" y=\"126\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\" text-anchor=\"middle\">2 · Buy back to close</text>\n          <text x=\"304\" y=\"100\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-primary)\" font-weight=\"600\" text-anchor=\"end\">3 · Buying lifts price</text>\n        </svg>\n        <div class=\"cap\"><button class=\"linkbtn\" data-go=\"markets\">Today's FII short covering, in numbers: Markets desk →</button></div>\n      </div>", "relation": "<div class=\"lviz\">\n        <div class=\"cause\">\n          <div><span class=\"lbl\">Cause · Brent crude</span><b>$117 → ~$93</b><span class=\"chg\">▼ ~20% from late-Oct peak</span></div>\n          <svg viewBox=\"0 0 120 44\" aria-hidden=\"true\"><path d=\"M2 6 L18 4 L30 10 L44 14 L58 22 L70 26 L84 34 L98 38 L108 34 L118 32\" fill=\"none\" stroke=\"var(--amber)\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>\n        </div>\n        <svg class=\"fan\" viewBox=\"0 0 300 28\" preserveAspectRatio=\"none\" aria-hidden=\"true\">\n          <defs><marker id=\"fanArrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"var(--text-tertiary)\"/></marker></defs>\n          <path d=\"M150 0 C150 14 50 10 50 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 L150 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 C150 14 250 10 250 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n        </svg>\n        <div class=\"effects\">\n          <div class=\"effect\">Oil import bill<span class=\"d good\">▼ smaller</span></div>\n          <div class=\"effect\">Rupee &amp; inflation<span class=\"d good\">▼ less pressure</span></div>\n          <div class=\"effect\">Airlines, paints, tyres<span class=\"d good\">▲ cheaper inputs</span></div>\n        </div>\n      </div>", "learning": "<div class=\"lviz\">\n        <div class=\"cap\">Wednesday's move by index</div>\n        <div class=\"lrow\"><span>Nifty 50</span><div class=\"t\"><i style=\"width:52%;background:var(--teal);opacity:.55\"></i></div><b>+0.84%</b></div>\n        <div class=\"lrow\"><span>Midcap 100</span><div class=\"t\"><i style=\"width:50%;background:var(--teal);opacity:.55\"></i></div><b>+0.81%</b></div>\n        <div class=\"lrow hi\"><span>Smallcap 100</span><div class=\"t\"><i style=\"width:100%;background:var(--teal)\"></i></div><b>+1.59%</b></div>\n        <div class=\"cap\" style=\"margin-top:6px\">So Wednesday's rally was</div>\n        <div class=\"meter\" role=\"img\" aria-label=\"Rally breadth: broad\"><i></i><i></i><i></i><i></i><i></i><span class=\"pin\" style=\"left:82%\"></span></div>\n        <div class=\"meter-l\"><span>Narrow · a few giants</span><span><b style=\"color:var(--text-primary)\">Broad</b> · most stocks</span></div>\n      </div>"};
 $('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${x.kind}</span></div><div class="lr3-b"><div class="lr3-t"><h3 class="term">${x.h}</h3><p class="one">${x.one}</p></div>${LVIZ[x.id]||''}</div><div class="hc-foot"><a class="linkbtn" href="today-demo-2026-11-12.html#learn" style="font:var(--type-caption)">Open in the full brief →</a><button class="got" data-learn="${x.id}">✓ Got it</button></div></article>`).join('');
 renderStreak();
 
