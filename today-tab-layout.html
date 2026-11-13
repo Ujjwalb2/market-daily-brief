@@ -874,7 +874,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
       <div class="eyebrow">Good morning · Edition 144</div>
       <h1>Thursday, 12 November</h1>
       <div class="asof"><span class="asof-pill"><i></i>Yesterday's market · Wednesday 11 Nov close</span><span class="src">Today's numbers arrive after the 3:30 pm close</span></div>
-      <p class="dayline">Markets bounced back after the Diwali break: Sensex up 0.95%, Nifty up 0.84%, as foreign investors bought ₹12,563 crore and banks led the way.</p>
+      <p class="dayline">Markets bounced back after the Diwali break as foreign investors returned in size and banks led the way.</p>
       <div class="chips"><span class="chip pos">FIIs back as buyers</span><span class="chip plain">Brent below $95</span><span class="chip ev t-fno">Sensex weekly expiry today</span></div>
       <div class="hero-row">
         <a class="mood-mini" href="#markets" data-go="markets" aria-label="Market mood: Optimistic, demo score 62 out of 100">
@@ -882,7 +882,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
           <div class="mood-read"><b class="num">62</b><span>Optimistic</span><span class="mood-delta">demo score</span></div>
           <div class="mood-bar"><i></i><i></i><i></i><i></i><i></i><span class="mood-pin" style="left:62%"></span></div>
           <div class="mood-scale"><span>Fear</span><span>Cautious</span><span>Neutral</span><span>Optimistic</span><span>Greed</span></div>
-          <div class="mood-why">FII buying · smallcaps ▲1.59% · VIX 17.56 ▲</div>
+          <div class="mood-why">FII buying · smallcaps led · volatility up</div>
         </a>
       </div>
     </div>
@@ -1090,7 +1090,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
         <div class="meter-l"><span>Narrow · a few giants</span><span><b style="color:var(--text-primary)">Broad</b> · most stocks</span></div>
       </div>
       <p class="one">When <b>smaller companies rise more than the big index</b>, buying is spread widely, not just in a few heavyweights. That usually makes a rally sturdier.</p>
-      <div class="watch"><b>But watch:</b> India VIX rose to 17.56 with the market, so traders expect bigger swings ahead.</div>
+      <div class="watch"><b>But watch:</b> India VIX, the market's fear gauge, rose with the market, so traders expect bigger swings ahead.</div>
       <div class="lfoot"><button class="got" data-learn="learning">✓ Got it</button><span class="src">Kotak Securities, Marketcalls</span></div>
     </article>
   </div>
@@ -1210,8 +1210,8 @@ const EVENTS=[
  E(2026,12,10,'eco','US Fed decision','Late night IST'),E(2026,12,14,'eco','CPI inflation (November)','4:00 pm'),
  E(2026,12,25,'hol','Trading holiday','Christmas')];
 const STORIES=[
- {tag:'Markets',chip:'pos',h:'Foreign investors return as buyers after the Diwali break',n:'+₹25,231 cr net in Nov',vis:'var(--teal)',hap:'FIIs bought ₹12,563 crore more than they sold in the cash market; DIIs sold ₹8,435 crore.',why:'FIIs also cut index-futures shorts from ~2.4 lakh contracts (30 Oct) to ~70,000; short covering fuels rallies.',you:'Invest through index funds? You are already riding this. No action needed.',src:'NSE provisional via Marketcalls',dur:'0:46',steps:[2.4,0.7]},
- {tag:'Sectors',chip:'info',h:'Banks lead the bounce; PSU banks jump almost 3%',n:'+2.94%',vis:'var(--teal)',hap:'Nifty PSU Bank rose 2.94% and Nifty Bank 1.76%; IT, pharma and realty slipped about 0.5%.',why:'Bank-led rallies usually reflect confidence in the economy and in loan growth.',you:'Portfolio heavy on IT? Feeling left out on Wednesday is normal. Sectors take turns.',src:'Kotak Securities',dur:'0:44',series:[30,1,7]},
+ {tag:'Markets',chip:'pos',h:'Foreign investors return as buyers after the Diwali break',n:'+₹25,231 cr net in Nov',vis:'var(--teal)',hap:'Foreign investors bought far more than they sold in the cash market, while domestic funds booked profits.',why:'Foreign funds also closed most of their bets against the Nifty. When short sellers buy back, it adds fuel to a rally.',you:'Invest through index funds? You are already riding this. No action needed.',src:'NSE provisional via Marketcalls',dur:'0:46',steps:[2.4,0.7]},
+ {tag:'Sectors',chip:'info',h:'Banks lead the bounce; PSU banks jump almost 3%',n:'+2.94%',vis:'var(--teal)',hap:'Public-sector banks led and the wider Nifty Bank index followed; IT, pharma and realty slipped about 0.5%.',why:'Bank-led rallies usually reflect confidence in the economy and in loan growth.',you:'Portfolio heavy on IT? Feeling left out on Wednesday is normal. Sectors take turns.',src:'Kotak Securities',dur:'0:44',series:[30,1,7]},
  {tag:'Global · Oil',chip:'warn',h:'Brent dips below $90 for the first time since August',n:'~$93',vis:'var(--amber)',hap:'Brent briefly fell below $90 on Tuesday after Trump said the Iran war could end soon; ~$93 by Wednesday afternoon.',why:'India imports most of its oil, so cheaper crude eases inflation and the import bill.',you:'If it holds, fuel and cooking-gas pressure eases over time, as do costs for paint and tyre makers.',src:'CNBC, Bloomberg, Kotak',dur:'0:41',steps:[117,91.49,93.05]},
  {tag:'Commodities',chip:'pos',h:'Silver jumps almost 3%; gold up 0.75% on MCX',n:'+2.92%',vis:'var(--teal)',hap:'MCX silver rose 2.92% to ₹1,87,910 a kg; gold rose 0.75% to ₹1,41,580 per 10 grams.',why:'Precious metals have had a huge run this year.',you:'Buying for a wedding or festival? Prices can swing a few per cent in a single day.',src:'MCX via Kotak',dur:'0:30',series:[30,1,9]},
  {tag:'Global · IPO',chip:'info',h:'Anthropic opens IPO roadshow at $70–78 a share',n:'Up to $64.4 bn',vis:'var(--blue)',hap:'825 million shares on Nasdaq (ANT), valuing it at up to $1.4 trillion; pricing expected 18 Nov.',why:'A test of how much investors will pay for AI.',you:'The mood around it can sway Indian IT stocks too. Educational only, not a recommendation.',src:'Anthropic, CNN',dur:'0:34'}
