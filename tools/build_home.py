@@ -373,6 +373,8 @@ body > .ticker{top:55px;z-index:39}
 @media (min-width:1400px) and (max-width:1799px){.fo-k small,.fo-lg span:last-child{display:none}.fo-k b{font-size:15px}.fo-k>div{padding:6px 7px}}
 @media (min-width:1400px) and (max-height:920px){.fo-k small{display:none}.hg-fo .hc-foot>span{display:none}}
 
+/* rotating cards never resize the grid: their size comes from the row, not their content */
+@media (min-width:1400px){.hg>.hg-tc,.hg>.hg-one,.hg>.mvx{contain:size;overflow:hidden}}
 /* Trade Calls rotation */
 .tc-body{display:flex;flex-direction:column;gap:10px;flex:1 1 auto;min-height:0}
 .tc-body.in{animation:hlIn .35s ease}
