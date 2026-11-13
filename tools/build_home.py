@@ -495,10 +495,10 @@ $('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,
 /* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
 $('#hlGot').addEventListener('click',()=>setTimeout(()=>{{if(doneToday()){{hlShow(hi,true);return}}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)}},0));
 hlShow(hi,false);
-/* changes idea every 8 s; pauses while the reader hovers or uses the card */
+/* changes idea every 5 s; pauses while the reader hovers or uses the card */
 {{let hold=false;const c=$('#learnCard');c.addEventListener('mouseenter',()=>hold=true);c.addEventListener('mouseleave',()=>hold=false);
   c.addEventListener('focusin',()=>hold=true);c.addEventListener('focusout',()=>hold=false);
-  setInterval(()=>{{if(!hold&&!document.hidden)hlShow(hi+1,true)}},8000)}}
+  setInterval(()=>{{if(!hold&&!document.hidden)hlShow(hi+1,true)}},5000)}}
 if(location.hash==='#learn')setTimeout(()=>{{const t=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');t.scrollIntoView({{behavior:'smooth',block:'center'}});t.classList.add('pulse')}},400);
 const TOC={STORY_TOC};
 $('#toc').innerHTML=TOC.map((x,i)=>`<li><button data-ch="${{i+1}}"><span class="n">${{i+1}}</span><span class="h">${{x.h}}</span><span class="d">${{x.d}}</span></button></li>`).join('');
