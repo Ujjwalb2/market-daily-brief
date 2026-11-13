@@ -16,6 +16,20 @@ js_helpers=cut('/* ================= helpers','/* ================= hero')
 js_ticker=cut('/* ================= LIVE TICKER','/* ================= SIDE RAILS')
 js_day=cut('const DAY=[','function renderClock')
 js_streak=cut('/* ================= STREAK','renderStreak();\n\n/* RIGHT RAIL')
+import json
+def lviz_for(lid):
+    j = s.index('data-learn="%s"' % lid)
+    i = s.rindex('<article class="card lcard">', 0, j)
+    art = s[i:j]
+    k = art.index('<div class="lviz">')
+    depth, pos = 0, k
+    for m in re.finditer(r'<div\b|</div>', art[k:]):
+        depth += 1 if m.group().startswith('<div') else -1
+        if depth == 0:
+            pos = k + m.end(); break
+    return art[k:pos]
+LVIZ = json.dumps({x: lviz_for(x) for x in ['term', 'relation', 'learning']}, ensure_ascii=False)
+
 
 # hero tweaks: CTA row instead of chips; links go to the full brief
 hero=re.sub(r'<div class="chips">.*?</div>',
@@ -106,6 +120,7 @@ CSS="""
   .hg>.hg-one{display:none}
   .hg-ln{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-16)}
   .hg-ln .card{padding:var(--space-16) var(--space-20)}
+  .hg-c{display:flex}.hg-c .hero{flex:1;align-items:stretch}.hg-c .hero-main,.hg-c .hero-side,.hg-c .idx-card{height:100%}
   .tc-more,.tc-others{display:grid;gap:8px}
   .tl .grp-h{display:block;margin-top:6px;font:600 10px/1 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;color:var(--text-tertiary)}
   .hg-tl .tl{gap:6px}
@@ -124,10 +139,30 @@ CSS="""
 .tc-others p{margin:0;font:var(--type-caption);color:var(--text-secondary)}
 .lr3 .term{margin:0;font:var(--type-title)}.lr3 .one{margin:0;font:var(--type-body-md);color:var(--text-secondary)}.lr3 .one b{color:var(--text-primary)}
 
-@media (min-width:1400px) and (max-height:920px){
+@media (min-width:1400px) and (max-height:1000px){
   .tc-others,.tc-meta2,.hg-tl .hc-foot>span{display:none!important}
   .hg-ln .card{padding:12px 16px;gap:6px}
   .home .top-story{display:none}
+}
+.lr3-b{display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,46%);gap:14px;align-items:start}
+.lr3-t{display:grid;gap:6px;align-content:start}
+.lr3 .lviz{min-height:0;padding:8px 10px;gap:5px}
+.lr3 .lviz .cap{font-size:11px}
+.lr3 .lviz .cap .linkbtn{font:inherit}
+.lr3 .lviz svg{max-height:120px}
+.lr3 .lrow{grid-template-columns:72px 1fr 50px;font-size:11px}
+.lr3 .cause{grid-template-columns:1fr;padding:6px 8px}.lr3 .cause svg{display:none}.lr3 .cause b{font-size:14px}
+.lr3 .effects{grid-template-columns:repeat(3,1fr);gap:4px}
+.lr3 .lviz>svg:not(:first-child){display:none}
+.lr3 .cause{padding:5px 8px}.lr3 .cause .lbl{font-size:10.5px}
+.lr3 .effects>*{padding:4px 5px!important;font-size:10.5px;line-height:1.25}
+.lr3 .meter-l{font-size:10.5px}
+
+@media (min-width:1400px) and (max-height:920px){
+  .hg-tc .tc-why{display:none}
+  .lr3 .one{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .lr3 .lviz{zoom:.8}
+  .lr3-b{grid-template-columns:minmax(0,1fr) minmax(230px,50%)}
 }
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
@@ -254,7 +289,8 @@ $('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,
 /* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
 $('#hlGot').addEventListener('click',()=>setTimeout(()=>{{if(doneToday()){{hlShow(hi,true);return}}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)}},0));
 hlShow(hi,false);
-$('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${{x.kind}}</span></div><h3 class="term">${{x.h}}</h3><p class="one">${{x.one}}</p><div class="hc-foot"><a class="linkbtn" href="{BRIEF}#learn" style="font:var(--type-caption)">See the picture →</a><button class="got" data-learn="${{x.id}}">✓ Got it</button></div></article>`).join('');
+const LVIZ={LVIZ};
+$('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${{x.kind}}</span></div><div class="lr3-b"><div class="lr3-t"><h3 class="term">${{x.h}}</h3><p class="one">${{x.one}}</p></div>${{LVIZ[x.id]||''}}</div><div class="hc-foot"><a class="linkbtn" href="{BRIEF}#learn" style="font:var(--type-caption)">Open in the full brief →</a><button class="got" data-learn="${{x.id}}">✓ Got it</button></div></article>`).join('');
 renderStreak();
 
 document.addEventListener('click',e=>{{const m=$('#apMenu'),b=$('#apMore');if(b.contains(e.target)){{m.hidden=!m.hidden;b.setAttribute('aria-expanded',String(!m.hidden))}}else if(!m.contains(e.target)||e.target.closest('a')){{m.hidden=true;b.setAttribute('aria-expanded','false')}}}});

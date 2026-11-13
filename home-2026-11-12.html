@@ -924,6 +924,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
   .hg>.hg-one{display:none}
   .hg-ln{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-16)}
   .hg-ln .card{padding:var(--space-16) var(--space-20)}
+  .hg-c{display:flex}.hg-c .hero{flex:1;align-items:stretch}.hg-c .hero-main,.hg-c .hero-side,.hg-c .idx-card{height:100%}
   .tc-more,.tc-others{display:grid;gap:8px}
   .tl .grp-h{display:block;margin-top:6px;font:600 10px/1 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;color:var(--text-tertiary)}
   .hg-tl .tl{gap:6px}
@@ -942,10 +943,30 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .tc-others p{margin:0;font:var(--type-caption);color:var(--text-secondary)}
 .lr3 .term{margin:0;font:var(--type-title)}.lr3 .one{margin:0;font:var(--type-body-md);color:var(--text-secondary)}.lr3 .one b{color:var(--text-primary)}
 
-@media (min-width:1400px) and (max-height:920px){
+@media (min-width:1400px) and (max-height:1000px){
   .tc-others,.tc-meta2,.hg-tl .hc-foot>span{display:none!important}
   .hg-ln .card{padding:12px 16px;gap:6px}
   .home .top-story{display:none}
+}
+.lr3-b{display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,46%);gap:14px;align-items:start}
+.lr3-t{display:grid;gap:6px;align-content:start}
+.lr3 .lviz{min-height:0;padding:8px 10px;gap:5px}
+.lr3 .lviz .cap{font-size:11px}
+.lr3 .lviz .cap .linkbtn{font:inherit}
+.lr3 .lviz svg{max-height:120px}
+.lr3 .lrow{grid-template-columns:72px 1fr 50px;font-size:11px}
+.lr3 .cause{grid-template-columns:1fr;padding:6px 8px}.lr3 .cause svg{display:none}.lr3 .cause b{font-size:14px}
+.lr3 .effects{grid-template-columns:repeat(3,1fr);gap:4px}
+.lr3 .lviz>svg:not(:first-child){display:none}
+.lr3 .cause{padding:5px 8px}.lr3 .cause .lbl{font-size:10.5px}
+.lr3 .effects>*{padding:4px 5px!important;font-size:10.5px;line-height:1.25}
+.lr3 .meter-l{font-size:10.5px}
+
+@media (min-width:1400px) and (max-height:920px){
+  .hg-tc .tc-why{display:none}
+  .lr3 .one{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .lr3 .lviz{zoom:.8}
+  .lr3-b{grid-template-columns:minmax(0,1fr) minmax(230px,50%)}
 }
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
@@ -1240,7 +1261,8 @@ $('#hlPrev').onclick=()=>hlShow(hi-1,true);$('#hlNext').onclick=()=>hlShow(hi+1,
 /* Got it → the next idea not yet learned comes up by itself (the streak handler above saves it first) */
 $('#hlGot').addEventListener('click',()=>setTimeout(()=>{if(doneToday()){hlShow(hi,true);return}if(!LRN.has(LEARN[hi].id))return;const k=LEARN.findIndex(x=>!LRN.has(x.id));setTimeout(()=>hlShow(k,true),450)},0));
 hlShow(hi,false);
-$('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${x.kind}</span></div><h3 class="term">${x.h}</h3><p class="one">${x.one}</p><div class="hc-foot"><a class="linkbtn" href="today-demo-2026-11-12.html#learn" style="font:var(--type-caption)">See the picture →</a><button class="got" data-learn="${x.id}">✓ Got it</button></div></article>`).join('');
+const LVIZ={"term": "<div class=\"lviz\">\n        <svg viewBox=\"0 0 320 150\" role=\"img\" aria-label=\"Price falls while traders bet on a fall, then rises as they buy back\">\n          <line x1=\"8\" x2=\"312\" y1=\"138\" y2=\"138\" stroke=\"var(--border-decorative)\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30 L312 138 L150 138 Z\" fill=\"var(--teal)\" opacity=\".12\"/>\n          <path d=\"M10 40 L60 54 L110 80 L150 104\" fill=\"none\" stroke=\"var(--slate-500)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <path d=\"M150 104 L190 84 L230 60 L270 42 L312 30\" fill=\"none\" stroke=\"var(--teal)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n          <circle cx=\"18\" cy=\"42\" r=\"5\" fill=\"var(--slate-500)\"/>\n          <circle cx=\"150\" cy=\"104\" r=\"5\" fill=\"var(--amber)\"/>\n          <circle cx=\"306\" cy=\"31\" r=\"5\" fill=\"var(--teal)\"/>\n          <text x=\"28\" y=\"30\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\">1 · Bet on a fall</text>\n          <text x=\"150\" y=\"126\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-secondary)\" text-anchor=\"middle\">2 · Buy back to close</text>\n          <text x=\"304\" y=\"100\" font-size=\"11\" font-family=\"Inter\" fill=\"var(--text-primary)\" font-weight=\"600\" text-anchor=\"end\">3 · Buying lifts price</text>\n        </svg>\n        <div class=\"cap\"><button class=\"linkbtn\" data-go=\"markets\">Today's FII short covering, in numbers: Markets desk →</button></div>\n      </div>", "relation": "<div class=\"lviz\">\n        <div class=\"cause\">\n          <div><span class=\"lbl\">Cause · Brent crude</span><b>$117 → ~$93</b><span class=\"chg\">▼ ~20% from late-Oct peak</span></div>\n          <svg viewBox=\"0 0 120 44\" aria-hidden=\"true\"><path d=\"M2 6 L18 4 L30 10 L44 14 L58 22 L70 26 L84 34 L98 38 L108 34 L118 32\" fill=\"none\" stroke=\"var(--amber)\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>\n        </div>\n        <svg class=\"fan\" viewBox=\"0 0 300 28\" preserveAspectRatio=\"none\" aria-hidden=\"true\">\n          <defs><marker id=\"fanArrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"var(--text-tertiary)\"/></marker></defs>\n          <path d=\"M150 0 C150 14 50 10 50 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 L150 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n          <path d=\"M150 0 C150 14 250 10 250 26\" fill=\"none\" stroke=\"var(--text-tertiary)\" stroke-width=\"1.25\" marker-end=\"url(#fanArrow)\"/>\n        </svg>\n        <div class=\"effects\">\n          <div class=\"effect\">Oil import bill<span class=\"d good\">▼ smaller</span></div>\n          <div class=\"effect\">Rupee &amp; inflation<span class=\"d good\">▼ less pressure</span></div>\n          <div class=\"effect\">Airlines, paints, tyres<span class=\"d good\">▲ cheaper inputs</span></div>\n        </div>\n      </div>", "learning": "<div class=\"lviz\">\n        <div class=\"cap\">Wednesday's move by index</div>\n        <div class=\"lrow\"><span>Nifty 50</span><div class=\"t\"><i style=\"width:52%;background:var(--teal);opacity:.55\"></i></div><b>+0.84%</b></div>\n        <div class=\"lrow\"><span>Midcap 100</span><div class=\"t\"><i style=\"width:50%;background:var(--teal);opacity:.55\"></i></div><b>+0.81%</b></div>\n        <div class=\"lrow hi\"><span>Smallcap 100</span><div class=\"t\"><i style=\"width:100%;background:var(--teal)\"></i></div><b>+1.59%</b></div>\n        <div class=\"cap\" style=\"margin-top:6px\">So Wednesday's rally was</div>\n        <div class=\"meter\" role=\"img\" aria-label=\"Rally breadth: broad\"><i></i><i></i><i></i><i></i><i></i><span class=\"pin\" style=\"left:82%\"></span></div>\n        <div class=\"meter-l\"><span>Narrow · a few giants</span><span><b style=\"color:var(--text-primary)\">Broad</b> · most stocks</span></div>\n      </div>"};
+$('#learnRow').innerHTML=LEARN.map(x=>`<article class="card lcard hl lr3"><div class="hc-head"><span class="eyebrow">${x.kind}</span></div><div class="lr3-b"><div class="lr3-t"><h3 class="term">${x.h}</h3><p class="one">${x.one}</p></div>${LVIZ[x.id]||''}</div><div class="hc-foot"><a class="linkbtn" href="today-demo-2026-11-12.html#learn" style="font:var(--type-caption)">Open in the full brief →</a><button class="got" data-learn="${x.id}">✓ Got it</button></div></article>`).join('');
 renderStreak();
 
 document.addEventListener('click',e=>{const m=$('#apMenu'),b=$('#apMore');if(b.contains(e.target)){m.hidden=!m.hidden;b.setAttribute('aria-expanded',String(!m.hidden))}else if(!m.contains(e.target)||e.target.closest('a')){m.hidden=true;b.setAttribute('aria-expanded','false')}});
