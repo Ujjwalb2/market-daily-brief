@@ -334,6 +334,14 @@ body > .ticker{top:55px;z-index:39}
 
 @media (min-width:1400px) and (max-height:920px){.mvx-r{padding:1px 0}.mvx{gap:6px}}
 /* less text on Home: the full brief keeps the long copy */
+.home .toc{display:none!important}
+@media (min-width:1400px) and (min-height:921px){
+  .home .hero-main{display:flex;flex-direction:column}
+  .home .hero .hero-main h1{font:600 44px/1.1 var(--font-sans);letter-spacing:-.6px;margin:8px 0 14px}
+  .home .hero-main .home-cta{margin-top:auto;margin-bottom:auto;padding:12px 0}
+  .home .hero-main .home-cta .btn{padding:14px 24px;font-size:15px}
+  .home .mood-mini .mood-scale{display:flex!important}
+}
 .home .dayline,.home .mood-mini .src,.home .idx-src,.hl .lviz .cap{display:none!important}
 .tc-sig{list-style:none;margin:0;padding:0;display:grid;gap:0}
 .tc-sig li{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-decorative);font:500 13px/1.2 var(--font-sans);color:var(--text-primary)}
