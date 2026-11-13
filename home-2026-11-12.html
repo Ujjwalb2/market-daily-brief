@@ -1206,6 +1206,15 @@ body > .ticker{top:55px;z-index:39}
 .tc-legs2 small{font:600 11px/1 var(--font-sans);color:var(--text-tertiary);margin-left:2px;white-space:nowrap}.tc-legs2>div{white-space:nowrap}
 .tc-dots{display:flex!important}.tc-dots i{cursor:pointer}
 
+/* trade call risk row: max profit / max loss / capital */
+.tc-risk{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:6px;padding:8px 10px;border-radius:var(--radius-8);background:var(--navy-900);color:var(--white)}
+.tc-risk>div{display:flex!important;flex-direction:column;gap:3px;min-width:0;align-items:stretch!important}.tc-risk>div>b,.tc-risk>div>span{display:block!important;width:auto!important;max-width:100%;text-align:left!important}
+.tc-risk span{font:600 9.5px/1 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.tc-risk b{font:600 13.5px/1.15 var(--font-sans);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-risk b.up{color:#5fd3b5}.tc-risk b.dn{color:#ff8a8a}.tc-risk b.x{font-size:12px}
+.tc-flag{display:inline-grid;place-items:center;width:13px;height:13px;margin-left:3px;border-radius:50%;background:var(--amber);color:#1a1a1a;font:700 9px/1 var(--font-sans);font-style:normal;vertical-align:1px;cursor:help}
+.tc-note{margin:0;font:var(--type-caption);color:var(--amber)}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -1295,7 +1304,7 @@ body > .ticker{top:55px;z-index:39}
     <div class="hg-c">
   <section class="hero" aria-label="Today's edition">
     <div class="hero-main">
-      <div class="eyebrow">Good morning · Edition 144</div>
+      <div class="eyebrow">Good morning · FIIs back, banks led</div>
       <h1>Thursday, 12 November</h1>
       <div class="asof"><span class="asof-pill"><i></i>Yesterday's market · Wednesday 11 Nov close</span></div>
       <p class="dayline">Markets bounced back after the Diwali break as foreign investors returned in size and banks led the way.</p>
@@ -1578,16 +1587,16 @@ renderToday();setInterval(renderToday,30000);
 
 /* ================= TRADE CALLS: one call at a time, switches every 5 s ================= */
 const CALLS=[
- {n:'SWIGGY',k:'Put spread',when:'Posted today',meta:'Swing · 1 month · Medium risk',legs:[['b','PUT 185','₹4.22',1],['s','PUT 180','₹2.35',1]],lv:['₹1.87','₹5.80','₹0.25','₹1.92'],cap:'₹21,000'},
- {n:'FEDERALBNK',k:'Call spread',when:'Posted 11 Nov',meta:'Swing · 1 week · High risk',legs:[['b','CALL 360','₹5.55',1],['s','CALL 380','₹1.40',2]],lv:['₹2.75','₹5.90','₹1.40','₹3.95'],cap:'₹1,14,000'}];
+ {n:'SWIGGY',k:'Put spread',when:'Posted today',meta:'Expiry 23 Nov · 1,825 qty · Medium risk',legs:[['b','PUT 185','₹4.22',1],['s','PUT 180','₹2.35',1]],lv:['₹1.87','₹5.80','₹0.25','₹1.92'],tflag:'Above this spread’s ₹5.00 maximum value. Being checked with the research desk.',mp:'₹5,712',ml:'₹3,413',cap:'₹21,000'},
+ {n:'FEDERALBNK',k:'Call ratio spread 1:2',when:'Posted 11 Nov',meta:'Expiry 23 Nov · 2,500 qty/lot · High risk',legs:[['b','CALL 360','₹5.55',1],['s','CALL 380','₹1.40',2]],lv:['₹2.75','₹5.90','₹1.40','₹3.95'],mp:'₹43,125',ml:'Unlimited >397',mlx:1,cap:'₹1,14,000'}];
 let ti=0,tcHold=false;
 $('#tcDots').innerHTML=CALLS.map(()=>'<i></i>').join('');
 function tcShow(i,anim){ti=(i+CALLS.length)%CALLS.length;const c=CALLS[ti],b=$('#tcBody');
   b.innerHTML=`<div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">${c.when} · ${ti+1} of ${CALLS.length} active</span>
     <div class="top"><b>${c.n} · ${c.k}</b><span class="tc-act">Active</span></div><div class="meta">${c.meta}</div></div>
     <div class="tc-more"><div class="tc-legs2">${c.legs.map(l=>`<div><i class="${l[0]}">${l[0]==='b'?'Buy':'Sell'}</i><span>${l[1]}${l[3]>1?` <small>×${l[3]}</small>`:''}</span><b>${l[2]}</b></div>`).join('')}</div>
-    <div class="tc-lv4"><div>Entry<b>${c.lv[0]}</b></div><div>Target<b class="up">${c.lv[1]}</b></div><div>Stop loss<b class="dn">${c.lv[2]}</b></div><div>LTP<b>${c.lv[3]}</b></div></div>
-    <div class="tc-cap"><span>Approx capital</span><b>${c.cap}</b></div></div>`;
+    <div class="tc-lv4"><div>Entry<b>${c.lv[0]}</b></div><div>Target<b class="up">${c.lv[1]}${c.tflag?`<i class="tc-flag" title="${c.tflag}" aria-label="${c.tflag}">!</i>`:''}</b></div><div>Stop loss<b class="dn">${c.lv[2]}</b></div><div>LTP<b>${c.lv[3]}</b></div></div>
+    <div class="tc-risk"><div><span>Max profit</span><b class="up">${c.mp}</b></div><div><span>Max loss</span><b class="dn${c.mlx?' x':''}">${c.ml}</b></div><div><span>Capital</span><b>${c.cap}</b></div></div></div>`;
   [...$('#tcDots').children].forEach((d,j)=>d.classList.toggle('on',j===ti));
   if(anim){b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}
 tcShow(0,false);
