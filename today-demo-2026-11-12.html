@@ -106,19 +106,35 @@ button{font-family:var(--font-sans)}
 .idx-card .ix{padding:var(--space-8) var(--space-12)}
 .idx-card .ix .lv{font:600 18px/1.25 var(--font-sans);margin:4px 0 2px}
 .idx-card .idx-src{margin-top:2px}
-.inst-grid{display:grid;grid-template-columns:2fr 1fr;gap:var(--space-24)}
-.fl{display:grid;grid-template-columns:56px 1fr 1fr;gap:8px 20px;align-items:center}
-.fl-h{font:var(--type-caption);color:var(--text-tertiary)}
-.fl-who{font:var(--type-label)}
-.fl-c b{display:block;font:600 16px/1.3 var(--font-sans);font-variant-numeric:tabular-nums}
+/* institutional activity: buy/sell bars from a zero line + shrinking FII short */
+.inst-grid{display:grid;grid-template-columns:1.25fr 1.25fr 1fr;gap:var(--space-24)}
+.flp{display:grid;gap:10px;align-content:start}
+.flp-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:var(--type-caption);color:var(--text-tertiary)}
+.flp-h b{font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.flr{display:grid;grid-template-columns:34px 1fr 1fr 78px;align-items:center}
+.flr .who{font:var(--type-label)}
+.flr .sell,.flr .buy{height:14px;display:flex}
+.flr .sell{justify-content:flex-end;border-right:2px solid var(--text-secondary)}
+.flr .sell i,.flr .buy i{display:block;height:100%}
+.flr .sell i{background:var(--slate-500);border-radius:3px 0 0 3px}
+.flr .buy i{background:var(--teal);border-radius:0 3px 3px 0}
+.flr .v{text-align:right;font:600 15px/1.2 var(--font-sans);font-variant-numeric:tabular-nums}
+.flr .v small{display:block;font:500 11px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.flx{display:grid;grid-template-columns:34px 1fr 1fr 78px;font:500 10px/1 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary)}
+.flx span:nth-child(2){text-align:right;padding-right:6px}.flx span:nth-child(3){padding-left:6px}
+.dvp{border-left:1px solid var(--border-decorative);padding-left:var(--space-24);display:grid;gap:8px;align-content:start}
+.oir{display:grid;grid-template-columns:72px 1fr 64px;gap:10px;align-items:center;font:var(--type-caption);color:var(--text-secondary)}
+.oir .bar{height:14px;border-radius:3px;background:var(--border-decorative);overflow:hidden}
+.oir .bar i{display:block;height:100%;background:var(--slate-500)}
+.oir b{text-align:right;font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.dvp .note{font:var(--type-caption);color:var(--text-secondary)}
+.dvp .kv{display:flex;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid var(--border-decorative);font:var(--type-caption);color:var(--text-secondary)}
+.dvp .kv b{font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums}
+@media (max-width:1100px){.inst-grid{grid-template-columns:1fr 1fr}.dvp{grid-column:1/-1;border-left:none;padding-left:0;border-top:1px solid var(--border-decorative);padding-top:var(--space-16)}}
 .au{color:var(--teal);font-size:11px}.ad{color:var(--slate-500);font-size:11px}
 .mb{display:block;height:6px;border-radius:var(--radius-pill);background:var(--border-decorative);overflow:hidden;margin-top:4px}
 .mb i{display:block;height:100%;border-radius:var(--radius-pill)}
 .mb i.t{background:var(--teal)}.mb i.s{background:var(--slate-500)}
-.dv{border-left:1px solid var(--border-decorative);padding-left:var(--space-24);display:grid;gap:8px;align-content:start}
-.dv-r{display:flex;justify-content:space-between;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
-.dv-r b{font:var(--type-data);color:var(--text-primary);font-variant-numeric:tabular-nums;white-space:nowrap}
-.dv-r b.muted{color:var(--text-tertiary);font-weight:500}
 .ipo-row-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
 .ipo-row-head .round{width:32px;height:32px;font-size:14px}
 .round:disabled{opacity:.35;cursor:default}
@@ -943,23 +959,24 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
   </div>
   <div class="grid g3" style="margin-top:12px">
     <div class="card inst span3">
-      <div class="head" style="margin:0 0 10px"><span class="eyebrow">Institutional activity · Wed 11 Nov</span><span class="src">Provisional NSE data via Marketcalls, Niftytrader · ₹ crore</span></div>
+      <div class="head" style="margin:0 0 10px"><span class="eyebrow">Institutional activity · Wed 11 Nov</span><span class="src">Provisional NSE data via Marketcalls, Niftytrader · cash in ₹ crore</span></div>
       <div class="inst-grid">
-        <div class="fl">
-          <div></div><div class="fl-h">Wednesday</div><div class="fl-h">November so far</div>
-          <div class="fl-who">FIIs</div>
-          <div class="fl-c"><b><span class="au">▲</span> +12,563</b><span class="mb"><i class="t" style="width:100%"></i></span></div>
-          <div class="fl-c"><b><span class="au">▲</span> +65,735</b><span class="mb"><i class="t" style="width:100%"></i></span></div>
-          <div class="fl-who">DIIs</div>
-          <div class="fl-c"><b><span class="ad">▼</span> −8,435</b><span class="mb"><i class="s" style="width:67%"></i></span></div>
-          <div class="fl-c"><b><span class="ad">▼</span> −40,504</b><span class="mb"><i class="s" style="width:62%"></i></span></div>
+        <div class="flp">
+          <div class="flp-h"><span>Wednesday</span><span>Net <b>+4,128</b></span></div>
+          <div class="flx" aria-hidden="true"><span></span><span>Sold</span><span>Bought</span><span></span></div>
+          <div class="flr"><span class="who">FIIs</span><span class="sell"><i style="width:0%"></i></span><span class="buy"><i style="width:100%"></i></span><span class="v">+12,563<small>net bought</small></span></div><div class="flr"><span class="who">DIIs</span><span class="sell"><i style="width:67%"></i></span><span class="buy"><i style="width:0%"></i></span><span class="v">−8,435<small>net sold</small></span></div>
         </div>
-        <div class="dv">
-          <div class="fl-h">Derivatives · Nifty</div>
-          <div class="dv-r"><span>FII net short in futures</span><b>2.4L → 70k</b></div>
-          <span class="mb"><i class="s" style="width:29%"></i></span>
-          <div class="dv-r"><span>Client net long</span><b>67,000</b></div>
-          <div class="dv-r"><span>Put-call ratio</span><b class="muted">needs NSE feed</b></div>
+        <div class="flp">
+          <div class="flp-h"><span>November so far</span><span>Net <b>+25,231</b></span></div>
+          <div class="flx" aria-hidden="true"><span></span><span>Sold</span><span>Bought</span><span></span></div>
+          <div class="flr"><span class="who">FIIs</span><span class="sell"><i style="width:0%"></i></span><span class="buy"><i style="width:100%"></i></span><span class="v">+65,735<small>net bought</small></span></div><div class="flr"><span class="who">DIIs</span><span class="sell"><i style="width:62%"></i></span><span class="buy"><i style="width:0%"></i></span><span class="v">−40,504<small>net sold</small></span></div>
+        </div>
+        <div class="dvp">
+          <div class="flp-h"><span>FII net short · Nifty futures</span><span>contracts</span></div>
+          <div class="oir"><span>30 Oct</span><span class="bar"><i style="width:100%"></i></span><b>2.4 lakh</b></div>
+          <div class="oir"><span>Wed 11 Nov</span><span class="bar"><i style="width:29%"></i></span><b>70,000</b></div>
+          <div class="note">Down about 70%: foreign funds closed most of their bets against the Nifty.</div>
+          <div class="kv"><span>Clients net long, Nifty futures</span><b>67,000</b></div>
         </div>
       </div>
     </div>
