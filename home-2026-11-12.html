@@ -374,6 +374,15 @@ body{padding-bottom:68px}
   nav.stabs{border-bottom-color:transparent!important}
   nav.stabs::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);width:min(1200px,calc(100vw - 520px));height:1px;background:var(--border-decorative);pointer-events:none}
 }
+
+/* full brief: short summary instead of the date card + market tiles (those live on Home) */
+.brief-sum{display:none}
+body.brief .hero{display:none}
+body.brief .brief-sum{display:grid;gap:10px;margin-top:var(--space-12);padding:var(--space-16) var(--space-20);border-radius:var(--radius-16);background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.bs-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bs-top .bs-home{margin-left:auto;font:var(--type-caption)}
+body.brief .brief-sum .dayline{margin:0;font:500 17px/1.45 var(--font-sans);color:var(--text-primary);max-width:none}
+body.brief .brief-sum .chips{margin:0}
 /* ---------- live ticker ---------- */
 .ticker{position:sticky;top:0;z-index:35;height:36px;display:flex;align-items:center;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative);overflow:hidden}
 .tk-status{flex:none;display:flex;align-items:center;gap:8px;height:100%;padding:0 var(--space-16);border-right:1px solid var(--border-decorative);background:var(--surface-raised);z-index:2;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
@@ -968,6 +977,28 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
   .lr3 .lviz{zoom:.8}
   .lr3-b{grid-template-columns:minmax(0,1fr) minmax(230px,50%)}
 }
+/* ticker under the header */
+body > .ticker{top:55px;z-index:39}
+/* streak in the spotlight */
+.home .stk-strip{padding:14px 22px;gap:26px;background:linear-gradient(90deg,var(--fb-warning-soft),var(--fin-positive-soft));border:1px solid rgba(240,160,75,.45);box-shadow:0 6px 20px rgba(240,160,75,.12)}
+.home .stk-strip .flame{width:54px;height:54px;border-radius:14px;background:var(--surface-raised)}
+.home .stk-strip .flame svg{width:32px!important;height:32px!important}
+.home .ss-n{gap:12px}.home .ss-n b{font:700 40px/1 var(--font-sans)}
+.home .ss-hi{font:700 16px/1.3 var(--font-sans)}
+.home .stk-strip .days div{width:28px}.home .stk-strip .days i{width:28px;height:28px}
+.home .stk-strip .stk-goal{padding:10px 14px;font:500 14px/1.3 var(--font-sans);background:var(--surface-raised);border-color:rgba(240,160,75,.45)}
+.home .stk-strip .stk-goal.done{border-color:rgba(0,201,154,.5)}
+.home .stk-strip .stk-goal{margin:0 auto!important}
+.home .stk-strip .stk-goal .linkbtn{display:inline-flex;align-items:center;height:28px;padding:0 12px;margin-left:6px;border-radius:var(--radius-pill);background:var(--action-primary);color:var(--action-on-primary);text-decoration:none;font:600 13px/1 var(--font-sans)}
+.home .stk-strip .pips i{width:22px;height:8px;border-radius:4px}
+.home .ss-ms{font:600 12px/1.3 var(--font-sans);color:var(--text-secondary)}
+/* centre cards: no empty band at the bottom */
+.hg-c .hero-main{display:flex;flex-direction:column}
+.hg-c .hero-main .hero-row{margin-top:auto}
+.hg-c .idx-card .idx-strip{grid-auto-rows:1fr}
+.hg-c .idx-card .ix{display:flex;flex-direction:column;justify-content:center}
+.hg-c .idx-card .idx-src{margin-top:8px}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:var(--space-16) var(--space-20)}
@@ -994,12 +1025,6 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 </style>
 </head>
 <body>
-<div class="ticker" role="region" aria-label="Live market ticker">
-  <div class="tk-status"><span class="pill" id="tkPill"><i></i><span id="tkState">Closed</span></span><span id="tkTime">--</span></div>
-  <div class="tk-viewport"><div class="tk-track" id="tkTrack"></div></div>
-  <div class="tk-src" id="tkSrc">Demo feed</div>
-</div>
-
 <header class="ap-bar">
   <div class="wrap">
     <a class="ap-logo" href="home-2026-11-12.html" aria-label="AlphaPad home"><span class="a">α</span>lpha<span class="p">Pad</span></a>
@@ -1014,6 +1039,11 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
     </nav>
   </div>
 </header>
+<div class="ticker" role="region" aria-label="Live market ticker">
+  <div class="tk-status"><span class="pill" id="tkPill"><i></i><span id="tkState">Closed</span></span><span id="tkTime">--</span></div>
+  <div class="tk-viewport"><div class="tk-track" id="tkTrack"></div></div>
+  <div class="tk-src" id="tkSrc">Demo feed</div>
+</div>
 
 <main class="wrap home">
   <div class="hg">
@@ -1137,7 +1167,7 @@ themeBtn.onclick=()=>{const t=curTheme()==='dark'?'light':'dark';root.dataset.th
 
 /* any [data-go] link (ticker items, Markets desk…) opens that part of the full brief */
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();
-  if(g.dataset.go==='learn'){const c=$('#learnCard');c.scrollIntoView({behavior:'smooth',block:'nearest'});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}
+  if(g.dataset.go==='learn'){const c=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');c.scrollIntoView({behavior:'smooth',block:'nearest'});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}
   location.href='today-demo-2026-11-12.html#'+g.dataset.go});
 
 /* ================= LIVE TICKER =================

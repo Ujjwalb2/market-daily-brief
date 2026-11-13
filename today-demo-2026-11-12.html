@@ -374,6 +374,15 @@ body{padding-bottom:68px}
   nav.stabs{border-bottom-color:transparent!important}
   nav.stabs::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);width:min(1200px,calc(100vw - 520px));height:1px;background:var(--border-decorative);pointer-events:none}
 }
+
+/* full brief: short summary instead of the date card + market tiles (those live on Home) */
+.brief-sum{display:none}
+body.brief .hero{display:none}
+body.brief .brief-sum{display:grid;gap:10px;margin-top:var(--space-12);padding:var(--space-16) var(--space-20);border-radius:var(--radius-16);background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.bs-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bs-top .bs-home{margin-left:auto;font:var(--type-caption)}
+body.brief .brief-sum .dayline{margin:0;font:500 17px/1.45 var(--font-sans);color:var(--text-primary);max-width:none}
+body.brief .brief-sum .chips{margin:0}
 /* ---------- live ticker ---------- */
 .ticker{position:sticky;top:0;z-index:35;height:36px;display:flex;align-items:center;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative);overflow:hidden}
 .tk-status{flex:none;display:flex;align-items:center;gap:8px;height:100%;padding:0 var(--space-16);border-right:1px solid var(--border-decorative);background:var(--surface-raised);z-index:2;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
@@ -846,7 +855,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 }
 </style>
 </head>
-<body>
+<body class="brief">
 <div class="ticker" role="region" aria-label="Live market ticker">
   <div class="tk-status"><span class="pill" id="tkPill"><i></i><span id="tkState">Closed</span></span><span id="tkTime">--</span></div>
   <div class="tk-viewport"><div class="tk-track" id="tkTrack"></div></div>
@@ -891,6 +900,13 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
     <div class="hero-side">
       <div class="card idx-card"><div class="head" style="margin:0 0 8px"><span class="eyebrow">Markets · Wed 11 Nov close</span><button class="linkbtn" data-go="markets">Markets desk →</button></div><div class="idx-strip" role="list" aria-label="Index closes"><div class="ix ixu"><div class="nm">Nifty 50</div><div class="lv">25,255.05</div><div class="ch">▲ +0.84%<span class=pt>+210.40</span></div></div><div class="ix ixu"><div class="nm">Sensex</div><div class="lv">81,879.40</div><div class="ch">▲ +0.95%<span class=pt>+772.75</span></div></div><div class="ix ixu"><div class="nm">Nifty Bank</div><div class="lv">60,792.40</div><div class="ch">▲ +1.76%<span class=pt>+1,051.15</span></div></div><div class="ix ixu"><div class="nm">Midcap 100</div><div class="lv">61,519.10</div><div class="ch">▲ +0.81%</div></div><div class="ix ixu"><div class="nm">Smallcap 100</div><div class="lv">19,489.35</div><div class="ch">▲ +1.59%</div></div><div class="ix ixu"><div class="nm">India VIX</div><div class="lv">17.56</div><div class="ch">▲ +0.77%</div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div></div></div>
     </div>
+  </section>
+  <!-- Short summary: the big date card and market tiles live on Home, so the brief doesn't repeat them.
+       The hero markup above stays in the file (hidden here) because Home is built from it. -->
+  <section class="brief-sum" aria-label="Today in short">
+    <div class="bs-top"><span class="eyebrow">Edition 144 · Thursday 12 November</span><span class="asof-pill"><i></i>Yesterday's market · Wednesday 11 Nov close</span><a class="linkbtn bs-home" href="home-2026-11-12.html">Index tiles and mood on Home →</a></div>
+    <p class="dayline">Markets bounced back after the Diwali break as foreign investors returned in size and banks led the way.</p>
+    <div class="chips"><span class="chip pos">FIIs back as buyers</span><span class="chip plain">Brent below $95</span><span class="chip ev t-fno">Sensex weekly expiry today</span></div>
   </section>
 </div>
 

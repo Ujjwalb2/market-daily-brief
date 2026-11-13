@@ -164,6 +164,28 @@ CSS="""
   .lr3 .lviz{zoom:.8}
   .lr3-b{grid-template-columns:minmax(0,1fr) minmax(230px,50%)}
 }
+/* ticker under the header */
+body > .ticker{top:55px;z-index:39}
+/* streak in the spotlight */
+.home .stk-strip{padding:14px 22px;gap:26px;background:linear-gradient(90deg,var(--fb-warning-soft),var(--fin-positive-soft));border:1px solid rgba(240,160,75,.45);box-shadow:0 6px 20px rgba(240,160,75,.12)}
+.home .stk-strip .flame{width:54px;height:54px;border-radius:14px;background:var(--surface-raised)}
+.home .stk-strip .flame svg{width:32px!important;height:32px!important}
+.home .ss-n{gap:12px}.home .ss-n b{font:700 40px/1 var(--font-sans)}
+.home .ss-hi{font:700 16px/1.3 var(--font-sans)}
+.home .stk-strip .days div{width:28px}.home .stk-strip .days i{width:28px;height:28px}
+.home .stk-strip .stk-goal{padding:10px 14px;font:500 14px/1.3 var(--font-sans);background:var(--surface-raised);border-color:rgba(240,160,75,.45)}
+.home .stk-strip .stk-goal.done{border-color:rgba(0,201,154,.5)}
+.home .stk-strip .stk-goal{margin:0 auto!important}
+.home .stk-strip .stk-goal .linkbtn{display:inline-flex;align-items:center;height:28px;padding:0 12px;margin-left:6px;border-radius:var(--radius-pill);background:var(--action-primary);color:var(--action-on-primary);text-decoration:none;font:600 13px/1 var(--font-sans)}
+.home .stk-strip .pips i{width:22px;height:8px;border-radius:4px}
+.home .ss-ms{font:600 12px/1.3 var(--font-sans);color:var(--text-secondary)}
+/* centre cards: no empty band at the bottom */
+.hg-c .hero-main{display:flex;flex-direction:column}
+.hg-c .hero-main .hero-row{margin-top:auto}
+.hg-c .idx-card .idx-strip{grid-auto-rows:1fr}
+.hg-c .idx-card .ix{display:flex;flex-direction:column;justify-content:center}
+.hg-c .idx-card .idx-src{margin-top:8px}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:var(--space-16) var(--space-20)}
@@ -192,8 +214,6 @@ CSS="""
 body=f"""</style>
 </head>
 <body>
-{ticker}
-
 <header class="ap-bar">
   <div class="wrap">
     <a class="ap-logo" href="home-2026-11-12.html" aria-label="AlphaPad home"><span class="a">α</span>lpha<span class="p">Pad</span></a>
@@ -208,6 +228,7 @@ body=f"""</style>
     </nav>
   </div>
 </header>
+{ticker}
 
 <main class="wrap home">
   <div class="hg">
@@ -257,7 +278,7 @@ const TODAY=new Date(2026,10,12);
 {js_helpers}
 /* any [data-go] link (ticker items, Markets desk…) opens that part of the full brief */
 document.addEventListener('click',e=>{{const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();
-  if(g.dataset.go==='learn'){{const c=$('#learnCard');c.scrollIntoView({{behavior:'smooth',block:'nearest'}});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}}
+  if(g.dataset.go==='learn'){{const c=getComputedStyle($('#learnRow')).display!=='none'?$('#learnRow'):$('#learnCard');c.scrollIntoView({{behavior:'smooth',block:'nearest'}});c.classList.remove('pulse');void c.offsetWidth;c.classList.add('pulse');return}}
   location.href='{BRIEF}#'+g.dataset.go}});
 
 {js_ticker}
