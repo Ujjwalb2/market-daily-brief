@@ -269,6 +269,34 @@ button{font-family:var(--font-sans)}
 .ms-bar{height:6px;border-radius:3px;background:var(--border-decorative);overflow:hidden;margin-top:10px}.ms-bar i{display:block;height:100%;background:var(--teal)}
 .toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:70;min-width:280px;max-width:440px;padding:12px 16px;border-radius:var(--radius-12);background:var(--surface-elevated);border:1px solid var(--border-glass);border-left:3px solid var(--teal);box-shadow:0 12px 32px rgba(0,0,0,.35);font:var(--type-label);color:var(--text-primary)}
 .toast small{display:block;font:var(--type-caption);color:var(--text-tertiary);margin-top:2px}
+
+/* ---------- right rail: learning cards ---------- */
+body.learn-rail #p-learn,body.learn-rail .stab[data-tab="learn"]{display:none!important}
+.rail.right{gap:var(--space-8)}
+.lr-head{display:flex;justify-content:space-between;align-items:center;padding:0 4px}
+.lr-count{font:600 11px/1 var(--font-sans);color:var(--text-tertiary)}
+.lr-stage{display:grid}.lr-stage .lcard{grid-area:1/1;transition:opacity .3s}.lr-stage .lcard.lr-off{visibility:hidden;opacity:0}
+.lr-stage .lcard{padding:var(--space-12) var(--space-16);gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.lr-stage .lcard .term{font:600 16px/1.3 var(--font-sans);letter-spacing:-.1px;margin:0}
+.lr-stage .lhead .chip{font-size:10.5px;padding:2px 7px}
+.lr-stage .lviz{min-height:0;padding:10px;gap:6px}
+.lr-stage .lrow{grid-template-columns:52px 1fr 54px;gap:6px;font-size:11px}
+.lr-stage .lrow b{font-size:11.5px}
+.lr-stage .cause{grid-template-columns:1fr;padding:8px 10px}.lr-stage .cause svg{display:none}
+.lr-stage .cause b{font-size:15px}
+.lr-stage .effects{grid-template-columns:1fr;gap:4px}
+.lr-stage .effect{display:flex;justify-content:space-between;align-items:center;text-align:left;padding:6px 8px;font-size:11.5px}
+.lr-stage .effect .d{margin:0;font-size:11px}
+.lr-stage .fan{display:none}
+.lr-stage .meter-l{font-size:10.5px}
+.lr-stage .one{font:400 12.5px/1.5 var(--font-sans)}
+.lr-stage .watch{display:none}
+.lr-stage .lfoot .src{font-size:10.5px}
+.lr-nav{display:flex;justify-content:space-between;align-items:center;padding:0 2px}
+.lr-nav .round{width:30px;height:30px}
+#lrDots i{width:7px;height:7px}#lrDots i.done{background:var(--teal)}#lrDots i.on{background:var(--blue);box-shadow:0 0 0 2px var(--fb-info-soft)}
+.rail.right.lr-pulse .lr-stage .lcard{animation:lrPulse 1.2s ease 2}
+@keyframes lrPulse{50%{border-color:var(--action-primary);box-shadow:0 0 0 4px var(--fb-info-soft)}}
 /* ---------- live ticker ---------- */
 .ticker{position:sticky;top:0;z-index:35;height:36px;display:flex;align-items:center;background:var(--surface-raised);border-bottom:1px solid var(--border-decorative);overflow:hidden}
 .tk-status{flex:none;display:flex;align-items:center;gap:8px;height:100%;padding:0 var(--space-16);border-right:1px solid var(--border-decorative);background:var(--surface-raised);z-index:2;font:var(--type-caption);color:var(--text-tertiary);white-space:nowrap}
@@ -784,7 +812,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
       </div>
     </div>
     <div class="hero-side">
-      <div class="card idx-card"><div class="head" style="margin:0 0 8px"><span class="eyebrow">Markets · Wed 11 Nov close</span><button class="linkbtn" data-go="markets">Markets desk →</button></div><div class="idx-strip" role="list" aria-label="Index closes"><div class="ix ixu"><div class="nm">Nifty 50</div><div class="lv">25,255.05</div><div class="ch">▲ +0.84%<span class=pt>+210.40</span></div></div><div class="ix ixu"><div class="nm">Sensex</div><div class="lv">81,879.40</div><div class="ch">▲ +0.95%<span class=pt>+772.75</span></div></div><div class="ix ixu"><div class="nm">Nifty Bank</div><div class="lv">61,000+ <small>level</small></div><div class="ch">▲ +1.76%</div></div><div class="ix ixu"><div class="nm">Midcap 100</div><div class="lv">61,519.10</div><div class="ch">▲ +0.81%</div></div><div class="ix ixu"><div class="nm">Smallcap 100</div><div class="lv">19,489.35</div><div class="ch">▲ +1.59%</div></div><div class="ix ixu"><div class="nm">India VIX</div><div class="lv">17.56</div><div class="ch">▲ +0.77%</div></div><div class="idx-src">Wednesday 11 Nov close · Sources: Upstox, Kotak Securities, Marketcalls · Nifty Bank's exact close was not published in these reports</div></div></div>
+      <div class="card idx-card"><div class="head" style="margin:0 0 8px"><span class="eyebrow">Markets · Wed 11 Nov close</span><button class="linkbtn" data-go="markets">Markets desk →</button></div><div class="idx-strip" role="list" aria-label="Index closes"><div class="ix ixu"><div class="nm">Nifty 50</div><div class="lv">25,255.05</div><div class="ch">▲ +0.84%<span class=pt>+210.40</span></div></div><div class="ix ixu"><div class="nm">Sensex</div><div class="lv">81,879.40</div><div class="ch">▲ +0.95%<span class=pt>+772.75</span></div></div><div class="ix ixu"><div class="nm">Nifty Bank</div><div class="lv">60,792.40</div><div class="ch">▲ +1.76%<span class=pt>+1,051.15</span></div></div><div class="ix ixu"><div class="nm">Midcap 100</div><div class="lv">61,519.10</div><div class="ch">▲ +0.81%</div></div><div class="ix ixu"><div class="nm">Smallcap 100</div><div class="lv">19,489.35</div><div class="ch">▲ +1.59%</div></div><div class="ix ixu"><div class="nm">India VIX</div><div class="lv">17.56</div><div class="ch">▲ +0.77%</div></div><div class="idx-src">Wednesday 11 Nov close · Source: NSE closing index data</div></div></div>
     </div>
   </section>
 </div>
@@ -815,9 +843,9 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
         <div class="mc-tip" id="mcTip" role="tooltip" hidden></div>
       </div>
     <div class="card movers">
-      <div class="head" style="margin:0"><span class="eyebrow">Nifty 50 movers · Wed 11 Nov</span><span class="src">Upstox, closing</span></div>
-      <div class="mv-list" role="list" aria-label="Nifty 50 movers · Wed 11 Nov"><div class="mv-row mvu"><span class="ar">▲</span><span class="nm">Mahindra &amp; Mahindra</span><span class="bar"><i style="width:100%"></i></span><b>+3.92%</b></div><div class="mv-row mvu"><span class="ar">▲</span><span class="nm">InterGlobe Aviation</span><span class="bar"><i style="width:96%"></i></span><b>+3.76%</b></div><div class="mv-row mvu"><span class="ar">▲</span><span class="nm">Trent</span><span class="bar"><i style="width:66%"></i></span><b>+2.59%</b></div><div class="mv-ref"><span></span><span>Nifty 50 itself</span><span class="bar"></span><b>+0.84%</b></div><div class="mv-row mvd"><span class="ar">▼</span><span class="nm">Nestle India</span><span class="bar"><i style="width:37%"></i></span><b>−1.44%</b></div><div class="mv-row mvd"><span class="ar">▼</span><span class="nm">Tech Mahindra</span><span class="bar"><i style="width:38%"></i></span><b>−1.50%</b></div><div class="mv-row mvd"><span class="ar">▼</span><span class="nm">Adani Ports</span><span class="bar"><i style="width:46%"></i></span><b>−1.82%</b></div></div>
-      <div class="src" style="margin-top:8px">Closing change on NSE. Other outlets show slightly different snapshots (e.g. M&amp;M +5.30% on Angel One).</div>
+      <div class="head" style="margin:0"><span class="eyebrow">Nifty 100 movers · Wed 11 Nov</span><span class="src">NSE, closing</span></div>
+      <div class="mv-list" role="list" aria-label="Nifty 100 movers · Wed 11 Nov"><div class="mv-row mvu"><span class="ar">▲</span><span class="nm">Bank of Baroda</span><span class="bar"><i style="width:100%"></i></span><b>+5.77%</b></div><div class="mv-row mvu"><span class="ar">▲</span><span class="nm">Mahindra &amp; Mahindra</span><span class="bar"><i style="width:92%"></i></span><b>+5.30%</b></div><div class="mv-row mvu"><span class="ar">▲</span><span class="nm">Samvardhana Motherson</span><span class="bar"><i style="width:83%"></i></span><b>+4.81%</b></div><div class="mv-ref"><span></span><span>Nifty 100 itself</span><span class="bar"></span><b>+0.86%</b></div><div class="mv-row mvd"><span class="ar">▼</span><span class="nm">Adani Ports</span><span class="bar"><i style="width:32%"></i></span><b>−1.84%</b></div><div class="mv-row mvd"><span class="ar">▼</span><span class="nm">LTM</span><span class="bar"><i style="width:37%"></i></span><b>−2.16%</b></div><div class="mv-row mvd"><span class="ar">▼</span><span class="nm">Adani Green Energy</span><span class="bar"><i style="width:56%"></i></span><b>−3.26%</b></div></div>
+      <div class="src" style="margin-top:8px">Closing change vs previous close, NSE bhavcopy. 72 of the 100 stocks rose.</div>
       <div class="mv-sec"><div class="head" style="margin:0"><span class="eyebrow">Sectors</span><span class="src">Wednesday · Sources: Kotak Securities, DSIJ</span></div><div class="heat" id="heat" style="grid-template-columns:repeat(6,1fr)"></div><div class="legend"><span><i style="background:var(--teal)"></i>teal = up</span><span><i style="background:var(--slate-500)"></i>grey = down</span><span>stronger colour = bigger move</span></div></div>
     </div>
   </div>
@@ -1022,9 +1050,11 @@ FII/DII figures are provisional. Rupee close and put-call ratio were not availab
   </div>
   <div class="rail-hint">IST · amber = today's events</div>
 </aside>
-<aside class="rail right" aria-label="Explainer for what is on screen" aria-live="polite">
-  <div class="rcard xp" id="xp"></div>
-  <div class="rail-hint">Follows your scroll · the explained card is outlined</div>
+<aside class="rail right" aria-label="Today's learning">
+  <div class="lr-head"><span class="eyebrow">Learn · 3 ideas today</span><span class="lr-count num" id="lrCount">1 / 3</span></div>
+  <div class="lr-stage" id="lrStage" aria-live="polite"></div>
+  <div class="lr-nav"><button class="round" id="lrPrev" aria-label="Previous idea">←</button><span class="xp-dots" id="lrDots"><i></i><i></i><i></i></span><button class="round" id="lrNext" aria-label="Next idea">→</button></div>
+  <div class="rail-hint">Changes every 12 s · pauses on hover · finish all 3 to keep your streak</div>
 </aside>
 
 <div class="calmodal" id="calModal" role="dialog" aria-modal="true" aria-label="Market calendar" hidden>
@@ -1142,10 +1172,10 @@ const TABS=['brief','markets','ipos','learn','archive'];
 const NAV_H=142;let jumpUntil=0;
 function mark(tab){$$('.stab').forEach(b=>{const on=b.dataset.tab===tab;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;if(on)b.classList.add('visited')});
   visited.add(tab);try{history.replaceState(null,'','#'+tab)}catch(e){}}
-function show(tab,instant){const sm=document.getElementById('stkModal');if(sm&&!sm.hidden){sm.hidden=true;document.body.style.overflow=''}if(tab==='calendar'){openCal();return}const el=$('#p-'+tab);if(!el)return;mark(tab);jumpUntil=Date.now()+800;
+function show(tab,instant){const sm=document.getElementById('stkModal');if(sm&&!sm.hidden){sm.hidden=true;document.body.style.overflow=''}if(tab==='calendar'){openCal();return}if(tab==='learn'&&document.body.classList.contains('learn-rail')){const r=document.querySelector('.rail.right');lrShow(lrNextOpen());r.classList.remove('lr-pulse');void r.offsetWidth;r.classList.add('lr-pulse');return}const el=$('#p-'+tab);if(!el)return;mark(tab);jumpUntil=Date.now()+800;
   scrollTo({top:el.getBoundingClientRect().top+scrollY-NAV_H+1,behavior:instant?'auto':'smooth'})}
 function spy(){if(Date.now()<jumpUntil)return;let cur='brief';
-  for(const t of TABS){if($('#p-'+t).getBoundingClientRect().top<=NAV_H+140)cur=t}
+  for(const t of TABS){const p=$('#p-'+t);if(!p.offsetParent)continue;if(p.getBoundingClientRect().top<=NAV_H+140)cur=t}
   if(innerHeight+scrollY>=document.documentElement.scrollHeight-4)cur=TABS.at(-1);
   if($('.stab[aria-selected="true"]').dataset.tab!==cur)mark(cur)}
 addEventListener('scroll',spy,{passive:true});
@@ -1378,35 +1408,6 @@ function renderClock(){const ist=istNow(),now=ist.getHours()*60+ist.getMinutes()
   if(!placed)html+=nowRow;html+='</ul></div>';$('#clk').innerHTML=html}
 renderClock();setInterval(renderClock,30000);
 
-/* RIGHT: explains whichever card sits in the middle of the screen. */
-const XP_NAMES=['Index tiles', 'Market mood', 'Month calendar', 'Movers & sectors', 'Top stories', 'Quick hits', "Today's events", 'Takeaways', 'Institutional activity', 'Know before you trade', 'IPO corner', 'Market calendar', 'Learn', 'Past editions'];
-const XP=[
- {sel:'.idx-card',q:'Nifty 50 vs Sensex',a:'Both track India\'s biggest companies. The Nifty 50 follows 50 stocks on the NSE; the Sensex follows 30 on the BSE. When people say "the market rose", they usually mean these.',eg:'Wednesday: Nifty +210 points (+0.84%), Sensex +773 (+0.95%).',rel:['India VIX','Midcap','Smallcap']},
- {sel:'.mood-mini',q:'What is market mood?',a:'A 0–100 score built from seven signals: momentum, breadth, volatility, safe-haven demand, options positioning, price strength and FII flows. Under 40 leans fearful, over 60 optimistic.',eg:'Today: 62, Optimistic (demo score). It describes sentiment; it is not a buy or sell signal.',rel:['VIX','Breadth']},
- {sel:'#miniCard',q:'Why dates move markets',a:'Results, expiries, IPO deadlines and data releases can all move prices. Nifty weekly options expire on Tuesdays; Sensex weekly options on Thursdays.',eg:'Today: Sensex weekly expiry and October CPI at 4 pm.',rel:['Expiry','CPI']},
- {sel:'.movers',q:'Reading movers and sectors',a:'Top gainers and losers are the Nifty 50 stocks that moved most. A sector index groups companies from one industry, so you can see which parts of the market led.',eg:'PSU banks (+2.94%) led Wednesday; IT (−0.53%) lagged.',rel:['PSU Bank','Sector index']},
- {sel:'#carousel',q:'Who are FIIs?',a:'Foreign Institutional Investors (officially FPIs) are overseas funds that invest in Indian markets. Because they move large sums, their buying or selling often sways the biggest stocks.',eg:'FIIs bought ₹12,563 crore of Indian shares on Wednesday.',rel:['FPI','DII']},
- {sel:'.card.quick',q:'What is EBITDA?',a:'Earnings before interest, tax, depreciation and amortisation: a company\'s operating profit before financing costs and accounting charges. Handy for comparing how well businesses run.',eg:'Popular Vehicles\' Q2 EBITDA rose 56.8% to ₹77.7 crore.',rel:['PAT','Margin']},
- {sel:'#dayTitle',up:'.card',q:'What is CPI inflation?',a:'The Consumer Price Index tracks how prices of a basket of household goods change. It is released monthly and is a key input for the RBI\'s interest-rate decisions.',eg:'October\'s CPI is due today at 4 pm.',rel:['RBI','Repo rate']},
- {sel:'.takeaways',q:'FIIs vs DIIs',a:'DIIs are Indian institutions: mutual funds, insurers and pension funds. They often take the other side of foreign investors, cushioning big swings.',eg:'Wednesday: FIIs +₹12,563 cr, DIIs −₹8,435 cr.',rel:['Mutual funds','SIP']},
- {sel:'.card.inst',q:'What is a futures "short"?',a:'A short in index futures is a bet that the index will fall. When short sellers close those bets, they buy back, which pushes prices up. That buying is called short covering.',eg:'FII index-futures shorts fell from ~2.4 lakh contracts to ~70,000.',rel:['Short covering','Open interest']},
- {sel:'.notices',q:'What is F&O expiry?',a:'Futures and options contracts end on a fixed day. Traders close or roll over their positions, which can make prices swing near the close.',eg:'Sensex weekly options expire today at 3:30 pm.',rel:['Options','Rollover']},
- {sel:'#p-ipos .ipo-sum',up:'section',q:'What does "38x subscribed" mean?',a:'Investors bid for 38 times more shares than were on offer. Strong demand usually means small allotments: many applicants get nothing.',eg:'Sample: Kestrel Energy\'s retail portion was 12.1x subscribed.',rel:['Allotment','Price band']},
- {sel:'#p-calendar .calbar',up:'section',q:'Using the market calendar',a:'Filter by type to see only what matters to you, then add events to your own calendar so you never miss an IPO deadline or an expiry.',eg:'This month: 12 IPO dates, 8 expiries, 3 data releases.',rel:['Add to calendar']},
- {sel:'#p-learn .learn',q:'Build your glossary',a:'Every term you save here goes into your own glossary, kept across editions. The terms change daily and are picked from that day\'s stories.',eg:'Today: short covering, the crude–rupee link, broad rallies.',rel:['Glossary']},
- {sel:'#arGrid',up:'section',q:'Every edition is saved',a:'Open any past day to read its stories or play its audio. Search finds every edition that mentioned a company or topic.',eg:'144 editions so far.',rel:['Search','Topic pages']}];
-const xpTargets=XP.map(x=>{let el=$(x.sel);if(el&&x.up)el=el.closest(x.up)||el;return el});
-let xpCur=-1,xpEl=null;
-function renderXp(i){const x=XP[i];
-  $('#xp').innerHTML=`<span class="xp-tag">Explaining · ${XP_NAMES[i]}</span><h4>${x.q}</h4><p>${x.a}</p><div class="xp-eg"><span>Today</span>${x.eg}</div>
-   <div class="xp-rel">${x.rel.map(r=>`<span class="chip plain">${r}</span>`).join('')}</div>
-   <div class="xp-foot"><button class="btn secondary" style="height:32px;white-space:nowrap">+ Save to glossary</button></div>`}
-function xpSpy(){const mid=innerHeight*0.45;let best=-1,bd=1e9;
-  xpTargets.forEach((el,i)=>{if(!el)return;const r=el.getBoundingClientRect();if(r.bottom<150||r.top>innerHeight-90)return;
-    const d=r.top<=mid&&r.bottom>=mid?0:Math.min(Math.abs(r.top-mid),Math.abs(r.bottom-mid));if(d<bd){bd=d;best=i}});
-  if(best<0||best===xpCur)return;xpCur=best;renderXp(best);
-  if(xpEl)xpEl.classList.remove('xp-focus');xpEl=xpTargets[best];xpEl.classList.add('xp-focus')}
-addEventListener('scroll',xpSpy,{passive:true});addEventListener('resize',xpSpy);xpSpy();
 
 function openCal(){$('#calModal').hidden=false;renderCal();document.body.style.overflow='hidden';$('#calClose').focus()}
 function closeCal(){$('#calModal').hidden=true;document.body.style.overflow=''}
@@ -1456,6 +1457,26 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#stkModal').hidden)close
 $('#stkReset').onclick=()=>{LRN.clear();saveL();renderStreak();toast('Demo reset','Today is back to 0 of 3')};
 $('#stkShare').onclick=()=>{const t=`I've kept up with the market for ${counts().cur} market days in a row on Springpad Today.`;try{navigator.clipboard.writeText(t)}catch(e){}toast('Copied to share',t)};
 renderStreak();
+
+/* RIGHT RAIL: today's 3 Learn cards, one at a time. On wide screens the cards move into the rail
+   (the Learn section and tab hide, so nothing repeats); on narrower screens they go back into the page. */
+const LR_MQ=matchMedia('(min-width:1400px)'),LCARDS=[...document.querySelectorAll('#p-learn .lcard')],LGRID=$('#p-learn .learn');
+let lrI=0,lrHold=false;
+const railMode=()=>document.body.classList.contains('learn-rail');
+function lrShow(i){lrI=(i+LCARDS.length)%LCARDS.length;const r=railMode();
+  LCARDS.forEach((c,j)=>{c.classList.toggle('lr-off',r&&j!==lrI);c.inert=r&&j!==lrI});$('#lrCount').textContent=`${lrI+1} / ${LCARDS.length}`;
+  [...$('#lrDots').children].forEach((d,j)=>{d.classList.toggle('on',j===lrI);d.classList.toggle('done',LRN.has(LEARN_IDS[j]))})}
+function lrPlace(){const r=LR_MQ.matches;document.body.classList.toggle('learn-rail',r);
+  LCARDS.forEach(c=>{c.classList.remove('lr-off');c.inert=false;(r?$('#lrStage'):LGRID).appendChild(c)});
+  $('#p-ipos .up-next').textContent=r?'Next: Archive ↓':'Next: Learn ↓';$('#p-archive .sechead .no').textContent=r?'04':'05';lrShow(lrI)}
+const lrNextOpen=()=>{const k=LEARN_IDS.findIndex(x=>!LRN.has(x));return k<0?lrI:k};
+$('#lrPrev').onclick=()=>lrShow(lrI-1);$('#lrNext').onclick=()=>lrShow(lrI+1);
+const RR=$('.rail.right');RR.addEventListener('mouseenter',()=>lrHold=true);RR.addEventListener('mouseleave',()=>lrHold=false);
+RR.addEventListener('focusin',()=>lrHold=true);RR.addEventListener('focusout',()=>lrHold=false);
+setInterval(()=>{if(railMode()&&!lrHold&&!document.hidden)lrShow(lrI+1)},12000);
+RR.addEventListener('click',e=>{if(e.target.closest('.got'))setTimeout(()=>{lrShow(lrI);if(LRN.has(LEARN_IDS[lrI])&&!doneToday())lrShow(lrNextOpen())},900)});
+const lrSync=()=>{if(LR_MQ.matches!==railMode()){lrPlace();spy()}};
+LR_MQ.addEventListener('change',lrSync);addEventListener('resize',lrSync);lrPlace();
 
 /* ================= start ================= */
 try{history.scrollRestoration='manual'}catch(e){}
