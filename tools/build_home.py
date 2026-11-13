@@ -468,11 +468,11 @@ function renderMvx(m){{const rows=m==='x'?SECS:MVS,mx=Math.max(...rows.map(r=>Ma
   $$('.seg2 button').forEach(b=>{{const on=b.dataset.m===m;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))}})}}
 $('.seg2').addEventListener('click',e=>{{const b=e.target.closest('button');if(b)renderMvx(b.dataset.m)}});
 renderMvx('s');
-/* switches between Nifty 100 and Sectors every 8 s; pauses while the reader hovers or uses the card */
+/* switches between Nifty 100 and Sectors every 5 s; pauses while the reader hovers or uses the card */
 {{let mvMode='s',mvHold=false;const c=$('.hg-dl');c.addEventListener('mouseenter',()=>mvHold=true);c.addEventListener('mouseleave',()=>mvHold=false);
   c.addEventListener('focusin',()=>mvHold=true);c.addEventListener('focusout',()=>mvHold=false);
   $('.seg2').addEventListener('click',e=>{{const b=e.target.closest('button');if(b)mvMode=b.dataset.m}});
-  setInterval(()=>{{if(mvHold||document.hidden)return;mvMode=mvMode==='s'?'x':'s';renderMvx(mvMode);const l=$('#mvx');l.classList.remove('in');void l.offsetWidth;l.classList.add('in')}},8000)}}
+  setInterval(()=>{{if(mvHold||document.hidden)return;mvMode=mvMode==='s'?'x':'s';renderMvx(mvMode);const l=$('#mvx');l.classList.remove('in');void l.offsetWidth;l.classList.add('in')}},5000)}}
 renderToday();setInterval(renderToday,30000);
 addEventListener('resize',()=>{{clearTimeout(window._tlr);window._tlr=setTimeout(renderToday,150)}});
 
