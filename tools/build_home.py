@@ -486,6 +486,24 @@ body > .ticker{top:55px;z-index:39}
 .scan-cue.gone{opacity:0;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.scan-cue{transition:none}}
 
+/* What's happening: tagged company filings */
+.wh{margin:8px 0 90px}
+.scan{margin-bottom:24px!important}
+.wh-card{padding:6px 8px}
+.wh-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 8px}
+.wh-i{display:grid;gap:4px;padding:10px 12px;border-radius:var(--radius-8);text-decoration:none;color:inherit;border-bottom:1px solid var(--border-decorative)}
+.wh-list li:nth-last-child(-n+3) .wh-i{border-bottom:none}
+.wh-i:hover{background:var(--surface-hover)}.wh-i:focus-visible{outline:2px solid var(--action-primary);outline-offset:-2px}
+.wh-m{display:flex;align-items:center;gap:8px;min-width:0}
+.wh-m time{font:500 11px/1 var(--font-sans);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.wh-m b{font:700 12.5px/1 var(--font-sans);letter-spacing:.3px;color:var(--text-primary)}
+.wh-fo{font:700 9.5px/1 var(--font-sans);padding:3px 5px;border-radius:4px;background:var(--indigo-soft);color:var(--text-secondary)}
+.wh-tag{margin-left:auto;font:600 10.5px/1 var(--font-sans);padding:4px 8px;border-radius:var(--radius-pill);white-space:nowrap}
+.wh-tag.g{background:var(--fin-positive-soft);color:var(--teal)}.wh-tag.w{background:var(--fb-warning-soft);color:var(--amber)}.wh-tag.n{background:var(--surface-glass);color:var(--text-secondary)}
+.wh-l{font:500 13px/1.4 var(--font-sans);color:var(--text-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wh-go{font:600 11px/1 var(--font-sans);color:var(--action-primary);opacity:0;transition:opacity .15s}.wh-i:hover .wh-go,.wh-i:focus-visible .wh-go{opacity:1}
+@media (max-width:1399px){.wh-list{grid-template-columns:repeat(2,minmax(0,1fr))}.wh-list li:nth-last-child(-n+3) .wh-i{border-bottom:1px solid var(--border-decorative)}.wh-list li:nth-last-child(-n+2) .wh-i{border-bottom:none}}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -621,9 +639,14 @@ body=f"""@media (min-width:1800px){{.hg-c .idx-strip .nm{{font:600 12.5px/1.2 va
     </div>
   </section>
 
+
+  <section class="wh" id="happening" aria-labelledby="whH">
+    <div class="scan-h"><h2 id="whH">What’s happening</h2><span>Company filings, Nifty 500 · NSE, Fri 13 Nov · tap to open the filing</span></div>
+    <div class="card wh-card"><ul class="wh-list"><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/BEL_13112026182841_Lettersigned.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>18:31</time><b>BEL</b><span class="wh-fo">F&amp;O</span><span class="wh-tag g">Order win</span></span><span class="wh-l">Discloses a new order / contract win</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/RHIM_13112026180912_Outcome.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>18:09</time><b>RHIM</b><span class="wh-tag w">CFO change</span></span><span class="wh-l">CFO resigns; successor named from 1 Jan 2027</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/ABB_13112026180525_PressReleaseQ32026signed.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>18:06</time><b>ABB</b><span class="wh-fo">F&amp;O</span><span class="wh-tag g">Results</span></span><span class="wh-l">Q2 results out; management cites expanding demand across segments</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/PGEL_13112026172525_FINALBSENSESEBISCN13112026.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>17:26</time><b>PGEL</b><span class="wh-fo">F&amp;O</span><span class="wh-tag w">Notice</span></span><span class="wh-l">Receives a show cause notice</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/JSWINFRA_13112026170704_SE_intimation-_LOA-Shambhu.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>17:13</time><b>JSWINFRA</b><span class="wh-tag g">Order win</span></span><span class="wh-l">Receives a letter of award for a new contract</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/EICHERMOT_13112026170319_EMLPressReleaseNovember132026Signed.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>17:03</time><b>EICHERMOT</b><span class="wh-fo">F&amp;O</span><span class="wh-tag g">Results</span></span><span class="wh-l">Q2 results: company calls it its best-ever quarter, with record revenue and EBITDA</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/AMBER_13112026161730_SE_Intimation_Update_on_ILJINs_Resumption_of_Operations.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>16:18</time><b>AMBER</b><span class="wh-fo">F&amp;O</span><span class="wh-tag g">Operations</span></span><span class="wh-l">Operations resume at subsidiary IL JIN Electronics’ factory</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/SHREECEM_13112026155359_NSE_BSE_Demand_order_131126.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>15:54</time><b>SHREECEM</b><span class="wh-fo">F&amp;O</span><span class="wh-tag w">Tax</span></span><span class="wh-l">Appeal against a Punjab state-tax demand order dismissed</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/TVSMOTOR_13112026150251_TVSM_SMP_intimationSD.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>15:03</time><b>TVSMOTOR</b><span class="wh-fo">F&amp;O</span><span class="wh-tag w">Exit</span></span><span class="wh-l">President of the India two-wheeler business resigns, effective 24 Dec</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/PAYTM_13112026144214_SE_Disclosure_PPSL_Wallet_License_in_principal_approval_Nov_2026_sd.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>14:42</time><b>PAYTM</b><span class="wh-fo">F&amp;O</span><span class="wh-tag g">Regulatory</span></span><span class="wh-l">In-principle RBI authorisation for its payments arm’s wallet licence</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/NATCOPHARM_13112026141002_Outcome_13112026.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>14:15</time><b>NATCOPHARM</b><span class="wh-tag n">Dividend</span></span><span class="wh-l">Q2 results and 2nd interim dividend; record date 19 Nov</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li><li><a class="wh-i" href="https://nsearchives.nseindia.com/corporate/ZEEL_13112026130852_SEIntimationBR13NovBBsigned.pdf" target="_blank" rel="noopener"><span class="wh-m"><time>13:11</time><b>ZEEL</b><span class="wh-tag g">Buyback</span></span><span class="wh-l">Files the board resolution for its share buyback</span><span class="wh-go" aria-hidden="true">Filing ↗</span></a></li></ul></div>
+  </section>
   <div style="height:8px"></div>
 </main>
-<a class="scan-cue" href="#scan" id="scanCue">Market scan ↓</a>
+<a class="scan-cue" href="#scan" id="scanCue">Market scan · What’s happening ↓</a>
 
 {calmodal}{modal}{dock}
 
