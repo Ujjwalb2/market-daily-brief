@@ -275,7 +275,13 @@ body.learn-rail #p-learn,body.learn-rail .stab[data-tab="learn"]{display:none!im
 .rail.right{gap:var(--space-8)}
 .lr-head{display:flex;justify-content:space-between;align-items:center;padding:0 4px}
 .lr-count{font:600 11px/1 var(--font-sans);color:var(--text-tertiary)}
-.lr-stage{display:grid}.lr-stage .lcard{grid-area:1/1;transition:opacity .3s}.lr-stage .lcard.lr-off{visibility:hidden;opacity:0}
+@media (min-width:1400px){.rail.right{overflow:hidden;right:max(20px,calc((100vw - 1200px) / 2 - 244px))}}
+.lr-head,.lr-nav,.rail.right .rail-hint{flex:none}
+.lr-stage{display:grid;grid-template-columns:minmax(0,1fr);flex:0 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;border-radius:var(--radius-12)}
+.lr-stage .lcard{grid-area:1/1;min-width:0;transition:opacity .3s}
+.lr-stage .lviz svg{max-width:100%}
+.lr-stage .lcard .term,.lr-stage .one{overflow-wrap:anywhere}
+@media (max-height:900px){.lr-stage .lviz .cap,.lr-stage .lhead .chip,.rail.right .rail-hint{display:none}.lr-stage .lcard{gap:8px;padding:10px 14px}.lr-stage .lviz{padding:8px}.lr-stage .one{font-size:12px;line-height:1.45}}.lr-stage .lcard.lr-off{visibility:hidden;opacity:0}
 .lr-stage .lcard{padding:var(--space-12) var(--space-16);gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
 .lr-stage .lcard .term{font:600 16px/1.3 var(--font-sans);letter-spacing:-.1px;margin:0}
 .lr-stage .lhead .chip{font-size:10.5px;padding:2px 7px}
