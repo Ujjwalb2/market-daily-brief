@@ -957,7 +957,7 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
 .tc-more,.tc-others,.tl .grp-h{display:none}
 @media (min-width:1400px){
   .home.wrap,.ap-bar .wrap{max-width:min(1760px,calc(100vw - 48px))!important}
-  .hg{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"s s s s" "tc c mk tl" "tc one dl bk"}
+  .hg{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"s s s s" "tc c mk tl" "fo one dl bk"}
   .hg-dl{display:flex!important}
   .hg-ln{display:none!important}
   .hg-ln .card{padding:var(--space-16) var(--space-20)}
@@ -1178,6 +1178,23 @@ body > .ticker{top:55px;z-index:39}
 @media (min-width:1400px){.tc-lvl{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-height:0}.tc-lvl svg{width:100%;height:auto;max-height:170px}}
 @media (min-width:1400px) and (max-height:880px){.tc-lvl{display:none}}
 
+/* F&O levels (bottom left) */
+@media (min-width:1400px){.hg-tc .tc-more{flex:1 1 auto;align-content:space-evenly}}
+.hg-fo{grid-area:fo}.hg>.hg-fo{display:none}
+@media (min-width:1400px){.hg>.hg-fo{display:flex}}
+.fo-exp{font:600 11px/1 var(--font-sans);padding:5px 8px;border-radius:var(--radius-pill);background:var(--fb-warning-soft);color:var(--amber);white-space:nowrap}
+.fo-k{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fo-k>div{display:grid;gap:2px;padding:7px 9px;border-radius:var(--radius-8);background:var(--surface-glass);border:1px solid var(--border-decorative)}
+.fo-k span{font:600 10.5px/1.2 var(--font-sans);color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.6px}
+.fo-k b{font:600 17px/1.2 var(--font-sans);font-variant-numeric:tabular-nums}
+.fo-k small{font:var(--type-caption);color:var(--text-tertiary)}
+.fo-k .s b{color:var(--teal)}.fo-k .r b{color:var(--slate-500)}
+.fo-ch{flex:1 1 0;min-height:64px;position:relative}.fo-ch svg{position:absolute;inset:0;width:100%;height:100%}
+.fo-lg{display:flex;gap:12px;font:var(--type-caption);color:var(--text-tertiary)}.fo-lg span:last-child{margin-left:auto}
+.fo-lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0}.fo-lg i.p{background:var(--teal)}.fo-lg i.c{background:var(--slate-500)}
+@media (min-width:1400px) and (max-width:1799px){.fo-k small,.fo-lg span:last-child{display:none}.fo-k b{font-size:15px}.fo-k>div{padding:6px 7px}}
+@media (min-width:1400px) and (max-height:920px){.fo-k small{display:none}.hg-fo .hc-foot>span{display:none}}
+
 /* fit the landing page on one screen */
 .home .hero{grid-template-columns:1.25fr 1fr;margin-top:var(--space-12)}
 .home .hero-main{padding:14px var(--space-20)}
@@ -1297,14 +1314,17 @@ body > .ticker{top:55px;z-index:39}
         <div class="tc-lv4"><div>Entry<b>₹1.87</b></div><div>Target<b class="up">₹5.80</b></div><div>Stop loss<b class="dn">₹0.25</b></div><div>LTP<b>₹1.92</b></div></div>
         <div class="tc-cap"><span>Approx capital</span><b>₹21,000</b></div>
       </div>
-      <p class="tc-why">Bearish continuation after a failed relief rally into the 20 EMA. Full analysis in Trade Calls.</p>
-      <div class="tc-an"><span class="eyebrow" style="color:var(--text-tertiary)">Why this call</span><ul class="tc-sig">
-        <li><i class="dn">▼</i><span>Downtrend</span><b>305 → 186</b></li>
-        <li><i class="dn">▼</i><span>Below all EMAs</span><b>20 to 200</b></li>
-        <li><i class="dn">▼</i><span>Bounce rejected</span><b>at 20 EMA</b></li>
-        <li><i class="wa">!</i><span>Idea fails</span><b>close above 198</b></li>
-      </ul></div>
-      <div class="hc-foot"><span>+2 more active</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
+            <div class="hc-foot"><span>+2 more active</span><a href="https://dev.alphapad.in/dashboard">Open Trade Calls →</a></div>
+    </article>
+    <article class="card hg-fo" aria-label="Nifty F&amp;O levels">
+      <div class="hc-head"><span class="eyebrow">F&amp;O levels · Nifty</span><span class="fo-exp">Expiry Tue 17 Nov</span></div>
+      <div class="fo-k">
+        <div class="s"><span>Support</span><b>25,000</b><small>most put OI</small></div>
+        <div><span>Max pain</span><b>25,100</b><small>expiry pull</small></div>
+        <div class="r"><span>Resistance</span><b>25,500</b><small>most call OI</small></div>
+      </div>
+      <div class="fo-ch"><svg viewBox="0 0 380 74" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Nifty open interest by strike for the 17 Nov expiry: puts largest at 25,000, calls largest at 25,500, spot 25,255"><rect x="4" y="2" width="7" height="7" rx="1.5" fill="var(--teal)"/><text x="14" y="9" font-size="10" font-family="Inter" fill="var(--text-tertiary)">Puts</text><rect x="42" y="2" width="7" height="7" rx="1.5" fill="var(--slate-500)"/><text x="52" y="9" font-size="10" font-family="Inter" fill="var(--text-tertiary)">Calls</text><line x1="0" x2="380" y1="60" y2="60" stroke="var(--border-decorative)"/><rect x="7.7" y="37.6" width="12.2" height="22.4" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="21.9" y="56.2" width="12.2" height="3.8" rx="1.5" fill="var(--slate-500)" opacity=".55"/><text x="20.9" y="73" text-anchor="middle" font-size="10" font-family="Inter" fill="var(--text-tertiary)">24,800</text><rect x="41.6" y="44.9" width="12.2" height="15.1" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="55.7" y="55.9" width="12.2" height="4.1" rx="1.5" fill="var(--slate-500)" opacity=".55"/><rect x="75.4" y="32.4" width="12.2" height="27.6" rx="1.5" fill="var(--teal)"/><rect x="89.5" y="44.5" width="12.2" height="15.5" rx="1.5" fill="var(--slate-500)" opacity=".55"/><text x="88.5" y="73" text-anchor="middle" font-size="10" font-family="Inter" fill="var(--text-tertiary)">25,000</text><rect x="109.2" y="46.9" width="12.2" height="13.1" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="123.4" y="53.0" width="12.2" height="7.0" rx="1.5" fill="var(--slate-500)" opacity=".55"/><rect x="143.0" y="44.8" width="12.2" height="15.2" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="157.2" y="42.0" width="12.2" height="18.0" rx="1.5" fill="var(--slate-500)" opacity=".55"/><text x="156.2" y="73" text-anchor="middle" font-size="10" font-family="Inter" fill="var(--text-tertiary)">25,200</text><rect x="176.8" y="46.0" width="12.2" height="14.0" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="191.0" y="33.4" width="12.2" height="26.6" rx="1.5" fill="var(--slate-500)" opacity=".55"/><rect x="210.6" y="50.7" width="12.2" height="9.3" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="224.8" y="26.0" width="12.2" height="34.0" rx="1.5" fill="var(--slate-500)" opacity=".55"/><text x="223.8" y="73" text-anchor="middle" font-size="10" font-family="Inter" fill="var(--text-tertiary)">25,400</text><rect x="244.5" y="50.7" width="12.2" height="9.3" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="258.6" y="14.0" width="12.2" height="46.0" rx="1.5" fill="var(--slate-500)"/><rect x="278.3" y="58.5" width="12.2" height="1.5" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="292.5" y="37.3" width="12.2" height="22.7" rx="1.5" fill="var(--slate-500)" opacity=".55"/><text x="291.5" y="73" text-anchor="middle" font-size="10" font-family="Inter" fill="var(--text-tertiary)">25,600</text><rect x="312.1" y="59.1" width="12.2" height="0.9" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="326.3" y="37.8" width="12.2" height="22.2" rx="1.5" fill="var(--slate-500)" opacity=".55"/><rect x="345.9" y="59.4" width="12.2" height="0.6" rx="1.5" fill="var(--teal)" opacity=".55"/><rect x="360.1" y="29.3" width="12.2" height="30.7" rx="1.5" fill="var(--slate-500)" opacity=".55"/><text x="359.1" y="73" text-anchor="middle" font-size="10" font-family="Inter" fill="var(--text-tertiary)">25,800</text><line x1="174.8" x2="174.8" y1="12" y2="60" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="3 2"/><text x="178.8" y="9" font-size="10" font-family="Inter" font-weight="600" fill="var(--amber)">Spot 25,255</text></svg></div>
+      <div class="hc-foot"><span>NSE F&amp;O · 11 Nov close</span><a href="#">Open Option Studio →</a></div>
     </article>
     <article class="card hg-tl" aria-label="Today's market timeline">
       <div class="hc-head"><span class="eyebrow">Today · Thu 12 Nov</span><button class="linkbtn" data-go="calendar">Calendar →</button></div>
