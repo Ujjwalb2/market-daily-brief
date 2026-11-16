@@ -971,6 +971,12 @@ footer{font:var(--type-caption);color:var(--text-tertiary);padding:var(--space-3
   .hg-tl .tl{gap:3px}
 }
 .tc-legs2{display:grid;gap:6px}
+.tc-pot{display:grid;gap:5px;padding:8px 10px;border-radius:var(--radius-8);background:var(--fin-positive-soft);border-left:3px solid var(--teal)}
+.tc-pot-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
+.tc-pot-h b{font:600 15px/1 var(--font-sans);font-variant-numeric:tabular-nums;color:var(--text-primary)}.tc-pot-h em{font-style:normal;font-size:12px;color:var(--text-secondary);margin-left:4px}
+.tc-pot-b{position:relative;height:6px;border-radius:3px;background:var(--surface-glass)}.tc-pot-b i{display:block;height:100%;border-radius:3px;background:var(--teal)}
+.tc-pot-b span{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--surface-raised);border:2px solid var(--teal)}
+.tc-pot-l{display:flex;justify-content:space-between;gap:6px;font:400 10.5px/1.2 var(--font-sans);color:var(--text-tertiary);white-space:nowrap}
 .tc-legs2>div{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-8);border:1px solid var(--border-decorative);font:var(--type-label)}
 .tc-legs2 i{font-style:normal;font:600 10px/1 var(--font-sans);text-transform:uppercase;padding:4px 6px;border-radius:var(--radius-6);text-align:center}
 .tc-legs2 i.b{background:var(--fin-positive-soft)}.tc-legs2 i.s{background:var(--fb-error-soft)}
@@ -1021,6 +1027,7 @@ body > .ticker{top:55px;z-index:39}
 .home .stk-strip .stk-goal{padding:10px 14px;font:500 14px/1.3 var(--font-sans);background:var(--surface-raised);border-color:rgba(240,160,75,.45)}
 .home .stk-strip .stk-goal.done{border-color:rgba(0,201,154,.5)}
 .home .stk-strip .stk-goal{margin:0 auto!important}
+@media (max-width:1599px){.home .stk-strip{gap:14px}.home .stk-strip .stk-goal{padding:8px 12px}.home .stk-strip .stk-goal{min-width:0}}
 .home .stk-strip .stk-goal .linkbtn{display:inline-flex;align-items:center;height:28px;padding:0 12px;margin-left:6px;border-radius:var(--radius-pill);background:var(--action-primary);color:var(--action-on-primary);text-decoration:none;font:600 13px/1 var(--font-sans)}
 .home .stk-strip .pips i{width:22px;height:8px;border-radius:4px}
 .home .ss-ms{font:600 12px/1.3 var(--font-sans);color:var(--text-secondary)}
@@ -1276,7 +1283,7 @@ body > .ticker{top:55px;z-index:39}
 .ipop b{display:block;margin-bottom:4px;font:600 13px/1.3 var(--font-sans);color:var(--text-primary)}.ipop p{margin:0 0 6px;line-height:1.5}.ipop small{color:var(--text-tertiary)}
 
 /* Market scan (below the first screen) */
-.scan{margin:56px 0 90px}
+.sdw{margin:56px 0 0}.scan{margin:40px 0 90px}.sd{container-type:inline-size;display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:var(--radius-16,16px);background:var(--surface-raised);border:1px solid var(--border-decorative);min-width:0}.sd-in{display:grid;grid-template-columns:1fr;gap:18px}@container (min-width:560px){.sd-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.sd-side{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}}@container (min-width:1000px){.sd-in{grid-template-columns:minmax(0,1.05fr) minmax(0,1.2fr) minmax(0,1fr)}.sd-side{grid-column:auto;display:flex;flex-direction:column;gap:14px}}.sd-id{display:flex;flex-direction:column;gap:10px;min-width:0}.sd-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.sd-eye{font:600 11px/1.2 var(--font-sans);letter-spacing:1.1px;text-transform:uppercase;color:var(--text-tertiary)}.sd-tag{font:600 11px/1 var(--font-sans);padding:5px 9px;border-radius:9999px;background:var(--fin-positive-soft);color:var(--text-primary);box-shadow:inset 0 0 0 1px rgba(0,201,154,.45);white-space:nowrap}.sd h3{margin:0;display:flex;align-items:center;gap:12px}.sd h3>span:last-child{display:grid;min-width:0}.sd h3 b{font:600 24px/1.1 var(--font-sans);letter-spacing:-.3px;color:var(--text-primary)}.sd h3 small{font:400 12.5px/1.3 var(--font-sans);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sd-av{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;background:var(--fin-positive-soft);box-shadow:inset 0 0 0 1px var(--teal);font:700 14px/1 var(--font-sans);color:var(--text-primary)}.sd-nm{display:flex;align-items:center;gap:8px}.sd-fo{display:inline-block;font:600 10px/1 var(--font-sans);padding:3px 6px;border-radius:9999px;background:var(--surface-hover);color:var(--text-secondary)}.sd-px{display:flex;align-items:baseline;gap:10px}.sd-px b{font:600 30px/1 var(--font-sans);letter-spacing:-.6px;font-variant-numeric:tabular-nums;color:var(--text-primary)}.sd-up{font:600 14px/1 var(--font-sans);color:var(--teal);font-variant-numeric:tabular-nums}.sd-why{margin:0;font:400 13.5px/1.55 var(--font-sans);color:var(--text-secondary)}.sd-why b{color:var(--text-primary);font-weight:600}.sd-risk{margin:0;padding:8px 10px;border-radius:8px;background:var(--fb-warning-soft);border-left:3px solid var(--amber);font:400 12.5px/1.4 var(--font-sans);color:var(--text-secondary)}.sd-risk b{color:var(--text-primary);font-weight:600}.sd-viz{display:flex;flex-direction:column;gap:14px;min-width:0}.sd-chart{position:relative;height:170px;border-radius:12px;background:var(--surface-glass);overflow:hidden}.sd-svg{position:absolute;inset:0;width:100%;height:100%}.sd-zone{fill:rgba(0,201,154,.07)}.sd-old{stroke:var(--text-tertiary);stroke-dasharray:4 4}.sd-line{fill:none;stroke:var(--teal);stroke-width:2.5;stroke-linejoin:round}.sd-oldl{position:absolute;left:10px;transform:translateY(4px);font:500 10.5px/1 var(--font-sans);color:var(--text-tertiary);white-space:nowrap}.sd-now{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(0,201,154,.25)}.sd-now em{position:absolute;right:12px;top:-6px;font:normal 600 11px/1 var(--font-sans);color:var(--text-primary);background:var(--surface-elevated);padding:3px 7px;border-radius:9999px;white-space:nowrap}.sd-rng-h,.sd-rng-l{display:flex;justify-content:space-between;gap:8px;font:400 11.5px/1.3 var(--font-sans);color:var(--text-tertiary)}.sd-rng-h span:last-child{color:var(--text-secondary);font-weight:600}.sd-rng-b{position:relative;height:8px;margin:7px 0;border-radius:4px;background:linear-gradient(90deg,rgba(123,135,153,.25),rgba(0,201,154,.25))}.sd-rng-b i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,rgba(0,201,154,.25),var(--teal))}.sd-rng-b span{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--surface-raised);border:3px solid var(--teal)}.sd-rng-l small{display:block;font-size:10.5px;opacity:.8}.sd-rng-l span:last-child{text-align:right}.sd-side{min-width:0}.sd-sig{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}.sd-sig li{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--surface-glass);border:1px solid var(--border-decorative);min-width:0}.sd-sig span{font:500 11px/1.2 var(--font-sans);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sd-sig b{font:600 20px/1.1 var(--font-sans);font-variant-numeric:tabular-nums;color:var(--text-primary)}.sd-sig small{font:400 11px/1.2 var(--font-sans);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sd-m{display:block;height:4px;margin-top:6px;border-radius:2px;background:var(--surface-glass);overflow:hidden}.sd-m i{display:block;height:100%;background:var(--teal);border-radius:2px}.sd-oth ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}.sd-oth li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"s n c" "s t c";column-gap:10px;align-items:center;padding:7px 10px;border-radius:8px;border:1px solid var(--border-decorative)}.sd-oth li b{grid-area:s;font:600 12.5px/1 var(--font-sans);color:var(--text-primary)}.sd-oth li>span:nth-child(2){grid-area:n;font:400 11.5px/1.2 var(--font-sans);color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sd-oth li em{grid-area:t;font:normal 400 11px/1.2 var(--font-sans);color:var(--text-tertiary)}.sd-oth .sd-up{grid-area:c;font-size:12.5px}.sd-f{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border-decorative);font:400 11.5px/1.3 var(--font-sans);color:var(--text-tertiary)}.sd-f>span:first-child{cursor:help;min-width:0}.sd-links{display:flex;gap:16px}.sd-links a{font:600 12.5px/1 var(--font-sans);color:var(--link,#8FA3FF);text-decoration:none;white-space:nowrap}.sd-links a:hover{text-decoration:underline}@container (max-width:420px){.sd-sig{grid-template-columns:1fr 1fr}.sd-px b{font-size:26px}.sd-chart{height:140px}}:root[data-theme="light"] .sd-up,:root[data-theme="light"] .sd-links a{color:var(--text-primary)}
 .scan-h{display:flex;align-items:baseline;gap:12px;margin:0 2px 10px}
 .scan-h h2{margin:0;font:600 18px/1.2 var(--font-sans);color:var(--text-primary)}
 .scan-h span{font:var(--type-caption);color:var(--text-tertiary)}
@@ -1501,6 +1508,31 @@ body > .ticker{top:55px;z-index:39}
     <section class="hg-ln" id="learnRow" aria-label="Today's three ideas"></section>
   </div>
 
+  <section class="sdw" id="sotd" aria-label="Stock of the day"><div class="scan-h"><h2>Stock of the day</h2><span>Nifty 500 · NSE, 11 Nov close · picked on technicals</span></div><article class="sd" aria-labelledby="sdH">
+  <div class="sd-in">
+    <div class="sd-id">
+      <div class="sd-top"><span class="sd-eye">Stock of the day · 11 Nov</span><span class="sd-tag">▲ Fresh 52-week high</span></div>
+      <h3 id="sdH"><span class="sd-av" aria-hidden="true">NA</span><span><span class="sd-nm"><b>NAVINFLUOR</b><span class="sd-fo">F&amp;O</span></span><small>Navin Fluorine International · Chemicals</small></span></h3>
+      <div class="sd-px"><b>₹9,659</b><span class="sd-up">▲ +5.97%</span></div>
+      <p class="sd-why">Closed at a fresh 52-week high, <b>4.5% above</b> its old peak of ₹9,245, on <b>3.1× its usual volume</b>. Futures OI rose 69% with the price: fresh buying. Breakouts on heavy volume tend to hold better than quiet ones.</p>
+      <p class="sd-risk"><b>What would undo it:</b> a close back below ₹9,245.</p>
+    </div>
+    <div class="sd-viz">
+      <div class="sd-chart"><svg viewBox="0 0 520 150" preserveAspectRatio="none" class="sd-svg" role="img" aria-label="NAVINFLUOR closes over the last 27 sessions, ending above its old 52-week high of ₹9,245"><defs><linearGradient id="sdg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#00C99A" stop-opacity=".28"/><stop offset="1" stop-color="#00C99A" stop-opacity="0"/></linearGradient></defs><rect x="0" y="0" width="520" height="42.5" class="sd-zone"/><polygon points="10,150 10.0,104.5 29.2,96.9 48.5,82.2 67.7,84.7 86.9,88.8 106.2,92.4 125.4,80.8 144.6,86.0 163.8,86.6 183.1,98.3 202.3,102.8 221.5,103.6 240.8,111.3 260.0,115.1 279.2,130.7 298.5,131.0 317.7,97.9 336.9,84.1 356.2,97.6 375.4,74.1 394.6,89.4 413.8,82.5 433.1,68.2 452.3,64.9 471.5,55.7 490.8,49.8 510.0,19.4 510.0,150" fill="url(#sdg)"/><line x1="0" x2="520" y1="42.5" y2="42.5" class="sd-old" vector-effect="non-scaling-stroke"/><polyline points="10.0,104.5 29.2,96.9 48.5,82.2 67.7,84.7 86.9,88.8 106.2,92.4 125.4,80.8 144.6,86.0 163.8,86.6 183.1,98.3 202.3,102.8 221.5,103.6 240.8,111.3 260.0,115.1 279.2,130.7 298.5,131.0 317.7,97.9 336.9,84.1 356.2,97.6 375.4,74.1 394.6,89.4 413.8,82.5 433.1,68.2 452.3,64.9 471.5,55.7 490.8,49.8 510.0,19.4" class="sd-line" vector-effect="non-scaling-stroke"/></svg><span class="sd-oldl" style="top:28.3%">Old 52-week high ₹9,245 · 8 Nov</span><span class="sd-now" style="left:98.1%;top:12.9%"><em>New high</em></span></div>
+      <div class="sd-rng" role="img" aria-label="52-week range ₹5,440 to ₹9,666; close at 100% of the range">
+        <div class="sd-rng-h"><span>52-week range</span><span>100% of range</span></div>
+        <div class="sd-rng-b"><i style="width:99.8%"></i><span style="left:99.8%"></span></div>
+        <div class="sd-rng-l"><span>Low ₹5,440<small>9 Dec 2025</small></span><span>High ₹9,666<small>11 Nov</small></span></div>
+      </div>
+    </div>
+    <div class="sd-side">
+      <ul class="sd-sig" aria-label="Why it was picked"><li><span>Volume</span><b>3.1×</b><small>20-day average</small><i class="sd-m"><i style="width:78%"></i></i></li><li><span>Delivery</span><b>45%</b><small>of traded shares</small><i class="sd-m"><i style="width:45%"></i></i></li><li><span>Above 20-day avg</span><b>+15.2%</b><small>avg ₹8,387</small><i class="sd-m"><i style="width:76%"></i></i></li><li><span>Futures OI</span><b>+69%</b><small>long buildup</small><i class="sd-m"><i style="width:69%"></i></i></li></ul>
+      <div class="sd-oth"><span class="sd-eye">Also at 52-week highs</span><ul><li><b>PNB</b><span>Punjab National Bank</span><em>+2.5% above 52W high</em><span class="sd-up">+4.77%</span></li><li><b>PETRONET</b><span>Petronet LNG</span><em>+1.0% above 52W high</em><span class="sd-up">+2.92%</span></li></ul></div>
+    </div>
+  </div>
+  <div class="sd-f"><span title="Nifty 500 stocks within 3% of, or above, their 52-week high; up on the day; volume at least 1.5× the 20-day average; delivery at least 35%; above the 20-day average. Highest score wins.">How it is picked: near 52-week high + heavy volume + strong delivery · NSE data · not a recommendation</span>
+    <span class="sd-links"><a href="https://dev.alphapad.in/option-studio">Option chain →</a><a href="https://dev.alphapad.in/screener">Screen similar →</a></span></div>
+</article></section>
   <section class="scan" id="scan" aria-labelledby="scanH">
     <div class="scan-h"><h2 id="scanH">Market scan</h2><span>Nifty 500 stocks · NSE, 11 Nov close</span></div>
     <div class="scan-g">
@@ -1518,7 +1550,7 @@ body > .ticker{top:55px;z-index:39}
   </section>
   <div style="height:8px"></div>
 </main>
-<a class="scan-cue" href="#scan" id="scanCue">Market scan · What’s happening ↓</a>
+<a class="scan-cue" href="#sotd" id="scanCue">Stock of the day · Market scan ↓</a>
 
 <div class="calmodal" id="calModal" role="dialog" aria-modal="true" aria-label="Market calendar" hidden>
   <div class="cm-box">
@@ -1817,16 +1849,23 @@ const CALLS=[
  {n:'SWIGGY',k:'Put spread',when:'Posted today',meta:'Expiry 23 Nov · 1,825 qty · Medium risk',legs:[['b','PUT 185','₹4.22',1],['s','PUT 180','₹2.35',1]],lv:['₹1.87','₹5.80','₹0.25','₹1.92'],tflag:'Above this spread’s ₹5.00 maximum value. Being checked with the research desk.',mp:'₹5,712',ml:'₹3,413',cap:'₹21,000'},
  {n:'FEDERALBNK',k:'Call ratio spread 1:2',when:'Posted 11 Nov',meta:'Expiry 23 Nov · 2,500 qty/lot · High risk',legs:[['b','CALL 360','₹5.55',1],['s','CALL 380','₹1.40',2]],lv:['₹2.75','₹5.90','₹1.40','₹3.95'],mp:'₹43,125',ml:'Unlimited >397',mlx:1,cap:'₹1,14,000'}];
 let ti=0,tcHold=false;
+const rs=x=>parseFloat(String(x).replace(/[₹,]/g,''));
+function tcPot(c){const e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
+  return `<div class="tc-pot" title="Potential left = target minus last price, as a % of last price"><div class="tc-pot-h"><span>Potential left</span><b>+₹${left.toFixed(2)} <em>${pc>=0?'+':''}${pc.toFixed(0)}%</em></b></div>
+  <div class="tc-pot-b" role="img" aria-label="${done.toFixed(0)}% of the way from entry to target"><i style="width:${done.toFixed(1)}%"></i><span style="left:${done.toFixed(1)}%"></span></div>
+  <div class="tc-pot-l"><span>Entry ${c.lv[0]}</span><span>${done.toFixed(0)}% of the way</span><span>Target ${c.lv[1]}</span></div></div>`}
 $('#tcDots').innerHTML=CALLS.map(()=>'<i></i>').join('');
 function tcShow(i,anim){ti=(i+CALLS.length)%CALLS.length;const c=CALLS[ti],b=$('#tcBody');
   b.innerHTML=`<div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">${c.when} · ${ti+1} of ${CALLS.length} active</span>
     <div class="top"><b>${c.n} · ${c.k}</b><span class="tc-act">Active</span></div><div class="meta">${c.meta}</div></div>
     <div class="tc-more"><div class="tc-legs2">${c.legs.map(l=>`<div><i class="${l[0]}">${l[0]==='b'?'Buy':'Sell'}</i><span>${l[1]}${l[3]>1?` <small>×${l[3]}</small>`:''}</span><b>${l[2]}</b></div>`).join('')}</div>
     <div class="tc-lv4"><div>Entry<b>${c.lv[0]}</b></div><div>Target<b class="up">${c.lv[1]}${c.tflag?`<i class="tc-flag" title="${c.tflag}" aria-label="${c.tflag}">!</i>`:''}</b></div><div>Stop loss<b class="dn">${c.lv[2]}</b></div><div>LTP<b>${c.lv[3]}</b></div></div>
+    ${tcPot(c)}
     <div class="tc-risk"><div><span>Max profit</span><b class="rk-up">${c.mp}</b></div><div><span>Max loss</span><b class="rk-dn${c.mlx?' x':''}">${c.ml}</b></div><div><span>Capital</span><b>${c.cap}</b></div></div></div>`;
   [...$('#tcDots').children].forEach((d,j)=>d.classList.toggle('on',j===ti));
   if(anim){b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}
-tcShow(0,false);
+function tcLock(){const b=$('#tcBody'),k=ti;b.style.minHeight='';let m=0;CALLS.forEach((_,i)=>{tcShow(i,false);m=Math.max(m,b.offsetHeight)});b.style.minHeight=m+'px';tcShow(k,false)}
+tcShow(0,false);tcLock();addEventListener('resize',()=>{clearTimeout(window._tcl);window._tcl=setTimeout(tcLock,150)});
 $('#tcDots').addEventListener('click',e=>{const d=e.target.closest('i');if(d)tcShow([...$('#tcDots').children].indexOf(d),true)});
 {const card=$('.hg-tc');['mouseenter','focusin'].forEach(ev=>card.addEventListener(ev,()=>tcHold=true));['mouseleave','focusout'].forEach(ev=>card.addEventListener(ev,()=>tcHold=false));
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(()=>{if(!tcHold&&!document.hidden)tcShow(ti+1,true)},5000)}

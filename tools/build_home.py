@@ -162,6 +162,12 @@ CSS="""
   .hg-tl .tl{gap:3px}
 }
 .tc-legs2{display:grid;gap:6px}
+.tc-pot{display:grid;gap:5px;padding:8px 10px;border-radius:var(--radius-8);background:var(--fin-positive-soft);border-left:3px solid var(--teal)}
+.tc-pot-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:var(--type-caption);color:var(--text-secondary)}
+.tc-pot-h b{font:600 15px/1 var(--font-sans);font-variant-numeric:tabular-nums;color:var(--text-primary)}.tc-pot-h em{font-style:normal;font-size:12px;color:var(--text-secondary);margin-left:4px}
+.tc-pot-b{position:relative;height:6px;border-radius:3px;background:var(--surface-glass)}.tc-pot-b i{display:block;height:100%;border-radius:3px;background:var(--teal)}
+.tc-pot-b span{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--surface-raised);border:2px solid var(--teal)}
+.tc-pot-l{display:flex;justify-content:space-between;gap:6px;font:400 10.5px/1.2 var(--font-sans);color:var(--text-tertiary);white-space:nowrap}
 .tc-legs2>div{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-8);border:1px solid var(--border-decorative);font:var(--type-label)}
 .tc-legs2 i{font-style:normal;font:600 10px/1 var(--font-sans);text-transform:uppercase;padding:4px 6px;border-radius:var(--radius-6);text-align:center}
 .tc-legs2 i.b{background:var(--fin-positive-soft)}.tc-legs2 i.s{background:var(--fb-error-soft)}
@@ -212,6 +218,7 @@ body > .ticker{top:55px;z-index:39}
 .home .stk-strip .stk-goal{padding:10px 14px;font:500 14px/1.3 var(--font-sans);background:var(--surface-raised);border-color:rgba(240,160,75,.45)}
 .home .stk-strip .stk-goal.done{border-color:rgba(0,201,154,.5)}
 .home .stk-strip .stk-goal{margin:0 auto!important}
+@media (max-width:1599px){.home .stk-strip{gap:14px}.home .stk-strip .stk-goal{padding:8px 12px}.home .stk-strip .stk-goal{min-width:0}}
 .home .stk-strip .stk-goal .linkbtn{display:inline-flex;align-items:center;height:28px;padding:0 12px;margin-left:6px;border-radius:var(--radius-pill);background:var(--action-primary);color:var(--action-on-primary);text-decoration:none;font:600 13px/1 var(--font-sans)}
 .home .stk-strip .pips i{width:22px;height:8px;border-radius:4px}
 .home .ss-ms{font:600 12px/1.3 var(--font-sans);color:var(--text-secondary)}
@@ -803,16 +810,23 @@ const CALLS=[
  {{n:'SWIGGY',k:'Put spread',when:'Posted today',meta:'Expiry 23 Nov · 1,825 qty · Medium risk',legs:[['b','PUT 185','₹4.22',1],['s','PUT 180','₹2.35',1]],lv:['₹1.87','₹5.80','₹0.25','₹1.92'],tflag:'Above this spread’s ₹5.00 maximum value. Being checked with the research desk.',mp:'₹5,712',ml:'₹3,413',cap:'₹21,000'}},
  {{n:'FEDERALBNK',k:'Call ratio spread 1:2',when:'Posted 11 Nov',meta:'Expiry 23 Nov · 2,500 qty/lot · High risk',legs:[['b','CALL 360','₹5.55',1],['s','CALL 380','₹1.40',2]],lv:['₹2.75','₹5.90','₹1.40','₹3.95'],mp:'₹43,125',ml:'Unlimited >397',mlx:1,cap:'₹1,14,000'}}];
 let ti=0,tcHold=false;
+const rs=x=>parseFloat(String(x).replace(/[₹,]/g,''));
+function tcPot(c){{const e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
+  return `<div class="tc-pot" title="Potential left = target minus last price, as a % of last price"><div class="tc-pot-h"><span>Potential left</span><b>+₹${{left.toFixed(2)}} <em>${{pc>=0?'+':''}}${{pc.toFixed(0)}}%</em></b></div>
+  <div class="tc-pot-b" role="img" aria-label="${{done.toFixed(0)}}% of the way from entry to target"><i style="width:${{done.toFixed(1)}}%"></i><span style="left:${{done.toFixed(1)}}%"></span></div>
+  <div class="tc-pot-l"><span>Entry ${{c.lv[0]}}</span><span>${{done.toFixed(0)}}% of the way</span><span>Target ${{c.lv[1]}}</span></div></div>`}}
 $('#tcDots').innerHTML=CALLS.map(()=>'<i></i>').join('');
 function tcShow(i,anim){{ti=(i+CALLS.length)%CALLS.length;const c=CALLS[ti],b=$('#tcBody');
   b.innerHTML=`<div class="tc-new"><span class="eyebrow" style="color:var(--text-tertiary)">${{c.when}} · ${{ti+1}} of ${{CALLS.length}} active</span>
     <div class="top"><b>${{c.n}} · ${{c.k}}</b><span class="tc-act">Active</span></div><div class="meta">${{c.meta}}</div></div>
     <div class="tc-more"><div class="tc-legs2">${{c.legs.map(l=>`<div><i class="${{l[0]}}">${{l[0]==='b'?'Buy':'Sell'}}</i><span>${{l[1]}}${{l[3]>1?` <small>×${{l[3]}}</small>`:''}}</span><b>${{l[2]}}</b></div>`).join('')}}</div>
     <div class="tc-lv4"><div>Entry<b>${{c.lv[0]}}</b></div><div>Target<b class="up">${{c.lv[1]}}${{c.tflag?`<i class="tc-flag" title="${{c.tflag}}" aria-label="${{c.tflag}}">!</i>`:''}}</b></div><div>Stop loss<b class="dn">${{c.lv[2]}}</b></div><div>LTP<b>${{c.lv[3]}}</b></div></div>
+    ${{tcPot(c)}}
     <div class="tc-risk"><div><span>Max profit</span><b class="rk-up">${{c.mp}}</b></div><div><span>Max loss</span><b class="rk-dn${{c.mlx?' x':''}}">${{c.ml}}</b></div><div><span>Capital</span><b>${{c.cap}}</b></div></div></div>`;
   [...$('#tcDots').children].forEach((d,j)=>d.classList.toggle('on',j===ti));
   if(anim){{b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}}}
-tcShow(0,false);
+function tcLock(){{const b=$('#tcBody'),k=ti;b.style.minHeight='';let m=0;CALLS.forEach((_,i)=>{{tcShow(i,false);m=Math.max(m,b.offsetHeight)}});b.style.minHeight=m+'px';tcShow(k,false)}}
+tcShow(0,false);tcLock();addEventListener('resize',()=>{{clearTimeout(window._tcl);window._tcl=setTimeout(tcLock,150)}});
 $('#tcDots').addEventListener('click',e=>{{const d=e.target.closest('i');if(d)tcShow([...$('#tcDots').children].indexOf(d),true)}});
 {{const card=$('.hg-tc');['mouseenter','focusin'].forEach(ev=>card.addEventListener(ev,()=>tcHold=true));['mouseleave','focusout'].forEach(ev=>card.addEventListener(ev,()=>tcHold=false));
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(()=>{{if(!tcHold&&!document.hidden)tcShow(ti+1,true)}},5000)}}
@@ -869,5 +883,15 @@ $('#speedBtn').onclick=e=>{{sp=(sp+1)%3;AUD.playbackRate=[1,1.25,1.5][sp];e.targ
 out=head+CSS+body
 # the dock's Transcript button points at the brief
 out=out.replace('<button class="iconbtn" data-go="brief">Transcript</button>',f'<a class="iconbtn" href="{BRIEF}#brief" style="text-decoration:none">Full brief</a>')
+# Stock of the day: a separate box, first thing below the first screen
+import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from sotd import render as _sd_render
+_sd_css, _sd_html = _sd_render()
+_sd_sec = ('<section class="sdw" id="sotd" aria-label="Stock of the day"><div class="scan-h"><h2>Stock of the day</h2><span>Nifty 500 · NSE, 11 Nov close · picked on technicals</span></div>'
+           + _sd_html + '</section>\n  ')
+assert out.count('<section class="scan" id="scan"') == 1 and out.count('</style>') >= 1
+out = out.replace('<section class="scan" id="scan"', _sd_sec + '<section class="scan" id="scan"', 1)
+out = out.replace('.scan{margin:56px 0 90px}', '.sdw{margin:56px 0 0}.scan{margin:40px 0 90px}' + _sd_css.replace('\n', ''), 1)
+out = out.replace('href="#scan" id="scanCue">Market scan · What’s happening ↓', 'href="#sotd" id="scanCue">Stock of the day · Market scan ↓', 1)
 open(B+"home-2026-11-12.html","w",encoding="utf-8").write(out)
 print("written",len(out))
