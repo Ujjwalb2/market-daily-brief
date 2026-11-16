@@ -889,9 +889,9 @@ out=head+CSS+body
 out=out.replace('<button class="iconbtn" data-go="brief">Transcript</button>',f'<a class="iconbtn" href="{BRIEF}#brief" style="text-decoration:none">Full brief</a>')
 # Stock of the day: a separate box, first thing below the first screen
 import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from sotd import render as _sd_render
+from sotd import render as _sd_render, HALF_CSS as _SD_HALF
 _sd_css, _sd_html = _sd_render()
-_sd_sec = '<section class="hg-sd" id="sotd" aria-label="Stock of the day">' + _sd_html + '</section>\n    '
+_sd_sec = '<section class="hg-sd sd-half" id="sotd" aria-label="Stock of the day">' + _sd_html + '</section>\n    '
 # Stock of the day sits right under the streak strip, as its own full-width grid row
 assert out.count('<div class="hg-c">') == 1
 out = out.replace('<div class="hg-c">', _sd_sec + '<div class="hg-c">', 1)
@@ -901,6 +901,11 @@ for a, b in [('grid-template-areas:"s s s" "c c c" "tc tl one"', 'grid-template-
              ('grid-template-areas:"s" "c"', 'grid-template-areas:"s" "sd" "c"')]:
     assert out.count(a) == 1, a
     out = out.replace(a, b, 1)
-out = out.replace('.scan{margin:56px 0 90px}', '.hg-sd{grid-area:sd;min-width:0;display:flex}.hg-sd .sd{flex:1}.hg-sd .sd-f{margin-top:auto}@container (min-width:500px){.hg-sd .sd-in{flex:1;gap:10px 18px;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-rows:auto auto auto minmax(0,1fr) auto auto;grid-template-areas:"top viz" "h3 viz" "px viz" "risk viz" "why why" "sig sig"}.hg-sd .sd-id,.hg-sd .sd-side{display:contents}.hg-sd .sd-top{grid-area:top}.hg-sd .sd h3{grid-area:h3}.hg-sd .sd-px{grid-area:px}.hg-sd .sd-risk{grid-area:risk;align-self:start}.hg-sd .sd-why{grid-area:why;font-size:13px;line-height:1.5}.hg-sd .sd-viz{grid-area:viz;gap:8px}.hg-sd .sd-chart{flex:1;min-height:120px}.hg-sd .sd-sig{grid-area:sig;grid-template-columns:repeat(4,minmax(0,1fr))}.hg-sd .sd-sig li{padding:8px 10px}.hg-sd .sd-sig small{display:none}.hg-sd .sd-sig b{font-size:17px}.hg-sd .sd-oth{display:none}.hg-sd .sd{padding:16px 18px;gap:10px}.hg-sd .sd-f{padding-top:10px}}@container (min-width:500px) and (max-width:580px){.hg-sd .sd-in{grid-template-rows:auto auto minmax(0,1fr) auto auto auto;grid-template-areas:"top top" "h3 viz" "px viz" "why why" "risk risk" "sig sig"}.hg-sd .sd-chart{min-height:100px}.hg-sd .sd-sig b{font-size:15px}.hg-sd .sd-sig span{font-size:10.5px}}@container (max-width:640px){.hg-sd .sd-f>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 0}.hg-sd .sd-f{flex-wrap:nowrap}}.scan{margin:56px 0 90px}' + _sd_css.replace('\n', ''), 1)
+out = out.replace('.scan{margin:56px 0 90px}', '.hg-sd{grid-area:sd;min-width:0;display:flex}' + _SD_HALF + '.scan{margin:56px 0 90px}' + _sd_css.replace('\n', ''), 1)
 open(B+"home-2026-11-12.html","w",encoding="utf-8").write(out)
 print("written",len(out))
+# Two desktop ideas, generated from the same Home so the content matches (local prototypes; not linked from Home)
+from variants import make as _make_variants
+for _n, _h in _make_variants(out):
+    open(B + _n, "w", encoding="utf-8").write(_h)
+    print("written", _n, len(_h))

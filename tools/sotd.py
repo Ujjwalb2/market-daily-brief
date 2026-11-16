@@ -25,6 +25,10 @@ SCREENER = 'https://dev.alphapad.in/screener'
 STUDIO = 'https://dev.alphapad.in/option-studio'
 
 
+# Compact layout for a card that gets about half a page's width (wrap the card in .sd-half).
+HALF_CSS = '.sd-half .sd{flex:1}.sd-half .sd-f{margin-top:auto}@container (min-width:500px){.sd-half .sd-in{flex:1;gap:10px 18px;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-rows:auto auto auto minmax(0,1fr) auto auto;grid-template-areas:"top viz" "h3 viz" "px viz" "risk viz" "why why" "sig sig"}.sd-half .sd-id,.sd-half .sd-side{display:contents}.sd-half .sd-top{grid-area:top}.sd-half .sd h3{grid-area:h3}.sd-half .sd-px{grid-area:px}.sd-half .sd-risk{grid-area:risk;align-self:start}.sd-half .sd-why{grid-area:why;font-size:13px;line-height:1.5}.sd-half .sd-viz{grid-area:viz;gap:8px}.sd-half .sd-chart{flex:1;min-height:120px}.sd-half .sd-sig{grid-area:sig;grid-template-columns:repeat(4,minmax(0,1fr))}.sd-half .sd-sig li{padding:8px 10px}.sd-half .sd-sig small{display:none}.sd-half .sd-sig b{font-size:17px}.sd-half .sd-oth{display:none}.sd-half .sd{padding:16px 18px;gap:10px}.sd-half .sd-f{padding-top:10px}}@container (min-width:500px) and (max-width:580px){.sd-half .sd-in{grid-template-rows:auto auto minmax(0,1fr) auto auto auto;grid-template-areas:"top top" "h3 viz" "px viz" "why why" "risk risk" "sig sig"}.sd-half .sd-chart{min-height:100px}.sd-half .sd-sig b{font-size:15px}.sd-half .sd-sig span{font-size:10.5px}}@container (max-width:640px){.sd-half .sd-f>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 0}.sd-half .sd-f{flex-wrap:nowrap}}'
+
+
 def _inr(v, d=0):
     s = f'{v:,.{d}f}'
     return '₹' + s
