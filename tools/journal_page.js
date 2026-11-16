@@ -173,7 +173,7 @@ addEventListener('DOMContentLoaded', function () {
     if (!selDay || selDay.slice(0, 7) !== calMonth) selDay = inCal.length ? inCal[inCal.length - 1].d : null;
     root.innerHTML = '<div class="jp-h"><h1>Trade journal</h1><span class="jp-chip">Sample account</span><span class="sp"></span><div class="jp-seg" role="group" aria-label="Period">' + [['week', 'This week'], ['month', mname(calMonth, 1)], ['all', 'All time']].map(function (p) { return '<button type="button" data-p="' + p[0] + '" aria-pressed="' + (period === p[0]) + '">' + p[1] + '</button>' }).join('') + '</div><a class="jp-back" href="idea-b-dashboard.html">← Dashboard</a></div>' + inbox() +
       '<div class="jp-kpi"><div class="jp-k"><span>Net P&L</span><b class="' + (s.net >= 0 ? 'up' : 'dn') + '">' + inr(s.net, 1) + '</b><small>' + s.n + ' closed trades</small></div>' +
-      '<div class="jp-k ring">' + ring(s.wr) + '<span>Win rate</span><b>' + s.wr.toFixed(0) + '%</b><small>' + s.w + ' won · ' + s.l + ' lost</small></div>' +
+      '<div class="jp-k jp-wr">' + ring(s.wr) + '<span>Win rate</span><b>' + s.wr.toFixed(0) + '%</b><small>' + s.w + ' won · ' + s.l + ' lost</small></div>' +
       '<div class="jp-k"><span>Profit factor</span><b>' + s.pf.toFixed(2) + '</b><small>gross win ÷ gross loss</small></div>' +
       '<div class="jp-k"><span>Expectancy</span><b class="' + (s.net >= 0 ? 'up' : 'dn') + '">' + inr(s.n ? s.net / s.n : 0, 1) + '</b><small>average per trade · ' + (s.exp >= 0 ? '+' : '−') + Math.abs(s.exp).toFixed(2) + 'R</small></div>' +
       '<div class="jp-k"><span>Avg win / loss</span><b>' + (s.al ? (s.aw / s.al).toFixed(2) : '0') + '×</b><small>' + inr(s.aw) + ' / ' + inr(s.al) + '</small></div>' +

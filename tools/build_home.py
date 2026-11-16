@@ -909,3 +909,6 @@ from variants import make as _make_variants
 for _n, _h in _make_variants(out):
     open(B + _n, "w", encoding="utf-8").write(_h)
     print("written", _n, len(_h))
+# Calm landing: a fresh, uncluttered first screen from the same data (local prototype)
+from calm import write as _write_calm
+print("written calm.html", _write_calm(out))

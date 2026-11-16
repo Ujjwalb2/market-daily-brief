@@ -18,7 +18,7 @@ html.idea-jr .hg,html.idea-jr #scan,html.idea-jr #happening,html.idea-jr .scan-c
 .jp-k span{font:500 12px/1.2 var(--font-sans);color:var(--text-tertiary)}
 .jp-k b{font:600 24px/1.1 var(--font-sans);font-variant-numeric:tabular-nums;color:var(--text-primary);white-space:nowrap}
 .jp-k small{font:400 11.5px/1.3 var(--font-sans);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.jp-k.ring{grid-template-columns:auto 1fr;align-items:center;column-gap:12px}.jp-k.ring svg{grid-row:span 3;width:52px;height:52px}
+.jp-k.jp-wr{grid-template-columns:auto 1fr;align-items:center;column-gap:12px}.jp-k.jp-wr svg{grid-row:span 3;width:52px;height:52px}
 .up{color:var(--teal)!important}.dn{color:var(--slate-500,#7B8799)!important}
 .jp-row{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px}
 .jp-row.b{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}

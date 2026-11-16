@@ -1552,7 +1552,7 @@ html.idea-b .home .stk-strip .ss-n span em+*,html.idea-b .home .stk-strip .ss-ms
 .ob-pulse{box-shadow:0 0 0 0 rgba(143,163,255,.6);animation:obPulse 1.8s ease-out infinite}
 @keyframes obPulse{0%{box-shadow:0 0 0 0 rgba(143,163,255,.55)}100%{box-shadow:0 0 0 14px rgba(143,163,255,0)}}
 .ob-tip{position:fixed;z-index:9500;display:flex;align-items:center;gap:14px;max-width:min(440px,calc(100vw - 24px));padding:14px 14px 14px 16px;border-radius:14px;background:#3F5BD9;color:#fff;box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.12)}
-.ob-tip::before{content:"";position:absolute;top:-6px;left:var(--ax,28px);width:12px;height:12px;background:#3F5BD9;transform:rotate(45deg);border-radius:2px}
+.ob-tip.up::before{top:auto;bottom:-6px}.ob-tip::before{content:"";position:absolute;top:-6px;left:var(--ax,28px);width:12px;height:12px;background:#3F5BD9;transform:rotate(45deg);border-radius:2px}
 .ob-tip-i{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.16);font-size:16px}
 .ob-tip-t{display:grid;gap:3px;min-width:0}.ob-tip-t b{font:600 14px/1.25 var(--font-sans)}.ob-tip-t span{font:400 13px/1.4 var(--font-sans);color:rgba(255,255,255,.9)}.ob-tip em{font-style:normal;font-weight:600}
 .ob-tip button{flex:none;height:34px;padding:0 14px;border:0;border-radius:9px;background:#fff;color:#3F5BD9;font:600 13px/1 var(--font-sans);cursor:pointer}.ob-tip button:hover{background:#EEF1FF}
@@ -1823,7 +1823,7 @@ addEventListener('DOMContentLoaded',function(){
     b.classList.add('ob-pulse');var t=document.createElement('div');t.className='ob-tip';t.setAttribute('role','dialog');t.setAttribute('aria-label','Your dashboard is ready');
     t.innerHTML='<span class="ob-tip-i" aria-hidden="true">\u2728</span><div class="ob-tip-t"><b>Your dashboard is ready</b><span>'+(p&&!p.skipped?'We set it up as <em>'+NAMES[p.preset]+'</em> from your answers.':'Start with the Basic screen and make it yours.')+'</span></div><button type="button">Got it</button>';
     document.body.appendChild(t);
-    function place(){var r=b.getBoundingClientRect();t.style.left=Math.max(12,Math.min(innerWidth-t.offsetWidth-12,r.left))+'px';t.style.top=(r.bottom+12)+'px';t.style.setProperty('--ax',(r.left+24-Math.max(12,Math.min(innerWidth-t.offsetWidth-12,r.left)))+'px')}
+    function place(){var r=b.getBoundingClientRect();t.style.left=Math.max(12,Math.min(innerWidth-t.offsetWidth-12,r.left))+'px';var tp=r.bottom+12,upw=tp+t.offsetHeight>innerHeight-8&&r.top-t.offsetHeight-12>8;t.classList.toggle('up',upw);t.style.top=(upw?r.top-t.offsetHeight-12:tp)+'px';t.style.setProperty('--ax',(r.left+24-Math.max(12,Math.min(innerWidth-t.offsetWidth-12,r.left)))+'px')}
     place();addEventListener('scroll',place,{passive:true});addEventListener('resize',place);
     function done(){try{localStorage.setItem(TIP_KEY,'1')}catch(e){}t.remove();b.classList.remove('ob-pulse');removeEventListener('scroll',place);removeEventListener('resize',place)}
     t.querySelector('button').addEventListener('click',done);b.addEventListener('click',done);document.addEventListener('keydown',function k(e){if(e.key==='Escape'&&document.body.contains(t)){done();document.removeEventListener('keydown',k)}})}
