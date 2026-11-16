@@ -912,3 +912,6 @@ for _n, _h in _make_variants(out):
 # Calm landing: a fresh, uncluttered first screen from the same data (local prototype)
 from calm import write as _write_calm
 print("written calm.html", _write_calm(out))
+# Phone app: every feature in a calm mobile layout (local prototype)
+from app import write as _write_app
+print("written app.html", _write_app(out))

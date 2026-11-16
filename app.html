@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="en" class="app">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>AlphaPad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('today-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<style>/* AlphaPad phone app — calm, AlphaPad tokens, dark default + light */
+:root{
+  --white:#FFFFFF;--teal:#00C99A;--amber:#F0A04B;--red:#E05252;--blue:#3282E8;
+  --indigo-500:#3F5BD9;--indigo-600:#3452C9;
+  --slate-50:#F8FAFC;--slate-200:#CBD5E1;--slate-400:#8793A5;--slate-500:#7B8799;--slate-600:#63758F;
+  --navy-600:#34445B;--navy-700:#252F3F;--navy-800:#1D2432;--navy-850:#171B26;--navy-900:#101827;
+  --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --tabh:64px;--safe-b:env(safe-area-inset-bottom,0px);
+}
+:root,:root[data-theme="dark"]{color-scheme:dark;
+  --surface-canvas:var(--navy-900);--surface-raised:var(--navy-850);--surface-elevated:var(--navy-800);
+  --surface-glass:rgba(255,255,255,.05);--surface-hover:rgba(63,91,217,.15);--surface-hover-stroke:rgba(63,91,217,.30);
+  --text-primary:var(--slate-50);--text-secondary:var(--slate-200);--text-tertiary:var(--slate-400);
+  --border-decorative:var(--navy-700);--border-glass:rgba(255,255,255,.12);--focus-outer:var(--slate-200);
+  --action-primary:var(--indigo-500);--action-hover:var(--indigo-600);--link:#8FA3FF;
+  --fin-positive-soft:rgba(0,201,154,.12);--fin-negative-soft:rgba(123,135,153,.12);
+  --fb-warning-soft:rgba(240,160,75,.12);--fb-info-soft:rgba(50,130,232,.12);--fb-error-soft:rgba(224,82,82,.12);
+  --up-text:var(--teal);--warn-text:var(--amber);--track:rgba(255,255,255,.08);--scrim:rgba(8,12,20,.6);--bar-bg:rgba(16,24,39,.86);}
+:root[data-theme="light"]{color-scheme:light;
+  --surface-canvas:var(--slate-50);--surface-raised:var(--white);--surface-elevated:var(--white);
+  --surface-glass:rgba(16,24,39,.04);--text-primary:var(--navy-900);--text-secondary:var(--navy-600);--text-tertiary:var(--navy-600);
+  --border-decorative:var(--slate-200);--border-glass:var(--slate-200);--focus-outer:var(--indigo-500);--link:var(--indigo-500);
+  --up-text:rgb(4,120,87);--warn-text:rgb(180,83,9);--track:rgba(16,24,39,.08);--scrim:rgba(16,24,39,.4);--bar-bg:rgba(248,250,252,.9);}
+*{box-sizing:border-box}
+html{background:var(--surface-canvas);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--surface-canvas);color:var(--text-primary);font:400 15px/1.5 var(--font-sans);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--focus-outer);outline-offset:2px;border-radius:6px}
+svg{display:block}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#app{max-width:480px;margin:0 auto;min-height:100vh;position:relative}
+@media (min-width:600px){body{background:var(--surface-canvas)}#app{border-left:1px solid var(--border-decorative);border-right:1px solid var(--border-decorative)}}
+
+/* ---------- screens ---------- */
+.scr{display:none;padding:0 20px calc(var(--tabh) + var(--safe-b) + 28px)}
+.scr.on{display:block;animation:scrIn .22s ease}
+.app.playing .scr{padding-bottom:calc(var(--tabh) + var(--safe-b) + 88px)}
+@keyframes scrIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.scr.on{animation:none}}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;min-height:56px;margin:0 -20px;padding:10px 20px;background:var(--bar-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.top h1{margin:0;font:700 22px/1.2 var(--font-sans);letter-spacing:-.4px}
+.top .sp{flex:1}
+.logo{font:700 19px/1 var(--font-sans);letter-spacing:-.4px}.logo span{color:var(--teal)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:9999px;border:1px solid var(--border-decorative);font:600 13px/1 var(--font-sans);color:var(--text-primary);white-space:nowrap}
+.chip small{font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--surface-elevated);border:1px solid var(--border-decorative);font:600 13px/1 var(--font-sans);color:var(--text-secondary)}
+
+/* ---------- type + common ---------- */
+.eb{font:600 11.5px/1.3 var(--font-sans);letter-spacing:1.1px;text-transform:uppercase;color:var(--text-tertiary)}
+.h2{display:flex;align-items:baseline;gap:10px;margin:30px 0 12px}
+.h2 h2{margin:0;font:600 18px/1.25 var(--font-sans);letter-spacing:-.2px}
+.h2 .sp{flex:1}
+.h2 a,.h2 button.l{font:600 13.5px/1 var(--font-sans);color:var(--link)}
+.h2 small{font:500 12.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.muted{color:var(--text-tertiary)}
+.u{color:var(--up-text)}.w{color:var(--warn-text)}.d{color:var(--text-tertiary)}
+.card{padding:16px;border-radius:16px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 20px;border-radius:12px;font:600 15px/1 var(--font-sans);white-space:nowrap}
+.btn.p{background:var(--action-primary);color:#fff}.btn.p:active{background:var(--action-hover)}
+.btn.g{border:1px solid var(--border-decorative);color:var(--text-primary)}
+.btn.s{height:40px;padding:0 14px;font-size:14px;border-radius:10px}
+.btn.full{width:100%}
+.btn .pi{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.2);font-size:9px}
+.ic{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:11px}
+.ic svg{width:18px;height:18px}
+.ic.t{background:var(--fin-positive-soft);color:var(--teal)}.ic.a{background:var(--fb-warning-soft);color:var(--amber)}.ic.b{background:var(--fb-info-soft);color:var(--blue)}.ic.i{background:rgba(63,91,217,.16);color:var(--link)}.ic.s{background:var(--fin-negative-soft);color:var(--slate-500)}
+.seg{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--surface-glass)}
+.seg button{flex:1;height:34px;border-radius:9px;font:600 13px/1 var(--font-sans);color:var(--text-tertiary)}
+.seg button[aria-pressed=true]{background:var(--surface-elevated);color:var(--text-primary);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:2px 20px}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;height:34px;padding:0 14px;border-radius:9999px;border:1px solid var(--border-decorative);font:600 13px/1 var(--font-sans);color:var(--text-secondary)}
+.chips button[aria-pressed=true]{background:var(--text-primary);border-color:var(--text-primary);color:var(--surface-canvas)}
+.list{list-style:none;margin:0;padding:0}
+.row{display:flex;align-items:center;gap:14px;width:100%;min-height:60px;padding:12px 0;text-align:left;border-bottom:1px solid var(--border-decorative)}
+.list>li:last-child>.row,.list>.row:last-child{border-bottom:0}
+.row .tx{flex:1;min-width:0;display:grid;gap:2px}
+.row .tx b{font:600 15px/1.3 var(--font-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tx small{font:400 13px/1.35 var(--font-sans);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .vl{text-align:right;font:600 14.5px/1.3 var(--font-sans);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .vl small{display:block;font:500 12.5px/1.3 var(--font-sans)}
+.row .go{color:var(--text-tertiary);font-size:18px}
+.badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:9999px;background:var(--amber);color:var(--navy-900);font:700 11.5px/1 var(--font-sans)}
+.tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;background:var(--surface-glass);font:600 11.5px/1 var(--font-sans);color:var(--text-secondary)}
+.tag.w{background:var(--fb-warning-soft);color:var(--text-primary)}
+.note{margin:14px 0 0;font:400 12px/1.5 var(--font-sans);color:var(--text-tertiary)}
+.bars{display:grid;gap:10px}
+.br{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;align-items:center}
+.br b{font:600 14px/1.2 var(--font-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.br .vl{font:600 14px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.br .tr{grid-column:1/-1;height:6px;border-radius:4px;background:var(--track);overflow:hidden}
+.br .tr i{display:block;height:100%;border-radius:4px;background:var(--teal)}
+.br .tr i.d{background:var(--slate-500)}.br .tr i.a{background:var(--amber)}.br .tr i.b{background:var(--blue)}
+
+/* ---------- today ---------- */
+.hero-main{position:relative;display:flex;flex-direction:column;gap:14px;padding-top:12px}
+.hero-main h2{margin:0;font:700 30px/1.15 var(--font-sans);letter-spacing:-.8px}
+.hero-main .sub{margin:-4px 0 0;font:400 16px/1.5 var(--font-sans);color:var(--text-secondary)}
+.hero-main .acts{display:grid;grid-template-columns:1.3fr 1fr;gap:10px;margin-top:4px}
+.hero-main .ob-chip{display:none}
+.nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:22px;padding:16px 0 0;border-top:1px solid var(--border-decorative)}
+.nm{display:grid;gap:3px;min-width:0}
+.nm+.nm{padding-left:14px;border-left:1px solid var(--border-decorative);margin-left:14px}
+.nm span{font:500 12px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.nm b{font:600 17px/1.2 var(--font-sans);font-variant-numeric:tabular-nums;letter-spacing:-.2px}
+.nm em{font-style:normal;font:600 12px/1 var(--font-sans)}
+.nxt{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--surface-glass);font:500 13.5px/1.4 var(--font-sans);color:var(--text-tertiary);text-align:left;width:100%}
+.nxt .dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px var(--fb-warning-soft)}
+.nxt b{color:var(--text-primary)}
+.nxt .go{margin-left:auto}
+/* spotlight: swipe cards */
+.spw{margin:0 -20px}
+.sp-tr{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 20px 4px;scroll-padding:0 20px}
+.sp-tr::-webkit-scrollbar{display:none}
+.sl{flex:0 0 calc(100% - 24px);scroll-snap-align:start;display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:18px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.sl .kr{display:flex;align-items:center;gap:9px;font:600 11px/1.2 var(--font-sans);letter-spacing:1px;text-transform:uppercase;color:var(--text-tertiary)}
+.sl .kr .ic{width:26px;height:26px;border-radius:8px}.sl .kr .ic svg{width:14px;height:14px}
+.sl .tt{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sl .tt b{font:700 24px/1.1 var(--font-sans);letter-spacing:-.5px}
+.sl .tt .v{font:600 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.sl .tt .dd{font:600 13.5px/1 var(--font-sans);color:var(--up-text)}
+.sl p{margin:0;font:400 14px/1.45 var(--font-sans);color:var(--text-secondary)}
+.sl .ac{display:flex;gap:16px;align-items:center;margin-top:auto;padding-top:4px}
+.sl .ac a,.sl .ac button{font:600 14px/1 var(--font-sans);color:var(--link)}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.dots i{width:6px;height:6px;border-radius:9999px;background:var(--track);transition:width .2s,background .2s}
+.dots i.on{width:18px;background:var(--teal)}
+.v-sd{position:relative;height:84px;border-radius:12px;overflow:hidden;background:var(--surface-glass)}
+.v-sd svg{position:absolute;inset:0;width:100%;height:100%}
+.v-sd polyline{fill:none;stroke:var(--teal);stroke-width:2;stroke-linejoin:round}
+.v-sd .oh{stroke:var(--text-tertiary);stroke-dasharray:3 3;stroke-width:1}
+.v-sd .oh-l{position:absolute;left:8px;top:6px;z-index:1;padding:2px 6px;border-radius:5px;background:var(--surface-raised);font:500 11px/1 var(--font-sans);color:var(--text-tertiary)}
+.v-ch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.v-ch span{display:grid;gap:3px;padding:8px 10px;border-radius:10px;background:var(--surface-glass);font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.v-ch b{font:600 15px/1.1 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.ring{--p:50;position:relative;width:84px;height:84px;flex:none;border-radius:50%;background:conic-gradient(var(--teal) calc(var(--p)*1%),var(--slate-500) 0);display:grid;place-items:center;align-content:center}
+.ring::before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--surface-raised)}
+.ring b,.ring small{position:relative;line-height:1}.ring b{font:700 18px/1 var(--font-sans)}.ring small{font:500 11px/1.4 var(--font-sans);color:var(--text-tertiary)}
+.v-br{display:flex;gap:16px;align-items:center}
+.v-br .bars{flex:1;min-width:0}
+.v-q{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.v-q .q{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--surface-glass);border-left:3px solid var(--slate-500);text-align:left}
+.v-q .q.qu{border-left-color:var(--teal)}.v-q .q.on{background:var(--fin-positive-soft)}
+.v-q small{font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.v-q b{font:700 20px/1.1 var(--font-sans);font-variant-numeric:tabular-nums}
+.v-q em{font-style:normal;font:600 12.5px/1.2 var(--font-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v-q .h{font:500 11px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.v-lg{display:flex;gap:14px;font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.v-lg i{display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--blue);margin-right:6px;vertical-align:-1px}.v-lg i.p{opacity:.35}
+.br .tr.two{display:flex}.br .tr.two i{border-radius:0}.br .tr.two i.p{opacity:.35}
+
+/* ---------- markets ---------- */
+.mk-nav{position:sticky;top:56px;z-index:19;margin:0 -20px;padding:6px 20px 10px;background:var(--bar-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.mk-nav .chips{margin:0 -20px}
+section.sec{scroll-margin-top:118px}
+.ixh{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+.ixh b{font:700 30px/1.1 var(--font-sans);letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+.ixh em{font-style:normal;font:600 14px/1 var(--font-sans)}
+.ixh small{width:100%;font:500 12.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.ixc{position:relative;height:170px;margin:8px 0 4px}
+.ixc svg{width:100%;height:100%;overflow:visible}
+.ixc .ln{fill:none;stroke:var(--teal);stroke-width:2;stroke-linejoin:round}
+.ixc .ln.w{stroke:var(--amber)}
+.ixc .gl{stroke:var(--border-decorative);stroke-width:1}
+.ixc text{font:500 10.5px var(--font-sans);fill:var(--text-tertiary)}
+.ixc .tip{position:absolute;top:0;transform:translateX(-50%);padding:4px 8px;border-radius:8px;background:var(--surface-elevated);border:1px solid var(--border-glass);font:600 12px/1.3 var(--font-sans);white-space:nowrap;pointer-events:none}
+.ixc .tip small{display:block;font:500 11px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.ixc .cur{stroke:var(--text-tertiary);stroke-dasharray:2 3}
+.fo3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fo3 div{display:grid;gap:3px;padding:12px;border-radius:12px;background:var(--surface-glass);border-top:3px solid var(--slate-500)}
+.fo3 .s{border-top-color:var(--teal)}.fo3 .m{border-top-color:var(--amber)}
+.fo3 span{font:500 12px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.fo3 b{font:700 18px/1.15 var(--font-sans);font-variant-numeric:tabular-nums}
+.fo3 small{font:400 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.foch{margin-top:14px}.foch svg{width:100%;height:auto}
+.oib{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.oib .q{display:grid;gap:4px;padding:12px;border-radius:14px;background:var(--surface-glass);border-left:3px solid var(--slate-500)}
+.oib .q.u{border-left-color:var(--teal)}
+.oib .q b{font:600 14px/1.2 var(--font-sans)}.oib .q .n{font:700 22px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.oib .q small{font:500 11.5px/1.3 var(--font-sans);color:var(--text-tertiary)}
+.oib .q ol{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:4px;font:500 12.5px/1.25 var(--font-sans)}
+.oib .q ol li{display:flex;justify-content:space-between;gap:6px}.oib .q ol em{font-style:normal;color:var(--text-tertiary)}
+.tl{position:relative;margin:4px 0 0;padding:0 0 0 22px;list-style:none}
+.tl::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:var(--border-decorative)}
+.tl li{position:relative;display:flex;gap:12px;padding:8px 0;font:500 14px/1.35 var(--font-sans)}
+.tl li::before{content:"";position:absolute;left:-21px;top:13px;width:12px;height:12px;border-radius:50%;background:var(--surface-canvas);box-shadow:inset 0 0 0 2px var(--slate-500)}
+.tl li.past{color:var(--text-tertiary)}.tl li.past::before{background:var(--slate-500);box-shadow:none}
+.tl li.next::before{box-shadow:inset 0 0 0 3px var(--amber)}
+.tl li.ev b{font-weight:600}
+.tl time{width:44px;flex:none;font-variant-numeric:tabular-nums;color:var(--text-tertiary)}
+.tl .now{position:relative;padding:2px 0;font:600 11.5px/1 var(--font-sans);color:var(--amber)}
+.tl .now::before{content:"";position:absolute;left:-19px;top:-1px;width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.tl li .g{margin-left:auto;font:500 11.5px/1.35 var(--font-sans);color:var(--text-tertiary)}
+.cal .row{min-height:56px}
+.cal .dt{width:44px;flex:none;display:grid;justify-items:center;gap:1px;padding:6px 0;border-radius:10px;background:var(--surface-glass)}
+.cal .dt b{font:700 16px/1 var(--font-sans)}.cal .dt small{font:600 10.5px/1 var(--font-sans);color:var(--text-tertiary);text-transform:uppercase}
+.ty{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--slate-500)}
+.ty.ipo{background:var(--blue)}.ty.earn{background:var(--teal)}.ty.fno{background:var(--amber)}.ty.hol{background:var(--slate-500)}.ty.eco{background:var(--indigo-500)}
+.fl .row{align-items:flex-start}
+.fl .tm{width:44px;flex:none;font:500 12.5px/1.6 var(--font-sans);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.fl .tx small{white-space:normal}
+.flh{display:flex;align-items:center;gap:8px;margin:18px 0 2px;font:600 13px/1.2 var(--font-sans);color:var(--text-secondary)}
+.flh i{width:8px;height:8px;border-radius:50%;background:var(--teal)}.flh i.b{background:var(--blue)}.flh i.w{background:var(--amber)}
+
+/* ---------- ideas ---------- */
+.sd .px{display:flex;align-items:baseline;gap:10px;margin:2px 0 10px;flex-wrap:wrap}
+.sd .px b{font:700 28px/1.1 var(--font-sans);letter-spacing:-.6px}
+.sd .px .v{font:600 18px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.sd .why{display:grid;gap:10px;margin:14px 0 0;padding:0;list-style:none}
+.sd .why li{display:flex;gap:10px;font:400 14px/1.45 var(--font-sans);color:var(--text-secondary)}
+.sd .why li::before{content:"";width:6px;height:6px;flex:none;margin-top:8px;border-radius:50%;background:var(--teal)}
+.sd .why li.r::before{background:var(--amber)}
+.tcw{margin:0 -20px}
+.tc-tr{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 20px 4px;scroll-padding:0 20px}
+.tc-tr::-webkit-scrollbar{display:none}
+.tc{flex:0 0 calc(100% - 24px);scroll-snap-align:start;display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:18px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.tc .hd{display:flex;align-items:flex-start;gap:10px}
+.tc .hd b{display:block;font:700 19px/1.2 var(--font-sans)}
+.tc .hd small{display:block;margin-top:3px;font:400 13px/1.35 var(--font-sans);color:var(--text-tertiary)}
+.tc .hd .tag{margin-left:auto;background:var(--fin-positive-soft);color:var(--text-primary)}
+.legs{display:grid;gap:6px}
+.legs div{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:var(--surface-glass);font:500 14px/1.2 var(--font-sans)}
+.legs i{font-style:normal;width:38px;font:700 11.5px/1 var(--font-sans);text-transform:uppercase;letter-spacing:.5px}
+.legs i.b{color:var(--up-text)}.legs i.s{color:var(--text-tertiary)}
+.legs b{margin-left:auto;font-variant-numeric:tabular-nums}
+.lv4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;text-align:center}
+.lv4 div{display:grid;gap:3px;font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.lv4 b{font:600 15px/1.2 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.pot{display:grid;gap:8px}
+.pot .h{display:flex;justify-content:space-between;font:500 13px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.pot .h b{color:var(--text-primary)}
+.pot .bar{position:relative;height:8px;border-radius:9999px;background:var(--track)}
+.pot .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:9999px;background:var(--teal)}
+.pot .bar span{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--surface-raised);box-shadow:inset 0 0 0 3px var(--teal)}
+.pot .l{display:flex;justify-content:space-between;font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.risk3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:12px;border-top:1px solid var(--border-decorative)}
+.risk3 div{display:grid;gap:3px;font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.risk3 b{font:600 14.5px/1.2 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.flag{padding:10px 12px;border-radius:10px;background:var(--fb-warning-soft);border-left:3px solid var(--amber);font:400 12.5px/1.45 var(--font-sans);color:var(--text-secondary)}
+
+/* ---------- journal ---------- */
+.mnav{display:flex;align-items:center;gap:8px;margin:10px 0 0}
+.mnav b{flex:1;text-align:center;font:600 16px/1.2 var(--font-sans)}
+.mnav button{width:40px;height:40px;border-radius:12px;border:1px solid var(--border-decorative);font-size:18px;color:var(--text-secondary)}
+.mnav button:disabled{opacity:.35}
+.inbox{display:grid;gap:12px;margin-top:16px;padding:16px;border-radius:16px;background:var(--fb-warning-soft);border:1px solid rgba(240,160,75,.35)}
+.inbox .hd{display:flex;align-items:center;gap:10px;font:600 15px/1.3 var(--font-sans)}
+.inbox .hd small{display:block;font:400 13px/1.4 var(--font-sans);color:var(--text-secondary)}
+.inbox .row{min-height:52px;border-bottom-color:rgba(240,160,75,.25)}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.kpi div{display:grid;gap:3px;padding:14px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.kpi span{font:500 12px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.kpi b{font:700 21px/1.15 var(--font-sans);font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.kpi small{font:400 12px/1.3 var(--font-sans);color:var(--text-tertiary)}
+.eq{height:150px;margin-top:4px}.eq svg{width:100%;height:100%;overflow:visible}
+.eq .ln{fill:none;stroke:var(--teal);stroke-width:2;stroke-linejoin:round}
+.eq .z{stroke:var(--text-tertiary);stroke-dasharray:3 4;opacity:.6}
+.eq .ar{fill:var(--teal);opacity:.1}
+.jcal{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.jcal .hd{font:600 11px/1 var(--font-sans);color:var(--text-tertiary);text-align:center;padding-bottom:4px}
+.jcal button,.jcal span.x{display:grid;gap:2px;align-content:center;justify-items:center;min-height:52px;padding:6px 2px;border-radius:10px;background:var(--surface-glass);font:600 12.5px/1.1 var(--font-sans)}
+.jcal span.x{background:transparent}
+.jcal button small{font:600 10.5px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.jcal button.p{background:rgba(0,201,154,var(--a,.15))}
+.jcal button.n{background:rgba(123,135,153,var(--a,.15))}
+.jcal button.p small{color:var(--text-primary)}.jcal button.n small{color:var(--text-primary)}
+.jcal button.sel{box-shadow:inset 0 0 0 2px var(--action-primary)}
+.jcal button.nt{color:var(--text-tertiary);font-weight:500}
+.ins{display:grid;gap:10px}
+.ins div{display:block;padding:12px 14px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);border-left:3px solid var(--blue);font:400 14px/1.45 var(--font-sans);color:var(--text-secondary)}
+.ins div.w{border-left-color:var(--amber)}.ins div.g{border-left-color:var(--teal)}
+.ins b{color:var(--text-primary)}
+.score{display:flex;align-items:center;gap:16px}
+.score .big{font:700 34px/1 var(--font-sans);letter-spacing:-.6px}
+.score small{font:400 13px/1.4 var(--font-sans);color:var(--text-tertiary)}
+.mist .br .tr i{background:var(--amber)}
+
+/* ---------- you ---------- */
+.prof{display:flex;align-items:center;gap:14px;margin-top:10px}
+.prof .av{width:56px;height:56px;font-size:20px}
+.prof b{display:block;font:700 20px/1.2 var(--font-sans)}
+.prof small{font:400 13.5px/1.4 var(--font-sans);color:var(--text-tertiary)}
+.stk{display:grid;gap:14px}
+.stk .n{display:flex;align-items:center;gap:12px}
+.stk .n b{font:700 34px/1 var(--font-sans)}
+.stk .n span{font:500 14px/1.35 var(--font-sans);color:var(--text-secondary)}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wk span{display:grid;justify-items:center;gap:6px;font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.wk i{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;font:700 12px/1 var(--font-sans);background:var(--track);color:var(--text-tertiary)}
+.wk .done i{background:var(--teal);color:var(--navy-900)}
+.wk .today i{background:transparent;box-shadow:inset 0 0 0 2px var(--teal);color:var(--text-primary)}
+.wk .hol i,.wk .off i{background:transparent;box-shadow:inset 0 0 0 1px var(--border-decorative)}
+.ms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ms div{display:grid;gap:3px;padding:10px 8px;border-radius:10px;background:var(--surface-glass);text-align:center;font:500 11px/1.25 var(--font-sans);color:var(--text-tertiary)}
+.ms b{font:700 14px/1 var(--font-sans);color:var(--text-secondary)}
+.ms .got{background:var(--fin-positive-soft)}.ms .got b{color:var(--text-primary)}
+.lrn .kind{display:flex;align-items:center;gap:8px}
+.lrn h3{margin:8px 0 6px;font:700 20px/1.25 var(--font-sans);letter-spacing:-.3px}
+.lrn p{margin:0;font:400 15px/1.5 var(--font-sans);color:var(--text-secondary)}
+.lrn p b{color:var(--text-primary);font-weight:600}
+.lrn .ft{display:flex;align-items:center;gap:10px;margin-top:16px}
+.lrn .ft .sp{flex:1}
+.lrn .pg{display:flex;gap:6px}.lrn .pg i{width:8px;height:8px;border-radius:50%;background:var(--track)}.lrn .pg i.done{background:var(--teal)}.lrn .pg i.on{box-shadow:0 0 0 2px var(--text-tertiary)}
+.lrn .ok{margin-bottom:10px;padding:10px 12px;border-radius:10px;background:var(--fin-positive-soft);font:600 13px/1.3 var(--font-sans)}
+.navb{width:40px;height:40px;border-radius:12px;border:1px solid var(--border-decorative);font-size:18px;color:var(--text-secondary)}
+.rst.arm{background:var(--fb-warning-soft);border-radius:12px}
+
+/* ---------- tab bar, mini player ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;background:var(--bar-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--border-decorative);padding-bottom:var(--safe-b)}
+.tabs nav{display:grid;grid-template-columns:repeat(5,1fr);width:100%;max-width:480px;height:var(--tabh)}
+.tabs a{position:relative;display:grid;justify-items:center;align-content:center;gap:4px;font:600 11px/1 var(--font-sans);color:var(--text-tertiary)}
+.tabs a svg{width:22px;height:22px}
+.tabs a[aria-current=page]{color:var(--text-primary)}
+.tabs a[aria-current=page] svg{color:var(--teal)}
+.tabs .badge{position:absolute;top:7px;left:calc(50% + 6px);min-width:18px;height:18px;font-size:10.5px}
+.mini{position:fixed;left:0;right:0;bottom:calc(var(--tabh) + var(--safe-b));z-index:39;display:flex;justify-content:center;padding:0 10px 8px;pointer-events:none}
+.mini[hidden]{display:none}
+.mini>div{pointer-events:auto;position:relative;display:flex;align-items:center;gap:12px;width:100%;max-width:460px;padding:10px 12px;border-radius:14px;background:var(--surface-elevated);border:1px solid var(--border-glass);box-shadow:0 10px 30px rgba(0,0,0,.3);overflow:hidden}
+.mini .pp{width:38px;height:38px;flex:none;border-radius:50%;background:var(--action-primary);color:#fff;font-size:11px}
+.mini .tx{flex:1;min-width:0;display:grid;gap:2px;text-align:left}
+.mini .tx b{font:600 13.5px/1.25 var(--font-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .tx small{font:500 12px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.mini .x{width:32px;height:32px;color:var(--text-tertiary);font-size:16px}
+.mini .pr{position:absolute;left:0;bottom:0;height:2px;background:var(--teal)}
+
+/* ---------- sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:var(--scrim);animation:shIn .2s ease}
+.sheet[hidden]{display:none}
+@keyframes shIn{from{opacity:0}to{opacity:1}}
+.sheet .pn{width:100%;max-width:480px;max-height:88vh;overflow:auto;padding:8px 20px calc(24px + var(--safe-b));border-radius:22px 22px 0 0;background:var(--surface-elevated);border:1px solid var(--border-glass);border-bottom:0;animation:pnUp .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes pnUp{from{transform:translateY(40px)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.sheet,.sheet .pn{animation:none}}
+.sheet .grab{width:40px;height:5px;margin:4px auto 10px;border-radius:9999px;background:var(--track)}
+.sheet .sh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sheet .sh h2{margin:0;flex:1;font:700 19px/1.25 var(--font-sans);letter-spacing:-.2px}
+.sheet .cl{width:34px;height:34px;border-radius:50%;background:var(--surface-glass);color:var(--text-secondary);font-size:15px}
+.sheet p{margin:0 0 12px;font:400 14.5px/1.55 var(--font-sans);color:var(--text-secondary)}
+.fld{display:grid;gap:8px;margin:16px 0 0}
+.fld>span{font:600 13px/1.2 var(--font-sans);color:var(--text-secondary)}
+.fld select,.fld textarea{width:100%;min-height:46px;padding:10px 12px;border-radius:12px;border:1px solid var(--slate-600);background:var(--surface-raised);color:var(--text-primary);font:400 15px/1.4 var(--font-sans)}
+.fld textarea{min-height:84px;resize:vertical}
+.fld .err{font:500 12.5px/1.3 var(--font-sans);color:var(--red)}
+.chk{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 2px;border-bottom:1px solid var(--border-decorative);font:500 14.5px/1.3 var(--font-sans)}
+.chk input{width:20px;height:20px;accent-color:var(--teal)}
+.moods{display:flex;flex-wrap:wrap;gap:8px}
+.moods button{height:38px;padding:0 14px;border-radius:9999px;border:1px solid var(--border-decorative);font:600 13.5px/1 var(--font-sans);color:var(--text-secondary)}
+.moods button[aria-pressed=true]{background:var(--surface-hover);border-color:var(--action-primary);color:var(--text-primary)}
+.sheet .acts{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:20px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:6px}
+.facts div{display:grid;gap:3px;padding:10px;border-radius:10px;background:var(--surface-glass);font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.facts b{font:600 14.5px/1.2 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.chs .row{min-height:50px}
+.chs .row.on b{color:var(--teal)}
+.toast{position:fixed;left:50%;bottom:calc(var(--tabh) + var(--safe-b) + 16px);z-index:80;transform:translateX(-50%);max-width:calc(100% - 40px);padding:12px 16px;border-radius:12px;background:var(--text-primary);color:var(--surface-canvas);font:600 13.5px/1.35 var(--font-sans);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.toast[hidden]{display:none}
+/* onboarding tip in the app sits above the tab bar */
+.ob-tip{max-width:min(440px,calc(100vw - 24px))}
+/* icons inside buttons and rows keep a fixed size */
+.btn svg{width:17px;height:17px;flex:none}
+.row .go svg{width:16px;height:16px}
+/* the one-time tip highlights "For you" gently */
+.b-dash.ob-pulse{box-shadow:none!important;animation:none!important;outline:0}
+.b-dash.ob-pulse h2{text-decoration:underline;text-decoration-color:var(--action-primary);text-underline-offset:5px}
+.ob-ov{position:fixed;inset:0;z-index:9000;display:grid;place-items:center;padding:20px;background:rgba(8,12,20,.72);backdrop-filter:blur(6px);animation:obIn .25s ease}
+@keyframes obIn{from{opacity:0}to{opacity:1}}
+.ob-card{width:min(620px,100%);padding:28px 30px;border-radius:22px;background:radial-gradient(80% 60% at 0% 0%,rgba(63,91,217,.22),transparent 60%),var(--surface-elevated);border:1px solid var(--border-glass,rgba(255,255,255,.12));box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.ob-top{display:flex;justify-content:space-between;align-items:center}
+.ob-step{font:600 11px/1 var(--font-sans);letter-spacing:1.1px;text-transform:uppercase;color:var(--text-tertiary)}
+.ob-skip{border:0;background:none;font:600 13px/1 var(--font-sans);color:var(--text-secondary);cursor:pointer}.ob-skip:hover{color:var(--text-primary);text-decoration:underline}
+.ob-prog{height:4px;margin:14px 0 20px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}.ob-prog i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--indigo-500,#3F5BD9));border-radius:2px;transition:width .3s}
+.ob-hi{margin:0 0 16px;font:600 18px/1.35 var(--font-sans);color:var(--text-primary)}.ob-hi span{font:400 14px/1.5 var(--font-sans);color:var(--text-secondary)}
+.ob-card h2{margin:0 0 16px;font:600 24px/1.25 var(--font-sans);letter-spacing:-.3px;color:var(--text-primary)}
+.ob-opts{display:grid;gap:10px}
+.ob-o{display:grid;gap:3px;text-align:left;padding:14px 16px;border-radius:14px;border:1px solid var(--border-decorative);background:rgba(255,255,255,.03);color:var(--text-primary);cursor:pointer;transition:border-color .15s,background .15s}
+.ob-o:hover{border-color:var(--surface-hover-stroke);background:var(--surface-hover)}.ob-o.on{border-color:var(--action-primary);background:rgba(63,91,217,.18)}
+.ob-o b{font:600 15px/1.25 var(--font-sans)}.ob-o small{font:400 12.5px/1.35 var(--font-sans);color:var(--text-tertiary)}
+.ob-f{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.ob-back{border:0;background:none;font:600 13px/1 var(--font-sans);color:var(--text-secondary);cursor:pointer}.ob-back:hover{color:var(--text-primary)}
+.ob-go{height:44px;padding:0 20px;border:0;border-radius:12px;background:var(--action-primary);color:#fff;font:600 14.5px/1 var(--font-sans);cursor:pointer}.ob-go:hover{background:var(--action-hover,#3452C9)}
+.ob-done{text-align:left}.ob-badge{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:24px;background:var(--fin-positive-soft);margin-bottom:14px}
+.ob-sum{margin:0;font:400 15px/1.55 var(--font-sans);color:var(--text-secondary)}
+.ob-chip{position:absolute;top:22px;right:24px;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9999px;border:1px solid var(--border-decorative);background:rgba(255,255,255,.05);color:var(--text-secondary);font:500 12.5px/1 var(--font-sans);cursor:pointer;z-index:2}
+.ob-chip b{color:var(--text-primary);font-weight:600}.ob-chip em{font-style:normal;color:var(--link,#8FA3FF);font-weight:600}.ob-chip:hover{border-color:var(--surface-hover-stroke)}
+.ob-pulse{box-shadow:0 0 0 0 rgba(143,163,255,.6);animation:obPulse 1.8s ease-out infinite}
+@keyframes obPulse{0%{box-shadow:0 0 0 0 rgba(143,163,255,.55)}100%{box-shadow:0 0 0 14px rgba(143,163,255,0)}}
+.ob-tip{position:fixed;z-index:9500;display:flex;align-items:center;gap:14px;max-width:min(440px,calc(100vw - 24px));padding:14px 14px 14px 16px;border-radius:14px;background:#3F5BD9;color:#fff;box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.12)}
+.ob-tip.up::before{top:auto;bottom:-6px}.ob-tip::before{content:"";position:absolute;top:-6px;left:var(--ax,28px);width:12px;height:12px;background:#3F5BD9;transform:rotate(45deg);border-radius:2px}
+.ob-tip-i{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.16);font-size:16px}
+.ob-tip-t{display:grid;gap:3px;min-width:0}.ob-tip-t b{font:600 14px/1.25 var(--font-sans)}.ob-tip-t span{font:400 13px/1.4 var(--font-sans);color:rgba(255,255,255,.9)}.ob-tip em{font-style:normal;font-weight:600}
+.ob-tip button{flex:none;height:34px;padding:0 14px;border:0;border-radius:9px;background:#fff;color:#3F5BD9;font:600 13px/1 var(--font-sans);cursor:pointer}.ob-tip button:hover{background:#EEF1FF}
+@media (prefers-reduced-motion:reduce){.ob-ov,.ob-pulse{animation:none}}
+.b-next{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.035);border:1px dashed var(--border-decorative);margin-top:auto}
+.bn-h{flex:none;font:600 11px/1.2 var(--font-sans);letter-spacing:1px;text-transform:uppercase;color:var(--text-tertiary)}
+.b-next ol{list-style:none;margin:0;padding:0;display:flex;gap:18px;flex-wrap:wrap;min-width:0}
+.b-next li{display:flex;align-items:baseline;gap:8px;font:500 13px/1.3 var(--font-sans);color:var(--text-primary);white-space:nowrap}
+.b-next time{font:600 12px/1 var(--font-sans);font-variant-numeric:tabular-nums;color:var(--amber)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var IDX=[{"n": "Nifty 50", "pts": "+210.40", "pct": "+0.84%", "up": true, "vix": false, "d": [["12 Oct", 22363.35], ["13 Oct", 22721.95], ["14 Oct", 22622.7], ["15 Oct", 22997.35], ["16 Oct", 23146.15], ["19 Oct", 22888.95], ["21 Oct", 22811.35], ["22 Oct", 22687.65], ["23 Oct", 22600.0], ["26 Oct", 22753.2], ["27 Oct", 22749.75], ["28 Oct", 22698.85], ["29 Oct", 22936.75], ["30 Oct", 23053.1], ["02 Nov", 23440.8], ["03 Nov", 23810.85], ["04 Nov", 23960.6], ["05 Nov", 24536.6], ["06 Nov", 25030.35], ["09 Nov", 25044.65], ["11 Nov", 25255.05]]}, {"n": "Nifty Bank", "pts": "+1,051.15", "pct": "+1.76%", "up": true, "vix": false, "d": [["12 Oct", 54918.0], ["13 Oct", 55481.05], ["14 Oct", 55316.0], ["15 Oct", 55810.5], ["16 Oct", 55844.0], ["19 Oct", 55488.1], ["21 Oct", 54976.9], ["22 Oct", 54925.7], ["23 Oct", 54287.35], ["26 Oct", 54366.7], ["27 Oct", 53974.9], ["28 Oct", 54267.4], ["29 Oct", 54909.65], ["30 Oct", 54686.95], ["02 Nov", 55002.2], ["03 Nov", 55540.05], ["04 Nov", 55913.6], ["05 Nov", 57773.65], ["06 Nov", 59086.0], ["09 Nov", 59741.25], ["11 Nov", 60792.4]]}, {"n": "Midcap 100", "pts": "+496.55", "pct": "+0.81%", "up": true, "vix": false, "d": [["12 Oct", 58834.55], ["13 Oct", 59459.2], ["14 Oct", 59409.1], ["15 Oct", 59197.25], ["16 Oct", 59129.75], ["19 Oct", 58487.95], ["21 Oct", 57565.85], ["22 Oct", 57063.95], ["23 Oct", 55800.65], ["26 Oct", 56465.4], ["27 Oct", 57029.9], ["28 Oct", 57274.7], ["29 Oct", 57841.65], ["30 Oct", 57301.25], ["02 Nov", 57983.4], ["03 Nov", 58596.25], ["04 Nov", 59505.5], ["05 Nov", 60620.9], ["06 Nov", 60606.65], ["09 Nov", 61022.55], ["11 Nov", 61519.1]]}, {"n": "Smallcap 100", "pts": "+304.30", "pct": "+1.59%", "up": true, "vix": false, "d": [["12 Oct", 19425.8], ["13 Oct", 19447.4], ["14 Oct", 19384.8], ["15 Oct", 19131.7], ["16 Oct", 19129.8], ["19 Oct", 18935.75], ["21 Oct", 18487.3], ["22 Oct", 18275.9], ["23 Oct", 17739.45], ["26 Oct", 17985.0], ["27 Oct", 18468.7], ["28 Oct", 18634.9], ["29 Oct", 18811.35], ["30 Oct", 18463.6], ["02 Nov", 18595.3], ["03 Nov", 18652.85], ["04 Nov", 19026.4], ["05 Nov", 19132.45], ["06 Nov", 18975.05], ["09 Nov", 19185.05], ["11 Nov", 19489.35]]}, {"n": "India VIX", "pts": "+0.14", "pct": "+0.77%", "up": true, "vix": true, "d": [["12 Oct", 15.25], ["13 Oct", 14.12], ["14 Oct", 14.63], ["15 Oct", 14.03], ["16 Oct", 14.06], ["19 Oct", 14.77], ["21 Oct", 15.68], ["22 Oct", 15.76], ["23 Oct", 16.86], ["26 Oct", 17.16], ["27 Oct", 16.4], ["28 Oct", 16.25], ["29 Oct", 15.12], ["30 Oct", 15.3], ["02 Nov", 15.5], ["03 Nov", 15.72], ["04 Nov", 15.19], ["05 Nov", 15.58], ["06 Nov", 17.47], ["09 Nov", 17.42], ["11 Nov", 17.56]]}, {"n": "Nifty 500", "pts": "+212.30", "pct": "+0.90%", "up": true, "vix": false, "d": [["12 Oct", 21822.75], ["13 Oct", 22090.0], ["14 Oct", 22038.0], ["15 Oct", 22180.8], ["16 Oct", 22270.05], ["19 Oct", 22041.6], ["21 Oct", 21837.9], ["22 Oct", 21696.55], ["23 Oct", 21427.6], ["26 Oct", 21608.75], ["27 Oct", 21734.9], ["28 Oct", 21727.45], ["29 Oct", 21941.5], ["30 Oct", 21895.9], ["02 Nov", 22241.4], ["03 Nov", 22520.35], ["04 Nov", 22769.2], ["05 Nov", 23224.7], ["06 Nov", 23456.95], ["09 Nov", 23567.0], ["11 Nov", 23779.3]]}, {"n": "Nifty Next 50", "pts": "+696.75", "pct": "+0.96%", "up": true, "vix": false, "d": [["12 Oct", 68351.7], ["13 Oct", 68927.95], ["14 Oct", 68999.3], ["15 Oct", 68671.6], ["16 Oct", 68988.6], ["19 Oct", 68695.85], ["21 Oct", 67655.3], ["22 Oct", 67354.15], ["23 Oct", 65828.6], ["26 Oct", 66477.15], ["27 Oct", 67343.95], ["28 Oct", 67303.7], ["29 Oct", 68121.6], ["30 Oct", 67709.1], ["02 Nov", 68962.65], ["03 Nov", 69624.35], ["04 Nov", 70795.0], ["05 Nov", 71768.65], ["06 Nov", 71657.8], ["09 Nov", 72789.45], ["11 Nov", 73486.2]]}, {"n": "Fin Services", "pts": "+278.50", "pct": "+1.02%", "up": true, "vix": false, "d": [["12 Oct", 24866.35], ["13 Oct", 25228.55], ["14 Oct", 24948.7], ["15 Oct", 25364.2], ["16 Oct", 25387.1], ["19 Oct", 24987.1], ["21 Oct", 24691.45], ["22 Oct", 24657.7], ["23 Oct", 24403.0], ["26 Oct", 24454.35], ["27 Oct", 24303.75], ["28 Oct", 24418.25], ["29 Oct", 24704.55], ["30 Oct", 24712.2], ["02 Nov", 24899.05], ["03 Nov", 25357.9], ["04 Nov", 25580.6], ["05 Nov", 26600.45], ["06 Nov", 27283.95], ["09 Nov", 27384.9], ["11 Nov", 27663.4]]}, {"n": "Nifty IT", "pts": "−173.30", "pct": "−0.53%", "up": false, "vix": false, "d": [["12 Oct", 28349.6], ["13 Oct", 29830.1], ["14 Oct", 30171.0], ["15 Oct", 30719.8], ["16 Oct", 31924.1], ["19 Oct", 31516.3], ["21 Oct", 32422.5], ["22 Oct", 32081.25], ["23 Oct", 31995.5], ["26 Oct", 32273.05], ["27 Oct", 32189.45], ["28 Oct", 31553.4], ["29 Oct", 31866.4], ["30 Oct", 32606.9], ["02 Nov", 32442.5], ["03 Nov", 32551.6], ["04 Nov", 32061.9], ["05 Nov", 32837.85], ["06 Nov", 32977.9], ["09 Nov", 32468.9], ["11 Nov", 32295.6]]}];
+var DAY=[
+ {g:'Before market',t:'07:30',b:'Springpad Today edition'},
+ {g:'Before market',t:'09:00',b:'Pre-open session'},
+ {g:'Market hours',t:'09:15',b:'Market opens'},
+ {g:'Market hours',t:'10:00',b:'Kestrel Energy lists',ev:1},
+ {g:'Market hours',t:'15:30',b:'Close · Sensex expiry',ev:1},
+ {g:'After market',t:'16:00',b:'CPI inflation (Oct)',ev:1},
+ {g:'After market',t:'18:00',b:'FII / DII data'},
+ {g:'After market',t:'20:00',b:'US markets open'}];
+var TYPES={ipo:{n:'IPOs',c:'t-ipo'},earn:{n:'Results',c:'t-earn'},fno:{n:'F&O expiry',c:'t-fno'},hol:{n:'Holidays & sessions',c:'t-hol'},eco:{n:'Economy & RBI',c:'t-eco'}};
+var E=(y,m,d,t,title,note)=>({d:new Date(y,m-1,d),t,title,note});
+var EVENTS=[
+ E(2026,10,27,'fno','Nifty monthly expiry','October series ends'),E(2026,10,29,'fno','Sensex monthly expiry','BSE'),
+ E(2026,11,3,'fno','Nifty weekly expiry','NSE · Tuesday'),E(2026,11,4,'ipo','Kestrel Energy IPO opens','₹2,050 cr · ₹96–101'),
+ E(2026,11,5,'fno','Sensex weekly expiry','BSE · Thursday'),E(2026,11,6,'ipo','Kestrel Energy IPO closes','Final: 38.5x subscribed'),
+ E(2026,11,8,'hol','Muhurat trading','Sunday special session, 2:20–3:30 pm · Samvat 2083'),
+ E(2026,11,9,'fno','Nifty weekly expiry (moved)','Shifted from Tuesday for the holiday'),E(2026,11,9,'ipo','Lumen Foods IPO opens','₹640 cr · ₹180–190'),
+ E(2026,11,10,'hol','Trading holiday','Diwali Balipratipada · MCX evening session only'),
+ E(2026,11,11,'ipo','Northwind Logistics IPO opens','₹1,200 cr · ₹410–432 · 3 days'),E(2026,11,11,'ipo','Lumen Foods IPO closes','4.2x so far'),E(2026,11,11,'earn','Aster Motors Q2 results','After market hours'),
+ E(2026,11,12,'eco','CPI inflation (October)','4:00 pm · MoSPI'),E(2026,11,12,'ipo','Kestrel Energy lists','NSE & BSE'),E(2026,11,12,'fno','Sensex weekly expiry','BSE'),
+ E(2026,11,13,'ipo','Northwind Logistics IPO closes','Bidding ends 5 pm'),E(2026,11,13,'eco','Industrial output (IIP)','September data'),E(2026,11,13,'earn','Harbor Cement Q2 results',''),
+ E(2026,11,16,'ipo','Lumen Foods lists','NSE & BSE'),E(2026,11,16,'ipo','Northwind allotment','Check status after 6 pm'),E(2026,11,16,'earn','Solace Hospitals Q2 results',''),
+ E(2026,11,17,'fno','Nifty weekly expiry','NSE'),E(2026,11,18,'ipo','Northwind Logistics lists','NSE & BSE'),
+ E(2026,11,19,'fno','Sensex weekly expiry','BSE'),E(2026,11,20,'ipo','Orion Pharma IPO opens','₹900 cr · price band soon'),
+ E(2026,11,24,'fno','Nifty monthly expiry','November series ends'),E(2026,11,24,'ipo','Orion Pharma IPO closes',''),
+ E(2026,11,26,'fno','Sensex monthly expiry','BSE'),E(2026,11,27,'eco','GDP growth, July–September','5:30 pm · MoSPI'),
+ E(2026,12,1,'eco','Auto sales (November)','Company releases'),E(2026,12,1,'fno','Nifty weekly expiry','NSE'),
+ E(2026,12,4,'eco','RBI policy decision','10:00 am · repo rate'),E(2026,12,8,'fno','Nifty weekly expiry','NSE'),
+ E(2026,12,10,'eco','US Fed decision','Late night IST'),E(2026,12,14,'eco','CPI inflation (November)','4:00 pm'),
+ E(2026,12,25,'hol','Trading holiday','Christmas')];
+var MVS=[{"n": "Bank of Baroda", "v": 5.77}, {"n": "Mahindra & Mahindra", "v": 5.3}, {"n": "Samvardhana Motherson", "v": 4.81}, {"n": "Adani Ports", "v": -1.84}, {"n": "LTM", "v": -2.16}, {"n": "Adani Green Energy", "v": -3.26}],SECS=[{"n": "PSU Bank", "v": 2.94}, {"n": "Private Bank", "v": 1.14}, {"n": "Auto", "v": 1.14}, {"n": "Pharma", "v": -0.41}, {"n": "Realty", "v": -0.42}, {"n": "IT", "v": -0.53}];
+var OIB={"lb": {"n": 64, "top": [{"s": "COROMANDEL", "p": 6.49, "o": 91.2}, {"s": "NAVINFLUOR", "p": 5.79, "o": 68.8}, {"s": "CUB", "p": 3.08, "o": 17.3}]}, "sb": {"n": 44, "top": [{"s": "COCHINSHIP", "p": -8.16, "o": 39.6}, {"s": "AMBER", "p": -1.37, "o": 12.8}, {"s": "BPCL", "p": -0.14, "o": 11.3}]}, "sc": {"n": 75, "top": [{"s": "RBLBANK", "p": 2.3, "o": -8.2}, {"s": "POWERINDIA", "p": 2.81, "o": -7.1}, {"s": "NAM-INDIA", "p": 0.75, "o": -6.0}]}, "lu": {"n": 28, "top": [{"s": "ICICIBANK", "p": -0.83, "o": -7.5}, {"s": "IREDA", "p": -0.28, "o": -6.5}, {"s": "ADANIGREEN", "p": -2.69, "o": -5.8}]}};
+var OIQ=[['lb','Long buildup','Price ▲ · OI ▲','u'],['sb','Short buildup','Price ▼ · OI ▲','d'],['sc','Short covering','Price ▲ · OI ▼','u'],['lu','Long unwinding','Price ▼ · OI ▼','d']];
+var CALLS=[
+ {n:'SWIGGY',k:'Put spread',when:'Posted today',meta:'Expiry 23 Nov · 1,825 qty · Medium risk',legs:[['b','PUT 185','₹4.22',1],['s','PUT 180','₹2.35',1]],lv:['₹1.87','₹5.80','₹0.25','₹1.92'],tflag:'Above this spread’s ₹5.00 maximum value. Being checked with the research desk.',mp:'₹5,712',ml:'₹3,413',cap:'₹21,000'},
+ {n:'FEDERALBNK',k:'Call ratio spread 1:2',when:'Posted 11 Nov',meta:'Expiry 23 Nov · 2,500 qty/lot · High risk',legs:[['b','CALL 360','₹5.55',1],['s','CALL 380','₹1.40',2]],lv:['₹2.75','₹5.90','₹1.40','₹3.95'],mp:'₹43,125',ml:'Unlimited >397',mlx:1,cap:'₹1,14,000'}];
+var LEARN=[
+ {id:'term',kind:'Term of the day',h:'Short covering',one:'Traders who <b>bet on a fall buy back</b>, and that buying lifts the price.'},
+ {id:'relation',kind:'Relation of the day',h:'Cheaper crude, relief for India',one:'India imports most of its oil, so <b>cheaper crude eases costs</b> at home.'},
+ {id:'learning',kind:'Learning of the day',h:'Broad rallies beat narrow ones',one:'When <b>smaller stocks beat the index</b>, buying is wide and the rally sturdier.'}];
+window.CD={"date":"Thursday, 12 November","driver":"FIIs back, banks led","head":"Markets bounced back after the Diwali break.","sub":"Foreign investors returned in size and banks led the way.","nums":[{"n":"Nifty 50","pct":"+0.84%","up":true,"vix":false,"d":[22363.35,22721.95,22622.7,22997.35,23146.15,22888.95,22811.35,22687.65,22600.0,22753.2,22749.75,22698.85,22936.75,23053.1,23440.8,23810.85,23960.6,24536.6,25030.35,25044.65,25255.05]},{"n":"Bank Nifty","pct":"+1.76%","up":true,"vix":false,"d":[54918.0,55481.05,55316.0,55810.5,55844.0,55488.1,54976.9,54925.7,54287.35,54366.7,53974.9,54267.4,54909.65,54686.95,55002.2,55540.05,55913.6,57773.65,59086.0,59741.25,60792.4]},{"n":"India VIX","pct":"+0.77%","up":true,"vix":true,"d":[15.25,14.12,14.63,14.03,14.06,14.77,15.68,15.76,16.86,17.16,16.4,16.25,15.12,15.3,15.5,15.72,15.19,15.58,17.47,17.42,17.56]}],"events":[["09:15","Market opens"],["15:30","Close · Sensex expiry"],["16:00","CPI inflation (Oct)"],["18:00","FII / DII data"],["20:00","US markets open"]],"calls":{"n":2,"lead":"SWIGGY","more":1},"expiry":{"day":"Tue 17 Nov","mp":"25,100"},"streak":{"n":6,"week":[["M","done"],["T","hol"],["W","done"],["T","today"],["F",""],["S","off"],["S","off"]],"left":3,"rank":142,"next":7},"links":{"brief":"today-demo-2026-11-12.html#brief","dash":"idea-b-dashboard.html","journal":"idea-b-journal.html","review":"idea-b-journal.html#review","learn":"today-demo-2026-11-12.html#learn","bt":"https://ujjwalb2.github.io/tradin-simulator/replay/","baskets":"https://dev.alphapad.in/baskets","studio":"https://dev.alphapad.in/option-studio","lms":"https://dev.alphapad.in/lms","screener":"https://dev.alphapad.in/screener","calls":"idea-b-dashboard.html#tc","fo":"idea-b-dashboard.html#fo","app":"app.html"},"audio":{"src":"demo/springpad-today-2026-11-12.m4a","dur":286.3,"ch":[["Market in 30 seconds",0.0],["Foreign investors are back",39.85],["Banks lead, IT lags",85.79],["Oil slips below 90 dollars",133.37],["Silver and gold climb",174.62],["Anthropic's giant IPO",204.7],["Quick hits, term of the day, sign-off",239.17]]},"sotd":{"closes":[8136.5,8272.0,8536.0,8490.0,8417.5,8352.5,8561.0,8468.0,8457.0,8247.5,8167.0,8152.5,8014.5,7946.5,7668.5,7662.0,8254.0,8501.0,8260.5,8680.0,8406.0,8530.0,8785.0,8845.0,9010.0,9115.0,9659.0],"oldy":8.804707060590886,"date":"11 Nov","s":"NAVINFLUOR","name":"Navin Fluorine International","ind":"Chemicals","fo":true,"close":9659.0,"chg":5.97,"day_hi":9666.0,"old_hi":9245.0,"old_hi_d":"8 Nov","l52":5440.0,"l52_d":"9 Dec 2025","vx":3.1,"dl":44.8,"sma20":8386.55,"oi":68.8,"others":[["PNB","Punjab National Bank",4.77,"+2.5% above 52W high"],["PETRONET","Petronet LNG",2.92,"+1.0% above 52W high"]]},"journal":{"pending":["pend-1","pend-2","pend-3","pend-4"],"net":10309,"wr":57},"fo":{"exp":"Expiry Tue 17 Nov","k":[["Support","25,000","most put OI"],["Max pain","25,100","expiry pull"],["Resistance","25,500","most call OI"]],"svg":"<svg viewBox=\"0 0 380 74\" preserveAspectRatio=\"xMidYMax meet\" role=\"img\" aria-label=\"Nifty open interest by strike for the 17 Nov expiry: puts largest at 25,000, calls largest at 25,500, max pain 25,100, spot 25,255\"><rect x=\"306\" y=\"2\" width=\"7\" height=\"7\" rx=\"1.5\" fill=\"var(--teal)\"/><text x=\"316\" y=\"9\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">Puts</text><rect x=\"344\" y=\"2\" width=\"7\" height=\"7\" rx=\"1.5\" fill=\"var(--slate-500)\"/><text x=\"354\" y=\"9\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">Calls</text><line x1=\"0\" x2=\"380\" y1=\"60\" y2=\"60\" stroke=\"var(--border-decorative)\"/><rect x=\"7.7\" y=\"37.6\" width=\"12.2\" height=\"22.4\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"21.9\" y=\"56.2\" width=\"12.2\" height=\"3.8\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><text x=\"20.9\" y=\"73\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">24,800</text><rect x=\"41.6\" y=\"44.9\" width=\"12.2\" height=\"15.1\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"55.7\" y=\"55.9\" width=\"12.2\" height=\"4.1\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><rect x=\"75.4\" y=\"32.4\" width=\"12.2\" height=\"27.6\" rx=\"1.5\" fill=\"var(--teal)\"/><rect x=\"89.5\" y=\"44.5\" width=\"12.2\" height=\"15.5\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><text x=\"88.5\" y=\"73\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">25,000</text><rect x=\"109.2\" y=\"46.9\" width=\"12.2\" height=\"13.1\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"123.4\" y=\"53.0\" width=\"12.2\" height=\"7.0\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><rect x=\"143.0\" y=\"44.8\" width=\"12.2\" height=\"15.2\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"157.2\" y=\"42.0\" width=\"12.2\" height=\"18.0\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><text x=\"156.2\" y=\"73\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">25,200</text><rect x=\"176.8\" y=\"46.0\" width=\"12.2\" height=\"14.0\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"191.0\" y=\"33.4\" width=\"12.2\" height=\"26.6\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><rect x=\"210.6\" y=\"50.7\" width=\"12.2\" height=\"9.3\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"224.8\" y=\"26.0\" width=\"12.2\" height=\"34.0\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><text x=\"223.8\" y=\"73\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">25,400</text><rect x=\"244.5\" y=\"50.7\" width=\"12.2\" height=\"9.3\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"258.6\" y=\"14.0\" width=\"12.2\" height=\"46.0\" rx=\"1.5\" fill=\"var(--slate-500)\"/><rect x=\"278.3\" y=\"58.5\" width=\"12.2\" height=\"1.5\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"292.5\" y=\"37.3\" width=\"12.2\" height=\"22.7\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><text x=\"291.5\" y=\"73\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">25,600</text><rect x=\"312.1\" y=\"59.1\" width=\"12.2\" height=\"0.9\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"326.3\" y=\"37.8\" width=\"12.2\" height=\"22.2\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><rect x=\"345.9\" y=\"59.4\" width=\"12.2\" height=\"0.6\" rx=\"1.5\" fill=\"var(--teal)\" opacity=\".55\"/><rect x=\"360.1\" y=\"29.3\" width=\"12.2\" height=\"30.7\" rx=\"1.5\" fill=\"var(--slate-500)\" opacity=\".55\"/><text x=\"359.1\" y=\"73\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Inter\" fill=\"var(--text-tertiary)\">25,800</text><line x1=\"174.8\" x2=\"174.8\" y1=\"12\" y2=\"60\" stroke=\"var(--amber)\" stroke-width=\"1.5\" stroke-dasharray=\"3 2\"/><text x=\"178.8\" y=\"9\" font-size=\"10\" font-family=\"Inter\" font-weight=\"600\" fill=\"var(--amber)\">Spot 25,255</text><line x1=\"122.4\" x2=\"122.4\" y1=\"12\" y2=\"60\" stroke=\"var(--text-secondary)\" stroke-width=\"1.5\" stroke-dasharray=\"2 3\"/><text x=\"118.4\" y=\"9\" text-anchor=\"end\" font-size=\"10\" font-family=\"Inter\" font-weight=\"600\" fill=\"var(--text-secondary)\">Max pain 25,100</text></svg>"},"baskets":[{"n":"Updated Momentum Basket","m":"Medium risk · 2 stocks","r":"+17.26%"},{"n":"All Weather Alpha","m":"High risk · 5 stocks","r":"+8.87%"},{"n":"Alphapad Smart Factor Plus","m":"High risk · 5 stocks","r":"+2.46%"}],"scan":[{"id":"sc-vol","h":"Volume shockers vs 20-day avg","rows":[{"s":"FACT","name":"Fertilisers and Chemicals Travancore Ltd.","v":"29.6×","c":"+8.67%","u":true,"w":100},{"s":"BEML","name":"BEML Ltd.","v":"19.4×","c":"+6.05%","u":true,"w":66},{"s":"IIFL","name":"IIFL Finance Ltd.","v":"12.3×","c":"+6.26%","u":true,"w":42},{"s":"KALYANKJIL","name":"Kalyan Jewellers India Ltd.","v":"10.8×","c":"+8.63%","u":true,"w":36},{"s":"COCHINSHIP","name":"Cochin Shipyard Ltd.","v":"10.4×","c":"−6.82%","u":false,"w":35}]},{"id":"sc-del","h":"Delivery spikes delivery % · jump","rows":[{"s":"HOMEFIRST","name":"Home First Finance Company India Ltd.","v":"86% +42.8","c":"−0.02%","u":false,"w":100},{"s":"MANKIND","name":"Mankind Pharma Ltd.","v":"64% +36.8","c":"−0.31%","u":false,"w":86},{"s":"GLAND","name":"Gland Pharma Ltd.","v":"53% +30","c":"−1.17%","u":false,"w":70},{"s":"SUPREMEIND","name":"Supreme Industries Ltd.","v":"69% +29.7","c":"+0.71%","u":true,"w":69},{"s":"DOMS","name":"DOMS Industries Ltd.","v":"78% +29.5","c":"−1.05%","u":false,"w":69}]},{"id":"sc-hi","h":"New 20-day highs 149 stocks","rows":[{"s":"FACT","name":"Fertilisers and Chemicals Travancore Ltd.","v":"","c":"+8.67%","u":true,"w":100},{"s":"KALYANKJIL","name":"Kalyan Jewellers India Ltd.","v":"","c":"+8.63%","u":true,"w":100},{"s":"SUNTV","name":"Sun TV Network Ltd.","v":"","c":"+7.21%","u":true,"w":83},{"s":"RKFORGE","name":"Ramkrishna Forgings Ltd.","v":"","c":"+7.19%","u":true,"w":83},{"s":"IIFL","name":"IIFL Finance Ltd.","v":"","c":"+6.26%","u":true,"w":72}]},{"id":"sc-lo","h":"New 20-day lows 7 stocks","rows":[{"s":"PFOCUS","name":"Prime Focus Ltd.","v":"","c":"−5.38%","u":false,"w":100},{"s":"THERMAX","name":"Thermax Ltd.","v":"","c":"−2.17%","u":false,"w":40},{"s":"HEXT","name":"Hexaware Technologies Ltd.","v":"","c":"−0.96%","u":false,"w":18},{"s":"SCHNEIDER","name":"Schneider Electric Infrastructure Ltd.","v":"","c":"−0.54%","u":false,"w":10},{"s":"ESCORTS","name":"Escorts Kubota Ltd.","v":"","c":"−0.48%","u":false,"w":9}]}],"filings":[{"c":"g","h":"Results & dividends","items":[{"s":"ABB","fo":true,"t":"18:06","x":"Q2 results; demand expanding across segments","href":"https://nsearchives.nseindia.com/corporate/ABB_13112026180525_PressReleaseQ32026signed.pdf"},{"s":"EICHERMOT","fo":true,"t":"17:03","x":"Best-ever quarter: record revenue and EBITDA","href":"https://nsearchives.nseindia.com/corporate/EICHERMOT_13112026170319_EMLPressReleaseNovember132026Signed.pdf"},{"s":"NATCOPHARM","fo":false,"t":"14:15","x":"Q2 results + 2nd interim dividend, record date 19 Nov","href":"https://nsearchives.nseindia.com/corporate/NATCOPHARM_13112026141002_Outcome_13112026.pdf"}]},{"c":"b","h":"Orders, deals & approvals","items":[{"s":"BEL","fo":true,"t":"18:31","x":"New order / contract win disclosed","href":"https://nsearchives.nseindia.com/corporate/BEL_13112026182841_Lettersigned.pdf"},{"s":"JSWINFRA","fo":false,"t":"17:13","x":"Letter of award for a new contract","href":"https://nsearchives.nseindia.com/corporate/JSWINFRA_13112026170704_SE_intimation-_LOA-Shambhu.pdf"},{"s":"AMBER","fo":true,"t":"16:18","x":"Operations resume at subsidiary IL JIN’s factory","href":"https://nsearchives.nseindia.com/corporate/AMBER_13112026161730_SE_Intimation_Update_on_ILJINs_Resumption_of_Operations.pdf"},{"s":"PAYTM","fo":true,"t":"14:42","x":"In-principle RBI nod for payments arm’s wallet licence","href":"https://nsearchives.nseindia.com/corporate/PAYTM_13112026144214_SE_Disclosure_PPSL_Wallet_License_in_principal_approval_Nov_2026_sd.pdf"},{"s":"ZEEL","fo":false,"t":"13:11","x":"Board resolution for share buyback filed","href":"https://nsearchives.nseindia.com/corporate/ZEEL_13112026130852_SEIntimationBR13NovBBsigned.pdf"}]},{"c":"w","h":"People & risks","items":[{"s":"RHIM","fo":false,"t":"18:09","x":"CFO resigns; successor named from 1 Jan 2027","href":"https://nsearchives.nseindia.com/corporate/RHIM_13112026180912_Outcome.pdf"},{"s":"PGEL","fo":true,"t":"17:26","x":"Receives a show cause notice","href":"https://nsearchives.nseindia.com/corporate/PGEL_13112026172525_FINALBSENSESEBISCN13112026.pdf"},{"s":"SHREECEM","fo":true,"t":"15:54","x":"Appeal against Punjab state-tax demand dismissed","href":"https://nsearchives.nseindia.com/corporate/SHREECEM_13112026155359_NSE_BSE_Demand_order_131126.pdf"},{"s":"TVSMOTOR","fo":true,"t":"15:03","x":"India two-wheeler business president resigns (24 Dec)","href":"https://nsearchives.nseindia.com/corporate/TVSMOTOR_13112026150251_TVSM_SMP_intimationSD.pdf"}]}]};window.JD=[{"d":"2026-09-01","t":"12:16","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1511.9,"ex":1505.9,"pnl":-180,"held":210,"risk":544,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-09-01","t":"14:12","sym":"BANKNIFTY 54400 CE","kind":"Option","side":"Buy","qty":35,"en":218.8,"ex":107.1,"pnl":-3910,"held":35,"risk":2297,"setup":"Trend continuation","rules":{"stop":false,"size":true,"setup":false,"revenge":false,"exit":true},"score":2,"mistakes":["No stop-loss","Off-plan setup","Revenge trade"],"mood":"Rushed"},{"d":"2026-09-02","t":"09:22","sym":"BANKNIFTY 54600 CE","kind":"Option","side":"Buy","qty":35,"en":173.7,"ex":145.9,"pnl":-973,"held":52,"risk":1824,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Anxious"},{"d":"2026-09-02","t":"14:05","sym":"BANKNIFTY 53900 PE","kind":"Option","side":"Buy","qty":35,"en":234.2,"ex":266.5,"pnl":1131,"held":185,"risk":2459,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Confident"},{"d":"2026-09-03","t":"10:41","sym":"INFY","kind":"Equity","side":"Sell","qty":30,"en":1476.6,"ex":1482.7,"pnl":-183,"held":2880,"risk":532,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-03","t":"11:48","sym":"NIFTY 24900 PE","kind":"Option","side":"Buy","qty":75,"en":127.0,"ex":145.5,"pnl":1388,"held":230,"risk":2858,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-04","t":"09:34","sym":"NIFTY 25000 PE","kind":"Option","side":"Buy","qty":75,"en":110.2,"ex":138.9,"pnl":2152,"held":70,"risk":2480,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-04","t":"11:05","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1545.6,"ex":1547.7,"pnl":63,"held":1440,"risk":556,"setup":"Trend continuation","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Focused"},{"d":"2026-09-04","t":"11:34","sym":"BANKNIFTY 53700 PE","kind":"Option","side":"Buy","qty":35,"en":180.2,"ex":165.1,"pnl":-528,"held":95,"risk":1892,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-07","t":"09:16","sym":"RELIANCE","kind":"Equity","side":"Buy","qty":40,"en":1379.8,"ex":1402.1,"pnl":892,"held":1440,"risk":662,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-09-07","t":"11:05","sym":"NIFTY 25000 PE","kind":"Option","side":"Buy","qty":75,"en":122.7,"ex":142.1,"pnl":1455,"held":70,"risk":2761,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-09-07","t":"11:16","sym":"NIFTY 24800 PE","kind":"Option","side":"Buy","qty":150,"en":67.1,"ex":68.3,"pnl":180,"held":230,"risk":3020,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Anxious"},{"d":"2026-09-08","t":"10:05","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1271.9,"ex":1290.8,"pnl":1134,"held":2880,"risk":916,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Anxious"},{"d":"2026-09-08","t":"10:22","sym":"NIFTY 25100 CE","kind":"Option","side":"Buy","qty":75,"en":82.4,"ex":80.4,"pnl":-150,"held":70,"risk":1854,"setup":"Trend continuation","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["Oversized","Early or late exit"],"mood":"Calm"},{"d":"2026-09-08","t":"14:34","sym":"NAVINFLUOR","kind":"Equity","side":"Buy","qty":5,"en":8982.6,"ex":9155.0,"pnl":862,"held":75,"risk":539,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-09","t":"09:22","sym":"INFY","kind":"Equity","side":"Sell","qty":30,"en":1541.8,"ex":1556.5,"pnl":-441,"held":2880,"risk":555,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-09-09","t":"09:41","sym":"BANKNIFTY 54400 PE","kind":"Option","side":"Buy","qty":35,"en":126.3,"ex":117.6,"pnl":-305,"held":52,"risk":1326,"setup":"Mean reversion","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Anxious"},{"d":"2026-09-09","t":"11:48","sym":"BANKNIFTY 54100 PE","kind":"Option","side":"Buy","qty":35,"en":176.8,"ex":187.1,"pnl":360,"held":230,"risk":1856,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":false},"score":3,"mistakes":["Revenge trade","Early or late exit"],"mood":"Confident"},{"d":"2026-09-09","t":"14:34","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1518.1,"ex":1520.7,"pnl":78,"held":120,"risk":547,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Calm"},{"d":"2026-09-10","t":"10:16","sym":"NIFTY 25300 CE","kind":"Option","side":"Buy","qty":75,"en":144.4,"ex":197.5,"pnl":3982,"held":35,"risk":3249,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-10","t":"10:48","sym":"RELIANCE","kind":"Equity","side":"Buy","qty":40,"en":1405.4,"ex":1398.1,"pnl":-292,"held":1440,"risk":675,"setup":"Opening range breakout","rules":{"stop":true,"size":false,"setup":false,"revenge":true,"exit":true},"score":3,"mistakes":["Oversized","Off-plan setup"],"mood":"Calm"},{"d":"2026-09-10","t":"10:55","sym":"BANKNIFTY 55100 CE","kind":"Option","side":"Buy","qty":35,"en":196.3,"ex":223.0,"pnl":934,"held":35,"risk":2061,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Anxious"},{"d":"2026-09-11","t":"12:48","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1277.7,"ex":1300.7,"pnl":1380,"held":1440,"risk":920,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-11","t":"12:48","sym":"BANKNIFTY 54600 PE","kind":"Option","side":"Buy","qty":35,"en":140.6,"ex":162.3,"pnl":760,"held":70,"risk":1476,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-09-14","t":"10:05","sym":"BANKNIFTY 53500 PE","kind":"Option","side":"Buy","qty":35,"en":116.5,"ex":115.2,"pnl":-45,"held":140,"risk":1223,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Calm"},{"d":"2026-09-14","t":"11:12","sym":"NIFTY 25100 CE","kind":"Option","side":"Buy","qty":75,"en":66.8,"ex":52.6,"pnl":-1065,"held":35,"risk":1503,"setup":"Breakout retest","rules":{"stop":false,"size":true,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["No stop-loss"],"mood":"Focused"},{"d":"2026-09-14","t":"12:12","sym":"BANKNIFTY 53800 PE","kind":"Option","side":"Buy","qty":35,"en":236.5,"ex":191.7,"pnl":-1568,"held":18,"risk":2483,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Anxious"},{"d":"2026-09-14","t":"13:34","sym":"BANKNIFTY 55000 CE","kind":"Option","side":"Buy","qty":35,"en":221.2,"ex":264.1,"pnl":1502,"held":18,"risk":2323,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-17","t":"09:41","sym":"BANKNIFTY 54400 CE","kind":"Option","side":"Buy","qty":35,"en":224.6,"ex":214.3,"pnl":-360,"held":230,"risk":2358,"setup":"Opening range breakout","rules":{"stop":false,"size":true,"setup":false,"revenge":true,"exit":true},"score":3,"mistakes":["No stop-loss","Off-plan setup"],"mood":"Anxious"},{"d":"2026-09-17","t":"10:41","sym":"TCS","kind":"Equity","side":"Buy","qty":20,"en":3133.8,"ex":3107.7,"pnl":-522,"held":1440,"risk":752,"setup":"Trend continuation","rules":{"stop":true,"size":false,"setup":true,"revenge":false,"exit":false},"score":2,"mistakes":["Oversized","Revenge trade","Early or late exit"],"mood":"Rushed"},{"d":"2026-09-17","t":"12:48","sym":"BANKNIFTY 53900 PE","kind":"Option","side":"Buy","qty":70,"en":237.1,"ex":145.6,"pnl":-6405,"held":185,"risk":4979,"setup":"Opening range breakout","rules":{"stop":false,"size":true,"setup":false,"revenge":true,"exit":true},"score":3,"mistakes":["No stop-loss","Off-plan setup"],"mood":"Calm"},{"d":"2026-09-22","t":"09:05","sym":"TCS","kind":"Equity","side":"Buy","qty":20,"en":3110.6,"ex":3111.1,"pnl":10,"held":2880,"risk":747,"setup":"Breakout retest","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Calm"},{"d":"2026-09-22","t":"11:16","sym":"BANKNIFTY 53500 PE","kind":"Option","side":"Buy","qty":70,"en":143.6,"ex":151.4,"pnl":546,"held":230,"risk":3016,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Anxious"},{"d":"2026-09-23","t":"09:34","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1325.2,"ex":1347.3,"pnl":1326,"held":210,"risk":954,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-09-23","t":"10:05","sym":"NIFTY 25100 CE","kind":"Option","side":"Buy","qty":150,"en":113.2,"ex":118.0,"pnl":720,"held":52,"risk":5094,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Focused"},{"d":"2026-09-23","t":"10:12","sym":"ICICIBANK","kind":"Equity","side":"Sell","qty":60,"en":1292.3,"ex":1284.4,"pnl":474,"held":75,"risk":930,"setup":"Mean reversion","rules":{"stop":false,"size":true,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["No stop-loss","Early or late exit"],"mood":"Anxious"},{"d":"2026-09-24","t":"09:12","sym":"NAVINFLUOR","kind":"Equity","side":"Sell","qty":5,"en":8912.1,"ex":8991.4,"pnl":-396,"held":2880,"risk":535,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-09-24","t":"09:12","sym":"BANKNIFTY 53500 PE","kind":"Option","side":"Buy","qty":35,"en":197.5,"ex":178.9,"pnl":-651,"held":35,"risk":2074,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Focused"},{"d":"2026-09-24","t":"09:12","sym":"BANKNIFTY 54200 PE","kind":"Option","side":"Buy","qty":70,"en":125.6,"ex":100.9,"pnl":-1729,"held":52,"risk":2638,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Calm"},{"d":"2026-09-24","t":"09:55","sym":"NAVINFLUOR","kind":"Equity","side":"Buy","qty":5,"en":9268.6,"ex":9473.8,"pnl":1026,"held":2880,"risk":556,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-09-25","t":"10:55","sym":"NIFTY 25000 CE","kind":"Option","side":"Buy","qty":75,"en":145.9,"ex":149.8,"pnl":293,"held":140,"risk":3283,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Anxious"},{"d":"2026-09-25","t":"14:34","sym":"NIFTY 25200 PE","kind":"Option","side":"Buy","qty":75,"en":98.9,"ex":125.7,"pnl":2010,"held":140,"risk":2225,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-09-28","t":"10:22","sym":"NIFTY 25000 PE","kind":"Option","side":"Buy","qty":75,"en":149.9,"ex":182.8,"pnl":2468,"held":95,"risk":3373,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Anxious"},{"d":"2026-09-28","t":"12:05","sym":"RELIANCE","kind":"Equity","side":"Buy","qty":40,"en":1445.2,"ex":1479.9,"pnl":1388,"held":1440,"risk":694,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-09-28","t":"12:41","sym":"NAVINFLUOR","kind":"Equity","side":"Buy","qty":5,"en":8960.1,"ex":8768.8,"pnl":-957,"held":2880,"risk":538,"setup":"Opening range breakout","rules":{"stop":false,"size":false,"setup":true,"revenge":true,"exit":false},"score":2,"mistakes":["No stop-loss","Oversized","Early or late exit"],"mood":"Focused"},{"d":"2026-09-29","t":"10:55","sym":"NIFTY 24800 PE","kind":"Option","side":"Buy","qty":75,"en":59.6,"ex":73.3,"pnl":1027,"held":18,"risk":1341,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Rushed"},{"d":"2026-09-29","t":"14:05","sym":"NIFTY 24800 PE","kind":"Option","side":"Buy","qty":150,"en":90.1,"ex":108.5,"pnl":2760,"held":230,"risk":4054,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Calm"},{"d":"2026-09-30","t":"09:41","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1256.4,"ex":1245.8,"pnl":-636,"held":210,"risk":905,"setup":"Mean reversion","rules":{"stop":true,"size":false,"setup":true,"revenge":false,"exit":true},"score":3,"mistakes":["Oversized","Revenge trade"],"mood":"Rushed"},{"d":"2026-09-30","t":"10:41","sym":"BANKNIFTY 54300 CE","kind":"Option","side":"Buy","qty":35,"en":160.8,"ex":121.1,"pnl":-1390,"held":140,"risk":1688,"setup":"Mean reversion","rules":{"stop":true,"size":false,"setup":false,"revenge":true,"exit":true},"score":3,"mistakes":["Oversized","Off-plan setup"],"mood":"Confident"},{"d":"2026-10-05","t":"09:48","sym":"NIFTY 25000 PE","kind":"Option","side":"Buy","qty":75,"en":77.9,"ex":64.7,"pnl":-990,"held":70,"risk":1753,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Anxious"},{"d":"2026-10-05","t":"10:22","sym":"NIFTY 25000 CE","kind":"Option","side":"Buy","qty":150,"en":70.0,"ex":64.4,"pnl":-840,"held":52,"risk":3150,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Anxious"},{"d":"2026-10-05","t":"12:34","sym":"NAVINFLUOR","kind":"Equity","side":"Sell","qty":5,"en":9081.8,"ex":9144.2,"pnl":-312,"held":210,"risk":545,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Anxious"},{"d":"2026-10-05","t":"14:22","sym":"NAVINFLUOR","kind":"Equity","side":"Buy","qty":5,"en":8865.5,"ex":8787.1,"pnl":-392,"held":120,"risk":532,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":false,"revenge":false,"exit":true},"score":3,"mistakes":["Off-plan setup","Revenge trade"],"mood":"Calm"},{"d":"2026-10-06","t":"10:12","sym":"SBIN","kind":"Equity","side":"Buy","qty":120,"en":805.5,"ex":815.3,"pnl":1176,"held":120,"risk":1160,"setup":"Breakout retest","rules":{"stop":false,"size":true,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["No stop-loss"],"mood":"Confident"},{"d":"2026-10-06","t":"10:48","sym":"BANKNIFTY 53800 PE","kind":"Option","side":"Buy","qty":35,"en":224.5,"ex":312.5,"pnl":3080,"held":18,"risk":2357,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-10-06","t":"11:16","sym":"BANKNIFTY 54900 CE","kind":"Option","side":"Buy","qty":35,"en":129.5,"ex":180.0,"pnl":1768,"held":70,"risk":1360,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-10-06","t":"14:05","sym":"NIFTY 25200 CE","kind":"Option","side":"Buy","qty":75,"en":151.9,"ex":211.9,"pnl":4500,"held":35,"risk":3418,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-10-08","t":"11:16","sym":"NIFTY 25300 CE","kind":"Option","side":"Buy","qty":75,"en":62.3,"ex":56.1,"pnl":-465,"held":140,"risk":1402,"setup":"Breakout retest","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Calm"},{"d":"2026-10-08","t":"12:22","sym":"RELIANCE","kind":"Equity","side":"Buy","qty":40,"en":1380.5,"ex":1406.4,"pnl":1036,"held":210,"risk":663,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-10-08","t":"13:16","sym":"TCS","kind":"Equity","side":"Buy","qty":20,"en":3031.1,"ex":3026.1,"pnl":-100,"held":210,"risk":727,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-10-09","t":"09:05","sym":"NIFTY 25100 CE","kind":"Option","side":"Buy","qty":75,"en":95.5,"ex":58.8,"pnl":-2752,"held":52,"risk":2149,"setup":"VWAP pullback","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["Oversized","Early or late exit"],"mood":"Rushed"},{"d":"2026-10-09","t":"11:22","sym":"BANKNIFTY 54700 CE","kind":"Option","side":"Buy","qty":35,"en":223.7,"ex":195.0,"pnl":-1004,"held":185,"risk":2349,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Calm"},{"d":"2026-10-09","t":"11:34","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1308.3,"ex":1306.6,"pnl":-102,"held":1440,"risk":942,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-10-12","t":"09:41","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1539.4,"ex":1535.9,"pnl":-105,"held":210,"risk":554,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Anxious"},{"d":"2026-10-12","t":"12:34","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1318.7,"ex":1346.2,"pnl":1650,"held":75,"risk":949,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-10-12","t":"13:34","sym":"INFY","kind":"Equity","side":"Sell","qty":30,"en":1490.9,"ex":1490.8,"pnl":3,"held":1440,"risk":537,"setup":"Trend continuation","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Focused"},{"d":"2026-10-13","t":"10:55","sym":"NIFTY 25000 CE","kind":"Option","side":"Buy","qty":75,"en":99.8,"ex":62.4,"pnl":-2805,"held":95,"risk":2246,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":false},"score":3,"mistakes":["Off-plan setup","Early or late exit"],"mood":"Confident"},{"d":"2026-10-13","t":"12:12","sym":"NIFTY 25100 PE","kind":"Option","side":"Buy","qty":75,"en":105.4,"ex":101.0,"pnl":-330,"held":230,"risk":2372,"setup":"VWAP pullback","rules":{"stop":false,"size":false,"setup":true,"revenge":true,"exit":true},"score":3,"mistakes":["No stop-loss","Oversized"],"mood":"Calm"},{"d":"2026-10-13","t":"13:05","sym":"PNB","kind":"Equity","side":"Buy","qty":400,"en":132.4,"ex":134.0,"pnl":640,"held":1440,"risk":636,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-10-13","t":"14:22","sym":"NIFTY 24900 PE","kind":"Option","side":"Buy","qty":75,"en":50.7,"ex":60.3,"pnl":720,"held":18,"risk":1141,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Calm"},{"d":"2026-10-14","t":"12:55","sym":"NIFTY 25000 CE","kind":"Option","side":"Buy","qty":75,"en":96.5,"ex":98.1,"pnl":120,"held":230,"risk":2171,"setup":"Breakout retest","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["Oversized","Early or late exit"],"mood":"Anxious"},{"d":"2026-10-14","t":"14:22","sym":"BANKNIFTY 54900 PE","kind":"Option","side":"Buy","qty":35,"en":211.5,"ex":178.9,"pnl":-1141,"held":140,"risk":2221,"setup":"VWAP pullback","rules":{"stop":false,"size":true,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["No stop-loss"],"mood":"Focused"},{"d":"2026-10-15","t":"09:05","sym":"SBIN","kind":"Equity","side":"Sell","qty":120,"en":833.7,"ex":814.0,"pnl":2364,"held":120,"risk":1201,"setup":"Mean reversion","rules":{"stop":true,"size":false,"setup":true,"revenge":false,"exit":true},"score":3,"mistakes":["Oversized","Revenge trade"],"mood":"Calm"},{"d":"2026-10-15","t":"10:48","sym":"RELIANCE","kind":"Equity","side":"Buy","qty":40,"en":1383.9,"ex":1368.2,"pnl":-628,"held":210,"risk":664,"setup":"Trend continuation","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Confident"},{"d":"2026-10-15","t":"11:22","sym":"BANKNIFTY 54100 PE","kind":"Option","side":"Buy","qty":35,"en":128.0,"ex":80.5,"pnl":-1662,"held":18,"risk":1344,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":false},"score":3,"mistakes":["Revenge trade","Early or late exit"],"mood":"Calm"},{"d":"2026-10-15","t":"12:41","sym":"BANKNIFTY 53500 PE","kind":"Option","side":"Buy","qty":35,"en":175.3,"ex":202.4,"pnl":948,"held":35,"risk":1841,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-10-19","t":"11:48","sym":"RELIANCE","kind":"Equity","side":"Buy","qty":40,"en":1429.5,"ex":1448.1,"pnl":744,"held":2880,"risk":686,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Focused"},{"d":"2026-10-19","t":"12:22","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1517.4,"ex":1512.5,"pnl":-147,"held":75,"risk":546,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-10-19","t":"12:34","sym":"NIFTY 25200 CE","kind":"Option","side":"Buy","qty":75,"en":114.0,"ex":107.1,"pnl":-518,"held":52,"risk":2565,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Anxious"},{"d":"2026-10-20","t":"12:16","sym":"NAVINFLUOR","kind":"Equity","side":"Buy","qty":5,"en":9282.6,"ex":9246.9,"pnl":-179,"held":1440,"risk":557,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-10-20","t":"13:48","sym":"NAVINFLUOR","kind":"Equity","side":"Buy","qty":5,"en":8895.3,"ex":8851.0,"pnl":-221,"held":120,"risk":534,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Rushed"},{"d":"2026-10-20","t":"14:16","sym":"BANKNIFTY 54900 PE","kind":"Option","side":"Buy","qty":35,"en":212.8,"ex":173.9,"pnl":-1362,"held":70,"risk":2234,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Anxious"},{"d":"2026-10-21","t":"11:05","sym":"RELIANCE","kind":"Equity","side":"Sell","qty":40,"en":1388.9,"ex":1413.7,"pnl":-992,"held":1440,"risk":667,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-10-21","t":"13:12","sym":"BANKNIFTY 54300 PE","kind":"Option","side":"Buy","qty":70,"en":192.7,"ex":271.4,"pnl":5509,"held":18,"risk":4047,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-10-21","t":"14:05","sym":"NIFTY 25000 CE","kind":"Option","side":"Buy","qty":75,"en":148.7,"ex":137.7,"pnl":-825,"held":140,"risk":3346,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Calm"},{"d":"2026-10-22","t":"10:22","sym":"PNB","kind":"Equity","side":"Sell","qty":400,"en":134.7,"ex":134.3,"pnl":160,"held":75,"risk":647,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-10-22","t":"13:48","sym":"NIFTY 25100 PE","kind":"Option","side":"Buy","qty":75,"en":149.6,"ex":88.7,"pnl":-4567,"held":70,"risk":3366,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":false},"score":3,"mistakes":["Off-plan setup","Early or late exit"],"mood":"Focused"},{"d":"2026-10-23","t":"09:34","sym":"NIFTY 25300 CE","kind":"Option","side":"Buy","qty":150,"en":126.8,"ex":115.4,"pnl":-1710,"held":95,"risk":5706,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Focused"},{"d":"2026-10-23","t":"09:55","sym":"BANKNIFTY 54200 CE","kind":"Option","side":"Buy","qty":35,"en":197.5,"ex":209.7,"pnl":427,"held":230,"risk":2074,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Rushed"},{"d":"2026-10-23","t":"11:12","sym":"BANKNIFTY 55400 CE","kind":"Option","side":"Buy","qty":35,"en":239.9,"ex":243.2,"pnl":115,"held":95,"risk":2519,"setup":"Opening range breakout","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Calm"},{"d":"2026-10-26","t":"09:55","sym":"BANKNIFTY 54900 CE","kind":"Option","side":"Buy","qty":70,"en":237.1,"ex":256.5,"pnl":1358,"held":70,"risk":4979,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Calm"},{"d":"2026-10-26","t":"13:34","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1523.0,"ex":1534.9,"pnl":357,"held":1440,"risk":548,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-10-26","t":"13:48","sym":"NIFTY 25200 PE","kind":"Option","side":"Buy","qty":75,"en":61.8,"ex":24.2,"pnl":-2820,"held":230,"risk":1390,"setup":"Mean reversion","rules":{"stop":false,"size":true,"setup":false,"revenge":true,"exit":false},"score":2,"mistakes":["No stop-loss","Off-plan setup","Early or late exit"],"mood":"Anxious"},{"d":"2026-10-29","t":"09:05","sym":"NIFTY 25100 CE","kind":"Option","side":"Buy","qty":150,"en":158.3,"ex":121.0,"pnl":-5595,"held":35,"risk":7124,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Calm"},{"d":"2026-10-29","t":"11:12","sym":"RELIANCE","kind":"Equity","side":"Buy","qty":40,"en":1439.3,"ex":1431.9,"pnl":-296,"held":2880,"risk":691,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Calm"},{"d":"2026-10-30","t":"09:34","sym":"BANKNIFTY 54000 PE","kind":"Option","side":"Buy","qty":70,"en":229.1,"ex":130.0,"pnl":-6937,"held":35,"risk":4811,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":false},"score":3,"mistakes":["Off-plan setup","Early or late exit"],"mood":"Calm"},{"d":"2026-10-30","t":"10:41","sym":"BANKNIFTY 53700 PE","kind":"Option","side":"Buy","qty":70,"en":169.6,"ex":236.5,"pnl":4683,"held":230,"risk":3562,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-11-02","t":"09:48","sym":"NIFTY 25000 PE","kind":"Option","side":"Buy","qty":150,"en":59.8,"ex":73.7,"pnl":2085,"held":35,"risk":2691,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Calm"},{"d":"2026-11-02","t":"10:16","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1522.8,"ex":1549.6,"pnl":804,"held":75,"risk":548,"setup":"Trend continuation","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-11-02","t":"14:41","sym":"BANKNIFTY 54600 CE","kind":"Option","side":"Buy","qty":35,"en":244.8,"ex":311.0,"pnl":2317,"held":140,"risk":2570,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-11-03","t":"09:41","sym":"HDFCBANK","kind":"Equity","side":"Buy","qty":60,"en":1702.9,"ex":1706.4,"pnl":210,"held":210,"risk":1226,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-11-03","t":"10:16","sym":"NIFTY 25300 CE","kind":"Option","side":"Buy","qty":150,"en":109.1,"ex":129.3,"pnl":3030,"held":70,"risk":4909,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-11-04","t":"09:12","sym":"PNB","kind":"Equity","side":"Buy","qty":400,"en":130.3,"ex":130.4,"pnl":40,"held":75,"risk":625,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Calm"},{"d":"2026-11-04","t":"11:48","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1304.7,"ex":1304.4,"pnl":-18,"held":120,"risk":939,"setup":"Trend continuation","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Confident"},{"d":"2026-11-04","t":"12:22","sym":"NIFTY 24800 PE","kind":"Option","side":"Buy","qty":150,"en":90.2,"ex":117.2,"pnl":4050,"held":185,"risk":4059,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Calm"},{"d":"2026-11-05","t":"09:12","sym":"BANKNIFTY 54500 CE","kind":"Option","side":"Buy","qty":35,"en":180.1,"ex":194.7,"pnl":511,"held":52,"risk":1891,"setup":"Breakout retest","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Focused"},{"d":"2026-11-05","t":"10:22","sym":"HDFCBANK","kind":"Equity","side":"Buy","qty":60,"en":1654.0,"ex":1653.6,"pnl":-24,"held":75,"risk":1191,"setup":"VWAP pullback","rules":{"stop":true,"size":false,"setup":false,"revenge":true,"exit":true},"score":3,"mistakes":["Oversized","Off-plan setup"],"mood":"Anxious"},{"d":"2026-11-05","t":"12:41","sym":"NIFTY 25100 CE","kind":"Option","side":"Buy","qty":75,"en":102.7,"ex":117.8,"pnl":1132,"held":70,"risk":2311,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-11-06","t":"09:12","sym":"ICICIBANK","kind":"Equity","side":"Buy","qty":60,"en":1280.5,"ex":1251.1,"pnl":-1764,"held":120,"risk":922,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":false,"revenge":false,"exit":true},"score":3,"mistakes":["Off-plan setup","Revenge trade"],"mood":"Anxious"},{"d":"2026-11-06","t":"10:34","sym":"BANKNIFTY 53600 PE","kind":"Option","side":"Buy","qty":35,"en":142.7,"ex":120.8,"pnl":-766,"held":70,"risk":1498,"setup":"VWAP pullback","rules":{"stop":false,"size":true,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["No stop-loss","Early or late exit"],"mood":"Calm"},{"d":"2026-11-06","t":"10:41","sym":"NIFTY 25100 CE","kind":"Option","side":"Buy","qty":75,"en":81.8,"ex":83.2,"pnl":105,"held":95,"risk":1840,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Calm"},{"d":"2026-11-09","t":"11:12","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1538.2,"ex":1504.2,"pnl":-1020,"held":75,"risk":554,"setup":"VWAP pullback","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["Oversized","Early or late exit"],"mood":"Confident"},{"d":"2026-11-09","t":"12:16","sym":"BANKNIFTY 53800 PE","kind":"Option","side":"Buy","qty":70,"en":185.6,"ex":203.1,"pnl":1225,"held":140,"risk":3898,"setup":"Breakout retest","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Confident"},{"d":"2026-11-10","t":"09:22","sym":"BANKNIFTY 54200 CE","kind":"Option","side":"Buy","qty":35,"en":197.3,"ex":192.1,"pnl":-182,"held":230,"risk":2072,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":false},"score":4,"mistakes":["Early or late exit"],"mood":"Focused"},{"d":"2026-11-10","t":"09:22","sym":"NIFTY 25200 CE","kind":"Option","side":"Buy","qty":75,"en":153.4,"ex":153.4,"pnl":0,"held":70,"risk":3452,"setup":"VWAP pullback","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-11-10","t":"14:41","sym":"TCS","kind":"Equity","side":"Buy","qty":20,"en":3113.6,"ex":3194.8,"pnl":1624,"held":1440,"risk":747,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Focused"},{"d":"2026-11-11","t":"10:41","sym":"NIFTY 25300 CE","kind":"Option","side":"Buy","qty":150,"en":158.0,"ex":217.6,"pnl":8940,"held":140,"risk":7110,"setup":"Opening range breakout","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Rushed"},{"d":"2026-11-11","t":"13:55","sym":"PNB","kind":"Equity","side":"Buy","qty":400,"en":131.0,"ex":128.1,"pnl":-1160,"held":120,"risk":629,"setup":"Trend continuation","rules":{"stop":false,"size":true,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["No stop-loss","Early or late exit"],"mood":"Confident"},{"d":"2026-11-12","t":"09:16","sym":"NIFTY 24900 PE","kind":"Option","side":"Buy","qty":75,"en":62.7,"ex":75.1,"pnl":930,"held":95,"risk":1411,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":false,"exit":true},"score":4,"mistakes":["Revenge trade"],"mood":"Confident"},{"d":"2026-11-12","t":"09:41","sym":"NIFTY 24800 PE","kind":"Option","side":"Buy","qty":75,"en":85.1,"ex":81.7,"pnl":-255,"held":70,"risk":1915,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":true,"revenge":true,"exit":true},"score":5,"mistakes":[],"mood":"Anxious"},{"d":"2026-11-12","t":"11:05","sym":"BANKNIFTY 54800 PE","kind":"Option","side":"Buy","qty":35,"en":123.3,"ex":130.0,"pnl":235,"held":18,"risk":1295,"setup":"Breakout retest","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":true},"score":4,"mistakes":["Oversized"],"mood":"Anxious"},{"d":"2026-11-12","t":"11:22","sym":"PNB","kind":"Equity","side":"Buy","qty":400,"en":135.7,"ex":132.4,"pnl":-1320,"held":2880,"risk":651,"setup":"Breakout retest","rules":{"stop":false,"size":true,"setup":false,"revenge":true,"exit":true},"score":3,"mistakes":["No stop-loss","Off-plan setup"],"mood":"Rushed"},{"d":"2026-11-13","t":"09:12","sym":"INFY","kind":"Equity","side":"Buy","qty":30,"en":1477.7,"ex":1480.0,"pnl":69,"held":210,"risk":532,"setup":"Mean reversion","rules":{"stop":true,"size":true,"setup":false,"revenge":true,"exit":true},"score":4,"mistakes":["Off-plan setup"],"mood":"Confident"},{"d":"2026-11-13","t":"09:41","sym":"TCS","kind":"Equity","side":"Buy","qty":20,"en":3174.2,"ex":3128.9,"pnl":-906,"held":120,"risk":762,"setup":"VWAP pullback","rules":{"stop":true,"size":false,"setup":true,"revenge":true,"exit":false},"score":3,"mistakes":["Oversized","Early or late exit"],"mood":"Calm"},{"d":"2026-11-13","t":"14:55","sym":"BANKNIFTY 55000 CE","kind":"Option","side":"Buy","qty":70,"en":226.1,"ex":89.2,"pnl":-9583,"held":18,"risk":4748,"setup":"Breakout retest","rules":{"stop":false,"size":true,"setup":false,"revenge":false,"exit":true},"score":2,"mistakes":["No stop-loss","Off-plan setup","Revenge trade"],"mood":"Rushed"}];window.JDP=[{"id":"pend-1","d":"2026-11-16","t":"09:24","sym":"NIFTY 25300 CE","kind":"Option","side":"Buy","qty":75,"en":84.5,"ex":112.0,"pnl":2062,"held":47,"risk":1901,"broker":"Your broker"},{"id":"pend-2","d":"2026-11-16","t":"10:41","sym":"BANKNIFTY 55200 PE","kind":"Option","side":"Buy","qty":35,"en":168.0,"ex":131.5,"pnl":-1278,"held":96,"risk":1764,"broker":"Your broker"},{"id":"pend-3","d":"2026-11-16","t":"11:58","sym":"HDFCBANK","kind":"Equity","side":"Buy","qty":60,"en":1712.4,"ex":1729.8,"pnl":1044,"held":205,"risk":1233,"broker":"Your broker"},{"id":"pend-4","d":"2026-11-16","t":"14:06","sym":"NIFTY 25250 PE","kind":"Option","side":"Buy","qty":75,"en":58.0,"ex":44.5,"pnl":-1012,"held":31,"risk":1305,"broker":"Your broker"}];
+</script>
+<script>/* AlphaPad phone app. Tabs: Today, Markets, Ideas, Journal, You. Data: window.CD + Home's data globals + JD/JDP. */
+(function(){
+'use strict';
+var D=window.CD,L=D.links,root=document.documentElement,app=document.getElementById('app');
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var inr=function(v,sign){var s='₹'+Math.abs(Math.round(v)).toLocaleString('en-IN');return (v<0?'−\u2060':(sign&&v>0?'+\u2060':''))+s};
+var mmss=function(t){t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
+var num=function(v,dp){return v.toLocaleString('en-IN',{minimumFractionDigits:dp,maximumFractionDigits:dp})};
+var I=function(p,w){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(w||1.8)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'};
+var store={get:function(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+var ICO={
+  today:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  markets:'<path d="M4 19h16"/><path d="m5 15 4-5 4 3 6-7"/>',
+  ideas:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+  journal:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 9h6M9 13h6"/>',
+  you:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  sd:'<path d="m4 15 6-6 4 4 6-6"/><path d="M15 7h5v5"/>',vol:'<path d="M5 20V10M10 20V4M15 20v-7M20 20v-4"/>',br:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 8 8h-8z"/>',
+  del:'<path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',oi:'<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>',
+  tc:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/>',fo:'<path d="M4 20V10M9 20V4M14 20v-8M19 20v-5"/>',bk:'<path d="M3 9h18l-2 11H5z"/><path d="m8 9 4-6 4 6"/>',
+  learn:'<path d="M2 8l10-5 10 5-10 5z"/><path d="M6 10v5c3 2 9 2 12 0v-5"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  scan:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',mv:'<path d="M7 17V7M3 11l4-4 4 4M17 7v10M13 13l4 4 4-4"/>',
+  bt:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/>',brief:'<path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/>',ext:'<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v6H4V6h6"/>',
+  studio:'<path d="M4 4h16v16H4z"/><path d="M4 10h16M10 4v16"/>',lms:'<path d="M4 19V5l8 4 8-4v14l-8 4z"/>',theme:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z"/>',reset:'<path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/>',
+  setup:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>'};
+
+/* ---------------- journal model (same storage as the desktop journal) ---------------- */
+var MISTAKE={stop:'No stop-loss',size:'Oversized',setup:'Off-plan setup',revenge:'Revenge trade',exit:'Early or late exit'};
+var RULES=[['stop','Stop-loss placed before entry'],['size','Size within planned risk'],['setup','Setup from my playbook'],['revenge','No revenge trade'],['exit','Exited as planned']];
+var SETUPS=['Opening range breakout','VWAP pullback','Breakout retest','Trend continuation','Mean reversion'],MOODS=['Calm','Focused','Confident','Rushed','Anxious'];
+var BASE=window.JD||[],PEND=window.JDP||[],rv=store.get('ap-journal-review',{}),notes=store.get('ap-journal-notes',{}),ALL=[];
+function mergeAll(){var mine=PEND.filter(function(p){return rv[p.id]&&rv[p.id].status==='ok'}).map(function(p){var r=rv[p.id],rules=r.rules||{},t=JSON.parse(JSON.stringify(p));
+    t.setup=r.setup;t.rules=rules;t.score=Object.keys(MISTAKE).filter(function(k){return rules[k]}).length;t.mistakes=Object.keys(MISTAKE).filter(function(k){return !rules[k]}).map(function(k){return MISTAKE[k]});t.mood=r.mood||'–';t.note=r.note||'';t.confirmed=true;return t});
+  ALL=BASE.concat(mine).sort(function(a,b){return (a.d+a.t)<(b.d+b.t)?-1:1})}
+mergeAll();
+var todo=function(){return PEND.filter(function(p){return !rv[p.id]})};
+var MONTHS=function(){return Array.from(new Set(ALL.map(function(t){return t.d.slice(0,7)}))).sort()};
+var jMonth=MONTHS().slice(-1)[0],jDay=null;
+var dt=function(d){return new Date(d+'T12:00:00')},mname=function(m){return new Date(m+'-15T12:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'})};
+var dlong=function(d){return dt(d).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'})};
+var hrs=function(m){return m>=1440?Math.round(m/1440)+'d':m>=60?(m/60).toFixed(1).replace('.0','')+'h':m+'m'};
+function stats(tr){var w=tr.filter(function(t){return t.pnl>0}),l=tr.filter(function(t){return t.pnl<0}),sum=function(a){return a.reduce(function(s,t){return s+t.pnl},0)},gw=sum(w),gl=-sum(l);
+  return {n:tr.length,net:gw-gl,w:w.length,l:l.length,wr:tr.length?w.length/tr.length*100:0,pf:gl?gw/gl:0,aw:w.length?gw/w.length:0,al:l.length?gl/l.length:0,
+    score:tr.length?tr.reduce(function(s,t){return s+(t.score||0)},0)/tr.length:0}}
+
+/* ---------------- shell ---------------- */
+var TABS=[['today','Today'],['markets','Markets'],['ideas','Ideas'],['journal','Journal'],['you','You']];
+app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+
+  '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
+  '<div class="tabs"><nav aria-label="App">'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
+  '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div>';
+
+var tab='today';
+function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1];if(!TABS.some(function(x){return x[0]===t}))t='today';tab=t;
+  $$('.scr').forEach(function(s){s.classList.toggle('on',s.id==='s-'+t)});$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  RENDER[t]();if(sec){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
+function go(h){if(location.hash==='#'+h)route();else location.hash=h}
+addEventListener('hashchange',route);
+function badge(){var n=todo().length,b=$('#jBadge');b.hidden=!n;b.textContent=n}
+var tt;function toast(m){var t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true},2600)}
+
+/* sheet */
+var lastFocus=null;
+function sheet(title,body,after){lastFocus=document.activeElement;var s=$('#sheet'),old=$('#sheetPn'),fresh=old.cloneNode(false);old.parentNode.replaceChild(fresh,old);fresh.innerHTML='<div class="grab" aria-hidden="true"></div><div class="sh"><h2 id="shH">'+title+'</h2><button type="button" class="cl" data-close aria-label="Close">✕</button></div>'+body;
+  s.setAttribute('aria-labelledby','shH');s.hidden=false;document.body.style.overflow='hidden';if(after)after($('#sheetPn'));setTimeout(function(){var f=$('#sheetPn [data-close]');if(f)f.focus()},50)}
+function closeSheet(){$('#sheet').hidden=true;document.body.style.overflow='';if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$('#sheet').addEventListener('click',function(e){if(e.target.id==='sheet'||e.target.closest('[data-close]'))closeSheet()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet()});
+function top(title,right){return '<header class="top">'+(title?'<h1>'+title+'</h1>':'<a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a>')+'<span class="sp"></span>'+(right||'')+'</header>'}
+function streakChip(){return '<button type="button" class="chip" data-act="streak" aria-label="'+D.streak.n+' day streak">🔥 '+D.streak.n+'</button>'}
+function avatar(){return '<a class="av" href="#you" aria-label="You">T</a>'}
+function info(title,text,src){sheet(esc(title),'<p>'+text+'</p>'+(src?'<p class="note">'+esc(src)+'</p>':''))}
+function infoBtn(k){return '<button type="button" class="l" data-info="'+k+'" aria-label="About this">ⓘ</button>'}
+var INFO_TXT={
+  calls:['Trade calls','Research calls from the AlphaPad desk. Each shows the option legs, entry, target, stop loss and last price, plus the payoff worked out from the legs and quantity: max profit, max loss, and capital. A ratio spread can lose more than it costs, so its max loss can read “unlimited”.','Source: AlphaPad Trade Calls · Prices are indicative · Research advice, not a recommendation to trade'],
+  fo:['F&O levels','From yesterday’s Nifty option open interest for the nearest expiry. Support is the strike with the most put OI near spot; resistance is the strike with the most call OI near spot. Max pain is where option buyers as a whole would lose the most at expiry. Levels are a guide, not a forecast.','Source: NSE F&O bhavcopy, 11 Nov close'],
+  oib:['OI buildup','Futures where price and open interest moved together tell you who is adding positions. Price up with OI up is long buildup; price down with OI up is short buildup; price up with OI down is short covering; price down with OI down is long unwinding.','211 stock futures · OI across expiries · NSE 11 Nov'],
+  sd:['Stock of the day','Picked on technicals from the Nifty 500: a fresh 52-week closing high, confirmed by volume, delivery and futures open interest. It is analysis, not advice.','Source: NSE bhavcopy, '+D.sotd.date+' close']};
+
+/* ---------------- audio ---------------- */
+var A=new Audio(D.audio.src);A.preload='none';var CH=D.audio.ch;
+function chAt(t){var i=0;CH.forEach(function(c,j){if(t>=c[1])i=j});return i}
+function paintAudio(){var t=A.currentTime,d=A.duration||D.audio.dur,i=chAt(t),on=!A.paused;
+  $('#mini').hidden=!(on||t>0);root.classList.toggle('playing',!$('#mini').hidden);
+  $('#mCh').textContent=CH[i][0];$('#mT').textContent='Chapter '+(i+1)+' of '+CH.length+' · '+mmss(t)+' / '+mmss(d);$('#mPr').style.width=(t/d*100)+'%';
+  $('#mPP').textContent=on?'❚❚':'▶';$('#mPP').setAttribute('aria-label',on?'Pause':'Play');
+  $$('[data-act="listen"]').forEach(function(b){b.innerHTML='<span class="pi" aria-hidden="true">'+(on?'❚❚':'▶')+'</span>'+(on?'Pause':t>0?'Resume':'Listen')+' <small>'+mmss(D.audio.dur)+'</small>'});
+  var cs=$('#chs');if(cs)$$('.row',cs).forEach(function(r,j){r.classList.toggle('on',j===i)})}
+function toggleAudio(){if(A.paused)A.play().catch(function(){toast('Audio could not start. Try again.')});else A.pause();paintAudio()}
+['timeupdate','play','pause','loadedmetadata'].forEach(function(e){A.addEventListener(e,paintAudio)});A.addEventListener('ended',function(){A.currentTime=0;paintAudio()});
+$('#mPP').onclick=toggleAudio;$('#mX').onclick=function(){A.pause();A.currentTime=0;paintAudio()};
+$('#mOpen').onclick=chapters;
+function chapters(){sheet('Today’s brief','<p>'+esc(D.head)+' '+esc(D.sub)+'</p><div class="list chs" id="chs">'+CH.map(function(c,j){return '<button type="button" class="row" data-ch="'+j+'"><span class="tx"><b>'+esc(c[0])+'</b><small>Chapter '+(j+1)+' · starts at '+mmss(c[1])+'</small></span><span class="go">▶</span></button>'}).join('')+'</div>'+
+  '<a class="btn g full" style="margin-top:16px" href="'+L.brief+'">Read the full brief '+I(ICO.ext)+'</a>',function(p){p.addEventListener('click',function(e){var r=e.target.closest('[data-ch]');if(!r)return;A.currentTime=CH[+r.dataset.ch][1];A.play().catch(function(){});paintAudio()});paintAudio()})}
+
+/* ---------------- shared bits ---------------- */
+function spark(v,W,H,pad){pad=pad||3;var lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1;return v.map(function(x,i){return (i*W/(v.length-1)).toFixed(1)+','+(H-pad-(x-lo)/r*(H-2*pad)).toFixed(1)}).join(' ')}
+function bar(label,val,w,cls,right){return '<div class="br"><b>'+label+'</b><span class="vl '+(right||'')+'">'+val+'</span><span class="tr"><i class="'+(cls||'')+'" style="width:'+Math.max(2,Math.min(100,w)).toFixed(0)+'%"></i></span></div>'}
+var now=new Date(),nowM=now.getHours()*60+now.getMinutes(),toM=function(t){var a=t.split(':');return +a[0]*60+ +a[1]};
+var DAYS=(typeof DAY!=='undefined'?DAY:[]);
+function nextEv(){var up=DAYS.filter(function(e){return e.t&&toM(e.t)>=nowM});return up[0]}
+var profile=function(){return store.get('ap-profile',null)};
+
+/* ---------------- TODAY ---------------- */
+function sotdViz(){var sp=spark(D.sotd.closes,100,34),oy=D.sotd.oldy.toFixed(1);return '<div class="v-sd"><svg viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="ag1" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#00C99A" stop-opacity=".3"/><stop offset="1" stop-color="#00C99A" stop-opacity="0"/></linearGradient></defs><polygon fill="url(#ag1)" points="0,34 '+sp+' 100,34"/><line class="oh" x1="0" x2="100" y1="'+oy+'" y2="'+oy+'" vector-effect="non-scaling-stroke"/><polyline points="'+sp+'" vector-effect="non-scaling-stroke"/></svg><span class="oh-l">Old high ₹'+num(D.sotd.old_hi,0)+'</span></div>'}
+var SC=function(id){return (D.scan.filter(function(s){return s.id===id})[0]||{rows:[]})};
+function spotSlides(){var S=D.sotd,vol=SC('sc-vol').rows,hi=SC('sc-hi'),del=SC('sc-del').rows;
+  var hiN=parseInt((hi.h.match(/(\d+)\s*stocks/)||[0,149])[1],10),loN=parseInt(((SC('sc-lo').h||'').match(/(\d+)\s*stocks/)||[0,7])[1],10),pct=hiN/(hiN+loN)*100;
+  var lb=OIB.lb.top[0];
+  return [
+   {c:'t',ic:'sd',k:'Stock of the day · '+S.date,t:S.s,v:'₹'+num(S.close,0),d:'+'+S.chg.toFixed(2)+'%',sub:'Fresh 52-week high, '+((S.close/S.old_hi-1)*100).toFixed(1)+'% above the old peak.',
+    viz:sotdViz()+'<div class="v-ch"><span>Volume<b>'+S.vx+'×</b></span><span>Delivery<b>'+Math.round(S.dl)+'%</b></span><span>Futures OI<b>+'+Math.round(S.oi)+'%</b></span></div>',a:[['#ideas/sd','Why it’s picked']]},
+   {c:'a',ic:'vol',k:'Volume shockers',t:vol[0].s,v:vol[0].v,d:vol[0].c,sub:'Volume far above the 20-day average. Check the news first.',
+    viz:'<div class="bars">'+vol.slice(0,3).map(function(r){return bar(r.s,r.v,r.w,'a')}).join('')+'</div>',a:[['#markets/scan','See the full scan']]},
+   {c:'t',ic:'br',k:'Breadth · Nifty 500',t:hiN+' vs '+loN,v:'',d:'',sub:'New 20-day highs against new lows: a broad rally.',
+    viz:'<div class="v-br"><div class="ring" style="--p:'+pct.toFixed(1)+'" role="img" aria-label="'+hiN+' new highs, '+loN+' new lows"><b>'+Math.round(pct)+'%</b><small>highs</small></div><div class="bars">'+hi.rows.slice(0,3).map(function(r){return '<div class="br"><b>'+r.s+'</b><span class="vl u">'+r.c+'</span></div>'}).join('')+'</div></div>',a:[['#markets/scan','See new highs']]},
+   {c:'b',ic:'del',k:'Delivery spikes',t:del[0].s,v:del[0].v.split(' ')[0],d:'+'+del[0].v.split(' ')[1]+' pts',sub:'Shares changing hands for delivery, not intraday.',
+    viz:'<div class="bars">'+del.slice(0,3).map(function(r){var p=r.v.split(' '),tot=parseFloat(p[0]),j=parseFloat(p[1]);return '<div class="br"><b>'+r.s+'</b><span class="vl">'+p[0]+' <small class="u">+'+p[1]+'</small></span><span class="tr two"><i class="b p" style="width:'+(tot-j)+'%"></i><i class="b" style="width:'+j+'%"></i></span></div>'}).join('')+'</div><div class="v-lg"><span><i class="p"></i>yesterday</span><span><i></i>today’s jump</span></div>',a:[['#markets/scan','See delivery spikes']]},
+   {c:'i',ic:'oi',k:'Futures buildup · 211 stocks',t:lb.s,v:'OI +'+Math.round(lb.o)+'%',d:'+'+lb.p.toFixed(1)+'%',sub:'Price and OI rising together: fresh buying.',
+    viz:'<div class="v-q">'+OIQ.map(function(q,i){return '<span class="q'+(q[3]==='u'?' qu':'')+(i?'':' on')+'"><small>'+q[1]+'</small><b>'+OIB[q[0]].n+'</b><em>'+OIB[q[0]].top[0].s+'</em></span>'}).join('')+'</div>',a:[['#markets/movers','See OI buildup']]}]}
+var PRESET_ROWS={
+  basic:['sd','calls','fo','learn'],options:['calls','fo','oib','journal'],picker:['sd','scan','movers','filings'],
+  investor:['baskets','indices','filings','learn'],learner:['learn','brief','cal','sd']};
+function forYou(){var p=profile(),key=(p&&p.preset)||'basic',S=D.sotd,lrn=learned(),nx=nextEv(),t=todo().length,c=CALLS[0];
+  var R={
+    sd:['t',ICO.sd,'Stock of the day',S.s+' · fresh 52-week high','+'+S.chg.toFixed(2)+'%','u','#ideas/sd'],
+    calls:['i',ICO.tc,'Trade calls',CALLS.length+' active · '+c.n+' '+c.k.toLowerCase(),'','','#ideas/calls'],
+    fo:['a',ICO.fo,'Nifty F&O levels','Support '+D.fo.k[0][1]+' · Resist. '+D.fo.k[2][1],D.fo.exp.replace('Expiry ',''),'','#markets/fo'],
+    oib:['i',ICO.oi,'OI buildup','Long buildup '+OIB.lb.n+' · short buildup '+OIB.sb.n,'','','#markets/movers'],
+    journal:['a',ICO.journal,'Journal',t?t+' trade'+(t>1?'s':'')+' to review':'All trades reviewed',inr(stats(ALL.filter(function(x){return x.d.slice(0,7)===MONTHS().slice(-1)[0]})).net,true),'','#journal'],
+    scan:['a',ICO.scan,'Market scan','Volume, delivery, 20-day highs and lows','','','#markets/scan'],
+    movers:['t',ICO.mv,'Movers',MVS[0].n+' +'+MVS[0].v.toFixed(2)+'%','','','#markets/movers'],
+    filings:['b',ICO.file,'What’s happening',D.filings.reduce(function(s,g){return s+g.items.length},0)+' company filings','','','#markets/filings'],
+    baskets:['t',ICO.bk,'Baskets',D.baskets[0].n,D.baskets[0].r,'u','#ideas/baskets'],
+    indices:['t',ICO.markets,'Markets','Nifty 50 and 8 more indices','','','#markets/indices'],
+    learn:['i',ICO.learn,'Learn today',lrn.length>=LEARN.length?'All 3 ideas learned':(LEARN.length-lrn.length)+' ideas left to keep your streak','','','#you/learn'],
+    brief:['b',ICO.brief,'Today’s brief','7 chapters · '+mmss(D.audio.dur),'','','@brief'],
+    cal:['a',ICO.cal,'Coming up',nx?nx.t+' '+nx.b:'Market day done','','','#markets/cal']};
+  return '<div class="h2 b-dash"><h2>For you</h2><small id="fyName">'+(p&&!p.skipped&&window.apProfile?window.apProfile.names[p.preset]:'Basic')+'</small><span class="sp"></span><button type="button" class="l" data-act="setup">Change</button></div>'+
+    '<div class="card" style="padding:0 16px"><div class="list" id="fyRows">'+PRESET_ROWS[key].map(function(k){var r=R[k];return '<a class="row" href="'+(r[6][0]==='@'?'#today':r[6])+'"'+(r[6]==='@brief'?' data-act="chapters"':'')+'><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></a>'}).join('')+'</div></div>'}
+function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)});
+  var SL=spotSlides();
+  s.innerHTML=top('',streakChip()+avatar())+
+    '<section class="hero-main" aria-labelledby="tH"><div class="eb">Good morning, Trader · '+esc(D.date)+'</div><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+
+    '<div class="acts"><button type="button" class="btn p" data-act="listen"></button><button type="button" class="btn g" data-act="chapters">Chapters</button></div></section>'+
+    '<div class="nums" role="group" aria-label="Yesterday’s close">'+idx.map(function(x){var v=x.d[x.d.length-1][1],w=x.n==='India VIX';return '<a class="nm" href="#markets/indices" data-ix="'+esc(x.n)+'"><span>'+(x.n==='Nifty Bank'?'Bank Nifty':x.n)+'</span><b>'+num(v,2)+'</b><em class="'+(w?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pct.replace(/^[+−-]/,'')+'</em></a>'}).join('')+'</div>'+
+    '<a class="nxt" href="#markets/cal"><span class="dot" aria-hidden="true"></span><span>'+(nx?'Next: <b>'+esc(nx.b)+'</b> at '+nx.t:'Market day done. Tomorrow’s brief lands at 7:30.')+'</span><span class="go" aria-hidden="true">›</span></a>'+
+    '<div class="h2"><h2>Spotlight</h2><small id="spC">1 of '+SL.length+'</small></div>'+
+    '<div class="spw"><div class="sp-tr" id="spTr" aria-roledescription="carousel" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" aria-roledescription="slide" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
+    forYou()+
+    '<p class="note">Analysis, not investment advice. Prices are from the 11 Nov close.</p>';
+  paintAudio();
+  var tr=$('#spTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12,i=Math.round(tr.scrollLeft/w);$$('.dots i',s).forEach(function(d,j){d.classList.toggle('on',j===i)});$('#spC').textContent=(i+1)+' of '+SL.length},{passive:true});
+}
+
+/* ---------------- MARKETS ---------------- */
+var ixSel='Nifty 50',mvSeg='stocks',scSeg='sc-vol',calType='all';
+function ixChart(x){var W=340,H=150,P=6,v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1;
+  var X=function(i){return P+i*(W-2*P)/(v.length-1)},Y=function(y){return P+(hi-y)/r*(H-2*P-14)};
+  var pts=v.map(function(y,i){return X(i).toFixed(1)+','+Y(y).toFixed(1)}).join(' ');
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="'+esc(x.n)+' daily closes, '+x.d[0][0]+' to '+x.d[x.d.length-1][0]+'"><line class="gl" x1="0" x2="'+W+'" y1="'+Y(hi).toFixed(1)+'" y2="'+Y(hi).toFixed(1)+'"/><line class="gl" x1="0" x2="'+W+'" y1="'+Y(lo).toFixed(1)+'" y2="'+Y(lo).toFixed(1)+'"/>'+
+    '<polyline class="ln'+(x.n==='India VIX'?' w':'')+'" points="'+pts+'" vector-effect="non-scaling-stroke"/><line class="cur" id="ixCur" x1="0" x2="0" y1="0" y2="'+(H-14)+'" hidden/>'+
+    '<text x="0" y="'+H+'">'+x.d[0][0]+'</text><text x="'+W+'" y="'+H+'" text-anchor="end">'+x.d[x.d.length-1][0]+'</text></svg><span class="tip" id="ixTip" hidden></span>'}
+function rMarkets(){var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0],last=x.d[x.d.length-1][1],m=(last/x.d[0][1]-1)*100;
+  var NAV=[['indices','Indices'],['fo','F&O levels'],['movers','Movers'],['scan','Scan'],['filings','Filings'],['cal','Calendar']];
+  var scan=SC(scSeg),SCN={'sc-vol':'Volume','sc-del':'Delivery','sc-hi':'20-day highs','sc-lo':'20-day lows'};
+  var types=Object.keys(TYPES),today0=new Date(2026,10,12),up=EVENTS.filter(function(e){return e.d>=today0&&(calType==='all'||e.t===calType)}).slice(0,10);
+  var nm=nowM,nI=DAYS.findIndex(function(e){return toM(e.t)>=nm});
+  s.innerHTML=top('Markets',streakChip())+
+    '<div class="mk-nav"><div class="chips" role="navigation" aria-label="Sections">'+NAV.map(function(n){return '<button type="button" data-jump="'+n[0]+'">'+n[1]+'</button>'}).join('')+'</div></div>'+
+    '<section class="sec" id="indices"><div class="chips" style="margin-top:6px" aria-label="Choose an index">'+IDX.map(function(i){return '<button type="button" data-ix="'+esc(i.n)+'" aria-pressed="'+(i.n===x.n)+'">'+esc(i.n.replace('Nifty Bank','Bank Nifty'))+'</button>'}).join('')+'</div>'+
+      '<div class="ixh"><b>'+num(last,2)+'</b><em class="'+(x.n==='India VIX'?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pts+' ('+x.pct+')</em><small>'+esc(x.n)+' · '+(m>=0?'+':'−')+Math.abs(m).toFixed(1)+'% in a month · 11 Nov close</small></div>'+
+      '<div class="ixc" id="ixc">'+ixChart(x)+'</div></section>'+
+    '<section class="sec" id="fo"><div class="h2"><h2>F&amp;O levels · Nifty</h2>'+infoBtn('fo')+'<span class="sp"></span><small>'+esc(D.fo.exp)+'</small></div>'+
+      '<div class="fo3">'+D.fo.k.map(function(k,i){return '<div class="'+['s','m','r'][i]+'"><span>'+esc(k[0])+'</span><b>'+esc(k[1])+'</b><small>'+esc(k[2])+'</small></div>'}).join('')+'</div>'+
+      '<div class="foch">'+D.fo.svg+'</div><a class="btn g full" style="margin-top:14px" href="'+L.studio+'">Open Option Studio '+I(ICO.ext)+'</a></section>'+
+    '<section class="sec" id="movers"><div class="h2"><h2>Movers</h2>'+(mvSeg==='oi'?infoBtn('oib'):'')+'</div><div class="seg" role="group" aria-label="Movers view">'+[['stocks','Nifty 100'],['sectors','Sectors'],['oi','OI buildup']].map(function(b){return '<button type="button" data-mv="'+b[0]+'" aria-pressed="'+(mvSeg===b[0])+'">'+b[1]+'</button>'}).join('')+'</div><div style="margin-top:14px">'+movers()+'</div></section>'+
+    '<section class="sec" id="scan"><div class="h2"><h2>Market scan</h2><span class="sp"></span><small>Nifty 500 · 11 Nov</small></div><div class="chips" aria-label="Scan">'+Object.keys(SCN).map(function(k){return '<button type="button" data-sc="'+k+'" aria-pressed="'+(scSeg===k)+'">'+SCN[k]+'</button>'}).join('')+'</div>'+
+      '<div class="card" style="margin-top:12px;padding:0 16px"><div class="list">'+scan.rows.map(function(r){return '<div class="row"><span class="tx"><b>'+esc(r.s)+'</b><small>'+esc(r.name)+'</small></span><span class="vl">'+(r.v?esc(r.v.split(' ')[0]):'')+'<small class="'+(r.u?'u':'d')+'">'+esc(r.c)+'</small></span></div>'}).join('')+'</div></div>'+
+      '<a class="btn g full" style="margin-top:12px" href="'+L.screener+'">Open the screener '+I(ICO.ext)+'</a></section>'+
+    '<section class="sec" id="filings"><div class="h2"><h2>What’s happening</h2><span class="sp"></span><small>Filings · 13 Nov</small></div>'+
+      D.filings.map(function(g){return '<div class="flh"><i class="'+g.c+'"></i>'+esc(g.h)+'</div><div class="list fl">'+g.items.map(function(it){return '<a class="row" href="'+esc(it.href)+'" target="_blank" rel="noopener"><span class="tm">'+it.t+'</span><span class="tx"><b>'+esc(it.s)+(it.fo?' <span class="tag">F&amp;O</span>':'')+'</b><small>'+esc(it.x)+'</small></span><span class="go" aria-hidden="true">'+I(ICO.ext)+'</span></a>'}).join('')+'</div>'}).join('')+'</section>'+
+    '<section class="sec" id="cal"><div class="h2"><h2>Today</h2><span class="sp"></span><small>IST</small></div><ol class="tl">'+DAYS.map(function(e,i){var past=toM(e.t)<nm;return (i===nI?'<li class="now" aria-label="Now">Now '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</li>':'')+'<li class="'+(past?'past':'')+(i===nI?' next':'')+(e.ev?' ev':'')+'"><time>'+e.t+'</time><b>'+esc(e.b)+'</b><span class="g">'+esc(e.g)+'</span></li>'}).join('')+'</ol>'+
+      '<div class="h2"><h2>Coming up</h2></div><div class="chips">'+['all'].concat(types).map(function(k){return '<button type="button" data-ct="'+k+'" aria-pressed="'+(calType===k)+'">'+(k==='all'?'All':TYPES[k].n)+'</button>'}).join('')+'</div>'+
+      '<div class="list cal" style="margin-top:8px">'+(up.length?up.map(function(e){return '<div class="row"><span class="dt"><b>'+e.d.getDate()+'</b><small>'+e.d.toLocaleDateString('en-IN',{month:'short'})+'</small></span><span class="tx"><b><i class="ty '+e.t+'"></i>'+esc(e.title)+'</b><small>'+esc(e.note)+'</small></span></div>'}).join(''):'<p class="muted">Nothing of this kind coming up.</p>')+'</div></section>'+
+    '<p class="note">Data from NSE, 11 Nov close. Analysis, not investment advice.</p>';
+  wireChart(x)}
+function movers(){if(mvSeg==='oi')return '<div class="oib">'+OIQ.map(function(q){var o=OIB[q[0]];return '<div class="q '+q[3]+'"><b>'+q[1]+'</b><span class="n">'+o.n+'</span><small>'+q[2]+'</small><ol>'+o.top.map(function(t){return '<li><span>'+t.s+'</span><em>'+(t.p>0?'+':'−')+Math.abs(t.p).toFixed(1)+'%</em></li>'}).join('')+'</ol></div>'}).join('')+'</div><p class="note">211 stock futures · OI across expiries · NSE 11 Nov</p>';
+  var arr=mvSeg==='sectors'?SECS:MVS,mx=Math.max.apply(null,arr.map(function(m){return Math.abs(m.v)}));
+  return '<div class="bars">'+arr.map(function(m){return bar(esc(m.n),(m.v>0?'+':'−')+Math.abs(m.v).toFixed(2)+'%',Math.abs(m.v)/mx*100,m.v>0?'':'d',m.v>0?'u':'d')}).join('')+'</div>'}
+function wireChart(x){var box=$('#ixc');if(!box)return;var svg=box.querySelector('svg'),tip=$('#ixTip'),cur=$('#ixCur');
+  function at(cx){var r=svg.getBoundingClientRect(),f=Math.max(0,Math.min(1,(cx-r.left)/r.width)),i=Math.round(f*(x.d.length-1)),p=x.d[i];
+    tip.hidden=false;cur.removeAttribute('hidden');var px=6+i*(340-12)/(x.d.length-1);cur.setAttribute('x1',px);cur.setAttribute('x2',px);
+    tip.style.left=Math.max(40,Math.min(r.width-40,(px/340)*r.width))+'px';tip.innerHTML=num(p[1],2)+'<small>'+p[0]+'</small>'}
+  function off(){tip.hidden=true;cur.setAttribute('hidden','')}
+  box.addEventListener('pointermove',function(e){at(e.clientX)});box.addEventListener('pointerdown',function(e){at(e.clientX)});box.addEventListener('pointerleave',off)}
+
+/* ---------------- IDEAS ---------------- */
+var rs=function(x){return parseFloat(String(x).replace(/[₹,]/g,''))};
+function callCard(c,i){var e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
+  return '<article class="tc" aria-label="'+esc(c.n)+' trade call"><div class="hd"><div><b>'+esc(c.n)+'</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div><span class="tag">Active</span></div>'+
+    '<small class="muted" style="margin-top:-8px">'+esc(c.meta)+'</small>'+
+    '<div class="legs">'+c.legs.map(function(g){return '<div><i class="'+g[0]+'">'+(g[0]==='b'?'Buy':'Sell')+'</i><span>'+esc(g[1])+(g[3]>1?' <small class="muted">×'+g[3]+'</small>':'')+'</span><b>'+esc(g[2])+'</b></div>'}).join('')+'</div>'+
+    '<div class="lv4"><div>Entry<b>'+c.lv[0]+'</b></div><div>Target<b class="u">'+c.lv[1]+'</b></div><div>Stop loss<b>'+c.lv[2]+'</b></div><div>Last<b>'+c.lv[3]+'</b></div></div>'+
+    '<div class="pot"><div class="h"><span>Potential left</span><b>+₹'+left.toFixed(2)+' <span class="u">'+(pc>=0?'+':'')+pc.toFixed(0)+'%</span></b></div><div class="bar" role="img" aria-label="'+done.toFixed(0)+'% of the way from entry to target"><i style="width:'+done.toFixed(1)+'%"></i><span style="left:'+done.toFixed(1)+'%"></span></div><div class="l"><span>Entry</span><span>'+done.toFixed(0)+'% of the way</span><span>Target</span></div></div>'+
+    (c.tflag?'<div class="flag">'+esc(c.tflag)+'</div>':'')+
+    '<div class="risk3"><div>Max profit<b class="u">'+esc(c.mp)+'</b></div><div>Max loss<b>'+esc(c.ml)+'</b></div><div>Capital<b>'+esc(c.cap)+'</b></div></div></article>'}
+function sotdWhy(){var S=D.sotd,ab=(S.close/S.old_hi-1)*100,fromLo=(S.close/S.l52-1)*100,sma=(S.close/S.sma20-1)*100;
+  return ['Closed at a fresh 52-week high of ₹'+num(S.close,0)+', '+ab.toFixed(1)+'% above the old high of ₹'+num(S.old_hi,0)+' ('+S.old_hi_d+').',
+    'Volume was '+S.vx+'× its 20-day average, so the move had real participation.',
+    Math.round(S.dl)+'% of traded shares were taken for delivery, a sign of buyers holding on.',
+    'Futures open interest rose '+Math.round(S.oi)+'% with the price: fresh long positions.',
+    'Up '+fromLo.toFixed(0)+'% from its 52-week low (₹'+num(S.l52,0)+', '+S.l52_d+') and '+sma.toFixed(1)+'% above its 20-day average.']}
+function rIdeas(){var s=$('#s-ideas'),S=D.sotd;
+  s.innerHTML=top('Ideas',streakChip())+
+    '<section class="sec" id="sd"><div class="h2"><h2>Stock of the day</h2>'+infoBtn('sd')+'<span class="sp"></span><small>'+S.date+' close</small></div><div class="card sd">'+
+      '<div class="eb">'+esc(S.name)+' · '+esc(S.ind)+(S.fo?' · F&amp;O':'')+'</div><div class="px"><b>'+S.s+'</b><span class="v">₹'+num(S.close,0)+'</span><span class="u" style="font-weight:600">+'+S.chg.toFixed(2)+'%</span></div>'+sotdViz()+
+      '<div class="v-ch" style="margin-top:10px"><span>Volume<b>'+S.vx+'×</b></span><span>Delivery<b>'+Math.round(S.dl)+'%</b></span><span>Futures OI<b>+'+Math.round(S.oi)+'%</b></span></div>'+
+      '<ul class="why">'+sotdWhy().map(function(w){return '<li>'+w+'</li>'}).join('')+'<li class="r">Check the stop before you act: the day’s high was ₹'+num(S.day_hi,0)+'. Analysis, not advice.</li></ul>'+
+      '<div style="display:flex;gap:10px;margin-top:16px"><a class="btn p s" href="'+L.screener+'">Screen similar</a><button type="button" class="btn g s" data-act="others">Also near highs</button></div></div></section>'+
+    '<section class="sec" id="calls"><div class="h2"><h2>Trade calls</h2>'+infoBtn('calls')+'<span class="sp"></span><small id="tcC">1 of '+CALLS.length+'</small></div>'+
+      '<div class="tcw"><div class="tc-tr" id="tcTr">'+CALLS.map(callCard).join('')+'</div></div><p class="note">Research advice from the AlphaPad desk. Prices are indicative.</p></section>'+
+    '<section class="sec" id="baskets"><div class="h2"><h2>Baskets</h2><span class="sp"></span><a href="'+L.baskets+'">+ Build</a></div><div class="card" style="padding:0 16px"><div class="list">'+
+      D.baskets.map(function(b){return '<a class="row" href="'+L.baskets+'"><span class="ic t">'+I(ICO.bk)+'</span><span class="tx"><b>'+esc(b.n)+'</b><small>'+esc(b.m)+'</small></span><span class="vl u">'+esc(b.r)+'<small class="muted">1 year</small></span></a>'}).join('')+'</div></div><p class="note">Past returns are not a promise of future returns. Not investment advice.</p></section>';
+  var tr=$('#tcTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12;$('#tcC').textContent=(Math.round(tr.scrollLeft/w)+1)+' of '+CALLS.length},{passive:true})}
+
+/* ---------------- JOURNAL ---------------- */
+function insights(tr){var out=[],opt=tr.filter(function(t){return t.kind==='Option'}),ow=opt.filter(function(t){return t.pnl>0}),ol=opt.filter(function(t){return t.pnl<0});
+  var avg=function(a){return a.reduce(function(x,t){return x+t.held},0)/a.length};
+  if(ow.length&&ol.length){var r=avg(ol)/avg(ow);if(r>1.3)out.push(['w','You hold losing option trades <b>'+r.toFixed(1)+'× longer</b> than winners.'])}
+  var by={};tr.forEach(function(t){var k=dt(t.d).toLocaleDateString('en-IN',{weekday:'long'});by[k]=(by[k]||0)+t.pnl});var wd=Object.keys(by).sort(function(a,b){return by[a]-by[b]})[0];
+  if(wd&&by[wd]<0)out.push(['w','<b>'+wd+'s cost you '+inr(by[wd])+'</b>, your weakest day. Consider trading smaller.']);
+  var ss={};tr.forEach(function(t){if(!t.setup)return;var b=ss[t.setup]||(ss[t.setup]={p:0,n:0});b.p+=t.pnl;b.n++});var best=Object.keys(ss).sort(function(a,b){return ss[b].p-ss[a].p})[0];
+  if(best&&ss[best].p>0)out.push(['g','<b>'+best+'</b> is your best setup: '+inr(ss[best].p,true)+' over '+ss[best].n+' trades.']);
+  var off=tr.filter(function(t){return (t.score||5)<4}),on=tr.filter(function(t){return (t.score||0)>=4});
+  if(off.length&&on.length)out.push(['i','Trades that kept 4–5 plan rules made <b>'+inr(on.reduce(function(s,t){return s+t.pnl},0),true)+'</b>; the rest made <b>'+inr(off.reduce(function(s,t){return s+t.pnl},0),true)+'</b>.']);
+  return out.slice(0,3)}
+function equity(tr){var W=340,H=140,c=0,pts=tr.map(function(t){c+=t.pnl;return c});if(pts.length<2)return '';var mx=Math.max.apply(null,pts.concat([0])),mn=Math.min.apply(null,pts.concat([0]));
+  var X=function(i){return i*W/(pts.length-1)},Y=function(v){return 6+(mx-v)/((mx-mn)||1)*(H-12)},line=pts.map(function(v,i){return X(i).toFixed(1)+','+Y(v).toFixed(1)}).join(' ');
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="Running P&L over '+tr.length+' trades, ending at '+inr(c,true)+'"><polygon class="ar" points="0,'+Y(0).toFixed(1)+' '+line+' '+W+','+Y(0).toFixed(1)+'"/><line class="z" x1="0" x2="'+W+'" y1="'+Y(0).toFixed(1)+'" y2="'+Y(0).toFixed(1)+'" vector-effect="non-scaling-stroke"/><polyline class="ln" points="'+line+'" vector-effect="non-scaling-stroke"/></svg>'}
+function jcal(m,tr){var y=+m.slice(0,4),mo=+m.slice(5,7),days=new Date(y,mo,0).getDate(),by={};tr.forEach(function(t){(by[t.d]=by[t.d]||[]).push(t)});
+  var mx=Math.max.apply(null,Object.keys(by).map(function(d){return Math.abs(by[d].reduce(function(s,t){return s+t.pnl},0))}).concat([1]));
+  var cells=[],first=new Date(y,mo-1,1).getDay();var lead=(first+6)%7;if(lead<5)for(var k=0;k<lead;k++)cells.push('<span class="x"></span>');
+  for(var d=1;d<=days;d++){var wd=new Date(y,mo-1,d).getDay();if(wd===0||wd===6)continue;var key=m+'-'+String(d).padStart(2,'0'),list=by[key];
+    if(!list){cells.push('<button type="button" class="nt" data-day="'+key+'" aria-label="'+dlong(key)+', no trades">'+d+'</button>');continue}
+    var p=list.reduce(function(s,t){return s+t.pnl},0),a=(0.12+Math.abs(p)/mx*0.5).toFixed(2);
+    cells.push('<button type="button" class="'+(p>=0?'p':'n')+(jDay===key?' sel':'')+'" style="--a:'+a+'" data-day="'+key+'" aria-label="'+dlong(key)+', '+list.length+' trades, '+inr(p,true)+'">'+d+'<small>'+(Math.abs(p)>=1000?(p<0?'−':'+')+(Math.abs(p)/1000).toFixed(1)+'k':inr(p,true))+'</small></button>')}
+  return '<div class="jcal" role="group" aria-label="'+mname(m)+' by day">'+['Mon','Tue','Wed','Thu','Fri'].map(function(w){return '<span class="hd">'+w+'</span>'}).join('')+cells.join('')+'</div>'}
+function rJournal(){var s=$('#s-journal'),ms=MONTHS(),mi=ms.indexOf(jMonth);if(mi<0){jMonth=ms[ms.length-1];mi=ms.length-1}
+  var tr=ALL.filter(function(t){return t.d.slice(0,7)===jMonth}),st=stats(tr),td=todo(),ins=insights(tr),mist={};tr.forEach(function(t){(t.mistakes||[]).forEach(function(k){mist[k]=(mist[k]||0)+1})});
+  var mk=Object.keys(mist).sort(function(a,b){return mist[b]-mist[a]}),mmx=mk.length?mist[mk[0]]:1;
+  s.innerHTML=top('Journal','<span class="tag">Sample</span>')+
+    (td.length?'<div class="inbox" id="review"><div class="hd"><span class="ic a">'+I('<path d="M4 13h4l2 3h4l2-3h4"/><path d="M5 5h14l1 8v6H4v-6z"/>')+'</span><div>'+td.length+' trade'+(td.length>1?'s':'')+' from today to review<small>Fetched from your broker. Add the setup and plan check to log them.</small></div></div><div class="list">'+
+      td.map(function(p){return '<button type="button" class="row" data-review="'+p.id+'"><span class="tx"><b>'+esc(p.sym)+'</b><small>'+p.t+' · '+p.side+' '+p.qty+' · '+p.en+' → '+p.ex+'</small></span><span class="vl '+(p.pnl>=0?'u':'d')+'">'+inr(p.pnl,true)+'</span><span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div>':'<div class="inbox" style="background:var(--fin-positive-soft);border-color:rgba(0,201,154,.3)"><div class="hd">✓ All of today’s trades are reviewed</div></div>')+
+    '<div class="mnav"><button type="button" data-m="-1" aria-label="Previous month"'+(mi<=0?' disabled':'')+'>‹</button><b>'+mname(jMonth)+'</b><button type="button" data-m="1" aria-label="Next month"'+(mi>=ms.length-1?' disabled':'')+'>›</button></div>'+
+    '<div class="kpi"><div><span>Net P&amp;L</span><b class="'+(st.net>=0?'u':'d')+'">'+inr(st.net,true)+'</b><small>'+st.n+' trades</small></div><div><span>Win rate</span><b>'+st.wr.toFixed(0)+'%</b><small>'+st.w+' won · '+st.l+' lost</small></div>'+
+      '<div><span>Profit factor</span><b>'+st.pf.toFixed(2)+'</b><small>gross win ÷ gross loss</small></div><div><span>Avg win / loss</span><b>'+(st.al?(st.aw/st.al).toFixed(2):'–')+'×</b><small>'+inr(st.aw)+' / '+inr(st.al)+'</small></div></div>'+
+    '<div class="h2"><h2>Equity curve</h2><span class="sp"></span><small>running P&amp;L</small></div><div class="eq">'+equity(tr)+'</div>'+
+    '<div class="h2"><h2>Calendar</h2><span class="sp"></span><small>tap a day</small></div>'+jcal(jMonth,tr)+
+    (ins.length?'<div class="h2"><h2>Insights</h2></div><div class="ins">'+ins.map(function(x){return '<div class="'+x[0]+'">'+x[1]+'</div>'}).join('')+'</div>':'')+
+    '<div class="h2"><h2>Plan score</h2><span class="sp"></span><small>5 rules per trade</small></div><div class="card"><div class="score"><span class="big">'+st.score.toFixed(1)+'</span><small>out of 5 on average.<br>'+(mk.length?'Most missed: <b>'+mk[0].toLowerCase()+'</b>.':'Every rule kept.')+'</small></div>'+
+      (mk.length?'<div class="bars mist" style="margin-top:14px">'+mk.map(function(k){return bar(k,mist[k]+'×',mist[k]/mmx*100,'a')}).join('')+'</div>':'')+'</div>'+
+    '<div class="h2"><h2>Trades</h2><span class="sp"></span><small>'+st.n+' this month</small></div><div class="card" style="padding:0 16px"><div class="list">'+
+      tr.slice().reverse().slice(0,40).map(function(t){var i=ALL.indexOf(t);return '<button type="button" class="row" data-trade="'+i+'"><span class="tx"><b>'+esc(t.sym)+(t.confirmed?' <span class="tag">today</span>':'')+'</b><small>'+dt(t.d).toLocaleDateString('en-IN',{day:'numeric',month:'short'})+' '+t.t+' · '+esc(t.setup||'')+'</small></span><span class="vl '+(t.pnl>=0?'u':'d')+'">'+inr(t.pnl,true)+'<small class="muted">'+(t.score!=null?t.score+'/5':'')+'</small></span></button>'}).join('')+'</div></div>'+
+    '<p class="note">Sample trades to show how your journal looks. Charges and taxes are not deducted.</p>';
+  badge()}
+function dayBody(d){var list=ALL.filter(function(t){return t.d===d}),p=list.reduce(function(s,t){return s+t.pnl},0),n=notes[d]||{};
+  return '<div class="facts"><div>Trades<b>'+list.length+'</b></div><div>P&amp;L<b class="'+(p>=0?'u':'d')+'">'+inr(p,true)+'</b></div><div>Wins<b>'+list.filter(function(t){return t.pnl>0}).length+'</b></div></div>'+
+    (list.length?'<div class="list">'+list.map(function(t){return '<button type="button" class="row" data-trade="'+ALL.indexOf(t)+'"><span class="tx"><b>'+esc(t.sym)+'</b><small>'+t.t+' · '+esc(t.setup||'')+'</small></span><span class="vl '+(t.pnl>=0?'u':'d')+'">'+inr(t.pnl,true)+'</span></button>'}).join('')+'</div>':'<p class="muted">No trades this day.</p>')+
+    '<label class="fld"><span>Before the market: plan</span><textarea data-n="pre" placeholder="Levels, setups, max loss for the day">'+esc(n.pre||'')+'</textarea></label>'+
+    '<label class="fld"><span>After the close: what I learned</span><textarea data-n="post" placeholder="What went well, what to change">'+esc(n.post||'')+'</textarea></label>'+
+    '<div class="fld"><span>How the day felt</span><div class="moods">'+MOODS.map(function(m){return '<button type="button" data-dmood="'+m+'" aria-pressed="'+(n.mood===m)+'">'+m+'</button>'}).join('')+'</div></div><p class="note">Notes save on this device as you type.</p>'}
+function openDay(d){jDay=d;sheet(dlong(d),dayBody(d),function(p){var tm;p.addEventListener('input',function(e){var k=e.target.dataset.n;if(!k)return;(notes[d]=notes[d]||{})[k]=e.target.value;clearTimeout(tm);tm=setTimeout(function(){store.set('ap-journal-notes',notes)},300)});
+  p.addEventListener('click',function(e){var b=e.target.closest('[data-dmood]');if(!b)return;(notes[d]=notes[d]||{}).mood=b.dataset.dmood;store.set('ap-journal-notes',notes);$$('[data-dmood]',p).forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})})});if(tab==='journal')rJournal()}
+function openTrade(i){var t=ALL[i];if(!t)return;var r=t.risk?t.pnl/t.risk:0;
+  sheet(esc(t.sym),'<div class="facts"><div>P&amp;L<b class="'+(t.pnl>=0?'u':'d')+'">'+inr(t.pnl,true)+'</b></div><div>R multiple<b>'+(r>=0?'+':'−')+Math.abs(r).toFixed(2)+'R</b></div><div>Held<b>'+hrs(t.held)+'</b></div><div>Side<b>'+t.side+' '+t.qty+'</b></div><div>Entry<b>'+t.en+'</b></div><div>Exit<b>'+t.ex+'</b></div></div>'+
+    '<p class="muted" style="margin-top:10px">'+dlong(t.d)+' at '+t.t+' · '+esc(t.kind)+' · '+esc(t.setup||'No setup')+' · Mood: '+esc(t.mood||'–')+'</p>'+
+    '<div class="fld"><span>Plan check · '+(t.score!=null?t.score:'–')+' of 5</span></div><div>'+RULES.map(function(rr){var ok=t.rules&&t.rules[rr[0]];return '<div class="chk"><span aria-hidden="true" class="'+(ok?'u':'w')+'">'+(ok?'✓':'✕')+'</span>'+rr[1]+'</div>'}).join('')+'</div>'+
+    (t.note?'<p style="margin-top:14px">“'+esc(t.note)+'”</p>':''))}
+function reviewForm(id){var p=PEND.filter(function(x){return x.id===id})[0];if(!p)return;var prev={};
+  sheet('Review '+esc(p.sym),'<div class="facts"><div>P&amp;L<b class="'+(p.pnl>=0?'u':'d')+'">'+inr(p.pnl,true)+'</b></div><div>Entry → exit<b>'+p.en+' → '+p.ex+'</b></div><div>Held<b>'+hrs(p.held)+'</b></div></div><p class="muted">'+p.t+' · '+p.side+' '+p.qty+' · from '+esc(p.broker)+'</p>'+
+    '<form id="rvF" novalidate><label class="fld"><span>Setup</span><select name="setupSel"><option value="">Choose the setup</option>'+SETUPS.map(function(x){return '<option>'+x+'</option>'}).join('')+'<option>Other</option></select><span class="err" id="rvErr" hidden>Choose a setup to log this trade.</span></label>'+
+    '<div class="fld"><span>Did you follow your plan?</span></div><div>'+RULES.map(function(r){return '<label class="chk"><input type="checkbox" name="'+r[0]+'" checked>'+r[1]+'</label>'}).join('')+'</div>'+
+    '<div class="fld"><span>Mood</span><div class="moods">'+MOODS.map(function(m){return '<button type="button" data-mood="'+m+'" aria-pressed="false">'+m+'</button>'}).join('')+'</div></div>'+
+    '<label class="fld"><span>Note (optional)</span><textarea name="note" placeholder="Why you took it, what you saw"></textarea></label>'+
+    '<div class="acts"><button type="button" class="btn g" data-skip>Skip</button><button type="submit" class="btn p">Add to journal</button></div></form>',
+  function(pn){var mood='';pn.addEventListener('click',function(e){var b=e.target.closest('[data-mood]');if(b){mood=b.dataset.mood;$$('[data-mood]',pn).forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}
+      if(e.target.closest('[data-skip]')){rv[id]={status:'skip'};store.set('ap-journal-review',rv);mergeAll();closeSheet();toast('Skipped. It stays out of your stats.');rJournal();nextReview()}});
+    $('#rvF',pn).addEventListener('submit',function(e){e.preventDefault();var f=e.target;if(!f.setupSel.value){$('#rvErr',pn).hidden=false;f.setupSel.focus();return}
+      var rules={};RULES.forEach(function(r){rules[r[0]]=f[r[0]].checked});rv[id]={status:'ok',setup:f.setupSel.value,rules:rules,mood:mood,note:f.note.value.trim()};store.set('ap-journal-review',rv);mergeAll();
+      jMonth=p.d.slice(0,7);closeSheet();toast('Added to your journal');rJournal();nextReview()})})}
+function nextReview(){var n=todo()[0];if(n)setTimeout(function(){reviewForm(n.id)},350)}
+
+/* ---------------- YOU ---------------- */
+var LKEY='sp-learn-2026-11-12',lrnI=0;
+function learned(){return store.get(LKEY,[])}
+function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'dark',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
+  var MSL=(typeof MS!=='undefined'?MS:[[7,'Week regular'],[30,'Month regular'],[100,'Market habit'],[250,'Market veteran']]);
+  s.innerHTML=top('You')+
+    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>Your screen: '+(p&&!p.skipped&&window.apProfile?window.apProfile.names[p.preset]:'Basic')+' · <button type="button" class="l" style="color:var(--link);font-weight:600" data-act="setup">Change</button></small></div></div>'+
+    '<section class="sec" id="streak"><div class="h2"><h2>Streak</h2><span class="sp"></span><small>Rank #'+S.rank+' this week</small></div><div class="card stk"><div class="n"><b>🔥 '+S.n+'</b><span>market days in a row<br><span class="muted">'+(S.next-S.n)+' day to your '+S.next+'-day mark</span></span></div>'+
+      '<div class="wk">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i title="'+({done:'Done',hol:'Market holiday',today:'Today',off:'Weekend','':'Coming up'})[d[1]]+'">'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
+      '<div class="ms">'+MSL.map(function(m){return '<div class="'+(S.n>=m[0]?'got':'')+'"><b>'+m[0]+'</b>'+m[1]+'</div>'}).join('')+'</div></div></section>'+
+    '<section class="sec" id="learn"><div class="h2"><h2>Learn today</h2><span class="sp"></span><small>'+lr.length+' of '+LEARN.length+' done</small></div><div class="card lrn">'+(all?'<div class="ok">✓ All 3 ideas learned. Streak kept for today.</div>':'')+
+      '<div class="kind"><span class="eb">'+esc(x.kind)+'</span>'+(got?'<span class="tag" style="margin-left:auto">✓ Learned</span>':'')+'</div><h3>'+esc(x.h)+'</h3><p>'+x.one+'</p>'+
+      '<div class="ft"><button type="button" class="navb" data-lrn="-1" aria-label="Previous idea">‹</button><div class="pg" aria-hidden="true">'+LEARN.map(function(l,j){return '<i class="'+(lr.indexOf(l.id)>=0?'done':'')+(j===lrnI?' on':'')+'"></i>'}).join('')+'</div><button type="button" class="navb" data-lrn="1" aria-label="Next idea">›</button><span class="sp"></span>'+
+      (got?'':'<button type="button" class="btn p s" data-got="'+x.id+'">Got it</button>')+'</div></div></section>'+
+    '<div class="h2"><h2>Tools</h2></div><div class="card" style="padding:0 16px"><div class="list">'+
+      [[L.bt,ICO.bt,'i','Backtesting','Replay a past session candle by candle',1],[L.screener,ICO.scan,'a','Screener','Scan Nifty 500 stocks',0],[L.studio,ICO.studio,'b','Option Studio','Option chain and strategies',0],[L.baskets,ICO.bk,'t','Baskets','Build and track baskets',0],[L.lms,ICO.lms,'i','LMS','Courses and lessons',0],[L.brief,ICO.brief,'b','Full brief','Read today’s brief on the web',0]]
+      .map(function(r){return '<a class="row" href="'+r[0]+'"'+(r[5]?' target="_blank" rel="noopener"':'')+'><span class="ic '+r[2]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[3]+'</b><small>'+r[4]+'</small></span><span class="go" aria-hidden="true">'+(r[5]?I(ICO.ext):'›')+'</span></a>'}).join('')+'</div></div>'+
+    '<div class="h2"><h2>Settings</h2></div><div class="card"><div class="fld" style="margin:0"><span>Theme</span><div class="seg" role="group" aria-label="Theme">'+[['dark','Dark'],['light','Light']].map(function(t){return '<button type="button" data-theme-set="'+t[0]+'" aria-pressed="'+(th===t[0])+'">'+t[1]+'</button>'}).join('')+'</div></div>'+
+      '<div class="list" style="margin-top:8px"><button type="button" class="row" data-act="setup"><span class="ic i">'+I(ICO.setup)+'</span><span class="tx"><b>Change my screen</b><small>Answer the 3 questions again</small></span><span class="go">›</span></button>'+
+      '<button type="button" class="row rst" id="rstB"><span class="ic s">'+I(ICO.reset)+'</span><span class="tx"><b>Start fresh</b><small id="rstS">Clears everything saved on this device</small></span></button></div></div>'+
+    '<p class="note">AlphaPad by Springpad. Analysis, not investment advice. Prototype with sample data.</p>'}
+
+/* ---------------- streak sheet + global clicks ---------------- */
+function streakSheet(){var S=D.streak,lr=learned();sheet('🔥 '+S.n+'-day streak','<p>Open AlphaPad on a market day and learn the day’s 3 ideas to keep it going.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
+  '<div class="facts"><div>Rank<b>#'+S.rank+'</b></div><div>Next mark<b>'+S.next+' days</b></div><div>Ideas left<b>'+Math.max(0,LEARN.length-lr.length)+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#you/learn" data-close>Learn today’s ideas</a>')}
+document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set]');if(!a)return;var ds=a.dataset;
+  if(ds.act==='listen')return toggleAudio();
+  if(ds.act==='chapters'){e.preventDefault();return chapters()}
+  if(ds.act==='streak')return streakSheet();
+  if(ds.act==='setup'){closeSheet();if(window.apProfile)window.apProfile.open();return}
+  if(ds.act==='others'){var o=D.sotd.others;return sheet('Also near 52-week highs','<div class="list">'+o.map(function(x){return '<div class="row"><span class="tx"><b>'+esc(x[0])+'</b><small>'+esc(x[1])+' · '+esc(x[3])+'</small></span><span class="vl u">+'+x[2].toFixed(2)+'%</span></div>'}).join('')+'</div>')}
+  if(ds.info){var t=INFO_TXT[ds.info];return info(t[0],t[1],t[2])}
+  if(ds.jump){var el=document.getElementById(ds.jump);if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
+  if(ds.ix&&a.tagName==='BUTTON'){ixSel=ds.ix;rMarkets();return}
+  if(ds.ix&&a.tagName==='A'){ixSel=ds.ix;return}
+  if(ds.mv){mvSeg=ds.mv;var y=scrollY;rMarkets();scrollTo(0,y);return}
+  if(ds.sc){scSeg=ds.sc;var y2=scrollY;rMarkets();scrollTo(0,y2);return}
+  if(ds.ct){calType=ds.ct;var y3=scrollY;rMarkets();scrollTo(0,y3);return}
+  if(ds.review)return reviewForm(ds.review);
+  if(ds.trade)return openTrade(+ds.trade);
+  if(ds.day)return openDay(ds.day);
+  if(ds.m){var ms=MONTHS(),i=ms.indexOf(jMonth)+ +ds.m;if(i>=0&&i<ms.length){jMonth=ms[i];jDay=null;rJournal()}return}
+  if(ds.lrn){lrnI=(lrnI+ +ds.lrn+LEARN.length)%LEARN.length;var y4=scrollY;rYou();scrollTo(0,y4);return}
+  if(ds.got){var l=learned();if(l.indexOf(ds.got)<0)l.push(ds.got);store.set(LKEY,l);var nx=LEARN.findIndex(function(x){return l.indexOf(x.id)<0});if(nx>=0)lrnI=nx;var y5=scrollY;rYou();scrollTo(0,y5);toast(l.length>=LEARN.length?'All 3 learned. Streak kept for today.':(LEARN.length-l.length)+' left to keep your streak');return}
+  if(ds.themeSet){root.setAttribute('data-theme',ds.themeSet);store.set('today-theme',ds.themeSet);try{localStorage.setItem('today-theme',ds.themeSet)}catch(err){}var y6=scrollY;rYou();scrollTo(0,y6);return}
+});
+var armed=0;document.addEventListener('click',function(e){var b=e.target.closest('#rstB');if(!b)return;
+  if(Date.now()-armed>4000){armed=Date.now();b.classList.add('arm');$('#rstS').textContent='Tap again to confirm';setTimeout(function(){if(Date.now()-armed>=4000&&$('#rstS')){b.classList.remove('arm');$('#rstS').textContent='Clears everything saved on this device'}},4100);return}
+  try{Object.keys(localStorage).forEach(function(k){if(/^(ap-|sp-|today-)/.test(k))localStorage.removeItem(k)})}catch(err){}location.replace(location.pathname)});
+/* the questions finish → refresh what depends on the chosen screen */
+document.addEventListener('click',function(e){if(!e.target.closest('.ob-go,.ob-skip'))return;
+  if(tab==='today'){var h=$('#s-today .b-dash');if(h)h.scrollIntoView({block:'center'});setTimeout(function(){var tmp=document.createElement('div');tmp.innerHTML=forYou();$('#fyRows').innerHTML=tmp.querySelector('#fyRows').innerHTML;$('#fyName').textContent=tmp.querySelector('#fyName').textContent},0)}
+  else setTimeout(function(){RENDER[tab]()},0)});
+
+var RENDER={today:rToday,markets:rMarkets,ideas:rIdeas,journal:rJournal,you:rYou};
+if(!root.getAttribute('data-theme'))root.setAttribute('data-theme',matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+badge();route();paintAudio();
+})();
+</script>
+<script>
+/* Onboarding: three questions on the first visit pick a starting screen; skipping gives Basic. Saved on this device; change any time. */
+(function(){
+  var PROFILE_KEY='ap-profile',TIP_KEY='ap-tip-dash';
+  var Q=[
+    {k:'exp',q:'How long have you been trading?',a:[['new','Just starting','Less than 6 months'],['mid','6 months to 2 years','I place trades most weeks'],['pro','More than 2 years','Trading is a routine for me']]},
+    {k:'what',q:'What do you trade most?',a:[['fo','Options and futures','Nifty, Bank Nifty, stock F&O'],['swing','Stocks for days or weeks','Swing and positional trades'],['long','Long-term investing','Baskets, SIPs, holding for years'],['explore','Still exploring','I am finding my style']]},
+    {k:'want',q:'What should AlphaPad help you with each morning?',a:[['learn','Learn how markets work','One idea a day, explained simply'],['ideas','Find trade ideas','Calls, scans and the pick of the day'],['track','Review my trades','Journal, win rate, habits'],['watch','Keep an eye on the market','Indices, filings and the big picture']]}];
+  var NAMES={basic:'Basic',options:'Options trader',picker:'Stock picker',investor:'Investor',learner:'Learner'};
+  var WHY={basic:'today, the pick of the day, calls and levels',options:'trade calls, F&O levels, OI buildup and your journal',picker:'the pick of the day, scans, movers and filings',investor:'baskets, the big picture and company filings',learner:'the brief, one idea a day and the calendar'};
+  function pick(a){if(a.exp==='new'||a.what==='explore'||a.want==='learn')return 'learner';if(a.what==='fo')return 'options';if(a.what==='swing')return 'picker';if(a.what==='long'||a.want==='watch')return 'investor';return 'basic'}
+  function get(){try{return JSON.parse(localStorage.getItem(PROFILE_KEY))}catch(e){return null}}
+  function set(p){try{localStorage.setItem(PROFILE_KEY,JSON.stringify(p));localStorage.removeItem('ap-dash-v4');localStorage.removeItem('ap-dash-seen')}catch(e){}}
+  window.apProfile={get:get,names:NAMES,why:WHY,open:function(){open()}};
+  var ans={},step=0,ov;
+  function open(){ans={};step=0;ov=document.createElement('div');ov.className='ob-ov';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Set up your AlphaPad');document.body.appendChild(ov);draw()}
+  function close(){if(ov){ov.remove();ov=null}}
+  function draw(){var n=Q.length;
+    if(step<n){var q=Q[step];
+      ov.innerHTML='<div class="ob-card"><div class="ob-top"><span class="ob-step">Step '+(step+1)+' of '+n+'</span><button type="button" class="ob-skip">Skip for now</button></div><div class="ob-prog"><i style="width:'+((step+1)/(n+1)*100)+'%"></i></div>'+
+        (step===0?'<p class="ob-hi">Welcome to AlphaPad 👋<br><span>Three quick questions and we will set up a screen that fits how you trade.</span></p>':'')+
+        '<h2>'+q.q+'</h2><div class="ob-opts">'+q.a.map(function(o){return '<button type="button" class="ob-o'+(ans[q.k]===o[0]?' on':'')+'" data-v="'+o[0]+'"><b>'+o[1]+'</b><small>'+o[2]+'</small></button>'}).join('')+'</div>'+
+        '<div class="ob-f">'+(step?'<button type="button" class="ob-back">← Back</button>':'<span></span>')+'</div></div>'}
+    else{var p=pick(ans);
+      ov.innerHTML='<div class="ob-card ob-done"><div class="ob-prog"><i style="width:100%"></i></div><div class="ob-badge">✨</div><h2>Your screen is ready: '+NAMES[p]+'</h2><p class="ob-sum">Based on your answers, your dashboard opens with '+WHY[p]+'. You can change this any time.</p><div class="ob-f"><button type="button" class="ob-back">← Change answers</button><button type="button" class="ob-go" data-p="'+p+'">Start my day →</button></div></div>'}}
+  document.addEventListener('click',function(e){if(!ov||!ov.contains(e.target))return;var b=e.target.closest('button');if(!b)return;
+    if(b.classList.contains('ob-o')){ans[Q[step].k]=b.dataset.v;step++;setTimeout(draw,120);b.classList.add('on');return}
+    if(b.classList.contains('ob-back')){step=Math.max(0,step-1);draw();return}
+    if(b.classList.contains('ob-skip')){set({preset:'basic',skipped:true,at:Date.now()});close();chip();tip();return}
+    if(b.classList.contains('ob-go')){set({preset:b.dataset.p,answers:ans,at:Date.now()});close();chip();tip()}});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ov){set({preset:'basic',skipped:true,at:Date.now()});close();chip();tip()}});
+  /* profile chip on the landing card, so people can change their screen later */
+  function chip(){var m=document.querySelector('.hero-main');if(!m)return;var p=get(),c=m.querySelector('.ob-chip');if(!c){c=document.createElement('button');c.type='button';c.className='ob-chip';m.appendChild(c);c.onclick=function(){open()}}
+    c.innerHTML='<span aria-hidden="true">👤</span>'+(p&&!p.skipped?'Your screen: <b>'+NAMES[p.preset]+'</b>':'Personalise your screen')+'<em>Change</em>'}
+  /* one-time tip pointing at View your dashboard */
+  function tip(){try{if(localStorage.getItem(TIP_KEY))return}catch(e){}var b=document.querySelector('.b-dash');if(!b||document.querySelector('.ob-tip'))return;var p=get();
+    b.classList.add('ob-pulse');var t=document.createElement('div');t.className='ob-tip';t.setAttribute('role','dialog');t.setAttribute('aria-label','Your dashboard is ready');
+    t.innerHTML='<span class="ob-tip-i" aria-hidden="true">\u2728</span><div class="ob-tip-t"><b>Your dashboard is ready</b><span>'+(p&&!p.skipped?'We set it up as <em>'+NAMES[p.preset]+'</em> from your answers.':'Start with the Basic screen and make it yours.')+'</span></div><button type="button">Got it</button>';
+    document.body.appendChild(t);
+    function place(){var r=b.getBoundingClientRect();t.style.left=Math.max(12,Math.min(innerWidth-t.offsetWidth-12,r.left))+'px';var tp=r.bottom+12,upw=tp+t.offsetHeight>innerHeight-8&&r.top-t.offsetHeight-12>8;t.classList.toggle('up',upw);t.style.top=(upw?r.top-t.offsetHeight-12:tp)+'px';t.style.setProperty('--ax',(r.left+24-Math.max(12,Math.min(innerWidth-t.offsetWidth-12,r.left)))+'px')}
+    place();addEventListener('scroll',place,{passive:true});addEventListener('resize',place);
+    function done(){try{localStorage.setItem(TIP_KEY,'1')}catch(e){}t.remove();b.classList.remove('ob-pulse');removeEventListener('scroll',place);removeEventListener('resize',place)}
+    t.querySelector('button').addEventListener('click',done);b.addEventListener('click',done);document.addEventListener('keydown',function k(e){if(e.key==='Escape'&&document.body.contains(t)){done();document.removeEventListener('keydown',k)}})}
+  addEventListener('load',function(){chip();if(/[?&]setup=1/.test(location.search)){setTimeout(open,200);return}if(!get()){setTimeout(open,/[?&]nosplash/.test(location.search)?100:1500)}else tip()});
+})();
+/* Coming up today: the rest of today's events, read from the timeline card */
+addEventListener('load',function(){setTimeout(function(){var main=document.querySelector('.hero-main'),pk=document.querySelector('.b-peek');if(!main||!pk)return;
+  var li=[].slice.call(document.querySelectorAll('#tl li')).map(function(x){return x.textContent.replace(/\s+/g,' ').trim()}).filter(function(t){return /^\d{1,2}:\d{2}/.test(t)}),k=-1;
+  li.forEach(function(t,i){if(k<0&&/close/i.test(t))k=i});var ev=(k>=0?li.slice(k):li.slice(-4)).slice(0,4);if(!ev.length)return;
+  var box=document.createElement('div');box.className='b-next';box.innerHTML='<span class="bn-h">Coming up today</span><ol>'+ev.map(function(t){var m=t.match(/^(\d{1,2}:\d{2})\s*(.*)$/);return '<li><time>'+(m?m[1]:'')+'</time><span>'+(m?m[2]:t)+'</span></li>'}).join('')+'</ol>';
+  pk.insertAdjacentElement('beforebegin',box)},300)});
+</script>
+
+</body>
+</html>
