@@ -565,6 +565,9 @@ body > .ticker{top:55px;z-index:39}
 .home .idx-card .ix .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (min-width:1100px){.home .stk-strip{margin-top:10px;padding:8px 16px}}
 @media (max-width:1100px){.hg{grid-template-columns:1fr 1fr;grid-template-areas:"s s" "c c" "tc tc" "tl one"}}
+.ap-mx{display:none!important}
+@media (max-width:1099px){.home .stk-strip{flex-wrap:wrap;gap:10px 12px;padding:12px 14px}.home .stk-strip .flame{width:44px;height:44px}.home .stk-strip .ss-n{flex:1 1 0;min-width:0}.home .stk-strip .poll{flex:1 1 100%;order:5;justify-content:space-between}.home .stk-strip .stk-goal{flex:1 1 100%;margin:0!important;order:6;flex-wrap:wrap;row-gap:6px;white-space:normal}.home .stk-strip .lb-pill{order:7}.home .stk-strip .ss-end{order:8;margin-left:auto}}
+@media (max-width:640px){.hg{grid-template-columns:minmax(0,1fr);grid-template-areas:"s" "c" "tc" "tl" "one"}.hg>*{min-width:0}.ap-x{display:none!important}.ap-mx{display:block!important}.ap-nav{gap:6px}.ap-nav .ap-btn[aria-label="Account"]{font-size:0;gap:0;padding:0 9px}.tk-src{display:none!important}.scan-g,.wh-g{grid-template-columns:minmax(0,1fr)!important}.sdw{margin-top:32px}.scan{margin:28px 0 90px}.scan-h{flex-wrap:wrap;row-gap:2px}.hg-tc .tc-more{display:grid!important;gap:8px}.hg-tc{contain:none!important;height:auto!important}.home .hero{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:none!important}.home .hero>*{grid-column:auto!important;grid-row:auto!important;min-width:0}}
 """
 
 body=f"""@media (min-width:1800px){{.hg-c .idx-strip .nm{{font:600 12.5px/1.2 var(--font-sans)!important;letter-spacing:0!important;text-transform:none!important}}}}
@@ -604,12 +607,12 @@ body=f"""@media (min-width:1800px){{.hg-c .idx-strip .nm{{font:600 12.5px/1.2 va
     <a class="ap-logo" href="home-2026-11-12.html" aria-label="AlphaPad home"><span class="a">α</span>lpha<span class="p">Pad</span></a>
     <nav class="ap-nav" aria-label="AlphaPad">
       <button class="ap-btn ap-ic" aria-label="Notifications, 9+ new"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="ap-badge">9+</span></button>
-      <a class="ap-btn" href="https://dev.alphapad.in/baskets"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="3.2"/><circle cx="7" cy="16" r="3.2"/><circle cx="17" cy="16" r="3.2"/></svg>Baskets</a>
-      <a class="ap-btn" href="https://dev.alphapad.in/option-studio"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>Option Studio</a>
-      <a class="ap-btn" href="https://dev.alphapad.in/lms"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10 12 5l10 5-10 5z"/><path d="M6 12v4c3 2 9 2 12 0v-4"/></svg>LMS</a>
+      <a class="ap-btn ap-x" href="https://dev.alphapad.in/baskets"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="3.2"/><circle cx="7" cy="16" r="3.2"/><circle cx="17" cy="16" r="3.2"/></svg>Baskets</a>
+      <a class="ap-btn ap-x" href="https://dev.alphapad.in/option-studio"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>Option Studio</a>
+      <a class="ap-btn ap-x" href="https://dev.alphapad.in/lms"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10 12 5l10 5-10 5z"/><path d="M6 12v4c3 2 9 2 12 0v-4"/></svg>LMS</a>
       <button class="ap-btn" aria-label="Account"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>TRADER</button>
       <div class="ap-more"><button class="ap-btn ap-ic" id="apMore" aria-haspopup="true" aria-expanded="false" aria-label="More">⋮</button>
-        <div class="ap-menu" id="apMenu" hidden><a href="{BRIEF}#brief">Today's full brief</a><a href="https://dev.alphapad.in/dashboard">Trade calls</a><button id="themeBtn">Light</button></div></div>
+        <div class="ap-menu" id="apMenu" hidden><a class="ap-mx" href="https://dev.alphapad.in/baskets">Baskets</a><a class="ap-mx" href="https://dev.alphapad.in/option-studio">Option Studio</a><a class="ap-mx" href="https://dev.alphapad.in/lms">LMS</a><a href="{BRIEF}#brief">Today's full brief</a><a href="https://dev.alphapad.in/dashboard">Trade calls</a><button id="themeBtn">Light</button></div></div>
     </nav>
   </div>
 </header>
@@ -887,11 +890,16 @@ out=out.replace('<button class="iconbtn" data-go="brief">Transcript</button>',f'
 import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sotd import render as _sd_render
 _sd_css, _sd_html = _sd_render()
-_sd_sec = ('<section class="sdw" id="sotd" aria-label="Stock of the day"><div class="scan-h"><h2>Stock of the day</h2><span>Nifty 500 · NSE, 11 Nov close · picked on technicals</span></div>'
-           + _sd_html + '</section>\n  ')
-assert out.count('<section class="scan" id="scan"') == 1 and out.count('</style>') >= 1
-out = out.replace('<section class="scan" id="scan"', _sd_sec + '<section class="scan" id="scan"', 1)
-out = out.replace('.scan{margin:56px 0 90px}', '.sdw{margin:56px 0 0}.scan{margin:40px 0 90px}' + _sd_css.replace('\n', ''), 1)
-out = out.replace('href="#scan" id="scanCue">Market scan · What’s happening ↓', 'href="#sotd" id="scanCue">Stock of the day · Market scan ↓', 1)
+_sd_sec = '<section class="hg-sd" id="sotd" aria-label="Stock of the day">' + _sd_html + '</section>\n    '
+# Stock of the day sits right under the streak strip, as its own full-width grid row
+assert out.count('<div class="hg-c">') == 1
+out = out.replace('<div class="hg-c">', _sd_sec + '<div class="hg-c">', 1)
+for a, b in [('grid-template-areas:"s s s" "c c c"', 'grid-template-areas:"s s s" "sd sd sd" "c c c"'),
+             ('grid-template-areas:"s s s s" "tc c mk tl"', 'grid-template-areas:"s s s s" "sd sd sd sd" "tc c mk tl"'),
+             ('grid-template-areas:"s s" "c c"', 'grid-template-areas:"s s" "sd sd" "c c"'),
+             ('grid-template-areas:"s" "c"', 'grid-template-areas:"s" "sd" "c"')]:
+    assert out.count(a) == 1, a
+    out = out.replace(a, b, 1)
+out = out.replace('.scan{margin:56px 0 90px}', '.hg-sd{grid-area:sd;min-width:0;display:flex}.hg-sd .sd{flex:1}.scan{margin:56px 0 90px}' + _sd_css.replace('\n', ''), 1)
 open(B+"home-2026-11-12.html","w",encoding="utf-8").write(out)
 print("written",len(out))
