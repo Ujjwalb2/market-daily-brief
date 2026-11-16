@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--canvas:#101827;--raised:#171B26;--elev:#1D2432;--line:#252F3F;--t1:#F8FAFC;--t2:#CBD5E1;--t3:#8793A5;--indigo:#3F5BD9;--teal:#00C99A}
+:root[data-theme="light"]{--canvas:#F8FAFC;--raised:#FFFFFF;--elev:#FFFFFF;--line:#CBD5E1;--t1:#101827;--t2:#34445B;--t3:#34445B}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--canvas:#F8FAFC;--raised:#FFFFFF;--elev:#FFFFFF;--line:#CBD5E1;--t1:#101827;--t2:#34445B;--t3:#34445B}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--canvas);color:var(--t1);font:400 14px/1.5 Inter,system-ui,sans-serif}
+.wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;padding:24px 16px 40px}
+h1{margin:0;font:600 20px/1.2 Inter,sans-serif;letter-spacing:-.2px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.seg{display:inline-flex;padding:3px;border-radius:9999px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+.seg button{border:0;background:none;color:var(--t2);font:500 13px/1 Inter,sans-serif;padding:8px 14px;border-radius:9999px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--indigo);color:#fff}
+.btn{border:1px solid var(--line);background:var(--raised);color:var(--t1);font:500 13px/1 Inter,sans-serif;padding:8px 12px;border-radius:8px;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--indigo)}
+.stage{display:flex;gap:28px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.phone{position:relative;width:calc(var(--w) + 24px);height:calc(var(--h) + 24px);padding:12px;border-radius:54px;background:#05070c;box-shadow:0 0 0 2px #2a3242,0 30px 60px rgba(0,0,0,.45);transform-origin:top center}
+.phone::before{content:"";position:absolute;top:22px;left:50%;width:120px;height:32px;margin-left:-60px;border-radius:20px;background:#05070c;z-index:2;pointer-events:none}
+.screen{width:100%;height:100%;border-radius:42px;overflow:hidden;background:#101827;display:flex;flex-direction:column}.sb{flex:none;height:47px;display:flex;align-items:center;justify-content:space-between;padding:6px 30px 0 34px;background:#101827;color:#F8FAFC;font:600 14px/1 Inter,sans-serif}.sb i{font-style:normal;font-size:11px;letter-spacing:1px}
+iframe{display:block;width:100%;flex:1;min-height:0;border:0;background:#101827}
+.cap{font:500 12px/1.3 Inter,sans-serif;color:var(--t3);text-align:center}
+.cap b{color:var(--t2);font-weight:600}
+.note{max-width:560px;text-align:center;font:400 12.5px/1.5 Inter,sans-serif;color:var(--t3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Phone prototype</h1>
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Page">
+      <button type="button" data-src="app" aria-pressed="true">AlphaPad app</button>
+      <button type="button" data-src="gh" aria-pressed="false">Home (GitHub page)</button>
+      <button type="button" data-src="rd" aria-pressed="false">Redesign (local)</button>
+      <button type="button" data-src="both" aria-pressed="false">Side by side</button>
+    </div>
+    <div class="seg" role="group" aria-label="Device">
+      <button type="button" data-dev="390x844" aria-pressed="true">iPhone 15</button>
+      <button type="button" data-dev="360x780" aria-pressed="false">Android</button>
+      <button type="button" data-dev="430x932" aria-pressed="false">Pro Max</button>
+    </div>
+    <button class="btn" id="reload" type="button">↻ Reload</button>
+  </div>
+  <div class="stage" id="stage"></div>
+  <p class="note">Each screen is the real page running at phone width: scroll, tap the tabs, vote in the poll, open the menu. Home is the same file that GitHub serves; the redesign exists only on this laptop.</p>
+</div>
+<script>
+const PAGES={app:{src:'app.html',name:'AlphaPad app',where:'phone app prototype'},gh:{src:'home-2026-11-12.html',name:'Home',where:'same page as GitHub'},rd:{src:'versions/redesign/index.html',name:'Redesign',where:'this laptop only'}};
+let mode='app',dev=[390,844];
+const stage=document.getElementById('stage');
+function phone(p){return `<div><div class="phone" style="--w:${dev[0]}px;--h:${dev[1]}px"><div class="screen"><div class="sb" aria-hidden="true"><span>9:41</span><i>▂▄▆ 5G ▮</i></div><iframe title="${p.name} on a phone" src="${p.src}?v=${Date.now()}" loading="eager"></iframe></div></div><p class="cap"><b>${p.name}</b> · ${dev[0]}×${dev[1]} · ${p.where}</p></div>`}
+function fit(){const ph=[...document.querySelectorAll('.phone')];const avail=innerHeight-170,availW=(innerWidth-32)/ph.length-28;ph.forEach(e=>{const s=Math.min(1,avail/(dev[1]+24),availW/(dev[0]+24));e.style.transform=s<1?`scale(${s})`:'';e.parentElement.style.height=s<1?((dev[1]+24)*s+30)+'px':'';e.parentElement.style.width=s<1?((dev[0]+24)*s)+'px':''})}
+function draw(){stage.innerHTML=mode==='both'?phone(PAGES.gh)+phone(PAGES.rd):phone(PAGES[mode]);fit()}
+document.querySelectorAll('[data-src]').forEach(b=>b.onclick=()=>{mode=b.dataset.src;document.querySelectorAll('[data-src]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));draw()});
+document.querySelectorAll('[data-dev]').forEach(b=>b.onclick=()=>{dev=b.dataset.dev.split('x').map(Number);document.querySelectorAll('[data-dev]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));draw()});
+document.getElementById('reload').onclick=draw;addEventListener('resize',fit);draw();
+fetch(PAGES.rd.src,{method:'HEAD'}).then(r=>{if(!r.ok)throw 0}).catch(()=>{document.querySelectorAll('[data-src=rd],[data-src=both]').forEach(b=>{b.disabled=true;b.title='The redesign page is only on the laptop';b.style.opacity=.45})});
+</script>
+</body>
+</html>
