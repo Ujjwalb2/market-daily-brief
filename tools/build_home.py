@@ -566,6 +566,7 @@ body > .ticker{top:55px;z-index:39}
 @media (min-width:1100px){.home .stk-strip{margin-top:10px;padding:8px 16px}}
 @media (max-width:1100px){.hg{grid-template-columns:1fr 1fr;grid-template-areas:"s s" "c c" "tc tc" "tl one"}}
 .ap-mx{display:none!important}
+@media (min-width:1101px) and (max-width:1399px){.home .hero{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:none!important}.home .hero>*{grid-column:auto!important;grid-row:auto!important;min-width:0}}
 @media (max-width:1099px){.home .stk-strip{flex-wrap:wrap;gap:10px 12px;padding:12px 14px}.home .stk-strip .flame{width:44px;height:44px}.home .stk-strip .ss-n{flex:1 1 0;min-width:0}.home .stk-strip .poll{flex:1 1 100%;order:5;justify-content:space-between}.home .stk-strip .stk-goal{flex:1 1 100%;margin:0!important;order:6;flex-wrap:wrap;row-gap:6px;white-space:normal}.home .stk-strip .lb-pill{order:7}.home .stk-strip .ss-end{order:8;margin-left:auto}}
 @media (max-width:640px){.hg{grid-template-columns:minmax(0,1fr);grid-template-areas:"s" "c" "tc" "tl" "one"}.hg>*{min-width:0}.ap-x{display:none!important}.ap-mx{display:block!important}.ap-nav{gap:6px}.ap-nav .ap-btn[aria-label="Account"]{font-size:0;gap:0;padding:0 9px}.tk-src{display:none!important}.scan-g,.wh-g{grid-template-columns:minmax(0,1fr)!important}.sdw{margin-top:32px}.scan{margin:28px 0 90px}.scan-h{flex-wrap:wrap;row-gap:2px}.hg-tc .tc-more{display:grid!important;gap:8px}.hg-tc{contain:none!important;height:auto!important}.home .hero{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:none!important}.home .hero>*{grid-column:auto!important;grid-row:auto!important;min-width:0}}
 """
@@ -894,12 +895,12 @@ _sd_sec = '<section class="hg-sd" id="sotd" aria-label="Stock of the day">' + _s
 # Stock of the day sits right under the streak strip, as its own full-width grid row
 assert out.count('<div class="hg-c">') == 1
 out = out.replace('<div class="hg-c">', _sd_sec + '<div class="hg-c">', 1)
-for a, b in [('grid-template-areas:"s s s" "c c c"', 'grid-template-areas:"s s s" "sd sd sd" "c c c"'),
-             ('grid-template-areas:"s s s s" "tc c mk tl"', 'grid-template-areas:"s s s s" "sd sd sd sd" "tc c mk tl"'),
+for a, b in [('grid-template-areas:"s s s" "c c c" "tc tl one"', 'grid-template-areas:"s s s" "c sd sd" "tc sd sd" "tl one one"'),
+             ('grid-template-areas:"s s s s" "tc c mk tl" "fo one dl bk"', 'grid-template-areas:"s s s s" "c sd sd sd" "tc sd sd sd" "fo mk tl one" "fo dl bk one"'),
              ('grid-template-areas:"s s" "c c"', 'grid-template-areas:"s s" "sd sd" "c c"'),
              ('grid-template-areas:"s" "c"', 'grid-template-areas:"s" "sd" "c"')]:
     assert out.count(a) == 1, a
     out = out.replace(a, b, 1)
-out = out.replace('.scan{margin:56px 0 90px}', '.hg-sd{grid-area:sd;min-width:0;display:flex}.hg-sd .sd{flex:1}.scan{margin:56px 0 90px}' + _sd_css.replace('\n', ''), 1)
+out = out.replace('.scan{margin:56px 0 90px}', '.hg-sd{grid-area:sd;min-width:0;display:flex}.hg-sd .sd{flex:1}.hg-sd .sd-f{margin-top:auto}@container (min-width:560px){.hg-sd .sd-in{flex:1;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"id viz" "sig viz" "oth viz"}.hg-sd .sd-side{display:contents}.hg-sd .sd-id{grid-area:id}.hg-sd .sd-viz{grid-area:viz}.hg-sd .sd-oth{grid-area:oth;align-self:end}.hg-sd .sd-sig{grid-area:sig;grid-template-columns:repeat(2,minmax(0,1fr));align-self:center}.hg-sd .sd-chart{flex:1;min-height:170px}}.scan{margin:56px 0 90px}' + _sd_css.replace('\n', ''), 1)
 open(B+"home-2026-11-12.html","w",encoding="utf-8").write(out)
 print("written",len(out))
