@@ -566,7 +566,7 @@ body > .ticker{top:55px;z-index:39}
 @media (min-width:1100px){.home .stk-strip{margin-top:10px;padding:8px 16px}}
 @media (max-width:1100px){.hg{grid-template-columns:1fr 1fr;grid-template-areas:"s s" "c c" "tc tc" "tl one"}}
 .ap-mx{display:none!important}
-@media (min-width:1101px) and (max-width:1399px){.home .hero{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:none!important}.home .hero>*{grid-column:auto!important;grid-row:auto!important;min-width:0}}
+@media (min-width:1101px) and (max-width:1399px){.hg{grid-template-columns:1fr 1fr 2fr!important}.hg-c .hero-side{grid-area:mk}.hg-tc .tc-more{display:grid!important;gap:8px}}
 @media (max-width:1099px){.home .stk-strip{flex-wrap:wrap;gap:10px 12px;padding:12px 14px}.home .stk-strip .flame{width:44px;height:44px}.home .stk-strip .ss-n{flex:1 1 0;min-width:0}.home .stk-strip .poll{flex:1 1 100%;order:5;justify-content:space-between}.home .stk-strip .stk-goal{flex:1 1 100%;margin:0!important;order:6;flex-wrap:wrap;row-gap:6px;white-space:normal}.home .stk-strip .lb-pill{order:7}.home .stk-strip .ss-end{order:8;margin-left:auto}}
 @media (max-width:640px){.hg{grid-template-columns:minmax(0,1fr);grid-template-areas:"s" "c" "tc" "tl" "one"}.hg>*{min-width:0}.ap-x{display:none!important}.ap-mx{display:block!important}.ap-nav{gap:6px}.ap-nav .ap-btn[aria-label="Account"]{font-size:0;gap:0;padding:0 9px}.tk-src{display:none!important}.scan-g,.wh-g{grid-template-columns:minmax(0,1fr)!important}.sdw{margin-top:32px}.scan{margin:28px 0 90px}.scan-h{flex-wrap:wrap;row-gap:2px}.hg-tc .tc-more{display:grid!important;gap:8px}.hg-tc{contain:none!important;height:auto!important}.home .hero{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:none!important}.home .hero>*{grid-column:auto!important;grid-row:auto!important;min-width:0}}
 """
@@ -574,7 +574,7 @@ body > .ticker{top:55px;z-index:39}
 body=f"""@media (min-width:1800px){{.hg-c .idx-strip .nm{{font:600 12.5px/1.2 var(--font-sans)!important;letter-spacing:0!important;text-transform:none!important}}}}
 @media (min-width:1800px){{.home .hero .hero-main h1{{font-size:30px!important;letter-spacing:-.3px;white-space:nowrap}}}}
 /* even grid: summary and markets become two separate, equal cards (no card inside a card) */
-@media (min-width:1400px){{
+@media (min-width:1101px){{
   .hg-c,.hg-c .hero{{display:contents}}
   .hg-c .hero-main,.hg-c .hero-side{{background:var(--surface-raised);border:1px solid var(--border-decorative);border-radius:var(--radius-12);min-width:0;height:auto}}
   .hg-c .hero-main{{grid-area:c}}
@@ -829,7 +829,7 @@ function tcShow(i,anim){{ti=(i+CALLS.length)%CALLS.length;const c=CALLS[ti],b=$(
     <div class="tc-risk"><div><span>Max profit</span><b class="rk-up">${{c.mp}}</b></div><div><span>Max loss</span><b class="rk-dn${{c.mlx?' x':''}}">${{c.ml}}</b></div><div><span>Capital</span><b>${{c.cap}}</b></div></div></div>`;
   [...$('#tcDots').children].forEach((d,j)=>d.classList.toggle('on',j===ti));
   if(anim){{b.classList.remove('in');void b.offsetWidth;b.classList.add('in')}}}}
-function tcLock(){{const b=$('#tcBody'),k=ti;b.style.minHeight='';let m=0;CALLS.forEach((_,i)=>{{tcShow(i,false);m=Math.max(m,b.offsetHeight)}});b.style.minHeight=m+'px';tcShow(k,false)}}
+function tcLock(){{const b=$('#tcBody'),k=ti;b.style.minHeight='';b.style.flex='0 0 auto';let m=0;CALLS.forEach((_,i)=>{{tcShow(i,false);m=Math.max(m,b.offsetHeight)}});b.style.flex='';b.style.minHeight=m+'px';tcShow(k,false)}}
 tcShow(0,false);tcLock();addEventListener('resize',()=>{{clearTimeout(window._tcl);window._tcl=setTimeout(tcLock,150)}});
 $('#tcDots').addEventListener('click',e=>{{const d=e.target.closest('i');if(d)tcShow([...$('#tcDots').children].indexOf(d),true)}});
 {{const card=$('.hg-tc');['mouseenter','focusin'].forEach(ev=>card.addEventListener(ev,()=>tcHold=true));['mouseleave','focusout'].forEach(ev=>card.addEventListener(ev,()=>tcHold=false));
@@ -895,12 +895,12 @@ _sd_sec = '<section class="hg-sd" id="sotd" aria-label="Stock of the day">' + _s
 # Stock of the day sits right under the streak strip, as its own full-width grid row
 assert out.count('<div class="hg-c">') == 1
 out = out.replace('<div class="hg-c">', _sd_sec + '<div class="hg-c">', 1)
-for a, b in [('grid-template-areas:"s s s" "c c c" "tc tl one"', 'grid-template-areas:"s s s" "c sd sd" "tc sd sd" "tl one one"'),
-             ('grid-template-areas:"s s s s" "tc c mk tl" "fo one dl bk"', 'grid-template-areas:"s s s s" "c sd sd sd" "tc sd sd sd" "fo mk tl one" "fo dl bk one"'),
+for a, b in [('grid-template-areas:"s s s" "c c c" "tc tl one"', 'grid-template-areas:"s s s" "c tc sd" "mk tl one"'),
+             ('grid-template-areas:"s s s s" "tc c mk tl" "fo one dl bk"', 'grid-template-areas:"s s s s" "c tc sd sd" "fo mk tl one" "dl dl bk bk"'),
              ('grid-template-areas:"s s" "c c"', 'grid-template-areas:"s s" "sd sd" "c c"'),
              ('grid-template-areas:"s" "c"', 'grid-template-areas:"s" "sd" "c"')]:
     assert out.count(a) == 1, a
     out = out.replace(a, b, 1)
-out = out.replace('.scan{margin:56px 0 90px}', '.hg-sd{grid-area:sd;min-width:0;display:flex}.hg-sd .sd{flex:1}.hg-sd .sd-f{margin-top:auto}@container (min-width:560px){.hg-sd .sd-in{flex:1;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"id viz" "sig viz" "oth viz"}.hg-sd .sd-side{display:contents}.hg-sd .sd-id{grid-area:id}.hg-sd .sd-viz{grid-area:viz}.hg-sd .sd-oth{grid-area:oth;align-self:end}.hg-sd .sd-sig{grid-area:sig;grid-template-columns:repeat(2,minmax(0,1fr));align-self:center}.hg-sd .sd-chart{flex:1;min-height:170px}}.scan{margin:56px 0 90px}' + _sd_css.replace('\n', ''), 1)
+out = out.replace('.scan{margin:56px 0 90px}', '.hg-sd{grid-area:sd;min-width:0;display:flex}.hg-sd .sd{flex:1}.hg-sd .sd-f{margin-top:auto}@container (min-width:500px){.hg-sd .sd-in{flex:1;gap:10px 18px;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-rows:auto auto auto minmax(0,1fr) auto auto;grid-template-areas:"top viz" "h3 viz" "px viz" "risk viz" "why why" "sig sig"}.hg-sd .sd-id,.hg-sd .sd-side{display:contents}.hg-sd .sd-top{grid-area:top}.hg-sd .sd h3{grid-area:h3}.hg-sd .sd-px{grid-area:px}.hg-sd .sd-risk{grid-area:risk;align-self:start}.hg-sd .sd-why{grid-area:why;font-size:13px;line-height:1.5}.hg-sd .sd-viz{grid-area:viz;gap:8px}.hg-sd .sd-chart{flex:1;min-height:120px}.hg-sd .sd-sig{grid-area:sig;grid-template-columns:repeat(4,minmax(0,1fr))}.hg-sd .sd-sig li{padding:8px 10px}.hg-sd .sd-sig small{display:none}.hg-sd .sd-sig b{font-size:17px}.hg-sd .sd-oth{display:none}.hg-sd .sd{padding:16px 18px;gap:10px}.hg-sd .sd-f{padding-top:10px}}@container (min-width:500px) and (max-width:580px){.hg-sd .sd-in{grid-template-rows:auto auto minmax(0,1fr) auto auto auto;grid-template-areas:"top top" "h3 viz" "px viz" "why why" "risk risk" "sig sig"}.hg-sd .sd-chart{min-height:100px}.hg-sd .sd-sig b{font-size:15px}.hg-sd .sd-sig span{font-size:10.5px}}@container (max-width:640px){.hg-sd .sd-f>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 0}.hg-sd .sd-f{flex-wrap:nowrap}}.scan{margin:56px 0 90px}' + _sd_css.replace('\n', ''), 1)
 open(B+"home-2026-11-12.html","w",encoding="utf-8").write(out)
 print("written",len(out))
