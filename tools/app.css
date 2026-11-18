@@ -1124,3 +1124,7 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .irl .tx small+small{margin-top:2px}
 .irg{display:grid;justify-items:end;gap:3px;flex:none}.irg b{font:800 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}.irg.u b{color:var(--up-text)}.irg.d b{color:var(--slate-500)}.irg small{font:500 11px/1 var(--font-sans);color:var(--text-tertiary)}
 .irl .tx small{white-space:normal;overflow:visible;text-overflow:clip}
+
+/* free days: total row */
+.fdl li.fdtot{margin-top:4px;padding-top:12px;border-top:1px solid var(--border-control);border-bottom:0}
+.fdl li.fdtot b{font-weight:700}.fdl li.fdtot em{font-weight:800;color:var(--up-text);white-space:nowrap}
