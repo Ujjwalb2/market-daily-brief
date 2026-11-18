@@ -643,3 +643,26 @@ section.sec{scroll-margin-top:118px}
 :root[data-theme="light"] .morning .stp .tx em{color:var(--text-secondary)}
 .mdots i.on{background:var(--text-primary)}
 .morning .stp.c-i .tx em{color:var(--link)}
+
+/* top tabs: tiles under the header that change with the bottom tab */
+.subbar{position:sticky;top:56px;z-index:19;display:flex;gap:8px;margin:0 -20px;padding:8px 20px 10px;overflow-x:auto;scrollbar-width:none;background:var(--bar-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.subbar::-webkit-scrollbar{display:none}
+.subbar button{flex:1 0 74px;display:grid;justify-items:center;align-content:center;gap:5px;height:60px;padding:0 6px;border-radius:14px;
+  background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-tertiary);font:600 12px/1 var(--font-sans);white-space:nowrap}
+.subbar button svg{width:21px;height:21px}
+.subbar button[aria-current]{background:linear-gradient(180deg,rgba(63,91,217,.32),rgba(63,91,217,.1));border-color:rgba(63,91,217,.55);color:var(--text-primary)}
+.subbar button[aria-current] svg{color:var(--link)}
+.sub-off{display:none!important}
+.scr .subbar+*{margin-top:8px}
+
+/* top tabs, our own look: one slim track, icon + label, a highlight that slides between tabs */
+.subbar{display:block;gap:0;padding:6px 20px 10px;overflow-x:auto}
+.subbar .sbt{position:relative;display:flex;min-width:100%;width:max-content;padding:3px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.subbar .ind{position:absolute;left:0;top:3px;bottom:3px;width:0;border-radius:11px;
+  background:linear-gradient(135deg,var(--indigo-500),#5B74F0);box-shadow:0 6px 18px rgba(63,91,217,.35);transition:transform .32s cubic-bezier(.3,1.3,.5,1),width .32s cubic-bezier(.3,1.3,.5,1)}
+.subbar button{position:relative;z-index:1;flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 12px;border:0;border-radius:11px;background:none;
+  color:var(--text-tertiary);font:600 13px/1 var(--font-sans);white-space:nowrap;grid-template-columns:none}
+.subbar button svg{width:16px;height:16px}
+.subbar button[aria-current]{background:none;border:0;color:#fff}
+.subbar button[aria-current] svg{color:#fff}
+@media (prefers-reduced-motion:reduce){.subbar .ind{transition:none}}
