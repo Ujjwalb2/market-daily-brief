@@ -2386,7 +2386,7 @@ function boardSheet(){var v=seasonScore(),all=BOARD.concat([['You',v]]).sort(fun
     return '<div class="tg">'+tierPill(i)+'<small>'+t[2]+'+ points</small></div><div class="list">'+ps.map(function(x){return '<div class="row'+(x[0]==='You'?' me':'')+'"><span class="tx"><b>'+esc(x[0])+'</b></span><span class="vl">'+x[1]+'</span></div>'}).join('')+'</div>'}).join('')+
     '<p class="cap">Sample names for the prototype.</p>')}
 
-function mfootHTML(){var v=seasonScore();return '<a class="mfoot" href="#you/season"><span>⭐ <b>'+v+'</b> pts</span><span>#'+myRank()+' · '+TIERS[tierOf(v)][1]+'</span><span>🎁 <b>'+freeDays()+'</b> free days</span><span class="go" aria-hidden="true">›</span></a>'}
+function mfootHTML(){var v=seasonScore();return '<a class="mfoot" href="#rewards"><span>⭐ <b>'+v+'</b> pts</span><span>#'+myRank()+' · '+TIERS[tierOf(v)][1]+'</span><span>🎁 <b>'+freeDays()+'</b> free days</span><span class="go" aria-hidden="true">›</span></a>'}
 
 
 function bodyHTML(){var v=seasonScore(),ti=tierOf(v);
