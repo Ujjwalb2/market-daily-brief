@@ -484,27 +484,28 @@ function allDone(){return mDone()===goals().length}
 function totalDays(){return HIST.total+(allDone()?1:0)}
 function longest(){return Math.max(HIST.longest,streakNow())}
 function freezes(){return Math.min(2,HIST.freezes+(streakNow()>=7&&D.streak.n<7?1:0))}
-var MILES=[[3,'Getting started','First badge'],[7,'Week regular','+1 streak freeze and a weekly report card'],[21,'Habit formed','+3 free days and a group session with the RA'],[50,'Committed','+7 free days and advanced backtest templates'],[100,'Market habit','+15 free days and a 1-on-1 call with a SEBI-registered RA']];
+var MILES=[[3,'Getting started','First badge'],[7,'Week regular','+1 streak freeze'],[21,'Habit formed','+2 free days and a group session with the RA'],[50,'Committed','+3 free days and advanced backtest templates'],[100,'Market habit','+5 free days and a 1-on-1 call with a SEBI-registered RA']];
 /* id, icon, name, how to earn, progress() -> [have, need], free days it adds */
 var BADGES=[
   ['start','🌱','Getting started','Finish 3 market mornings',function(){return [totalDays(),3]},0],
   ['week','📅','Week regular','Reach a 7-day streak',function(){return [longest(),7]},0],
   ['habit','🧠','Habit formed','Finish 21 market mornings',function(){return [totalDays(),21]},0],
   ['comeback','💪','Comeback','Come back after a break and finish 5 mornings in a row',function(){return [streakNow(),5]},0],
-  ['review','📝','Reviewer','Review every trade for a whole week',function(){return [1,1]},1],
-  ['early','🌅','Early bird','Hear the brief before 9:15 on 10 days',function(){return [10,10]},1],
+  ['review','📝','Reviewer','Review every trade for a whole week',function(){return [1,1]},0],
+  ['early','🌅','Early bird','Hear the brief before 9:15 on 10 days',function(){return [10,10]},0],
   ['plan','🎯','Plan keeper','Follow all 5 rules on 10 reviewed trades',function(){return [7+planKept(),10]},1],
-  ['learner','📚','Learner','Learn all 3 ideas on 10 days',function(){return [9+(learned().length>=LEARN.length?1:0),10]},1],
+  ['learner','📚','Learner','Learn all 3 ideas on 10 days',function(){return [9+(learned().length>=LEARN.length?1:0),10]},0],
   ['stop','🛡️','Stop-loss always','Set a stop-loss before entry on every trade for a week',function(){return [3,5]},1],
   ['fifty','⭐','Committed','Finish 50 market mornings',function(){return [totalDays(),50]},0],
   ['hund','🏆','Market habit','Finish 100 market mornings',function(){return [totalDays(),100]},0],
   ['hof','👑','Hall of Fame','Get featured in a Monday shoutout',function(){return [0,1]},0]];
 function bp(b){var p=b[4]();return [Math.min(p[0],p[1]),p[1]]}
 function bGot(b){var p=bp(b);return p[0]>=p[1]}
-function freeLog(){var l=[['Full weeks of mornings',HIST.weeks,HIST.weeks+' weeks × 1 day'],['21-day milestone',3,'Habit formed']];
-  if(totalDays()>=50)l.push(['50-day milestone',7,'Committed']);
+function freeLog(){var fw=Math.floor(HIST.weeks/2),l=[];if(fw)l.push(['Full weeks of mornings',fw,HIST.weeks+' full weeks · 1 day per 2 weeks']);if(totalDays()>=21)l.push(['21-day milestone',2,'Habit formed']);
+  if(totalDays()>=50)l.push(['50-day milestone',3,'Committed']);if(totalDays()>=100)l.push(['100-day milestone',5,'Market habit']);
   BADGES.forEach(function(b){if(b[5]&&bGot(b))l.push([b[2]+' badge',b[5],'Badge reward'])});return l}
-function freeDays(){return Math.min(30,freeLog().reduce(function(a,x){return a+x[1]},0))}
+var FD_MAX=7;
+function freeDays(){return Math.min(FD_MAX,freeLog().reduce(function(a,x){return a+x[1]},0))}
 function seasonLive(){var p=[],r=reviewsOk().length,l=learned().length,k=planKept();
   if(allDone())p.push(['Full morning today',10]);if(r)p.push(['Trades reviewed × '+r,5*r]);if(l)p.push(['Ideas learned × '+l,5*l]);if(k)p.push(['Trades on plan × '+k,5*k]);return p}
 function liveSum(){return seasonLive().reduce(function(a,x){return a+x[1]},0)}
@@ -519,12 +520,12 @@ var ROT=['Most consistent','Most improved','Best reviewer','Best learner'];
 var HOF=[['Aarav S.','Most consistent','26–30 Oct'],['Kabir M.','Best reviewer','19–23 Oct'],['Ananya D.','Most improved','12–16 Oct'],['Vikram T.','Best learner','5–9 Oct']];
 function tierPill(i){return '<span class="tier '+TIERS[i][0]+'"><i aria-hidden="true"></i>'+TIERS[i][1]+'</span>'}
 
-function freeHTML(){var n=freeDays(),stops=[[7,'1 week'],[15,'Half month'],[30,'Month free']],nx=stops.filter(function(s){return n<s[0]})[0];
+function freeHTML(){var n=freeDays(),stops=[[2,'2 days'],[5,'5 days'],[7,'Week free']],nx=stops.filter(function(s){return n<s[0]})[0];
   return '<section class="sec" id="rewards"><div class="h2"><h2>Free days</h2><span class="sp"></span><small>Renews 2 Dec</small></div><div class="card fd">'+
-    '<div class="fdh"><b>'+n+'</b><span>free days of AlphaPad earned<br><span class="muted">'+(nx?(nx[0]-n)+' more to reach '+nx[1].toLowerCase():'A full month free on your next renewal')+'</span></span></div>'+
-    '<div class="fdt" role="img" aria-label="'+n+' of 30 free days"><div class="fdbar"><i style="width:'+(n/30*100).toFixed(1)+'%"></i></div>'+stops.map(function(s){return '<span class="stop'+(n>=s[0]?' got':'')+'" style="left:'+(s[0]/30*100).toFixed(1)+'%"><i></i><b>'+s[0]+'</b><small>'+s[1]+'</small></span>'}).join('')+'</div>'+
+    '<div class="fdh"><b>'+n+'</b><span>free days of AlphaPad earned<br><span class="muted">'+(nx?(nx[0]-n)+' more to reach '+nx[1].toLowerCase():'A full week free on your next renewal')+'</span></span></div>'+
+    '<div class="fdt" role="img" aria-label="'+n+' of '+FD_MAX+' free days"><div class="fdbar"><i style="width:'+(n/FD_MAX*100).toFixed(1)+'%"></i></div>'+stops.map(function(s){return '<span class="stop'+(n>=s[0]?' got':'')+'" style="left:'+(s[0]/FD_MAX*100).toFixed(1)+'%"><i></i><b>'+s[0]+'</b><small>'+s[1]+'</small></span>'}).join('')+'</div>'+
     '<ul class="fdl">'+freeLog().map(function(x){return '<li><span><b>'+esc(x[0])+'</b><small>'+esc(x[2])+'</small></span><em>+'+x[1]+' day'+(x[1]>1?'s':'')+'</em></li>'}).join('')+'</ul>'+
-    '<p class="cap">Taken off your next renewal automatically. Up to 30 days per renewal; days expire after 12 months and only extend a paid plan.</p></div></section>'}
+    '<p class="cap">Taken off your next renewal automatically. Up to 7 days per renewal; days expire after 12 months and only extend a paid plan.</p></div></section>'}
 
 function streakHTML(){var S=D.streak,f=freezes(),t=totalDays(),nm=MILES.filter(function(m){return t<m[0]})[0];
   return '<section class="sec" id="streak"><div class="h2"><h2>Streak</h2><span class="sp"></span><small>Market days only</small></div><div class="card stk"><div class="n"><b>🔥 '+streakNow()+'</b><span>market days in a row<br><span class="muted">Longest '+longest()+' · weekends and holidays never count</span></span></div>'+
