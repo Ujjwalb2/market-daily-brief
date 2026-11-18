@@ -745,7 +745,7 @@ var STEP={
   watch:['Check the market','Indices, F&O levels, filings',function(){return !!mstate().watch},'#markets']};
 function mDone(){return goals().filter(function(k){return STEP[k][2]()}).length}
 function streakNow(){return D.streak.n+(mDone()===goals().length?1:0)}
-function morningHTML(){var g=goals(),d=mDone(),all=d===g.length,pct=d/g.length*100;
+function morningHTML(){var g=goals(),d=mDone(),all=d===g.length,pct=d/g.length*100;store.set('ap-day-done-2026-11-12',all?1:0);
   return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><div class="mring" style="--p:'+pct.toFixed(0)+'" aria-hidden="true"><b>'+d+'/'+g.length+'</b></div><div><h2 id="mH">'+(all?'Morning done 🔥 '+streakNow():'Your morning')+'</h2><small>'+(all?'+10 season points. See you tomorrow at 7:30.':(g.length-d)+' step'+(g.length-d>1?'s':'')+' left to keep your '+D.streak.n+'-day streak')+'</small></div></div>'+
     '<ol class="steps">'+g.map(function(k){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1];return '<li><a class="stp'+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><i aria-hidden="true">'+(ok?'✓':'')+'</i><span class="tx"><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="go" aria-hidden="true">'+(ok?'':'›')+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol>'+mfootHTML()+'</section>'}
 function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}

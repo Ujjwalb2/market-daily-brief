@@ -79,7 +79,8 @@ def page(home_html):
 
 
 def write(home_html):
-    out = page(home_html)
+    import rewards_desk
+    out = rewards_desk.inject(page(home_html))
     open(os.path.join(ROOT, 'calm.html'), 'w', encoding='utf-8').write(out)
     return len(out)
 
