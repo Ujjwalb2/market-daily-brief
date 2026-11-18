@@ -863,3 +863,10 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 #s-today .tick.tkf{position:sticky;top:56px;z-index:20;border-bottom:1px solid var(--border-decorative)}
 #s-today .subbar{top:94px}
 .scr .subbar+*{margin-top:14px}
+
+/* Spotlight: cards stacked, you scroll down through them */
+.spw{margin:0}
+.sp-tr{display:grid;gap:12px;overflow:visible;padding:0;scroll-snap-type:none}
+.sl{flex:none;width:auto}
+.spw .dots{display:none}
+.sl.flash{box-shadow:0 0 0 2px var(--action-primary);transition:box-shadow .3s}

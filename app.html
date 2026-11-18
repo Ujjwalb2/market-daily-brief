@@ -873,6 +873,13 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 #s-today .tick.tkf{position:sticky;top:56px;z-index:20;border-bottom:1px solid var(--border-decorative)}
 #s-today .subbar{top:94px}
 .scr .subbar+*{margin-top:14px}
+
+/* Spotlight: cards stacked, you scroll down through them */
+.spw{margin:0}
+.sp-tr{display:grid;gap:12px;overflow:visible;padding:0;scroll-snap-type:none}
+.sl{flex:none;width:auto}
+.spw .dots{display:none}
+.sl.flash{box-shadow:0 0 0 2px var(--action-primary);transition:box-shadow .3s}
 </style>
 </head>
 <body>
@@ -1124,7 +1131,7 @@ function forYou(){return '<div class="h2"><h2>For you</h2><small id="fyName">'+p
 /* Home previews: two highlights and two of your things, each with a way to see all */
 function homePreview(){var SL=spotSlides().slice(0,2),F=fyRows().slice(0,2);
   return '<section class="pv"><div class="pvh"><b>Market highlights</b><button type="button" class="l" data-sub-go="spot">See all '+spotSlides().length+' →</button></div><div class="card" style="padding:0 16px"><div class="list">'+
-    SL.map(function(x){return '<button type="button" class="row" data-sub-go="spot"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span class="tx"><b>'+x.t+(x.v?' <small class="muted" style="display:inline">'+x.v+'</small>':'')+'</b><small>'+x.k.replace(/<[^>]+>/g,'')+'</small></span>'+(x.d?'<span class="vl u">'+x.d+'</span>':'')+'<span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div></section>'+
+    SL.map(function(x,i){return '<button type="button" class="row" data-sub-go="spot" data-spot="'+i+'"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span class="tx"><b>'+x.t+(x.v?' <small class="muted" style="display:inline">'+x.v+'</small>':'')+'</b><small>'+x.k.replace(/<[^>]+>/g,'')+'</small></span>'+(x.d?'<span class="vl u">'+x.d+'</span>':'')+'<span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div></section>'+
     '<section class="pv"><div class="pvh"><b>For you</b><button type="button" class="l" data-sub-go="foryou">See all →</button></div><div class="card" style="padding:0 16px"><div class="list">'+F.map(fyRow).join('')+'</div></div></section>'}
 
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
@@ -1134,8 +1141,8 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     morningHTML()+
 
     (locked()?profitHTML('home'):'')+homePreview()+
-    '<div class="h2"><h2>Spotlight</h2><small id="spC">1 of '+SL.length+'</small></div>'+
-    '<div class="spw"><div class="sp-tr" id="spTr" aria-roledescription="carousel" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" aria-roledescription="slide" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
+    '<div class="h2"><h2>Spotlight</h2><small id="spC">'+SL.length+' today</small></div>'+
+    '<div class="spw"><div class="sp-tr" id="spTr" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" id="spot-'+i+'" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
     '<p class="note">Analysis, not investment advice. Prices are from the 11 Nov close.</p>';
   paintAudio();
@@ -1496,7 +1503,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#you/rewards" data-close>Free days, badges and season</a>')}
 document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-sub-go]');if(!a)return;var ds=a.dataset;
-  if(ds.subGo){var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
+  if(ds.subGo){var spot=a.getAttribute('data-spot');if(spot!=null)setTimeout(function(){var el=document.getElementById('spot-'+spot);if(el){var y=el.getBoundingClientRect().top+scrollY-150;window.scrollTo({top:y,behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1200)}},60);var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.tile){closeSheet();return tileSheet(ds.tile)}
   if(a.hasAttribute('data-back')){e.preventDefault();location.hash=prevH==='#rewards'?'#today':prevH;return}
   if(ds.badge)return badgeSheet(ds.badge);
@@ -1566,11 +1573,6 @@ function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;v
     ind.style.transform='translateX('+to.x+'px)';ind.style.width=to.w+'px';subInd[t]=to;
     bar.scrollLeft=Math.max(0,on.offsetLeft-bar.offsetWidth/2+on.offsetWidth/2)}
   var edge=function(){bar.classList.toggle('more-r',bar.scrollLeft+bar.clientWidth<bar.scrollWidth-6);bar.classList.toggle('more-l',bar.scrollLeft>6)};edge();bar.addEventListener('scroll',edge,{passive:true})
-  var up=$('.upnext',scr);if(up)up.remove();
-  if(!all&&live.length>1){var ix=live.findIndex(function(x){return x[0]===k}),nx=live[(ix+1)%live.length],o=document.createElement('section');o.className='upnext';o.dataset.sub='*';
-    o.innerHTML='<div class="eb">'+(ix+1<live.length?'Up next':'Back to the start')+'</div><button type="button" class="unx" data-sub-go="'+nx[0]+'"><span class="ic i">'+I(ICO[nx[2]]||ICO.today,2)+'</span><span class="tx"><b>'+nx[1]+'</b><small>'+SUBDESC[nx[0]]+'</small></span><span class="go" aria-hidden="true">→</span></button>'+
-      '<div class="unl">'+live.filter(function(x){return x[0]!==k&&x[0]!==nx[0]}).map(function(x){return '<button type="button" data-sub-go="'+x[0]+'">'+I(ICO[x[2]]||ICO.today,2)+x[1]+'</button>'}).join('')+'</div><p class="swh">Swipe left or right to switch</p>';
-    var note=kids.filter(function(c){return c.classList.contains('note')}).pop();if(note)scr.insertBefore(o,note);else scr.appendChild(o)}
   if(t==='ideas'&&k==='calls')mark('calls')}
 /* swipe left or right on a screen to move between its top tabs */
 (function(){var x0=0,y0=0,t0=0,ok=false;
