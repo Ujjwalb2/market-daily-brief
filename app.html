@@ -834,6 +834,32 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .hello .tick{margin-top:8px;height:34px}
 #s-today .morning{margin-top:12px}
 .subbar{padding-bottom:6px}
+
+/* market card: still, full width, three indices side by side */
+.tick.tk3{display:flex;align-items:stretch;gap:0;height:auto;padding:10px 4px 10px 12px}
+.tk3 .tkc{flex:1;min-width:0;display:grid;gap:3px;padding-right:8px}
+.tk3 .tkc+.tkc{padding-left:12px;border-left:1px solid var(--border-decorative)}
+.tk3 small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.tk3 b{font:700 15px/1.15 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.tk3 em{font:600 12px/1 var(--font-sans);font-style:normal}
+.tk3 .tcv{align-self:center;flex:none;width:22px;font-size:15px}
+/* Home previews */
+.pv{margin-top:22px}
+.pvh{display:flex;align-items:baseline;margin-bottom:10px}.pvh b{flex:1;font:600 16px/1.2 var(--font-sans)}
+.pvh .l{font:600 13px/1 var(--font-sans);color:var(--link)}
+.pv .row{width:100%;text-align:left;color:var(--text-primary)}
+.pv .row:last-child,#fyRows .row:last-child{border-bottom:0}
+
+/* top tabs use the full width of the phone */
+.subbar{padding:6px 8px 6px}
+.subbar .sbt{border-radius:14px}
+
+/* market ticker: flows, edge to edge across the phone (no card sides) */
+.tick.tkf{display:block;width:auto;height:36px;margin:10px -20px 0;padding:0;border-radius:0;border-left:0;border-right:0;background:var(--surface-raised)}
+.tkf .tkw{display:block;height:100%;-webkit-mask-image:none;mask-image:none}
+.tkf .tkt{height:100%;padding-left:20px;gap:12px}
+.tick.tkf{width:calc(100% + 40px);max-width:none;overflow:hidden}.tkf .tkw{width:100%;overflow:hidden}
+.tkf .tkt{height:36px;align-items:center;vertical-align:top}.tick.tkf{height:38px}
 </style>
 </head>
 <body>
@@ -1068,33 +1094,33 @@ function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createEl
 
 /* ---------------- TODAY ---------------- */
 var CL=D.closed||[],CLW=CL.filter(function(c){return c.how==='target'}).length;
-function forYou(){var p=profile(),key=(p&&p.preset)||'basic',S=D.sotd,lrn=learned(),nx=nextEv(),t=todo().length,c=CALLS[0];
-  var R={
-    sd:['t',ICO.sd,'Stock of the day',S.s+' · fresh 52-week high','+'+S.chg.toFixed(2)+'%','u','#ideas/sd'],
-    calls:['i',ICO.tc,'Trade calls',CALLS.length+' active · '+CLW+' of '+CL.length+' recent hit target','','','#ideas/calls'],
-    fo:['a',ICO.fo,'Nifty F&O levels','S '+D.fo.k[0][1]+' · Max pain '+D.fo.k[1][1]+' · R '+D.fo.k[2][1],'','','#markets/fo'],
-    oib:['i',ICO.oi,'OI buildup','Long buildup '+OIB.lb.n+' · short buildup '+OIB.sb.n,'','','#markets/movers'],
-    journal:['a',ICO.journal,'Journal',t?t+' trade'+(t>1?'s':'')+' to review':'All trades reviewed',inr(stats(ALL.filter(function(x){return x.d.slice(0,7)===MONTHS().slice(-1)[0]})).net,true),'','#journal'],
-    scan:['a',ICO.scan,'Market scan','Volume, delivery, 20-day highs and lows','','','#markets/scan'],
-    movers:['t',ICO.mv,'Movers',MVS[0].n+' +'+MVS[0].v.toFixed(2)+'%','','','#markets/movers'],
-    filings:['b',ICO.file,'What’s happening',D.filings.reduce(function(s,g){return s+g.items.length},0)+' company filings','','','#markets/filings'],
-    baskets:['t',ICO.bk,'Baskets',D.baskets[0].n,D.baskets[0].r,'u','#ideas/baskets'],
-    indices:['t',ICO.markets,'Markets','Nifty 50 and 8 more indices','','','#markets/indices'],
-    learn:['i',ICO.learn,'Learn today',lrn.length>=LEARN.length?'All 3 ideas learned':(LEARN.length-lrn.length)+' ideas left today','','','#you/learn'],
-    cal:['a',ICO.cal,'Coming up',nx?nx.t+' '+nx.b:'Market day done','','','#markets/cal']};
-  var BYP={basic:['sd','calls','fo','indices'],options:['calls','fo','oib','sd'],picker:['sd','scan','movers','filings'],investor:['baskets','indices','filings','sd'],learner:['learn','sd','cal','indices']};
-  var rows=BYP[key].filter(function(k){return !(k==='calls'&&goals().indexOf('calls')>=0&&key!=='options')});
-  if(goals().indexOf('journal')>=0&&rows.indexOf('journal')<0)rows.splice(1,0,'journal');
-  rows=rows.slice(0,4);
-  return '<div class="h2"><h2>For you</h2><small id="fyName">'+presetName()+'</small><span class="sp"></span><button type="button" class="l" data-act="setup">Change</button></div>'+
-    '<div class="card" style="padding:0 16px"><div class="list" id="fyRows">'+rows.map(function(k){var r=R[k];return '<a class="row" href="'+r[6]+'"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></a>'}).join('')+'</div></div>'}
+function fyRows(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],st=stats(ALL.filter(function(x){return x.d.slice(0,7)===mo})),v=seasonScore(),nx=nextEv();
+  var R=[
+    ['a',ICO.journal,'Your trading this month',st.n+' trades · '+st.wr.toFixed(0)+'% win rate',inr(st.net,true),st.net>=0?'u':'','#journal/overview'],
+    locked()?['a',ICO.tc,'Your live calls',CALLS.length+' posted today · locked','Unlock','','@pro']:['i',ICO.tc,'Your live calls',CALLS.length+' active · '+CLW+' of '+CL.length+' recent hit target','','','#ideas/calls'],
+    ['t',ICO.star,'Your rewards',freeDays()+' free days · '+TIERS[tierOf(v)][1]+' · #'+myRank(),v+' pts','','#rewards']];
+  var X={options:['a',ICO.fo,'Your expiry: Nifty '+D.fo.exp.replace(/^Expiry\s*/,''),'Support '+D.fo.k[0][1]+' · max pain '+D.fo.k[1][1]+' · resistance '+D.fo.k[2][1],'','','#markets/fo'],
+    investor:['t',ICO.bk,'Your baskets',D.baskets[0].n,D.baskets[0].r,'u','#ideas/baskets'],
+    learner:['i',ICO.learn,'Your learning',learned().length+' of '+LEARN.length+' ideas today','','','#you/learn'],
+    picker:['t',ICO.mv,'Your watch: top mover',MVS[0].n+' +'+MVS[0].v.toFixed(2)+'%','','','#markets/movers'],
+    basic:['a',ICO.cal,'Coming up for you',nx?nx.t+' '+nx.b:'Market day done','','','#markets/cal']}[key];
+  if(X)R.push(X);return R}
+function fyRow(r){var pro=r[6]==='@pro';return '<'+(pro?'button type="button" data-act="pro"':'a href="'+r[6]+'"')+' class="row"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></'+(pro?'button':'a')+'>'}
+function forYou(){return '<div class="h2"><h2>For you</h2><small id="fyName">'+presetName()+'</small><span class="sp"></span><button type="button" class="l" data-act="setup">Change</button></div>'+
+    '<div class="card" style="padding:0 16px"><div class="list" id="fyRows">'+fyRows().map(fyRow).join('')+'</div></div>'}
+/* Home previews: two highlights and two of your things, each with a way to see all */
+function homePreview(){var SL=spotSlides().slice(0,2),F=fyRows().slice(0,2);
+  return '<section class="pv"><div class="pvh"><b>Market highlights</b><button type="button" class="l" data-sub-go="spot">See all '+spotSlides().length+' →</button></div><div class="card" style="padding:0 16px"><div class="list">'+
+    SL.map(function(x){return '<button type="button" class="row" data-sub-go="spot"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span class="tx"><b>'+x.t+(x.v?' <small class="muted" style="display:inline">'+x.v+'</small>':'')+'</b><small>'+x.k.replace(/<[^>]+>/g,'')+'</small></span>'+(x.d?'<span class="vl u">'+x.d+'</span>':'')+'<span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div></section>'+
+    '<section class="pv"><div class="pvh"><b>For you</b><button type="button" class="l" data-sub-go="foryou">See all →</button></div><div class="card" style="padding:0 16px"><div class="list">'+F.map(fyRow).join('')+'</div></div></section>'}
+
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+
     '<div class="hello"><h1>'+hi+', Trader</h1>'+tickHTML()+'</div>'+
     morningHTML()+
 
-    (locked()?profitHTML('home'):'')+
+    (locked()?profitHTML('home'):'')+homePreview()+
     '<div class="h2"><h2>Spotlight</h2><small id="spC">1 of '+SL.length+'</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-roledescription="carousel" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" aria-roledescription="slide" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
@@ -1110,7 +1136,7 @@ var SENSEX={n:'Sensex',v:81879.40,pts:'+773.00',pct:'+0.95%',up:true};
 function ixShort(n){return n==='Nifty Bank'?'Bank Nifty':n}
 function tickHTML(){var a=IDX.filter(function(x){return x.n==='Nifty 50'}).concat([SENSEX],IDX.filter(function(x){return /^(Nifty Bank|Midcap 100|India VIX)$/.test(x.n)}));
   var one=a.map(function(x){return '<span>'+(x.n==='Nifty 50'?'Nifty':ixShort(x.n))+' <b>'+num(x.d?x.d[x.d.length-1][1]:x.v,2)+'</b> <em class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pct+'</em></span><i></i>'}).join('');
-  return '<button type="button" class="tick" data-act="ovw" aria-label="Market overview: '+a.map(function(x){return ixShort(x.n)+' '+x.pct}).join(', ')+'"><span class="tkw" aria-hidden="true"><span class="tkt">'+one+one+'</span></span><span class="tcv" aria-hidden="true">⌄</span></button>'}
+  return '<button type="button" class="tick tkf" data-act="ovw" aria-label="Market overview: '+a.map(function(x){return ixShort(x.n)+' '+x.pct}).join(', ')+'"><span class="tkw" aria-hidden="true"><span class="tkt">'+one+one+'</span></span></button>'}
 function ovSpark(x){var v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,W=150,H=40;
   var pts=v.map(function(y,i){return (i/(v.length-1)*W).toFixed(1)+','+(H-3-(y-lo)/r*(H-6)).toFixed(1)}).join(' ');
   var c=x.vix?'var(--amber)':x.up?'var(--teal)':'var(--slate-500)';
@@ -1507,7 +1533,7 @@ var SUBDESC={home:'Everything for today in one place',brief:'Listen or read in f
   sd:'Today’s stock of the day and why',calls:'Active calls from the desk',record:'Every closed call, wins and losses',baskets:'Ready-made stock baskets',
   review:'Tag today’s trades in a minute',overview:'P&L, win rate and calendar',insights:'Patterns and your plan score',trades:'Every trade, one by one',
   profile:'Your streak, rewards and badges',learn:'Three short ideas a day',tools:'Backtesting, screener and more',settings:'Theme and your screen'};
-var SHOWALL={today:'home'},subSel={};
+var SHOWALL={},subSel={};
 function subStart(c,m){if(m.slice(0,3)==='h2:')return c.classList.contains('h2')&&(c.textContent||'').trim().indexOf(m.slice(3))===0;return c.matches(m)}
 var subInd={},subDir='';
 function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;var old=$('.subbar',scr);if(old)old.remove();

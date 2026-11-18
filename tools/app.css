@@ -824,3 +824,29 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .hello .tick{margin-top:8px;height:34px}
 #s-today .morning{margin-top:12px}
 .subbar{padding-bottom:6px}
+
+/* market card: still, full width, three indices side by side */
+.tick.tk3{display:flex;align-items:stretch;gap:0;height:auto;padding:10px 4px 10px 12px}
+.tk3 .tkc{flex:1;min-width:0;display:grid;gap:3px;padding-right:8px}
+.tk3 .tkc+.tkc{padding-left:12px;border-left:1px solid var(--border-decorative)}
+.tk3 small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.tk3 b{font:700 15px/1.15 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.tk3 em{font:600 12px/1 var(--font-sans);font-style:normal}
+.tk3 .tcv{align-self:center;flex:none;width:22px;font-size:15px}
+/* Home previews */
+.pv{margin-top:22px}
+.pvh{display:flex;align-items:baseline;margin-bottom:10px}.pvh b{flex:1;font:600 16px/1.2 var(--font-sans)}
+.pvh .l{font:600 13px/1 var(--font-sans);color:var(--link)}
+.pv .row{width:100%;text-align:left;color:var(--text-primary)}
+.pv .row:last-child,#fyRows .row:last-child{border-bottom:0}
+
+/* top tabs use the full width of the phone */
+.subbar{padding:6px 8px 6px}
+.subbar .sbt{border-radius:14px}
+
+/* market ticker: flows, edge to edge across the phone (no card sides) */
+.tick.tkf{display:block;width:auto;height:36px;margin:10px -20px 0;padding:0;border-radius:0;border-left:0;border-right:0;background:var(--surface-raised)}
+.tkf .tkw{display:block;height:100%;-webkit-mask-image:none;mask-image:none}
+.tkf .tkt{height:100%;padding-left:20px;gap:12px}
+.tick.tkf{width:calc(100% + 40px);max-width:none;overflow:hidden}.tkf .tkw{width:100%;overflow:hidden}
+.tkf .tkt{height:36px;align-items:center;vertical-align:top}.tick.tkf{height:38px}
