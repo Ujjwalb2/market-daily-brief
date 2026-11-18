@@ -855,3 +855,11 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .tick.tkf{margin:0 -20px;border-top:0}
 .tkf .tkw{-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .hello{padding-top:6px}
+
+/* ticker + top tabs: one band, edge to edge, pinned together under the top bar while you scroll */
+.subbar{padding:0;background:var(--surface-raised)}
+.subbar .sbt{border-radius:0;border-left:0;border-right:0;border-top:0;padding:4px 8px;background:var(--surface-raised)}
+.subbar .ind{top:4px;bottom:4px}
+#s-today .tick.tkf{position:sticky;top:56px;z-index:20;border-bottom:1px solid var(--border-decorative)}
+#s-today .subbar{top:94px}
+.scr .subbar+*{margin-top:14px}
