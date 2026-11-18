@@ -1029,3 +1029,14 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .ippg{padding-bottom:24px}
 .ipintro{margin:4px 0 0}
 #s-ipos .ipr-h{margin-top:6px}
+
+/* IPO card footer: price band, allotment, listing */
+.ipf2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr) 14px;align-items:end;gap:8px;padding-top:10px;border-top:1px solid var(--border-decorative)}
+.ipf2>span:not(.go){display:grid;gap:4px;min-width:0}
+.ipf2 small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.ipf2 b{font:700 14px/1.1 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ipf2 .go{color:var(--text-tertiary);font-size:18px;line-height:1;justify-self:end}
+
+/* highlight + IPO cards: same height, but grow on narrow phones rather than cut text */
+.hlc,.ipc{height:auto;min-height:171px}
+#s-markets #ipos .ipintro{margin-top:14px}
