@@ -1045,3 +1045,14 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .flseg button small{font:600 11.5px/1 var(--font-sans);opacity:.7;margin-left:2px}
 .flsub{display:flex;align-items:center;gap:8px;margin:14px 0 2px;font:600 12px/1.2 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:var(--text-tertiary)}
 .flsub i{width:8px;height:8px;border-radius:50%;background:var(--slate-500)}.flsub i.g{background:var(--teal)}.flsub i.b{background:var(--blue)}.flsub i.w{background:var(--amber)}
+
+#filings .flseg+.list.fl{margin-top:10px}
+
+/* Market scan: one-row switch like Movers */
+.scseg{margin-top:6px}.scseg button{min-width:0;padding:0 4px;white-space:nowrap;font-size:12.5px}
+
+/* News switch: equal columns, short labels, count as a small badge */
+.flseg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.flseg button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:0 6px;white-space:nowrap}
+.flseg button small{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9999px;background:var(--surface-glass);font:700 11px/1 var(--font-sans);opacity:1;margin:0;color:var(--text-tertiary)}
+.flseg button[aria-pressed=true] small{background:var(--fin-positive-soft);color:var(--up-text)}
