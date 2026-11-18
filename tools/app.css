@@ -1094,5 +1094,5 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .bkb .go{color:var(--text-tertiary);font-size:20px}
 
 /* News filings: same box height on every switch; longer lists scroll inside it */
-#filings .list.fl{height:312px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:2px}
+#filings .list.fl{height:252px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:2px}
 #filings .list.fl.more{-webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(180deg,#000 calc(100% - 28px),transparent)}
