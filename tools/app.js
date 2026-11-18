@@ -209,8 +209,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
   s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+
     '<div class="hello"><h1>'+hi+', Trader</h1>'+tickHTML()+'</div>'+
     morningHTML()+
-    '<section class="brief card" aria-labelledby="tH"><div class="eb">Today’s brief · '+mmss(D.audio.dur)+'</div><a class="bl" href="#markets/filings"><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+'<span class="bln">Today’s news <i aria-hidden="true">→</i></span></a>'+
-      '</section>'+
+
     (locked()?profitHTML('home'):'')+
     '<div class="h2"><h2>Spotlight</h2><small id="spC">1 of '+SL.length+'</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-roledescription="carousel" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" aria-roledescription="slide" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
@@ -614,7 +613,7 @@ var armed=0;document.addEventListener('click',function(e){var b=e.target.closest
 /* ---------------- top tabs: they change with the bottom tab and show one part of the screen at a time ----------------
    Each entry: key, label, icon, and where that part starts on the screen ('h2:Title' = the heading with that title). */
 var SUBS={
-  today:[['home','Home','home','.hello'],['brief','Brief','brief','section.brief'],['spot','Spotlight','star','h2:Spotlight'],['foryou','For you','you','h2:For you']],
+  today:[['home','Home','home','.hello'],['spot','Spotlight','star','h2:Spotlight'],['foryou','For you','you','h2:For you']],
   markets:[['indices','Indices','markets','#indices'],['movers','Movers','mv','#movers'],['filings','News','file','#filings'],['cal','Calendar','cal','#cal']],
   ideas:[['sd','Pick','sd','#sd'],['calls','Calls','tc','#calls'],['record','Record','chart','#record'],['baskets','Baskets','bk','#baskets']],
   journal:[['review','Review','inbox','#review'],['overview','Overview','chart','.mnav'],['insights','Insights','bulb','h2:Insights'],['trades','Trades','list','h2:Trades']],
