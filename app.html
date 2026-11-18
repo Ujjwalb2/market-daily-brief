@@ -1189,6 +1189,18 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 
 /* Learn: cards stack and scroll down the page */
 .lnt{display:grid;gap:12px;margin-top:12px}
+
+/* Journal: slim to-review row at the top of Overview */
+.jrv{display:flex;align-items:center;gap:12px;width:100%;margin-top:14px;padding:12px 14px;border-radius:16px;text-align:left;color:var(--text-primary);
+  background:linear-gradient(100deg,rgba(240,160,75,.16),rgba(240,160,75,.04) 70%),var(--surface-raised);border:1px solid rgba(240,160,75,.4)}
+.jrv .ic{width:38px;height:38px;flex:none;border-radius:11px;background:linear-gradient(145deg,rgba(240,160,75,.32),rgba(240,160,75,.12));border:1px solid rgba(240,160,75,.4)}
+.jrv .ic svg{width:19px;height:19px}
+.jrv .tx{flex:1;min-width:0;display:grid;gap:3px}.jrv b{font:700 15px/1.2 var(--font-sans)}.jrv small{font:500 12.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.jrv .jrn{flex:none;display:grid;place-items:center;min-width:26px;height:26px;padding:0 7px;border-radius:9999px;background:var(--amber);color:var(--navy-900);font:800 13px/1 var(--font-sans)}
+.jrv .go{color:var(--text-tertiary);font-size:20px}
+.jrv.ok{background:var(--surface-raised);border-color:rgba(0,201,154,.3)}.jrv.ok .ic{display:grid;place-items:center;background:var(--fin-positive-soft);border-color:rgba(0,201,154,.35);color:var(--up-text);font-weight:800}
+.jrv+.mnav{margin-top:14px}
+.jrl .row{width:100%;text-align:left;color:var(--text-primary)}.jrl .row:last-child{border-bottom:0}
 </style>
 </head>
 <body>
@@ -1301,7 +1313,7 @@ function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=
   var dir=t===lastTab?(pg&&sec!==lastSec?'r':''):(pg?'up':(PAGES.indexOf(lastTab)>=0?'dn':(ni>oi?'r':'l')));lastSec=sec;
   $$('.scr').forEach(function(s){var on=s.id==='s-'+t;s.classList.toggle('on',on);s.classList.remove('sl-r','sl-l','sl-up','sl-dn');if(on&&dir){void s.offsetWidth;s.classList.add('sl-'+dir)}});lastTab=t;$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   if(t==='markets')mark('watch');if(t==='ideas'&&(sec==='calls'||!sec))mark('calls');
-  setTimeout(paintAudio,0);subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(t==='markets')flFade();if(t==='ideas'&&sec==='record')setTimeout(recSheet,60);if(sec&&(!SUBS[t]||!SUBS[t].some(function(x){return x[0]===sec}))){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
+  setTimeout(paintAudio,0);subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(t==='markets')flFade();if(t==='journal'&&sec==='review')setTimeout(jRevSheet,80);if(t==='ideas'&&sec==='record')setTimeout(recSheet,60);if(sec&&(!SUBS[t]||!SUBS[t].some(function(x){return x[0]===sec}))){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
 var PAGES=['rewards','ipos'],backH='',lastH='',lastSec;
 function go(h){if(location.hash==='#'+h)route();else location.hash=h}
 addEventListener('hashchange',route);
@@ -1793,8 +1805,8 @@ function rJournal(){var s=$('#s-journal'),ms=MONTHS(),mi=ms.indexOf(jMonth);if(m
   var tr=ALL.filter(function(t){return t.d.slice(0,7)===jMonth}),st=stats(tr),td=todo(),ins=insights(tr),mist={};tr.forEach(function(t){(t.mistakes||[]).forEach(function(k){mist[k]=(mist[k]||0)+1})});
   var mk=Object.keys(mist).sort(function(a,b){return mist[b]-mist[a]}),mmx=mk.length?mist[mk[0]]:1;
   s.innerHTML=top('Journal','<span class="tag">Sample</span>')+
-    (td.length?'<div class="inbox" id="review"><div class="hd"><span class="ic a">'+I('<path d="M4 13h4l2 3h4l2-3h4"/><path d="M5 5h14l1 8v6H4v-6z"/>')+'</span><div>'+td.length+' trade'+(td.length>1?'s':'')+' from today to review<small>Fetched from your broker. Add the setup and plan check to log them.</small></div></div><div class="list">'+
-      td.map(function(p){return '<button type="button" class="row" data-review="'+p.id+'"><span class="tx"><b>'+esc(p.sym)+'</b><small>'+p.t+' · '+p.side+' '+p.qty+' · '+p.en+' → '+p.ex+'</small></span><span class="vl '+(p.pnl>=0?'u':'d')+'">'+inr(p.pnl,true)+'</span><span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div>':'<div class="inbox" style="background:var(--fin-positive-soft);border-color:rgba(0,201,154,.3)"><div class="hd">✓ All of today’s trades are reviewed</div></div>')+
+    (td.length?'<button type="button" class="jrv" id="review" data-act="jrev"><span class="ic a">'+I('<path d="M4 13h4l2 3h4l2-3h4"/><path d="M5 5h14l1 8v6H4v-6z"/>',2)+'</span><span class="tx"><b>'+td.length+' trade'+(td.length>1?'s':'')+' to review</b><small>From today · about a minute</small></span><span class="jrn">'+td.length+'</span><span class="go" aria-hidden="true">›</span></button>'
+      :'<div class="jrv ok" id="review"><span class="ic t">✓</span><span class="tx"><b>All of today’s trades are reviewed</b><small>New trades from your broker show up here</small></span></div>')+
     '<div class="mnav"><button type="button" data-m="-1" aria-label="Previous month"'+(mi<=0?' disabled':'')+'>‹</button><b>'+mname(jMonth)+'</b><button type="button" data-m="1" aria-label="Next month"'+(mi>=ms.length-1?' disabled':'')+'>›</button></div>'+
     '<div class="kpi"><div><span>Net P&amp;L</span><b class="'+(st.net>=0?'u':'d')+'">'+inr(st.net,true)+'</b><small>'+st.n+' trades</small></div><div><span>Win rate</span><b>'+st.wr.toFixed(0)+'%</b><small>'+st.w+' won · '+st.l+' lost</small></div>'+
       '<div><span>Profit factor</span><b>'+st.pf.toFixed(2)+'</b><small>gross win ÷ gross loss</small></div><div><span>Avg win / loss</span><b>'+(st.al?(st.aw/st.al).toFixed(2):'–')+'×</b><small>'+inr(st.aw)+' / '+inr(st.al)+'</small></div></div>'+
@@ -1838,6 +1850,10 @@ function reviewForm(id){var p=PEND.filter(function(x){return x.id===id})[0];if(!
     $('#rvF',pn).addEventListener('submit',function(e){e.preventDefault();var f=e.target;if(!f.setupSel.value){$('#rvErr',pn).hidden=false;f.setupSel.focus();return}
       var rules={};RULES.forEach(function(r){rules[r[0]]=f[r[0]].checked});rv[id]={status:'ok',setup:f.setupSel.value,rules:rules,mood:mood,note:f.note.value.trim()};store.set('ap-journal-review',rv);mergeAll();
       jMonth=p.d.slice(0,7);closeSheet();toast('Added to your journal');rJournal();nextReview()})})}
+function jRevSheet(){var td=todo();if(!td.length){toast('All of today’s trades are reviewed');return}
+  sheet('Trades to review','<p class="muted" style="margin-top:0">Fetched from your broker today. Add the setup and plan check to log each one.</p>'+
+    '<div class="card" style="padding:0 14px"><div class="list jrl">'+td.map(function(p){return '<button type="button" class="row" data-review="'+p.id+'"><span class="tx"><b>'+esc(p.sym)+'</b><small>'+p.t+' · '+p.side+' '+p.qty+' · '+p.en+' → '+p.ex+'</small></span><span class="vl '+(p.pnl>=0?'u':'d')+'">'+inr(p.pnl,true)+'</span><span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div>'+
+    '<button type="button" class="btn p full" style="margin-top:14px" data-review="'+td[0].id+'">Start review · '+td.length+' trade'+(td.length>1?'s':'')+'</button>')}
 function nextReview(){var n=todo()[0];if(n)setTimeout(function(){reviewForm(n.id)},350)}
 
 /* ---------------- YOU ---------------- */
@@ -1989,6 +2005,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='streak')return;
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
+  if(ds.act==='jrev')return jRevSheet();
   if(ds.act==='record'){e.preventDefault();return recSheet()}
   if(ds.act==='iporec'){e.preventDefault();return ipoRecSheet()}
   if(ds.act==='ixpick')return sheet('Choose an index','<div class="list ixl">'+IDX.map(function(i){var v=i.d[i.d.length-1][1];return '<button type="button" class="row'+(i.n===ixSel?' on':'')+'" data-ix="'+esc(i.n)+'" data-close><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span>'+(i.n===ixSel?'<span class="ck" aria-hidden="true">✓</span>':'')+'</button>'}).join('')+'</div>');
@@ -2027,7 +2044,7 @@ var SUBS={
   today:[['home','Home','home','.hello'],['spot','Spotlight','star','h2:Spotlight'],['foryou','For you','you','h2:For you']],
   markets:[['indices','Indices','markets','#indices'],['movers','Movers','mv','#movers'],['ipos','IPOs','ipo','#ipos'],['filings','News','file','#filings']],
   ideas:[['sd','Pick','sd','#sd'],['calls','Calls','tc','#calls'],['baskets','Baskets','bk','#baskets'],['learn','Learn','learn','#learn']],
-  journal:[['review','Review','inbox','#review'],['overview','Overview','chart','.mnav'],['insights','Insights','bulb','h2:Insights'],['trades','Trades','list','h2:Trades']],
+  journal:[['overview','Overview','chart','.jrv'],['insights','Insights','bulb','h2:Insights'],['trades','Trades','list','h2:Trades']],
   you:[['profile','Profile','you','.prof'],['tools','Tools','bt','h2:Tools'],['settings','Settings','gear','h2:Settings']]};
 var SUBDESC={home:'Everything for today in one place',brief:'Listen or read in five minutes',spot:'Stock of the day and the big moves',foryou:'Picked for your setup',
   indices:'Nifty, Bank Nifty, VIX and F&O levels',movers:'Gainers, losers, OI build-up and scans',ipos:'Open, upcoming and listed IPOs with our score',filings:'Filings, results and the calendar',cal:'Events and timings today',
