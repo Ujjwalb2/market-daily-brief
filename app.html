@@ -1066,6 +1066,22 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .flseg button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:0 6px;white-space:nowrap}
 .flseg button small{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9999px;background:var(--surface-glass);font:700 11px/1 var(--font-sans);opacity:1;margin:0;color:var(--text-tertiary)}
 .flseg button[aria-pressed=true] small{background:var(--fin-positive-soft);color:var(--up-text)}
+
+/* News calendar: Today in a card, Coming up with a one-row switch and one date block per day */
+.tlc{margin-top:8px;padding:6px 16px}
+.tlc .tl{margin:0}
+.tl li{align-items:baseline}
+.tl li .g{flex:none;padding:3px 8px;border-radius:9999px;background:var(--surface-glass);font:500 11px/1.2 var(--font-sans)}
+.tl li b{flex:1;min-width:0}
+.tl li.ev:not(.past)::before{box-shadow:inset 0 0 0 2px var(--amber)}
+.ctseg{margin-top:6px}.ctseg button{min-width:0;padding:0 4px;white-space:nowrap;font-size:12.5px}
+.calc{margin-top:12px;padding:4px 16px}
+.cday{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-decorative)}.cday:last-child{border-bottom:0}
+.cday .dt{width:46px;flex:none;align-self:flex-start;display:grid;justify-items:center;gap:2px;padding:7px 0;border-radius:12px;background:var(--surface-glass)}
+.cday .dt b{font:800 18px/1 var(--font-sans);font-variant-numeric:tabular-nums}.cday .dt small{font:600 10px/1 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary)}
+.cev{flex:1;min-width:0;display:grid;gap:10px;align-content:center}
+.ce{display:flex;align-items:baseline;gap:2px}
+.ce span{display:grid;gap:3px;min-width:0}.ce b{font:600 14.5px/1.3 var(--font-sans)}.ce small{font:400 12.5px/1.3 var(--font-sans);color:var(--text-tertiary)}
 </style>
 </head>
 <body>
@@ -1177,7 +1193,7 @@ function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=
   var dir=t===lastTab?(pg&&sec!==lastSec?'r':''):(pg?'up':(PAGES.indexOf(lastTab)>=0?'dn':(ni>oi?'r':'l')));lastSec=sec;
   $$('.scr').forEach(function(s){var on=s.id==='s-'+t;s.classList.toggle('on',on);s.classList.remove('sl-r','sl-l','sl-up','sl-dn');if(on&&dir){void s.offsetWidth;s.classList.add('sl-'+dir)}});lastTab=t;$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   if(t==='markets')mark('watch');if(t==='ideas'&&(sec==='calls'||!sec))mark('calls');
-  setTimeout(paintAudio,0);subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(sec&&(!SUBS[t]||!SUBS[t].some(function(x){return x[0]===sec}))){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
+  setTimeout(paintAudio,0);subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(t==='ideas'&&sec==='record')setTimeout(recSheet,60);if(sec&&(!SUBS[t]||!SUBS[t].some(function(x){return x[0]===sec}))){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
 var PAGES=['rewards','ipos'],backH='',lastH='',lastSec;
 function go(h){if(location.hash==='#'+h)route();else location.hash=h}
 addEventListener('hashchange',route);
@@ -1448,7 +1464,7 @@ function ixChart(x){var W=340,H=150,P=6,v=x.d.map(function(p){return p[1]}),lo=M
 function rMarkets(){var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0],last=x.d[x.d.length-1][1],m=(last/x.d[0][1]-1)*100;
   var NAV=[['indices','Indices'],['fo','F&O levels'],['movers','Movers'],['scan','Scan'],['ipos','IPOs'],['filings','Filings'],['cal','Calendar']];
   var scan=SC(scSeg),SCN={'sc-vol':'Volume','sc-del':'Delivery','sc-hi':'20D highs','sc-lo':'20D lows'};
-  var types=Object.keys(TYPES).filter(function(k){return k!=='ipo'}),today0=new Date(2026,10,12);if(calType==='ipo')calType='all';var up=EVENTS.filter(function(e){return e.d>today0&&e.t!=='ipo'&&(calType==='all'||e.t===calType)}).slice(0,10);
+  var today0=new Date(2026,10,12),types=Object.keys(TYPES).filter(function(k){return k!=='ipo'&&EVENTS.some(function(e){return e.t===k&&e.d>today0})});if(calType==='ipo')calType='all';var up=EVENTS.filter(function(e){return e.d>today0&&e.t!=='ipo'&&(calType==='all'||e.t===calType)}).slice(0,10);
   var nm=nowM,nI=DAYS.findIndex(function(e){return toM(e.t)>=nm});
   s.innerHTML=top('Markets',streakChip())+
     '<div class="mk-nav"><div class="chips" role="navigation" aria-label="Sections">'+NAV.map(function(n){return '<button type="button" data-jump="'+n[0]+'">'+n[1]+'</button>'}).join('')+'</div></div>'+
@@ -1467,9 +1483,12 @@ function rMarkets(){var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===
       (function(){var FL=['Orders','Results','People'].map(function(k){return D.filings.filter(function(g){return g.h.indexOf(k)===0})[0]}).filter(Boolean),NM={Orders:'Orders',Results:'Results',People:'People'};if(!FL.length)FL=D.filings;if(flSeg>=FL.length)flSeg=0;
         return '<div class="seg flseg" role="group" aria-label="Filings view">'+FL.map(function(g,i){return '<button type="button" data-fl="'+i+'" aria-pressed="'+(i===flSeg)+'" aria-label="'+esc(g.h)+', '+g.items.length+'">'+esc(NM[g.h.split(/[ ,&]/)[0]]||g.h)+'<small>'+g.items.length+'</small></button>'}).join('')+'</div>'+
         [FL[flSeg]].map(function(g){return '<div class="list fl">'+g.items.map(function(it){return '<a class="row" href="'+esc(it.href)+'" target="_blank" rel="noopener"><span class="tm">'+it.t+'</span><span class="tx"><b>'+esc(it.s)+(it.fo?' <span class="tag">F&amp;O</span>':'')+'</b><small>'+esc(it.x)+'</small></span><span class="go" aria-hidden="true">'+I(ICO.ext)+'</span></a>'}).join('')+'</div>'}).join('')})()+'</section>'+
-    '<section class="sec" id="cal"><div class="h2"><h2>Today</h2><span class="sp"></span><small>IST</small></div><ol class="tl">'+DAYS.map(function(e,i){var past=toM(e.t)<nm;return (i===nI?'<li class="now" aria-label="Now">Now '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</li>':'')+'<li class="'+(past?'past':'')+(i===nI?' next':'')+(e.ev?' ev':'')+'"><time>'+e.t+'</time><b>'+esc(e.b)+'</b><span class="g">'+esc(e.g)+'</span></li>'}).join('')+'</ol>'+
-      '<div class="h2"><h2>Coming up</h2></div><div class="chips">'+['all'].concat(types).map(function(k){return '<button type="button" data-ct="'+k+'" aria-pressed="'+(calType===k)+'">'+(k==='all'?'All':TYPES[k].n)+'</button>'}).join('')+'</div>'+
-      '<div class="list cal" style="margin-top:8px">'+(up.length?up.map(function(e){return '<div class="row"><span class="dt"><b>'+e.d.getDate()+'</b><small>'+e.d.toLocaleDateString('en-IN',{month:'short'})+'</small></span><span class="tx"><b><i class="ty '+e.t+'"></i>'+esc(e.title)+'</b><small>'+esc(e.note)+'</small></span></div>'}).join(''):'<p class="muted">Nothing of this kind coming up.</p>')+'</div></section>'+
+    '<section class="sec" id="cal"><div class="h2"><h2>Today</h2><span class="sp"></span><small>IST</small></div><div class="card tlc"><ol class="tl">'+DAYS.map(function(e,i){var past=toM(e.t)<nm;return (i===nI?'<li class="now" aria-label="Now">Now '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</li>':'')+'<li class="'+(past?'past':'')+(i===nI?' next':'')+(e.ev?' ev':'')+'"><time>'+e.t+'</time><b>'+esc(e.b)+'</b><span class="g">'+esc(e.g)+'</span></li>'}).join('')+'</ol></div>'+
+      '<div class="h2"><h2>Coming up</h2></div><div class="seg ctseg" role="group" aria-label="Show events">'+['all'].concat(types).map(function(k){return '<button type="button" data-ct="'+k+'" aria-pressed="'+(calType===k)+'"'+(k==='all'?'':' aria-label="'+esc(TYPES[k].n)+'"')+'>'+(k==='all'?'All':({earn:'Results',fno:'Expiry',eco:'Economy',hol:'Holidays'})[k]||TYPES[k].n)+'</button>'}).join('')+'</div>'+
+      (up.length?'<div class="card calc">'+(function(){var G=[];up.forEach(function(e){var k=e.d.toDateString(),g=G[G.length-1];if(g&&g.k===k)g.e.push(e);else G.push({k:k,d:e.d,e:[e]})});
+        return G.map(function(g){var wd=g.d.toLocaleDateString('en-IN',{weekday:'short'});return '<div class="cday"><span class="dt"><small>'+wd+'</small><b>'+g.d.getDate()+'</b><small>'+g.d.toLocaleDateString('en-IN',{month:'short'})+'</small></span><div class="cev">'+
+          g.e.map(function(e){return '<div class="ce"><i class="ty '+e.t+'"></i><span><b>'+esc(e.title)+'</b>'+(e.note?'<small>'+esc(e.note)+'</small>':'')+'</span></div>'}).join('')+'</div></div>'}).join('')})()+'</div>'
+        :'<p class="muted">Nothing of this kind coming up.</p>')+'</section>'+
     '<p class="note">Data from NSE, 11 Nov close. Analysis, not investment advice.</p>';
   wireChart(x)}
 function movers(){if(mvSeg==='oi')return '<div class="oib">'+OIQ.map(function(q){var o=OIB[q[0]];return '<div class="q '+q[3]+'"><b>'+q[1]+'</b><span class="n">'+o.n+'</span><small>'+q[2]+'</small><ol>'+o.top.map(function(t){return '<li><span>'+t.s+'</span><em>'+(t.p>0?'+':'−')+Math.abs(t.p).toFixed(1)+'%</em></li>'}).join('')+'</ol></div>'}).join('')+'</div><p class="note">211 stock futures · OI across expiries · NSE 11 Nov</p>';
@@ -1506,8 +1525,7 @@ function rIdeas(){var s=$('#s-ideas'),S=D.sotd;
       '<ul class="why">'+sotdWhy().map(function(w){return '<li>'+w+'</li>'}).join('')+'<li class="r">Check the stop before you act: the day’s high was ₹'+num(S.day_hi,0)+'. Analysis, not advice.</li></ul>'+
       '<div style="display:flex;gap:10px;margin-top:16px"><a class="btn p s" href="'+L.screener+'">Screen similar</a><button type="button" class="btn g s" data-act="others">Also near highs</button></div></div></section>'+
     '<section class="sec" id="calls"><div class="h2"><h2>Trade calls</h2>'+infoBtn('calls')+'<span class="sp"></span><small id="tcC">1 of '+CALLS.length+'</small></div>'+
-      profitHTML()+'<div class="tcw"><div class="tc-tr" id="tcTr">'+CALLS.map(locked()?lockedCard:callCard).join('')+'</div></div><a class="trl" href="#ideas/record"><span><b>'+CLW+' of '+CL.length+'</b> recent calls hit target</span><span>See the track record \u203A</span></a><p class="note">Research advice from the AlphaPad desk. Prices are indicative.</p></section>'+
-    '<section class="sec" id="record"><div class="h2"><h2>Track record</h2><span class="sp"></span><small>closed in the last 30 days</small></div>'+trackHTML()+'</section>'+
+      profitHTML()+'<div class="tcw"><div class="tc-tr" id="tcTr">'+CALLS.map(locked()?lockedCard:callCard).join('')+'</div></div><a class="trl" href="#ideas/record" data-act="record"><span><b>'+CLW+' of '+CL.length+'</b> recent calls hit target</span><span>See the track record \u203A</span></a><p class="note">Research advice from the AlphaPad desk. Prices are indicative.</p></section>'+
     '<section class="sec" id="baskets"><div class="h2"><h2>Baskets</h2><span class="sp"></span><a href="'+L.baskets+'">+ Build</a></div><div class="card" style="padding:0 16px"><div class="list">'+
       D.baskets.map(function(b){return '<a class="row" href="'+L.baskets+'"><span class="ic t">'+I(ICO.bk)+'</span><span class="tx"><b>'+esc(b.n)+'</b><small>'+esc(b.m)+'</small></span><span class="vl u">'+esc(b.r)+'<small class="muted">1 year</small></span></a>'}).join('')+'</div></div><p class="note">Past returns are not a promise of future returns. Not investment advice.</p></section>';
   var tr=$('#tcTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12;$('#tcC').textContent=(Math.round(tr.scrollLeft/w)+1)+' of '+CALLS.length},{passive:true})}
@@ -1568,9 +1586,11 @@ function trackHTML(){var c=CL,n=c.length,tg=c.filter(function(x){return x.how===
     '<div class="chips" style="margin-top:12px" aria-label="Filter closed calls">'+[['all','All '+n],['target','Target hit'],['stop','Stop loss'],['early','Exited early']].map(function(f){return '<button type="button" data-tr="'+f[0]+'" aria-pressed="'+(trF===f[0])+'">'+f[1]+'</button>'}).join('')+'</div>'+
     '<div class="card" style="margin-top:12px;padding:0 16px"><div class="list">'+list.map(function(x){var i=CL.indexOf(x);return '<button type="button" class="row" data-cl="'+i+'"><span class="dotc '+HOW[x.how][1]+'" aria-hidden="true"></span><span class="tx"><b>'+esc(x.n)+' <small class="muted">'+esc(x.k)+'</small></b><small>'+HOW[x.how][0]+' \u00B7 closed '+dshort(x.cl)+' \u00B7 '+days(x.po,x.cl)+' day'+(days(x.po,x.cl)>1?'s':'')+'</small></span><span class="vl '+(x.ret>=0?'u':'d')+'">'+(x.ret>=0?'+':'\u2212')+Math.abs(x.ret)+'%<small class="muted">'+inr(x.pnl,true)+'</small></span></button>'}).join('')+'</div></div>'+
     '<p class="note">Every call closed in the last 30 days is listed, losses included. Returns are per call on the premium or price, before charges. Sample data for the prototype.</p>'}
-function openClosed(i){var x=CL[i];if(!x)return;var dd=days(x.po,x.cl),h=HOW[x.how];
+var recFrom=false;
+function recSheet(){recFrom=false;sheet('Track record','<p class="muted" style="margin-top:0">Every call closed in the last 30 days, losses included.</p>'+trackHTML())}
+function openClosed(i){var x=CL[i];if(!x)return;var back=recFrom;recFrom=false;var dd=days(x.po,x.cl),h=HOW[x.how];
   var pct=function(v){return (v>=x.en?'+':'\u2212')+Math.abs((v-x.en)/x.en*100).toFixed(1)+'%'};
-  sheet(esc(x.n)+' \u00B7 '+esc(x.k),'<div class="facts"><div>Result<b class="'+(x.ret>=0?'u':'d')+'">'+(x.ret>=0?'+':'\u2212')+Math.abs(x.ret)+'%</b></div><div>Per lot / qty<b class="'+(x.pnl>=0?'u':'d')+'">'+inr(x.pnl,true)+'</b></div><div>Held<b>'+dd+' day'+(dd>1?'s':'')+'</b></div></div>'+
+  sheet(esc(x.n)+' \u00B7 '+esc(x.k),(back?'<button type="button" class="l ipback" data-act="record">\u2190 Track record</button>':'')+'<div class="facts"><div>Result<b class="'+(x.ret>=0?'u':'d')+'">'+(x.ret>=0?'+':'\u2212')+Math.abs(x.ret)+'%</b></div><div>Per lot / qty<b class="'+(x.pnl>=0?'u':'d')+'">'+inr(x.pnl,true)+'</b></div><div>Held<b>'+dd+' day'+(dd>1?'s':'')+'</b></div></div>'+
     '<p class="muted" style="margin-top:8px">'+esc(x.legs)+' \u00B7 qty '+x.q.toLocaleString('en-IN')+'</p>'+
     '<div class="lv4" style="margin:14px 0"><div>Entry<b>\u20B9'+x.en+'</b></div><div>Target<b>\u20B9'+x.tg+'</b><small class="muted">'+pct(x.tg)+'</small></div><div>Stop loss<b>\u20B9'+x.sl+'</b><small class="muted">'+pct(x.sl)+'</small></div><div>Exit<b>\u20B9'+x.ex+'</b></div></div>'+
     '<ol class="tl"><li class="past"><time>'+dshort(x.po)+'</time><b>Call posted at \u20B9'+x.en+'</b></li><li class="'+(x.how==='target'?'ev':'')+'"><time>'+dshort(x.cl)+'</time><b>'+h[0]+' at \u20B9'+x.ex+'</b></li></ol>'+
@@ -1793,6 +1813,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='streak')return;
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
+  if(ds.act==='record'){e.preventDefault();return recSheet()}
   if(ds.act==='ixpick')return sheet('Choose an index','<div class="list ixl">'+IDX.map(function(i){var v=i.d[i.d.length-1][1];return '<button type="button" class="row'+(i.n===ixSel?' on':'')+'" data-ix="'+esc(i.n)+'" data-close><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span>'+(i.n===ixSel?'<span class="ck" aria-hidden="true">✓</span>':'')+'</button>'}).join('')+'</div>');
   if(ds.act==='prook'){store.set('ap-pro',1);closeSheet();toast('Pro unlocked on this device');RENDER[tab]();return}
   if(ds.act==='prolock'){try{localStorage.removeItem('ap-pro')}catch(e){}toast('Showing the free view again');RENDER[tab]();return}
@@ -1807,8 +1828,8 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.fl!=null){flSeg=+ds.fl;var y2=scrollY;rMarkets();scrollTo(0,y2);return}
   if(ds.sc){scSeg=ds.sc;var y2=scrollY;rMarkets();scrollTo(0,y2);return}
   if(ds.ct){calType=ds.ct;var y3=scrollY;rMarkets();scrollTo(0,y3);return}
-  if(ds.tr){trF=ds.tr;var y7=scrollY;rIdeas();scrollTo(0,y7);return}
-  if(ds.cl)return openClosed(+ds.cl);
+  if(ds.tr){trF=ds.tr;var pn=$('#sheetPn'),st=pn?pn.scrollTop:0;recSheet();var pn2=$('#sheetPn');if(pn2)pn2.scrollTop=st;return}
+  if(ds.cl){recFrom=!!a.closest('#sheetPn .trk,#sheetPn');return openClosed(+ds.cl)}
   if(ds.review)return reviewForm(ds.review);
   if(ds.trade)return openTrade(+ds.trade);
   if(ds.day)return openDay(ds.day);
@@ -1827,7 +1848,7 @@ var armed=0;document.addEventListener('click',function(e){var b=e.target.closest
 var SUBS={
   today:[['home','Home','home','.hello'],['spot','Spotlight','star','h2:Spotlight'],['foryou','For you','you','h2:For you']],
   markets:[['indices','Indices','markets','#indices'],['movers','Movers','mv','#movers'],['ipos','IPOs','ipo','#ipos'],['filings','News','file','#filings']],
-  ideas:[['sd','Pick','sd','#sd'],['calls','Calls','tc','#calls'],['record','Record','chart','#record'],['baskets','Baskets','bk','#baskets']],
+  ideas:[['sd','Pick','sd','#sd'],['calls','Calls','tc','#calls'],['baskets','Baskets','bk','#baskets']],
   journal:[['review','Review','inbox','#review'],['overview','Overview','chart','.mnav'],['insights','Insights','bulb','h2:Insights'],['trades','Trades','list','h2:Trades']],
   you:[['profile','Profile','you','.prof'],['learn','Learn','learn','#learn'],['tools','Tools','bt','h2:Tools'],['settings','Settings','gear','h2:Settings']]};
 var SUBDESC={home:'Everything for today in one place',brief:'Listen or read in five minutes',spot:'Stock of the day and the big moves',foryou:'Picked for your setup',

@@ -1056,3 +1056,19 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .flseg button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:0 6px;white-space:nowrap}
 .flseg button small{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9999px;background:var(--surface-glass);font:700 11px/1 var(--font-sans);opacity:1;margin:0;color:var(--text-tertiary)}
 .flseg button[aria-pressed=true] small{background:var(--fin-positive-soft);color:var(--up-text)}
+
+/* News calendar: Today in a card, Coming up with a one-row switch and one date block per day */
+.tlc{margin-top:8px;padding:6px 16px}
+.tlc .tl{margin:0}
+.tl li{align-items:baseline}
+.tl li .g{flex:none;padding:3px 8px;border-radius:9999px;background:var(--surface-glass);font:500 11px/1.2 var(--font-sans)}
+.tl li b{flex:1;min-width:0}
+.tl li.ev:not(.past)::before{box-shadow:inset 0 0 0 2px var(--amber)}
+.ctseg{margin-top:6px}.ctseg button{min-width:0;padding:0 4px;white-space:nowrap;font-size:12.5px}
+.calc{margin-top:12px;padding:4px 16px}
+.cday{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-decorative)}.cday:last-child{border-bottom:0}
+.cday .dt{width:46px;flex:none;align-self:flex-start;display:grid;justify-items:center;gap:2px;padding:7px 0;border-radius:12px;background:var(--surface-glass)}
+.cday .dt b{font:800 18px/1 var(--font-sans);font-variant-numeric:tabular-nums}.cday .dt small{font:600 10px/1 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary)}
+.cev{flex:1;min-width:0;display:grid;gap:10px;align-content:center}
+.ce{display:flex;align-items:baseline;gap:2px}
+.ce span{display:grid;gap:3px;min-width:0}.ce b{font:600 14.5px/1.3 var(--font-sans)}.ce small{font:400 12.5px/1.3 var(--font-sans);color:var(--text-tertiary)}
