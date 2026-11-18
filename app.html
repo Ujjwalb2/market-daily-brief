@@ -964,6 +964,25 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .pbk.live .lvl::-webkit-scrollbar{display:none}
 .pbk.live .lvr{scroll-snap-align:start;scroll-snap-stop:always}
 .pbk.live .lvd{margin:12px 0 2px}
+
+/* Home: Market highlights as swipe cards, one at a time; tap opens that highlight in Spotlight */
+.pv.hl .pvh small{font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.hlt{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
+.hlt::-webkit-scrollbar{display:none}
+.hlc{scroll-snap-align:start;scroll-snap-stop:always;display:grid;align-content:start;gap:10px;min-height:168px;padding:16px;border-radius:20px;text-align:left;color:var(--text-primary);
+  background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.hlc.t{background:radial-gradient(120% 90% at 100% 0%,rgba(0,201,154,.18),rgba(0,201,154,0) 60%),var(--surface-raised);border-color:rgba(0,201,154,.28)}
+.hlc.a{background:radial-gradient(120% 90% at 100% 0%,rgba(240,160,75,.18),rgba(240,160,75,0) 60%),var(--surface-raised);border-color:rgba(240,160,75,.28)}
+.hlc.b{background:radial-gradient(120% 90% at 100% 0%,rgba(50,130,232,.2),rgba(50,130,232,0) 60%),var(--surface-raised);border-color:rgba(50,130,232,.3)}
+.hlc.i{background:radial-gradient(120% 90% at 100% 0%,rgba(63,91,217,.24),rgba(63,91,217,0) 60%),var(--surface-raised);border-color:rgba(99,123,235,.35)}
+.hlc .hk{display:flex;align-items:center;gap:8px;font:600 12px/1.2 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:var(--text-tertiary)}
+.hlc .hk .ic{width:30px;height:30px;border-radius:9px}.hlc .hk .ic svg{width:16px;height:16px}
+.hlc .ht{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}
+.hlc .ht b{font:800 24px/1.1 var(--font-sans);letter-spacing:-.4px}.hlc .ht small{font:500 14px/1 var(--font-sans);color:var(--text-tertiary)}
+.hlc .ht em{margin-left:auto;font:800 20px/1 var(--font-sans);font-style:normal;color:var(--up-text);font-variant-numeric:tabular-nums}
+.hlc .hs{font:400 13.5px/1.4 var(--font-sans);color:var(--text-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hlc .hg{font:600 13px/1 var(--font-sans);color:var(--link)}
+.hld{margin-top:12px}
 </style>
 </head>
 <body>
@@ -1235,9 +1254,13 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-
     '<div class="fy">'+hero+'<div class="fy-2">'+calls+rew+'</div>'+X+'</div>'}
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
-function homePreview(mid){var SL=spotSlides().slice(0,2);
-  return (mid||'')+'<section class="pv"><div class="pvh"><b>Market highlights</b><button type="button" class="l" data-sub-go="spot">See all '+spotSlides().length+' →</button></div><div class="card" style="padding:0 16px"><div class="list">'+
-    SL.map(function(x,i){return '<button type="button" class="row" data-sub-go="spot" data-spot="'+i+'"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span class="tx"><b>'+x.t+(x.v?' <small class="muted" style="display:inline">'+x.v+'</small>':'')+'</b><small>'+x.k.replace(/<[^>]+>/g,'')+'</small></span>'+(x.d?'<span class="vl u">'+x.d+'</span>':'')+'<span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div></section>'}
+function homePreview(mid){var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
+  return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
+    '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
+      '<span class="hk"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span>'+st(x.k)+'</span></span>'+
+      '<span class="ht"><b>'+x.t+'</b>'+(x.v?'<small>'+x.v+'</small>':'')+(x.d?'<em>'+x.d+'</em>':'')+'</span>'+
+      '<span class="hs">'+st(x.sub)+'</span><span class="hg">Open in Spotlight →</span></button>'}).join('')+'</div>'+
+    (SL.length>1?'<div class="mdots hld" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>':'')+'</section>'}
 
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
@@ -1377,9 +1400,10 @@ function liveHTML(){var w=CL.filter(function(x){return x.ret>0}).length;
     (CALLS.length>1?'<div class="mdots lvd" aria-hidden="true">'+CALLS.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>':'')+
     '<a class="btn full pbc" href="#ideas/calls">Open all calls with levels →</a>'+
     '<p class="pbf">'+w+' of the last '+CL.length+' closed calls booked profit. Analysis, not investment advice.</p></section>'}
-function liveSlide(){var tr=$('#s-today .lvl');if(!tr||!tr.children.length)return;var n=tr.children.length,dots=$$('#s-today .lvd i');
-  var sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});var c=$('#lvC');if(c)c.textContent=(i+1)+' of '+n+' live'};
+function slideSync(tq,dq,cq,sfx){var tr=$(tq);if(!tr||!tr.children.length)return;var n=tr.children.length,dots=$$(dq);
+  var sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});var c=$(cq);if(c)c.textContent=(i+1)+' of '+n+sfx};
   tr.addEventListener('scroll',sync,{passive:true});sync()}
+function liveSlide(){slideSync('#s-today .lvl','#s-today .lvd i','#lvC',' live');slideSync('#s-today .hlt','#s-today .hld i','#hlC','')}
 function lockedCard(c){var nm=String(c.n),e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
   return '<article class="tc lk" aria-label="Locked trade call"><div class="hd"><div><b class="lkn">••••••••</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div><span class="tag">Active</span></div>'+
   '<div class="pot"><div class="h"><span>Potential left</span><b>'+(pc>=0?'+':'')+pc.toFixed(0)+'% <span class="u">to target</span></b></div><div class="bar" role="img" aria-label="'+done.toFixed(0)+'% of the way from entry to target"><i style="width:'+done.toFixed(1)+'%"></i><span style="left:'+done.toFixed(1)+'%"></span></div><div class="l"><span>Entry</span><span>'+done.toFixed(0)+'% of the way</span><span>Target</span></div></div>'+

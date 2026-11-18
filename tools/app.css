@@ -954,3 +954,22 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .pbk.live .lvl::-webkit-scrollbar{display:none}
 .pbk.live .lvr{scroll-snap-align:start;scroll-snap-stop:always}
 .pbk.live .lvd{margin:12px 0 2px}
+
+/* Home: Market highlights as swipe cards, one at a time; tap opens that highlight in Spotlight */
+.pv.hl .pvh small{font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.hlt{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
+.hlt::-webkit-scrollbar{display:none}
+.hlc{scroll-snap-align:start;scroll-snap-stop:always;display:grid;align-content:start;gap:10px;min-height:168px;padding:16px;border-radius:20px;text-align:left;color:var(--text-primary);
+  background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.hlc.t{background:radial-gradient(120% 90% at 100% 0%,rgba(0,201,154,.18),rgba(0,201,154,0) 60%),var(--surface-raised);border-color:rgba(0,201,154,.28)}
+.hlc.a{background:radial-gradient(120% 90% at 100% 0%,rgba(240,160,75,.18),rgba(240,160,75,0) 60%),var(--surface-raised);border-color:rgba(240,160,75,.28)}
+.hlc.b{background:radial-gradient(120% 90% at 100% 0%,rgba(50,130,232,.2),rgba(50,130,232,0) 60%),var(--surface-raised);border-color:rgba(50,130,232,.3)}
+.hlc.i{background:radial-gradient(120% 90% at 100% 0%,rgba(63,91,217,.24),rgba(63,91,217,0) 60%),var(--surface-raised);border-color:rgba(99,123,235,.35)}
+.hlc .hk{display:flex;align-items:center;gap:8px;font:600 12px/1.2 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:var(--text-tertiary)}
+.hlc .hk .ic{width:30px;height:30px;border-radius:9px}.hlc .hk .ic svg{width:16px;height:16px}
+.hlc .ht{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}
+.hlc .ht b{font:800 24px/1.1 var(--font-sans);letter-spacing:-.4px}.hlc .ht small{font:500 14px/1 var(--font-sans);color:var(--text-tertiary)}
+.hlc .ht em{margin-left:auto;font:800 20px/1 var(--font-sans);font-style:normal;color:var(--up-text);font-variant-numeric:tabular-nums}
+.hlc .hs{font:400 13.5px/1.4 var(--font-sans);color:var(--text-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hlc .hg{font:600 13px/1 var(--font-sans);color:var(--link)}
+.hld{margin-top:12px}

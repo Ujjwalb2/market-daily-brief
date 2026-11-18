@@ -221,9 +221,13 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-
     '<div class="fy">'+hero+'<div class="fy-2">'+calls+rew+'</div>'+X+'</div>'}
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
-function homePreview(mid){var SL=spotSlides().slice(0,2);
-  return (mid||'')+'<section class="pv"><div class="pvh"><b>Market highlights</b><button type="button" class="l" data-sub-go="spot">See all '+spotSlides().length+' →</button></div><div class="card" style="padding:0 16px"><div class="list">'+
-    SL.map(function(x,i){return '<button type="button" class="row" data-sub-go="spot" data-spot="'+i+'"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span class="tx"><b>'+x.t+(x.v?' <small class="muted" style="display:inline">'+x.v+'</small>':'')+'</b><small>'+x.k.replace(/<[^>]+>/g,'')+'</small></span>'+(x.d?'<span class="vl u">'+x.d+'</span>':'')+'<span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div></section>'}
+function homePreview(mid){var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
+  return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
+    '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
+      '<span class="hk"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span>'+st(x.k)+'</span></span>'+
+      '<span class="ht"><b>'+x.t+'</b>'+(x.v?'<small>'+x.v+'</small>':'')+(x.d?'<em>'+x.d+'</em>':'')+'</span>'+
+      '<span class="hs">'+st(x.sub)+'</span><span class="hg">Open in Spotlight →</span></button>'}).join('')+'</div>'+
+    (SL.length>1?'<div class="mdots hld" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>':'')+'</section>'}
 
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
@@ -363,9 +367,10 @@ function liveHTML(){var w=CL.filter(function(x){return x.ret>0}).length;
     (CALLS.length>1?'<div class="mdots lvd" aria-hidden="true">'+CALLS.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>':'')+
     '<a class="btn full pbc" href="#ideas/calls">Open all calls with levels →</a>'+
     '<p class="pbf">'+w+' of the last '+CL.length+' closed calls booked profit. Analysis, not investment advice.</p></section>'}
-function liveSlide(){var tr=$('#s-today .lvl');if(!tr||!tr.children.length)return;var n=tr.children.length,dots=$$('#s-today .lvd i');
-  var sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});var c=$('#lvC');if(c)c.textContent=(i+1)+' of '+n+' live'};
+function slideSync(tq,dq,cq,sfx){var tr=$(tq);if(!tr||!tr.children.length)return;var n=tr.children.length,dots=$$(dq);
+  var sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});var c=$(cq);if(c)c.textContent=(i+1)+' of '+n+sfx};
   tr.addEventListener('scroll',sync,{passive:true});sync()}
+function liveSlide(){slideSync('#s-today .lvl','#s-today .lvd i','#lvC',' live');slideSync('#s-today .hlt','#s-today .hld i','#hlC','')}
 function lockedCard(c){var nm=String(c.n),e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
   return '<article class="tc lk" aria-label="Locked trade call"><div class="hd"><div><b class="lkn">••••••••</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div><span class="tag">Active</span></div>'+
   '<div class="pot"><div class="h"><span>Potential left</span><b>'+(pc>=0?'+':'')+pc.toFixed(0)+'% <span class="u">to target</span></b></div><div class="bar" role="img" aria-label="'+done.toFixed(0)+'% of the way from entry to target"><i style="width:'+done.toFixed(1)+'%"></i><span style="left:'+done.toFixed(1)+'%"></span></div><div class="l"><span>Entry</span><span>'+done.toFixed(0)+'% of the way</span><span>Target</span></div></div>'+
