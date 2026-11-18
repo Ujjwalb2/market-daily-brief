@@ -45,13 +45,13 @@ function stats(tr){var w=tr.filter(function(t){return t.pnl>0}),l=tr.filter(func
 
 /* ---------------- shell ---------------- */
 var TABS=[['today','Today'],['markets','Markets'],['ideas','Ideas'],['journal','Journal'],['you','You']];
-app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+
+app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+'<main class="scr" id="s-rewards" aria-label="Streak and rewards"></main>'+
   '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
   '<div class="tabs"><nav aria-label="App">'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
   '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div>';
 
-var tab='today';
-function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1];if(!TABS.some(function(x){return x[0]===t}))t='today';tab=t;
+var tab='today',prevH='#today';
+function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1];if(t!=='rewards'&&!TABS.some(function(x){return x[0]===t}))t='today';if(t!=='rewards')prevH='#'+h.join('/');tab=t;
   $$('.scr').forEach(function(s){s.classList.toggle('on',s.id==='s-'+t)});$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   if(t==='markets')mark('watch');if(t==='ideas'&&(sec==='calls'||!sec))mark('calls');
   RENDER[t]();if(sec){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
@@ -68,7 +68,7 @@ function closeSheet(){$('#sheet').hidden=true;document.body.style.overflow='';if
 $('#sheet').addEventListener('click',function(e){if(e.target.id==='sheet'||e.target.closest('[data-close]'))closeSheet()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet()});
 function top(title,right){return '<header class="top">'+(title?'<h1>'+title+'</h1>':'<a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a>')+'<span class="sp"></span>'+(right||'')+'</header>'}
-function streakChip(){return '<button type="button" class="chip" data-act="streak" aria-label="'+D.streak.n+' day streak">🔥 '+D.streak.n+'</button>'}
+function streakChip(){return '<a class="chip" href="#rewards" data-act="streak" aria-label="'+streakNow()+' day streak">🔥 '+streakNow()+'</a>'}
 function avatar(){return '<a class="av" href="#you" aria-label="You">T</a>'}
 function info(title,text,src){sheet(esc(title),'<p>'+text+'</p>'+(src?'<p class="note">'+esc(src)+'</p>':''))}
 function infoBtn(k){return '<button type="button" class="l" data-info="'+k+'" aria-label="About this">ⓘ</button>'}
@@ -167,9 +167,9 @@ var STEP={
 function mDone(){return goals().filter(function(k){return STEP[k][2]()}).length}
 function streakNow(){return D.streak.n+(mDone()===goals().length?1:0)}
 function morningHTML(){var g=goals(),d=mDone(),all=d===g.length,pct=d/g.length*100;store.set('ap-day-done-2026-11-12',all?1:0);
-  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><div class="mring" style="--p:'+pct.toFixed(0)+'" aria-hidden="true"><b>'+d+'/'+g.length+'</b></div><div><h2 id="mH">'+(all?'Morning done 🔥 '+streakNow():'Your morning')+'</h2><small>'+(all?'+10 season points. See you tomorrow at 7:30.':(g.length-d)+' step'+(g.length-d>1?'s':'')+' left to keep your '+D.streak.n+'-day streak')+'</small></div></div>'+
-    '<ol class="steps">'+g.map(function(k){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1];return '<li><a class="stp'+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><i aria-hidden="true">'+(ok?'✓':'')+'</i><span class="tx"><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="go" aria-hidden="true">'+(ok?'':'›')+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol>'+mfootHTML()+'</section>'}
-function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}
+  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><div><h2 id="mH">'+(all?'Morning done 🔥':'Your morning')+'</h2><small>'+d+' of '+g.length+' done'+(all?' · +10 season points':' · finish all to keep your streak')+'</small></div></div>'+
+    '<ol class="steps">'+g.map(function(k){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1];return '<li><a class="stp'+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><i aria-hidden="true">'+(ok?'✓':'')+'</i><span class="tx"><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="go" aria-hidden="true">'+(ok?'':'›')+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol></section>'}
+function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);paintHero();var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}
 
 /* ---------------- TODAY ---------------- */
 var CL=D.closed||[],CLW=CL.filter(function(c){return c.how==='target'}).length;
@@ -195,17 +195,18 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',S=D.sotd,lrn=learne
     '<div class="card" style="padding:0 16px"><div class="list" id="fyRows">'+rows.map(function(k){var r=R[k];return '<a class="row" href="'+r[6]+'"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></a>'}).join('')+'</div></div>'}
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  s.innerHTML=top('','<button type="button" class="chip" data-act="streak" aria-label="Streak">🔥 '+streakNow()+'</button>'+avatar())+
+  s.innerHTML=top('',avatar())+
     '<div class="hello"><h1>'+hi+', Trader</h1><p>'+esc(D.date.replace(/^(\w{3})\w*,\s*(\d+)\s+(\w{3})\w*/,'$1 $2 $3'))+(nx?' \u00B7 '+nx.t+' '+esc(nx.b):'')+'</p></div>'+
+    heroHTML()+morningHTML()+
     '<section class="brief card" aria-labelledby="tH"><div class="eb">Today’s brief · '+mmss(D.audio.dur)+'</div><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+
       '<div class="bp"><button type="button" class="play" data-act="listen" aria-label="Play the brief"></button><div class="bt"><b id="bpT">Listen</b><small id="bpS">7 chapters</small><span class="bpb"><i id="bpBar"></i></span></div><button type="button" class="btn g s" data-act="chapters">Chapters</button></div></section>'+
     '<div class="strip" role="group" aria-label="Yesterday’s close">'+idx.map(function(x){var v=x.d[x.d.length-1][1],w=x.n==='India VIX';return '<a class="nm" href="#markets/indices" data-ix="'+esc(x.n)+'"><span>'+(x.n==='Nifty Bank'?'Bank Nifty':x.n)+'</span><b>'+num(v,2)+'</b><em class="'+(w?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pct.replace(/^[+−-]/,'')+'</em></a>'}).join('')+'</div>'+
-    morningHTML()+
     '<div class="h2"><h2>Spotlight</h2><small id="spC">1 of '+SL.length+'</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-roledescription="carousel" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" aria-roledescription="slide" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
     '<p class="note">Analysis, not investment advice. Prices are from the 11 Nov close.</p>';
   paintAudio();
+  var hh=$('#hero');if(hh&&wasAll===false&&allDone())hh.classList.add('win');wasAll=allDone();
   var tr=$('#spTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12,i=Math.round(tr.scrollLeft/w);$$('.dots i',s).forEach(function(d,j){d.classList.toggle('on',j===i)});$('#spC').textContent=(i+1)+' of '+SL.length},{passive:true})}
 
 /* ---------------- MARKETS ---------------- */
@@ -378,7 +379,7 @@ function learned(){return store.get(LKEY,[])}
 function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'dark',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
   s.innerHTML=top('You')+
     '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>Your screen: '+presetName()+' · <button type="button" class="l" style="color:var(--link);font-weight:600" data-act="setup">Change</button></small></div></div>'+
-    freeHTML()+streakHTML()+seasonHTML()+badgesHTML()+
+    '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
     '<section class="sec" id="learn"><div class="h2"><h2>Learn today</h2><span class="sp"></span><small>'+lr.length+' of '+LEARN.length+' done</small></div><div class="card lrn">'+(all?'<div class="ok">✓ All 3 ideas learned. Streak kept for today.</div>':'')+
       '<div class="kind"><span class="eb">'+esc(x.kind)+'</span>'+(got?'<span class="tag" style="margin-left:auto">✓ Learned</span>':'')+'</div><h3>'+esc(x.h)+'</h3><p>'+x.one+'</p>'+
       '<div class="ft"><button type="button" class="navb" data-lrn="-1" aria-label="Previous idea">‹</button><div class="pg" aria-hidden="true">'+LEARN.map(function(l,j){return '<i class="'+(lr.indexOf(l.id)>=0?'done':'')+(j===lrnI?' on':'')+'"></i>'}).join('')+'</div><button type="button" class="navb" data-lrn="1" aria-label="Next idea">›</button><span class="sp"></span>'+
@@ -481,14 +482,44 @@ function boardSheet(){var v=seasonScore(),all=BOARD.concat([['You',v]]).sort(fun
 function mfootHTML(){var v=seasonScore();return '<a class="mfoot" href="#you/season"><span>⭐ <b>'+v+'</b> pts</span><span>#'+myRank()+' · '+TIERS[tierOf(v)][1]+'</span><span>🎁 <b>'+freeDays()+'</b> free days</span><span class="go" aria-hidden="true">›</span></a>'}
 
 /* ---------------- streak sheet + global clicks ---------------- */
+/* ---------------- streak hero (top of Today) + Streak & rewards screen ---------------- */
+var wasAll=null;
+function weekHTML(){return '<div class="wk">'+D.streak.week.map(function(d,i){var st=d[1];if(st==='today'&&allDone())st='done';return '<span class="'+st+'"><i>'+(st==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'}
+function heroHTML(){var g=goals(),d=mDone(),all=d===g.length,left=g.length-d,v=seasonScore();
+  return '<section class="hero'+(all?' all':'')+'" id="hero" aria-label="Your streak"><a class="hring" href="#rewards" style="--p:'+(d/g.length*100).toFixed(0)+'" aria-label="'+streakNow()+' day streak, open streak and rewards"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak</small></a>'+
+    '<p class="hsub">'+(all?'Streak kept for today. See you tomorrow.':left+' step'+(left>1?'s':'')+' left to make it '+(D.streak.n+1))+'</p>'+weekHTML()+
+    '<a class="hstats" href="#rewards"><span>🎁 <b>'+freeDays()+'</b> free days</span><i></i><span>⭐ <b>'+v+'</b> '+TIERS[tierOf(v)][1]+'</span><i></i><span>🧊 <b>'+freezes()+'</b></span><em aria-hidden="true">›</em></a></section>'}
+function paintHero(){var h=$('#hero');if(!h)return;var all=allDone(),t=document.createElement('div');t.innerHTML=heroHTML();var n=t.firstChild;if(wasAll===false&&all)n.classList.add('win');h.replaceWith(n);wasAll=all}
+function strip(h){return h.replace(/<div class="h2"><h2>[^<]*<\/h2><span class="sp"><\/span><small>[^<]*<\/small><\/div>/,'')}
+function tileSheet(k){
+  if(k==='free')return sheet('🎁 Free days',strip(freeHTML()));
+  if(k==='season'||k==='shout'){var h=strip(seasonHTML()),i=h.indexOf('<div class="card sho">');return k==='season'?sheet('⭐ '+SEASON.name,h.slice(0,i)+'</section>'):sheet('📣 Monday shoutout','<section>'+h.slice(i))}
+  if(k==='badges')return sheet('🏅 Badges',strip(badgesHTML()));
+  if(k==='miles'){var s=streakHTML(),a=s.indexOf('<ol class="ladder'),b=s.indexOf('</ol>')+5;return sheet('🏁 Milestones','<p>'+totalDays()+' market mornings done. Breaking a streak never takes these away.</p>'+s.slice(a,b))}
+  if(k==='freeze')return sheet('🧊 Streak freezes','<p>A missed market day uses a freeze, so your streak survives. You earn one every 7 days and can hold 2.</p><p>No freeze left? Do both mornings within 24 hours to repair the streak.</p><div class="facts"><div>Ready<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Counts<b>Market days</b></div></div>')}
+function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDays(),nm=MILES.filter(function(m){return t<m[0]})[0],fd=freeDays(),bs=BADGES.slice().sort(function(a,b){return bGot(b)-bGot(a)}),bg=BADGES.filter(bGot).length,nx=ti>0?TIERS[ti-1]:null;
+  var tile=function(k,ic,lab,val,sub,p){return '<button type="button" class="rt" data-tile="'+k+'"><span class="eb">'+ic+' '+lab+'</span><b>'+val+'</b><small>'+sub+'</small><span class="lbar"><em style="width:'+Math.min(100,p*100).toFixed(0)+'%"></em></span></button>'};
+  s.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>Streak & rewards</h1><span class="sp"></span></header>'+
+    '<div class="rhead"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak · longest '+longest()+'</small>'+weekHTML()+
+      '<button type="button" class="frl" data-tile="freeze">'+[0,1].map(function(i){return '<i class="'+(i<freezes()?'on':'')+'">🧊</i>'}).join('')+' '+freezes()+' of 2 freezes ready <em>›</em></button></div>'+
+    '<div class="rgrid">'+
+      tile('free','🎁','Free days',fd,'of 30 · off your 2 Dec renewal',fd/30)+
+      tile('season','⭐','Season',v+' <span class="tier '+TIERS[ti][0]+'"><i></i>'+TIERS[ti][1]+'</span>',nx?(nx[2]-v)+' pts to '+nx[1]+' · #'+myRank():'#'+myRank()+' · top tier',nx?(v-TIERS[ti][2])/(nx[2]-TIERS[ti][2]):1)+
+      tile('miles','🏁','Next milestone',nm?nm[0]+' days':'All done',nm?(nm[0]-t)+' to go · '+nm[2].split(' and ')[0]:'You reached 100',nm?t/nm[0]:1)+
+      tile('badges','🏅','Badges',bg+' <small>of '+BADGES.length+'</small>','Tap to see what’s next',bg/BADGES.length)+'</div>'+
+    '<div class="h2"><h2>Badges</h2><span class="sp"></span><button type="button" class="l" data-tile="badges">See all</button></div><div class="brow">'+bs.map(function(b){var g=bGot(b);return '<button type="button" class="bc'+(g?' got':'')+'" data-badge="'+b[0]+'"><span aria-hidden="true">'+b[1]+'</span><small>'+b[2]+'</small></button>'}).join('')+'</div>'+
+    '<button type="button" class="shl" data-tile="shout"><span class="eb">📣 Monday shoutout</span><b>'+SHOUT.cat+': '+SHOUT.names.slice(0,2).join(', ')+' +'+(SHOUT.names.length-2+SHOUT.more)+'</b><small>Next Monday: Most improved. Beat last week’s '+HIST.lastWeek+' pts to be named.</small></button>'+
+    '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';}
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#you/rewards" data-close>Free days, badges and season</a>')}
-document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge]');if(!a)return;var ds=a.dataset;
+document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back]');if(!a)return;var ds=a.dataset;
+  if(ds.tile){closeSheet();return tileSheet(ds.tile)}
+  if(a.hasAttribute('data-back')){e.preventDefault();location.hash=prevH==='#rewards'?'#today':prevH;return}
   if(ds.badge)return badgeSheet(ds.badge);
   if(ds.act==='board')return boardSheet();
   if(ds.act==='listen')return toggleAudio();
   if(ds.act==='chapters'){e.preventDefault();return chapters()}
-  if(ds.act==='streak')return streakSheet();
+  if(ds.act==='streak')return;
   if(ds.act==='tomorning'){setTimeout(function(){var c=$('#morning');if(c)c.scrollIntoView({block:'center',behavior:'smooth'})},80);return}
   if(ds.act==='setup'){closeSheet();onboard();return}
   if(ds.act==='others'){var o=D.sotd.others;return sheet('Also near 52-week highs','<div class="list">'+o.map(function(x){return '<div class="row"><span class="tx"><b>'+esc(x[0])+'</b><small>'+esc(x[1])+' · '+esc(x[3])+'</small></span><span class="vl u">+'+x[2].toFixed(2)+'%</span></div>'}).join('')+'</div>')}
@@ -513,7 +544,7 @@ var armed=0;document.addEventListener('click',function(e){var b=e.target.closest
   if(Date.now()-armed>4000){armed=Date.now();b.classList.add('arm');$('#rstS').textContent='Tap again to confirm';setTimeout(function(){if(Date.now()-armed>=4000&&$('#rstS')){b.classList.remove('arm');$('#rstS').textContent='Clears everything saved on this device'}},4100);return}
   try{Object.keys(localStorage).forEach(function(k){if(/^(ap-|sp-|today-)/.test(k))localStorage.removeItem(k)})}catch(err){}location.replace(location.pathname)});
 /* the questions finish → refresh what depends on the chosen screen */
-var RENDER={today:rToday,markets:rMarkets,ideas:rIdeas,journal:rJournal,you:rYou};
+var RENDER={today:rToday,markets:rMarkets,ideas:rIdeas,journal:rJournal,you:rYou,rewards:rRewards};
 if(!root.getAttribute('data-theme'))root.setAttribute('data-theme',matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
 badge();route();paintAudio();
 if(!profile()||/[?&]setup=1/.test(location.search))setTimeout(onboard,/[?&]nosplash/.test(location.search)?60:500);
