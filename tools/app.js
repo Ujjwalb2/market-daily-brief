@@ -158,6 +158,8 @@ function onboard(){var ans={},step=0;ob=document.createElement('div');ob.classNa
 var MKEY='ap-morning-2026-11-12';
 function mstate(){return store.get(MKEY,{})}
 function mark(k){var m=mstate();if(m[k])return;var was=mDone()===goals().length;m[k]=Date.now();store.set(MKEY,m);if(tab==='today')paintMorning();if(!was&&mDone()===goals().length)toast('Morning done: +10 season points, streak '+streakNow())}
+/* colour, icon and button word for each morning step */
+var SLOOK={brief:['i','brief','Play'],calls:['t','tc','View'],journal:['a','journal','Review'],learn:['b','learn','Learn'],watch:['t','markets','Open']};
 var STEP={
   brief:['Listen to the brief','7 chapters · '+mmss(D.audio.dur),function(){return !!mstate().brief},'@listen'],
   calls:['Check today’s calls',CALLS.length+' active · track record inside',function(){return !!mstate().calls},'#ideas/calls'],
@@ -167,9 +169,11 @@ var STEP={
 function mDone(){return goals().filter(function(k){return STEP[k][2]()}).length}
 function streakNow(){return D.streak.n+(mDone()===goals().length?1:0)}
 function morningHTML(){var g=goals(),d=mDone(),all=d===g.length,pct=d/g.length*100;store.set('ap-day-done-2026-11-12',all?1:0);
-  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><div><h2 id="mH">'+(all?'Morning done 🔥':'Your morning')+'</h2><small>'+d+' of '+g.length+' done'+(all?' · +10 season points':' · finish all to keep your streak')+'</small></div></div>'+
-    '<ol class="steps">'+g.map(function(k){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1];return '<li><a class="stp'+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><i aria-hidden="true">'+(ok?'✓':'')+'</i><span class="tx"><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="go" aria-hidden="true">'+(ok?'':'›')+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol></section>'}
-function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);paintHero();var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}
+  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><h2 id="mH">'+(all?'Morning done 🔥':'Your morning')+'</h2><small>'+(all?'Streak kept · +10 pts':d+'/'+g.length+' · '+(g.length-d)+' left for 🔥 '+(D.streak.n+1))+'</small></div>'+
+    '<ol class="steps">'+g.map(function(k,n){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1],m=SLOOK[k];return '<li><a class="stp c-'+m[0]+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><span class="si" aria-hidden="true">'+(ok?I('<path d="m5 12 5 5 9-10"/>',2.6):I(ICO[m[1]],2))+'</span><span class="tx"><em>Step '+(n+1)+' of '+g.length+'</em><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="cta" aria-hidden="true">'+(ok?'Done':m[2])+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol><div class="mdots" aria-hidden="true">'+g.map(function(k){return '<i class="'+(STEP[k][2]()?'ok':'')+'"></i>'}).join('')+'</div></section>'}
+function morningSlide(){var ol=$('#morning .steps');if(!ol)return;var lis=$$('li',ol),f=lis.findIndex(function(li){return !li.querySelector('.stp.ok')});if(f>0)ol.scrollLeft=lis[f].offsetLeft-ol.offsetLeft-20;
+  var dots=$$('#morning .mdots i'),sync=function(){var i=Math.round(ol.scrollLeft/(lis[0].offsetWidth+20));dots.forEach(function(d,j){d.classList.toggle('on',j===i)})};sync();ol.addEventListener('scroll',sync,{passive:true})}
+function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);paintHero();morningSlide();var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}
 
 /* ---------------- TODAY ---------------- */
 var CL=D.closed||[],CLW=CL.filter(function(c){return c.how==='target'}).length;
@@ -195,9 +199,9 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',S=D.sotd,lrn=learne
     '<div class="card" style="padding:0 16px"><div class="list" id="fyRows">'+rows.map(function(k){var r=R[k];return '<a class="row" href="'+r[6]+'"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></a>'}).join('')+'</div></div>'}
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  s.innerHTML=top('',avatar())+
+  s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+
     '<div class="hello"><h1>'+hi+', Trader</h1><p>'+esc(D.date.replace(/^(\w{3})\w*,\s*(\d+)\s+(\w{3})\w*/,'$1 $2 $3'))+(nx?' \u00B7 '+nx.t+' '+esc(nx.b):'')+'</p></div>'+
-    heroHTML()+morningHTML()+
+    morningHTML()+
     '<section class="brief card" aria-labelledby="tH"><div class="eb">Today’s brief · '+mmss(D.audio.dur)+'</div><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+
       '<div class="bp"><button type="button" class="play" data-act="listen" aria-label="Play the brief"></button><div class="bt"><b id="bpT">Listen</b><small id="bpS">7 chapters</small><span class="bpb"><i id="bpBar"></i></span></div><button type="button" class="btn g s" data-act="chapters">Chapters</button></div></section>'+
     '<div class="strip" role="group" aria-label="Yesterday’s close">'+idx.map(function(x){var v=x.d[x.d.length-1][1],w=x.n==='India VIX';return '<a class="nm" href="#markets/indices" data-ix="'+esc(x.n)+'"><span>'+(x.n==='Nifty Bank'?'Bank Nifty':x.n)+'</span><b>'+num(v,2)+'</b><em class="'+(w?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pct.replace(/^[+−-]/,'')+'</em></a>'}).join('')+'</div>'+
@@ -206,6 +210,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     forYou()+
     '<p class="note">Analysis, not investment advice. Prices are from the 11 Nov close.</p>';
   paintAudio();
+  morningSlide();
   var hh=$('#hero');if(hh&&wasAll===false&&allDone())hh.classList.add('win');wasAll=allDone();
   var tr=$('#spTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12,i=Math.round(tr.scrollLeft/w);$$('.dots i',s).forEach(function(d,j){d.classList.toggle('on',j===i)});$('#spC').textContent=(i+1)+' of '+SL.length},{passive:true})}
 
@@ -485,10 +490,8 @@ function mfootHTML(){var v=seasonScore();return '<a class="mfoot" href="#you/sea
 /* ---------------- streak hero (top of Today) + Streak & rewards screen ---------------- */
 var wasAll=null;
 function weekHTML(){return '<div class="wk">'+D.streak.week.map(function(d,i){var st=d[1];if(st==='today'&&allDone())st='done';return '<span class="'+st+'"><i>'+(st==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'}
-function heroHTML(){var g=goals(),d=mDone(),all=d===g.length,left=g.length-d,v=seasonScore();
-  return '<section class="hero'+(all?' all':'')+'" id="hero" aria-label="Your streak"><a class="hring" href="#rewards" style="--p:'+(d/g.length*100).toFixed(0)+'" aria-label="'+streakNow()+' day streak, open streak and rewards"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak</small></a>'+
-    '<p class="hsub">'+(all?'Streak kept for today. See you tomorrow.':left+' step'+(left>1?'s':'')+' left to make it '+(D.streak.n+1))+'</p>'+weekHTML()+
-    '<a class="hstats" href="#rewards"><span>🎁 <b>'+freeDays()+'</b> free days</span><i></i><span>⭐ <b>'+v+'</b> '+TIERS[tierOf(v)][1]+'</span><i></i><span>🧊 <b>'+freezes()+'</b></span><em aria-hidden="true">›</em></a></section>'}
+function heroHTML(){var g=goals(),d=mDone(),all=d===g.length;
+  return '<a class="spill'+(all?' all':'')+'" id="hero" href="#rewards" aria-label="'+streakNow()+' day streak, '+d+' of '+g.length+' steps done today. Open streak and rewards"><span class="sring" style="--p:'+(d/g.length*100).toFixed(0)+'"><span aria-hidden="true">🔥</span></span><b>'+streakNow()+'</b><small>day streak</small><em aria-hidden="true">›</em></a>'}
 function paintHero(){var h=$('#hero');if(!h)return;var all=allDone(),t=document.createElement('div');t.innerHTML=heroHTML();var n=t.firstChild;if(wasAll===false&&all)n.classList.add('win');h.replaceWith(n);wasAll=all}
 function strip(h){return h.replace(/<div class="h2"><h2>[^<]*<\/h2><span class="sp"><\/span><small>[^<]*<\/small><\/div>/,'')}
 function tileSheet(k){

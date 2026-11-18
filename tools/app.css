@@ -567,3 +567,79 @@ section.sec{scroll-margin-top:118px}
 .ylink .fl{font-size:28px}.ylink .tx{flex:1;display:grid;gap:3px}.ylink b{font:700 17px/1.2 var(--font-sans)}.ylink small{font:500 12.5px/1.3 var(--font-sans);color:var(--text-tertiary)}.ylink .go{color:var(--text-tertiary);font-size:20px}
 .sheet .pn .sea,.sheet .pn .fd,.sheet .pn .ladder{border:0;padding-left:0;padding-right:0;background:none}
 .sheet .pn .sho{background:var(--surface-glass);border:0}
+
+/* compact streak pill, centred in the Today top bar (replaces the big ring) */
+.top .spill{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px 0 4px;border-radius:9999px;
+  background:linear-gradient(90deg,rgba(240,160,75,.16),rgba(240,160,75,.06));border:1px solid rgba(240,160,75,.3);color:var(--text-primary);white-space:nowrap}
+.top .spill.all{background:linear-gradient(90deg,rgba(0,201,154,.18),rgba(0,201,154,.06));border-color:rgba(0,201,154,.35)}
+.sring{--p:0;position:relative;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--teal) calc(var(--p)*1%),var(--track) 0)}
+.sring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--surface-canvas)}
+.sring span{position:relative;font-size:14px;line-height:1}
+.spill b{font:800 17px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.spill small{font:500 12px/1 var(--font-sans);color:var(--text-secondary)}
+.spill.win{animation:hwin .9s cubic-bezier(.2,1.4,.4,1)}.spill.win .sring span{animation:hfl 1.2s ease}
+@keyframes hwin{0%{transform:translate(-50%,-50%) scale(.85)}60%{transform:translate(-50%,-50%) scale(1.1)}100%{transform:translate(-50%,-50%)}}
+.rhead .fl{font-size:24px}.rhead>b{font-size:38px}
+@media (max-width:399px){.spill small{display:none}.top .spill{padding-right:12px}}
+
+/* Your morning: steps slide sideways as small cards, so the card stays short */
+.morning{padding:14px 0 14px}
+.morning .mh{padding:0 16px 10px}
+.morning .steps{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 2px;scroll-padding:0 16px;scrollbar-width:none}
+.morning .steps::-webkit-scrollbar{display:none}
+.morning .steps li{flex:none;width:148px;scroll-snap-align:start}
+.morning .stp{position:relative;display:grid;align-content:start;gap:10px;min-height:0;height:100%;padding:12px;border:1px solid var(--border-decorative);border-top:1px solid var(--border-decorative);border-radius:14px;background:var(--surface-glass)}
+.morning .stp .tx b{font-size:14px}.morning .stp .tx small{white-space:normal}
+.morning .stp .go{position:absolute;top:10px;right:12px}
+.morning .stp.ok{background:var(--fin-positive-soft);border-color:transparent}
+.spill em{font-style:normal;font-size:16px;line-height:1;color:var(--text-tertiary);margin-left:-2px}
+
+/* Your morning: one step at a time, full-width rectangle, swipe for the next */
+.morning .steps li{width:calc(100% - 32px)}
+.morning .stp{display:flex;align-items:center;gap:12px;height:auto;min-height:64px;padding:12px 14px}
+.morning .stp .go{position:static}
+.morning .stp .tx small{white-space:nowrap}
+.mdots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.mdots i{width:6px;height:6px;border-radius:9999px;background:var(--track);transition:width .2s,background .2s}
+.mdots i.ok{background:rgba(0,201,154,.45)}
+.mdots i.on{width:18px;background:var(--text-secondary)}
+
+/* Your morning, slim: no outer card, one-line header, thin slides; the next one peeks in from the right */
+.morning,.morning.all{margin-top:14px;padding:0;border:0;border-radius:0;background:none}
+.morning .mh{display:flex;align-items:baseline;gap:10px;padding:0 0 8px}
+.morning .mh h2{flex:1;margin:0;font:600 15px/1.2 var(--font-sans)}
+.morning .mh small{font:500 12.5px/1.2 var(--font-sans);color:var(--text-tertiary);white-space:nowrap}
+.morning .steps{gap:8px;margin:0 -20px;padding:0 20px;scroll-padding:0 20px}
+.morning .steps li{width:calc(100% - 56px)}
+.morning .stp{gap:10px;min-height:0;padding:9px 12px;border-radius:12px;background:var(--surface-raised)}
+.morning .stp>i{width:20px;height:20px;font-size:11px}
+.morning .stp .tx{gap:1px}
+.morning .stp .tx b{font:600 13.5px/1.25 var(--font-sans)}
+.morning .stp .tx small{font-size:12px}
+.morning .stp .go{font-size:16px}
+.morning .stp.ok{background:var(--fin-positive-soft)}
+.mdots{margin-top:7px}
+
+/* one full-width step at a time; the rest wait stacked behind it */
+.morning .steps{gap:20px;padding-bottom:10px}
+.morning .steps li{width:calc(100% - 40px)}
+.morning .steps li:not(:last-child) .stp{box-shadow:0 5px 0 -1px var(--surface-elevated),0 5px 0 0 var(--border-decorative),0 10px 0 -3px var(--surface-raised),0 10px 0 -2px var(--border-decorative)}
+.mdots{margin-top:2px}
+.morning .steps li{width:100%}
+
+/* Your morning: colourful step cards (indigo brief, teal calls/market, amber review, blue learn) */
+.morning .stp{--c:63,91,217;gap:12px;padding:10px 10px 10px 10px;border:1px solid rgba(var(--c),.35);
+  background:linear-gradient(100deg,rgba(var(--c),.22),rgba(var(--c),.06) 70%),var(--surface-raised)}
+.morning .stp.c-t{--c:0,201,154}.morning .stp.c-a{--c:240,160,75}.morning .stp.c-b{--c:50,130,232}
+.morning .stp .si{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgb(var(--c));color:#fff;box-shadow:0 6px 16px rgba(var(--c),.35)}
+.morning .stp.c-t .si,.morning .stp.c-a .si{color:#101827}
+.morning .stp .si svg{width:20px;height:20px}
+.morning .stp .tx em{font:700 10px/1.2 var(--font-sans);font-style:normal;letter-spacing:.9px;text-transform:uppercase;color:rgb(var(--c))}
+.morning .stp .cta{flex:none;padding:8px 14px;border-radius:9999px;background:rgb(var(--c));color:#fff;font:700 12.5px/1 var(--font-sans)}
+.morning .stp.c-t .cta,.morning .stp.c-a .cta{color:#101827}
+.morning .stp.ok{--c:0,201,154;border-color:rgba(0,201,154,.3);background:linear-gradient(100deg,rgba(0,201,154,.16),rgba(0,201,154,.04) 70%),var(--surface-raised)}
+.morning .stp.ok .cta{background:none;color:var(--up-text);padding-right:6px}
+.morning .stp.ok .tx b{text-decoration:none;color:var(--text-secondary)}
+:root[data-theme="light"] .morning .stp .tx em{color:var(--text-secondary)}
+.mdots i.on{background:var(--text-primary)}
+.morning .stp.c-i .tx em{color:var(--link)}

@@ -577,6 +577,82 @@ section.sec{scroll-margin-top:118px}
 .ylink .fl{font-size:28px}.ylink .tx{flex:1;display:grid;gap:3px}.ylink b{font:700 17px/1.2 var(--font-sans)}.ylink small{font:500 12.5px/1.3 var(--font-sans);color:var(--text-tertiary)}.ylink .go{color:var(--text-tertiary);font-size:20px}
 .sheet .pn .sea,.sheet .pn .fd,.sheet .pn .ladder{border:0;padding-left:0;padding-right:0;background:none}
 .sheet .pn .sho{background:var(--surface-glass);border:0}
+
+/* compact streak pill, centred in the Today top bar (replaces the big ring) */
+.top .spill{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px 0 4px;border-radius:9999px;
+  background:linear-gradient(90deg,rgba(240,160,75,.16),rgba(240,160,75,.06));border:1px solid rgba(240,160,75,.3);color:var(--text-primary);white-space:nowrap}
+.top .spill.all{background:linear-gradient(90deg,rgba(0,201,154,.18),rgba(0,201,154,.06));border-color:rgba(0,201,154,.35)}
+.sring{--p:0;position:relative;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--teal) calc(var(--p)*1%),var(--track) 0)}
+.sring::before{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--surface-canvas)}
+.sring span{position:relative;font-size:14px;line-height:1}
+.spill b{font:800 17px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.spill small{font:500 12px/1 var(--font-sans);color:var(--text-secondary)}
+.spill.win{animation:hwin .9s cubic-bezier(.2,1.4,.4,1)}.spill.win .sring span{animation:hfl 1.2s ease}
+@keyframes hwin{0%{transform:translate(-50%,-50%) scale(.85)}60%{transform:translate(-50%,-50%) scale(1.1)}100%{transform:translate(-50%,-50%)}}
+.rhead .fl{font-size:24px}.rhead>b{font-size:38px}
+@media (max-width:399px){.spill small{display:none}.top .spill{padding-right:12px}}
+
+/* Your morning: steps slide sideways as small cards, so the card stays short */
+.morning{padding:14px 0 14px}
+.morning .mh{padding:0 16px 10px}
+.morning .steps{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 2px;scroll-padding:0 16px;scrollbar-width:none}
+.morning .steps::-webkit-scrollbar{display:none}
+.morning .steps li{flex:none;width:148px;scroll-snap-align:start}
+.morning .stp{position:relative;display:grid;align-content:start;gap:10px;min-height:0;height:100%;padding:12px;border:1px solid var(--border-decorative);border-top:1px solid var(--border-decorative);border-radius:14px;background:var(--surface-glass)}
+.morning .stp .tx b{font-size:14px}.morning .stp .tx small{white-space:normal}
+.morning .stp .go{position:absolute;top:10px;right:12px}
+.morning .stp.ok{background:var(--fin-positive-soft);border-color:transparent}
+.spill em{font-style:normal;font-size:16px;line-height:1;color:var(--text-tertiary);margin-left:-2px}
+
+/* Your morning: one step at a time, full-width rectangle, swipe for the next */
+.morning .steps li{width:calc(100% - 32px)}
+.morning .stp{display:flex;align-items:center;gap:12px;height:auto;min-height:64px;padding:12px 14px}
+.morning .stp .go{position:static}
+.morning .stp .tx small{white-space:nowrap}
+.mdots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.mdots i{width:6px;height:6px;border-radius:9999px;background:var(--track);transition:width .2s,background .2s}
+.mdots i.ok{background:rgba(0,201,154,.45)}
+.mdots i.on{width:18px;background:var(--text-secondary)}
+
+/* Your morning, slim: no outer card, one-line header, thin slides; the next one peeks in from the right */
+.morning,.morning.all{margin-top:14px;padding:0;border:0;border-radius:0;background:none}
+.morning .mh{display:flex;align-items:baseline;gap:10px;padding:0 0 8px}
+.morning .mh h2{flex:1;margin:0;font:600 15px/1.2 var(--font-sans)}
+.morning .mh small{font:500 12.5px/1.2 var(--font-sans);color:var(--text-tertiary);white-space:nowrap}
+.morning .steps{gap:8px;margin:0 -20px;padding:0 20px;scroll-padding:0 20px}
+.morning .steps li{width:calc(100% - 56px)}
+.morning .stp{gap:10px;min-height:0;padding:9px 12px;border-radius:12px;background:var(--surface-raised)}
+.morning .stp>i{width:20px;height:20px;font-size:11px}
+.morning .stp .tx{gap:1px}
+.morning .stp .tx b{font:600 13.5px/1.25 var(--font-sans)}
+.morning .stp .tx small{font-size:12px}
+.morning .stp .go{font-size:16px}
+.morning .stp.ok{background:var(--fin-positive-soft)}
+.mdots{margin-top:7px}
+
+/* one full-width step at a time; the rest wait stacked behind it */
+.morning .steps{gap:20px;padding-bottom:10px}
+.morning .steps li{width:calc(100% - 40px)}
+.morning .steps li:not(:last-child) .stp{box-shadow:0 5px 0 -1px var(--surface-elevated),0 5px 0 0 var(--border-decorative),0 10px 0 -3px var(--surface-raised),0 10px 0 -2px var(--border-decorative)}
+.mdots{margin-top:2px}
+.morning .steps li{width:100%}
+
+/* Your morning: colourful step cards (indigo brief, teal calls/market, amber review, blue learn) */
+.morning .stp{--c:63,91,217;gap:12px;padding:10px 10px 10px 10px;border:1px solid rgba(var(--c),.35);
+  background:linear-gradient(100deg,rgba(var(--c),.22),rgba(var(--c),.06) 70%),var(--surface-raised)}
+.morning .stp.c-t{--c:0,201,154}.morning .stp.c-a{--c:240,160,75}.morning .stp.c-b{--c:50,130,232}
+.morning .stp .si{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgb(var(--c));color:#fff;box-shadow:0 6px 16px rgba(var(--c),.35)}
+.morning .stp.c-t .si,.morning .stp.c-a .si{color:#101827}
+.morning .stp .si svg{width:20px;height:20px}
+.morning .stp .tx em{font:700 10px/1.2 var(--font-sans);font-style:normal;letter-spacing:.9px;text-transform:uppercase;color:rgb(var(--c))}
+.morning .stp .cta{flex:none;padding:8px 14px;border-radius:9999px;background:rgb(var(--c));color:#fff;font:700 12.5px/1 var(--font-sans)}
+.morning .stp.c-t .cta,.morning .stp.c-a .cta{color:#101827}
+.morning .stp.ok{--c:0,201,154;border-color:rgba(0,201,154,.3);background:linear-gradient(100deg,rgba(0,201,154,.16),rgba(0,201,154,.04) 70%),var(--surface-raised)}
+.morning .stp.ok .cta{background:none;color:var(--up-text);padding-right:6px}
+.morning .stp.ok .tx b{text-decoration:none;color:var(--text-secondary)}
+:root[data-theme="light"] .morning .stp .tx em{color:var(--text-secondary)}
+.mdots i.on{background:var(--text-primary)}
+.morning .stp.c-i .tx em{color:var(--link)}
 </style>
 </head>
 <body>
@@ -785,6 +861,8 @@ function onboard(){var ans={},step=0;ob=document.createElement('div');ob.classNa
 var MKEY='ap-morning-2026-11-12';
 function mstate(){return store.get(MKEY,{})}
 function mark(k){var m=mstate();if(m[k])return;var was=mDone()===goals().length;m[k]=Date.now();store.set(MKEY,m);if(tab==='today')paintMorning();if(!was&&mDone()===goals().length)toast('Morning done: +10 season points, streak '+streakNow())}
+/* colour, icon and button word for each morning step */
+var SLOOK={brief:['i','brief','Play'],calls:['t','tc','View'],journal:['a','journal','Review'],learn:['b','learn','Learn'],watch:['t','markets','Open']};
 var STEP={
   brief:['Listen to the brief','7 chapters · '+mmss(D.audio.dur),function(){return !!mstate().brief},'@listen'],
   calls:['Check today’s calls',CALLS.length+' active · track record inside',function(){return !!mstate().calls},'#ideas/calls'],
@@ -794,9 +872,11 @@ var STEP={
 function mDone(){return goals().filter(function(k){return STEP[k][2]()}).length}
 function streakNow(){return D.streak.n+(mDone()===goals().length?1:0)}
 function morningHTML(){var g=goals(),d=mDone(),all=d===g.length,pct=d/g.length*100;store.set('ap-day-done-2026-11-12',all?1:0);
-  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><div><h2 id="mH">'+(all?'Morning done 🔥':'Your morning')+'</h2><small>'+d+' of '+g.length+' done'+(all?' · +10 season points':' · finish all to keep your streak')+'</small></div></div>'+
-    '<ol class="steps">'+g.map(function(k){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1];return '<li><a class="stp'+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><i aria-hidden="true">'+(ok?'✓':'')+'</i><span class="tx"><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="go" aria-hidden="true">'+(ok?'':'›')+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol></section>'}
-function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);paintHero();var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}
+  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><h2 id="mH">'+(all?'Morning done 🔥':'Your morning')+'</h2><small>'+(all?'Streak kept · +10 pts':d+'/'+g.length+' · '+(g.length-d)+' left for 🔥 '+(D.streak.n+1))+'</small></div>'+
+    '<ol class="steps">'+g.map(function(k,n){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1],m=SLOOK[k];return '<li><a class="stp c-'+m[0]+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><span class="si" aria-hidden="true">'+(ok?I('<path d="m5 12 5 5 9-10"/>',2.6):I(ICO[m[1]],2))+'</span><span class="tx"><em>Step '+(n+1)+' of '+g.length+'</em><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="cta" aria-hidden="true">'+(ok?'Done':m[2])+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol><div class="mdots" aria-hidden="true">'+g.map(function(k){return '<i class="'+(STEP[k][2]()?'ok':'')+'"></i>'}).join('')+'</div></section>'}
+function morningSlide(){var ol=$('#morning .steps');if(!ol)return;var lis=$$('li',ol),f=lis.findIndex(function(li){return !li.querySelector('.stp.ok')});if(f>0)ol.scrollLeft=lis[f].offsetLeft-ol.offsetLeft-20;
+  var dots=$$('#morning .mdots i'),sync=function(){var i=Math.round(ol.scrollLeft/(lis[0].offsetWidth+20));dots.forEach(function(d,j){d.classList.toggle('on',j===i)})};sync();ol.addEventListener('scroll',sync,{passive:true})}
+function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);paintHero();morningSlide();var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}
 
 /* ---------------- TODAY ---------------- */
 var CL=D.closed||[],CLW=CL.filter(function(c){return c.how==='target'}).length;
@@ -822,9 +902,9 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',S=D.sotd,lrn=learne
     '<div class="card" style="padding:0 16px"><div class="list" id="fyRows">'+rows.map(function(k){var r=R[k];return '<a class="row" href="'+r[6]+'"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></a>'}).join('')+'</div></div>'}
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  s.innerHTML=top('',avatar())+
+  s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+
     '<div class="hello"><h1>'+hi+', Trader</h1><p>'+esc(D.date.replace(/^(\w{3})\w*,\s*(\d+)\s+(\w{3})\w*/,'$1 $2 $3'))+(nx?' \u00B7 '+nx.t+' '+esc(nx.b):'')+'</p></div>'+
-    heroHTML()+morningHTML()+
+    morningHTML()+
     '<section class="brief card" aria-labelledby="tH"><div class="eb">Today’s brief · '+mmss(D.audio.dur)+'</div><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+
       '<div class="bp"><button type="button" class="play" data-act="listen" aria-label="Play the brief"></button><div class="bt"><b id="bpT">Listen</b><small id="bpS">7 chapters</small><span class="bpb"><i id="bpBar"></i></span></div><button type="button" class="btn g s" data-act="chapters">Chapters</button></div></section>'+
     '<div class="strip" role="group" aria-label="Yesterday’s close">'+idx.map(function(x){var v=x.d[x.d.length-1][1],w=x.n==='India VIX';return '<a class="nm" href="#markets/indices" data-ix="'+esc(x.n)+'"><span>'+(x.n==='Nifty Bank'?'Bank Nifty':x.n)+'</span><b>'+num(v,2)+'</b><em class="'+(w?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pct.replace(/^[+−-]/,'')+'</em></a>'}).join('')+'</div>'+
@@ -833,6 +913,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     forYou()+
     '<p class="note">Analysis, not investment advice. Prices are from the 11 Nov close.</p>';
   paintAudio();
+  morningSlide();
   var hh=$('#hero');if(hh&&wasAll===false&&allDone())hh.classList.add('win');wasAll=allDone();
   var tr=$('#spTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12,i=Math.round(tr.scrollLeft/w);$$('.dots i',s).forEach(function(d,j){d.classList.toggle('on',j===i)});$('#spC').textContent=(i+1)+' of '+SL.length},{passive:true})}
 
@@ -1112,10 +1193,8 @@ function mfootHTML(){var v=seasonScore();return '<a class="mfoot" href="#you/sea
 /* ---------------- streak hero (top of Today) + Streak & rewards screen ---------------- */
 var wasAll=null;
 function weekHTML(){return '<div class="wk">'+D.streak.week.map(function(d,i){var st=d[1];if(st==='today'&&allDone())st='done';return '<span class="'+st+'"><i>'+(st==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'}
-function heroHTML(){var g=goals(),d=mDone(),all=d===g.length,left=g.length-d,v=seasonScore();
-  return '<section class="hero'+(all?' all':'')+'" id="hero" aria-label="Your streak"><a class="hring" href="#rewards" style="--p:'+(d/g.length*100).toFixed(0)+'" aria-label="'+streakNow()+' day streak, open streak and rewards"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak</small></a>'+
-    '<p class="hsub">'+(all?'Streak kept for today. See you tomorrow.':left+' step'+(left>1?'s':'')+' left to make it '+(D.streak.n+1))+'</p>'+weekHTML()+
-    '<a class="hstats" href="#rewards"><span>🎁 <b>'+freeDays()+'</b> free days</span><i></i><span>⭐ <b>'+v+'</b> '+TIERS[tierOf(v)][1]+'</span><i></i><span>🧊 <b>'+freezes()+'</b></span><em aria-hidden="true">›</em></a></section>'}
+function heroHTML(){var g=goals(),d=mDone(),all=d===g.length;
+  return '<a class="spill'+(all?' all':'')+'" id="hero" href="#rewards" aria-label="'+streakNow()+' day streak, '+d+' of '+g.length+' steps done today. Open streak and rewards"><span class="sring" style="--p:'+(d/g.length*100).toFixed(0)+'"><span aria-hidden="true">🔥</span></span><b>'+streakNow()+'</b><small>day streak</small><em aria-hidden="true">›</em></a>'}
 function paintHero(){var h=$('#hero');if(!h)return;var all=allDone(),t=document.createElement('div');t.innerHTML=heroHTML();var n=t.firstChild;if(wasAll===false&&all)n.classList.add('win');h.replaceWith(n);wasAll=all}
 function strip(h){return h.replace(/<div class="h2"><h2>[^<]*<\/h2><span class="sp"><\/span><small>[^<]*<\/small><\/div>/,'')}
 function tileSheet(k){
