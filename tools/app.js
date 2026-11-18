@@ -206,8 +206,8 @@ function homePreview(){var SL=spotSlides().slice(0,2),F=fyRows().slice(0,2);
 
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+
-    '<div class="hello"><h1>'+hi+', Trader</h1>'+tickHTML()+'</div>'+
+  s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+tickHTML()+
+    '<div class="hello"><h1>'+hi+', Trader</h1></div>'+
     morningHTML()+
 
     (locked()?profitHTML('home'):'')+homePreview()+
@@ -629,7 +629,7 @@ var subInd={},subDir='';
 function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;var old=$('.subbar',scr);if(old)old.remove();
   var kids=[].slice.call(scr.children),grp=null,found={},cur=null;
   kids.forEach(function(c){if(c.tagName==='HEADER')return;var d=defs.filter(function(x){return subStart(c,x[3])})[0];if(d){cur=d[0];found[cur]=1}
-    c.dataset.sub=c.classList.contains('note')?'*':(cur||'-')});
+    c.dataset.sub=(c.classList.contains('note')||c.classList.contains('tick'))?'*':(cur||'-')});
   var live=defs.filter(function(x){return found[x[0]]});if(!live.length)return;
   if(sec){var el=document.getElementById(sec);if(el){var host=kids.filter(function(c){return c===el||c.contains(el)})[0];if(host&&host.dataset.sub&&found[host.dataset.sub])subSel[t]=host.dataset.sub}}
   if(!subSel[t]||!found[subSel[t]])subSel[t]=live[0][0];
@@ -637,7 +637,7 @@ function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;v
   kids.forEach(function(c){if(c.tagName==='HEADER')return;var g=c.dataset.sub;c.classList.toggle('sub-off',!(g==='*'||(all&&g!=='-')||g===k));c.classList.remove('ssl-r','ssl-l');if(subDir&&!c.classList.contains('sub-off')){void c.offsetWidth;c.classList.add('ssl-'+subDir)}});subDir='';
   var bar=document.createElement('nav');bar.className='subbar';bar.setAttribute('aria-label','Sections');
   bar.innerHTML='<div class="sbt"><i class="ind" aria-hidden="true"></i>'+live.map(function(x){return '<button type="button" data-sub-go="'+x[0]+'"'+(x[0]===k?' aria-current="true"':'')+'>'+I(ICO[x[2]]||ICO.today,2)+'<span>'+x[1]+'</span></button>'}).join('')+'</div>';
-  var hd=$('header',scr);if(hd)hd.after(bar);else scr.prepend(bar);
+  var hd=$('header',scr),tk=hd&&hd.nextElementSibling&&hd.nextElementSibling.classList.contains('tick')?hd.nextElementSibling:hd;if(tk)tk.after(bar);else scr.prepend(bar);
   var on=$('[aria-current]',bar),ind=$('.ind',bar),pv=subInd[t];
   if(on){var to={x:on.offsetLeft,w:on.offsetWidth};if(pv){ind.style.transition='none';ind.style.transform='translateX('+pv.x+'px)';ind.style.width=pv.w+'px';ind.offsetWidth;ind.style.transition=''}
     ind.style.transform='translateX('+to.x+'px)';ind.style.width=to.w+'px';subInd[t]=to;
