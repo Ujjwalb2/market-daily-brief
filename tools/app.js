@@ -196,8 +196,30 @@ function fyRows(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-
     basic:['a',ICO.cal,'Coming up for you',nx?nx.t+' '+nx.b:'Market day done','','','#markets/cal']}[key];
   if(X)R.push(X);return R}
 function fyRow(r){var pro=r[6]==='@pro';return '<'+(pro?'button type="button" data-act="pro"':'a href="'+r[6]+'"')+' class="row"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></'+(pro?'button':'a')+'>'}
-function forYou(){return '<div class="h2"><h2>For you</h2><small id="fyName">'+presetName()+'</small><span class="sp"></span><button type="button" class="l" data-act="setup">Change</button></div>'+
-    '<div class="card" style="padding:0 16px"><div class="list" id="fyRows">'+fyRows().map(fyRow).join('')+'</div></div>'}
+function forYou(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(x){return x.d.slice(0,7)===mo}),st=stats(tr),v=seasonScore(),ti=tierOf(v),nx=nextEv();
+  /* your month: running P&L line */
+  var cum=0,pts=tr.map(function(x){cum+=x.pnl;return cum}),lo=Math.min.apply(null,[0].concat(pts)),hi=Math.max.apply(null,[0].concat(pts)),rg=(hi-lo)||1,W=300,H=56;
+  var line=pts.map(function(y,i){return (pts.length>1?i/(pts.length-1)*W:0).toFixed(1)+','+(H-4-(y-lo)/rg*(H-8)).toFixed(1)}).join(' '),zero=(H-4-(0-lo)/rg*(H-8)).toFixed(1);
+  var mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'});
+  var hero='<a class="fy-hero" href="#journal/overview"><div class="fy-k"><span class="eb">Your '+mname+'</span><span class="go" aria-hidden="true">›</span></div>'+
+    '<div class="fy-n"><b class="'+(st.net>=0?'u':'')+'">'+inr(st.net,true)+'</b><small>net P&amp;L</small></div>'+
+    '<svg class="fy-sp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="'+W+'" y1="'+zero+'" y2="'+zero+'" stroke="var(--border-decorative)" stroke-dasharray="3 4"/><polyline points="'+line+'" fill="none" stroke="'+(st.net>=0?'var(--teal)':'var(--slate-500)')+'" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>'+
+    '<div class="fy-3"><div><b>'+st.n+'</b><small>trades</small></div><div><b>'+st.wr.toFixed(0)+'%</b><small>win rate</small></div><div><b>'+(st.pf?st.pf.toFixed(2):'–')+'</b><small>profit factor</small></div></div></a>';
+  /* two tiles: calls and rewards */
+  var calls=locked()?'<button type="button" class="fy-t lk" data-act="pro"><span class="ic a">'+I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',2)+'</span><b>'+CALLS.length+' live calls</b><small>Locked · '+CL.filter(function(x){return x.ret>0}).length+' of '+CL.length+' booked profit</small><em>Unlock →</em></button>'
+    :'<a class="fy-t" href="#ideas/calls"><span class="ic i">'+I(ICO.tc,2)+'</span><b>'+CALLS.length+' live calls</b><small>'+CLW+' of '+CL.length+' recent hit target</small><em>Open →</em></a>';
+  var rew='<a class="fy-t" href="#rewards"><span class="ic t">'+I(ICO.star,2)+'</span><b>'+freeDays()+' free days</b><small>'+v+' pts · '+TIERS[ti][1]+' · #'+myRank()+'</small><em>Rewards →</em></a>';
+  /* one card for what you trade */
+  var X;
+  if(key==='options')X='<a class="fy-x" href="#markets/fo"><div class="fy-k"><span class="eb">Your expiry · Nifty</span><small>'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small></div><div class="fy-lv">'+D.fo.k.map(function(k,n){return '<div class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div></a>';
+  else if(key==='investor')X='<a class="fy-x" href="#ideas/baskets"><div class="fy-k"><span class="eb">Your baskets</span></div>'+D.baskets.slice(0,2).map(function(b){return '<div class="fy-r"><span>'+esc(b.n)+'</span><b class="u">'+esc(b.r)+'</b></div>'}).join('')+'</a>';
+  else if(key==='learner'){var l=learned().length;X='<a class="fy-x" href="#you/learn"><div class="fy-k"><span class="eb">Your learning today</span><small>'+l+' of '+LEARN.length+'</small></div><span class="lbar"><em style="width:'+(l/LEARN.length*100)+'%"></em></span></a>'}
+  else if(key==='picker')X='<a class="fy-x" href="#markets/movers"><div class="fy-k"><span class="eb">Your watch · top movers</span></div>'+MVS.slice(0,3).map(function(m){return '<div class="fy-r"><span>'+esc(m.n)+'</span><b class="u">+'+m.v.toFixed(2)+'%</b></div>'}).join('')+'</a>';
+  else X='<a class="fy-x" href="#markets/cal"><div class="fy-k"><span class="eb">Coming up for you</span></div><div class="fy-r"><span>'+(nx?esc(nx.b):'Market day done')+'</span><b>'+(nx?nx.t:'')+'</b></div></a>';
+  return '<div class="h2 fyh"><h2>For you</h2></div>'+
+    '<div class="fy-who"><span>Set up for <b id="fyName">'+presetName()+'</b></span><button type="button" class="l" data-act="setup">Change</button></div>'+
+    '<div class="fy">'+hero+'<div class="fy-2">'+calls+rew+'</div>'+X+'</div>'}
+
 /* Home previews: two highlights and two of your things, each with a way to see all */
 function homePreview(){var SL=spotSlides().slice(0,2),F=fyRows().slice(0,2);
   return '<section class="pv"><div class="pvh"><b>Market highlights</b><button type="button" class="l" data-sub-go="spot">See all '+spotSlides().length+' →</button></div><div class="card" style="padding:0 16px"><div class="list">'+
@@ -211,7 +233,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     morningHTML()+
 
     (locked()?profitHTML('home'):'')+homePreview()+
-    '<div class="h2"><h2>Spotlight</h2><small id="spC">'+SL.length+' today</small></div>'+
+    '<div class="h2 sph"><h2>Spotlight</h2><small id="spC">'+SL.length+' today</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" id="spot-'+i+'" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
     '<p class="note">Analysis, not investment advice. Prices are from the 11 Nov close.</p>';
