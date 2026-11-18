@@ -923,6 +923,16 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 #movers>.h2{margin-top:14px}#filings>.h2{margin-top:14px;justify-content:flex-start}
 #s-markets .chips{flex-wrap:wrap;overflow:visible;margin:0;padding:2px 0;row-gap:2px}
 .ixpick{margin-top:14px}
+
+/* ticker: a down arrow on the right says "tap or pull down for all indices" */
+.tick.tkf{position:relative}
+.tkd{position:absolute;right:0;top:0;bottom:0;width:48px;display:grid;place-items:center;color:var(--text-primary);background:linear-gradient(90deg,transparent,var(--surface-raised) 40%)}
+.tkd svg{width:22px;height:22px;padding:3px;border-radius:50%;background:var(--surface-glass);box-shadow:0 0 0 1px var(--border-decorative);animation:tkb 1.8s ease-in-out infinite}
+@keyframes tkb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.tkd svg{animation:none}}
+.tkf .tkw{-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 100%);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 100%)}
+.tick.tkf .tkd{display:flex;align-items:center;justify-content:center;gap:0}
+.tick.tkf .tkd{width:64px;background:linear-gradient(90deg,transparent,var(--surface-raised) 45%)}
 </style>
 </head>
 <body>
@@ -1221,7 +1231,7 @@ var SENSEX={n:'Sensex',v:81879.40,pts:'+773.00',pct:'+0.95%',up:true};
 function ixShort(n){return n==='Nifty Bank'?'Bank Nifty':n}
 function tickHTML(){var a=IDX.filter(function(x){return x.n==='Nifty 50'}).concat([SENSEX],IDX.filter(function(x){return /^(Nifty Bank|Midcap 100|India VIX)$/.test(x.n)}));
   var one=a.map(function(x){return '<span>'+(x.n==='Nifty 50'?'Nifty':ixShort(x.n))+' <b>'+num(x.d?x.d[x.d.length-1][1]:x.v,2)+'</b> <em class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pct+'</em></span><i></i>'}).join('');
-  return '<button type="button" class="tick tkf" data-act="ovw" aria-label="Market overview: '+a.map(function(x){return ixShort(x.n)+' '+x.pct}).join(', ')+'"><span class="tkw" aria-hidden="true"><span class="tkt">'+one+one+'</span></span></button>'}
+  return '<button type="button" class="tick tkf" data-act="ovw" aria-label="Market overview: '+a.map(function(x){return ixShort(x.n)+' '+x.pct}).join(', ')+'"><span class="tkw" aria-hidden="true"><span class="tkt">'+one+one+'</span></span><span class="tkd" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>'}
 function ovSpark(x){var v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,W=150,H=40;
   var pts=v.map(function(y,i){return (i/(v.length-1)*W).toFixed(1)+','+(H-3-(y-lo)/r*(H-6)).toFixed(1)}).join(' ');
   var c=x.vix?'var(--amber)':x.up?'var(--teal)':'var(--slate-500)';

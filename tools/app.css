@@ -913,3 +913,13 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 #movers>.h2{margin-top:14px}#filings>.h2{margin-top:14px;justify-content:flex-start}
 #s-markets .chips{flex-wrap:wrap;overflow:visible;margin:0;padding:2px 0;row-gap:2px}
 .ixpick{margin-top:14px}
+
+/* ticker: a down arrow on the right says "tap or pull down for all indices" */
+.tick.tkf{position:relative}
+.tkd{position:absolute;right:0;top:0;bottom:0;width:48px;display:grid;place-items:center;color:var(--text-primary);background:linear-gradient(90deg,transparent,var(--surface-raised) 40%)}
+.tkd svg{width:22px;height:22px;padding:3px;border-radius:50%;background:var(--surface-glass);box-shadow:0 0 0 1px var(--border-decorative);animation:tkb 1.8s ease-in-out infinite}
+@keyframes tkb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.tkd svg{animation:none}}
+.tkf .tkw{-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 100%);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 100%)}
+.tick.tkf .tkd{display:flex;align-items:center;justify-content:center;gap:0}
+.tick.tkf .tkd{width:64px;background:linear-gradient(90deg,transparent,var(--surface-raised) 45%)}

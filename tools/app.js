@@ -248,7 +248,7 @@ var SENSEX={n:'Sensex',v:81879.40,pts:'+773.00',pct:'+0.95%',up:true};
 function ixShort(n){return n==='Nifty Bank'?'Bank Nifty':n}
 function tickHTML(){var a=IDX.filter(function(x){return x.n==='Nifty 50'}).concat([SENSEX],IDX.filter(function(x){return /^(Nifty Bank|Midcap 100|India VIX)$/.test(x.n)}));
   var one=a.map(function(x){return '<span>'+(x.n==='Nifty 50'?'Nifty':ixShort(x.n))+' <b>'+num(x.d?x.d[x.d.length-1][1]:x.v,2)+'</b> <em class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pct+'</em></span><i></i>'}).join('');
-  return '<button type="button" class="tick tkf" data-act="ovw" aria-label="Market overview: '+a.map(function(x){return ixShort(x.n)+' '+x.pct}).join(', ')+'"><span class="tkw" aria-hidden="true"><span class="tkt">'+one+one+'</span></span></button>'}
+  return '<button type="button" class="tick tkf" data-act="ovw" aria-label="Market overview: '+a.map(function(x){return ixShort(x.n)+' '+x.pct}).join(', ')+'"><span class="tkw" aria-hidden="true"><span class="tkt">'+one+one+'</span></span><span class="tkd" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>'}
 function ovSpark(x){var v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,W=150,H=40;
   var pts=v.map(function(y,i){return (i/(v.length-1)*W).toFixed(1)+','+(H-3-(y-lo)/r*(H-6)).toFixed(1)}).join(' ');
   var c=x.vix?'var(--amber)':x.up?'var(--teal)':'var(--slate-500)';
