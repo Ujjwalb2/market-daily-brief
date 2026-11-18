@@ -221,6 +221,42 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-
     '<div class="fy">'+hero+'<div class="fy-2">'+calls+rew+'</div>'+X+'</div>'}
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
+/* ---------------- IPOs going live: name, AlphaPad in-house score, report (sample data, same IPOs as the calendar) ---------------- */
+var IPOS=[
+  {n:'Northwind Logistics',sec:'Logistics · Mainboard',st:'open',stt:'Open now · closes 13 Nov',size:'₹1,200 cr',band:'₹410–432',lot:'34 shares',min:'₹14,688',sub:'2.1x so far',dates:[['Opens','11 Nov'],['Closes','13 Nov'],['Allotment','16 Nov'],['Lists','18 Nov']],
+   sc:7.4,parts:[['Business',8],['Financials',7.5],['Valuation',6.5],['Promoters & governance',7.5]],
+   good:['Revenue grew about 24% a year for three years, with steady margins','Most of the money raised goes to new warehouses, not to selling shareholders','Debt falls sharply after the issue'],
+   watch:['Priced above most listed logistics peers on earnings','Top five clients bring in over a third of revenue']},
+  {n:'Lumen Foods',sec:'Packaged foods · Mainboard',st:'list',stt:'Closed · lists 16 Nov',size:'₹640 cr',band:'₹180–190',lot:'78 shares',min:'₹14,820',sub:'4.2x subscribed',dates:[['Opened','9 Nov'],['Closed','11 Nov'],['Allotment','13 Nov'],['Lists','16 Nov']],
+   sc:5.6,parts:[['Business',6.5],['Financials',5.5],['Valuation',4.5],['Promoters & governance',6]],
+   good:['Well-known regional brands with loyal buyers','Profitable for the last three years'],
+   watch:['Two-thirds of the issue is promoters selling shares','Margins have been shrinking as input costs rise','Rich valuation for its growth rate']},
+  {n:'Orion Pharma',sec:'Pharmaceuticals · Mainboard',st:'soon',stt:'Opens 20 Nov',size:'₹900 cr',band:'Price band soon',lot:'–',min:'–',sub:'Not open yet',dates:[['Opens','20 Nov'],['Closes','24 Nov'],['Allotment','27 Nov'],['Lists','1 Dec']],
+   sc:6.8,parts:[['Business',7.5],['Financials',7],['Valuation',6],['Promoters & governance',6.5]],
+   good:['Export business with approvals in regulated markets','Cash from operations has stayed positive'],
+   watch:['Score is early: it will be updated once the price band is out','One product brings in a large share of sales']}];
+function ipoTone(v){return v>=7?['Strong','t']:v>=6?['Fair','a']:['Weak','s']}
+function ipoRing(v,big){var r=big?30:22,c=2*Math.PI*r,w=big?76:56,t=ipoTone(v);
+  return '<span class="ipr '+t[1]+(big?' big':'')+'" role="img" aria-label="AlphaPad score '+v.toFixed(1)+' out of 10, '+t[0]+'"><svg viewBox="0 0 '+w+' '+w+'" aria-hidden="true"><circle cx="'+w/2+'" cy="'+w/2+'" r="'+r+'" fill="none" stroke="var(--track)" stroke-width="'+(big?6:5)+'"/><circle cx="'+w/2+'" cy="'+w/2+'" r="'+r+'" fill="none" stroke="currentColor" stroke-width="'+(big?6:5)+'" stroke-linecap="round" stroke-dasharray="'+(c*v/10).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 '+w/2+' '+w/2+')"/></svg><b>'+v.toFixed(1)+'</b></span>'}
+function ipoHTML(){
+  return '<section class="pv ipo"><div class="pvh"><b>IPOs</b><small id="ipoC">1 of '+IPOS.length+'</small></div>'+
+    '<div class="hlt ipt" data-noswipe aria-label="IPOs, swipe for more">'+IPOS.map(function(x,i){var t=ipoTone(x.sc);
+      return '<button type="button" class="ipc" data-act="ipo" data-i="'+i+'" aria-label="'+esc(x.n)+': '+esc(x.stt)+', AlphaPad score '+x.sc.toFixed(1)+'. Open report">'+
+        '<span class="iph"><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span></span>'+
+        '<span class="ipm"><span class="ipn"><b>'+esc(x.n)+'</b><small>'+esc(x.sec)+'</small></span><span class="ipsc">'+ipoRing(x.sc)+'<small>'+t[0]+'</small></span></span>'+
+        '<span class="ipf"><span>Size<b>'+x.size+'</b></span><span>Price<b>'+x.band+'</b></span><span>Demand<b>'+x.sub+'</b></span></span>'+
+        '<span class="hg">Read the report →</span></button>'}).join('')+'</div>'+
+    '<div class="mdots ipd" aria-hidden="true">'+IPOS.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
+    '<p class="ipnote">AlphaPad score is our in-house rating out of 10. Sample IPOs for the prototype.</p></section>'}
+function ipoSheet(i){var x=IPOS[i],t=ipoTone(x.sc);
+  sheet(x.n,'<div class="ipr-h">'+ipoRing(x.sc,true)+'<div><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span><b>AlphaPad score: '+t[0]+'</b><small>'+esc(x.sec)+'</small></div></div>'+
+    '<div class="ipbars">'+x.parts.map(function(q){return '<div><span>'+q[0]+'</span><i><em class="'+ipoTone(q[1])[1]+'" style="width:'+q[1]*10+'%"></em></i><b>'+q[1].toFixed(1)+'</b></div>'}).join('')+'</div>'+
+    '<div class="facts"><div>Issue size<b>'+x.size+'</b></div><div>Price band<b>'+x.band+'</b></div><div>Lot<b>'+x.lot+'</b></div><div>Min. amount<b>'+x.min+'</b></div><div>Demand<b>'+x.sub+'</b></div></div>'+
+    '<h3 class="iph3">What looks good</h3><ul class="ipl g">'+x.good.map(function(g){return '<li>'+g+'</li>'}).join('')+'</ul>'+
+    '<h3 class="iph3">What to watch</h3><ul class="ipl w">'+x.watch.map(function(g){return '<li>'+g+'</li>'}).join('')+'</ul>'+
+    '<h3 class="iph3">Key dates</h3><div class="ipdt">'+x.dates.map(function(d){return '<div><small>'+d[0]+'</small><b>'+d[1]+'</b></div>'}).join('')+'</div>'+
+    '<a class="btn g full" style="margin-top:14px" href="#markets/cal" data-close>See all IPO dates in Calendar</a>'+
+    '<p class="note">AlphaPad’s in-house score, based on the offer document. Sample data for the prototype. Analysis, not investment advice.</p>')}
 function homePreview(mid){var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
   return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
     '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
@@ -235,7 +271,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     '<div class="hello"><h1>'+hi+', Trader</h1></div>'+
     morningHTML()+
 
-    homePreview(locked()?profitHTML('home'):liveHTML())+
+    homePreview(locked()?profitHTML('home'):liveHTML())+ipoHTML()+
     '<div class="h2 sph"><h2>Spotlight</h2><small id="spC">'+SL.length+' today</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" id="spot-'+i+'" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
@@ -370,7 +406,7 @@ function liveHTML(){var w=CL.filter(function(x){return x.ret>0}).length;
 function slideSync(tq,dq,cq,sfx){var tr=$(tq);if(!tr||!tr.children.length)return;var n=tr.children.length,dots=$$(dq);
   var sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});var c=$(cq);if(c)c.textContent=(i+1)+' of '+n+sfx};
   tr.addEventListener('scroll',sync,{passive:true});sync()}
-function liveSlide(){slideSync('#s-today .lvl','#s-today .lvd i','#lvC',' live');slideSync('#s-today .hlt','#s-today .hld i','#hlC','')}
+function liveSlide(){slideSync('#s-today .lvl','#s-today .lvd i','#lvC',' live');slideSync('#s-today .pv.hl .hlt','#s-today .hld i','#hlC','');slideSync('#s-today .ipt','#s-today .ipd i','#ipoC','')}
 function lockedCard(c){var nm=String(c.n),e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
   return '<article class="tc lk" aria-label="Locked trade call"><div class="hd"><div><b class="lkn">••••••••</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div><span class="tag">Active</span></div>'+
   '<div class="pot"><div class="h"><span>Potential left</span><b>'+(pc>=0?'+':'')+pc.toFixed(0)+'% <span class="u">to target</span></b></div><div class="bar" role="img" aria-label="'+done.toFixed(0)+'% of the way from entry to target"><i style="width:'+done.toFixed(1)+'%"></i><span style="left:'+done.toFixed(1)+'%"></span></div><div class="l"><span>Entry</span><span>'+done.toFixed(0)+'% of the way</span><span>Target</span></div></div>'+
@@ -623,6 +659,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='streak')return;
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
+  if(ds.act==='ipo')return ipoSheet(+ds.i);
   if(ds.act==='ixpick')return sheet('Choose an index','<div class="list ixl">'+IDX.map(function(i){var v=i.d[i.d.length-1][1];return '<button type="button" class="row'+(i.n===ixSel?' on':'')+'" data-ix="'+esc(i.n)+'" data-close><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span>'+(i.n===ixSel?'<span class="ck" aria-hidden="true">✓</span>':'')+'</button>'}).join('')+'</div>');
   if(ds.act==='prook'){store.set('ap-pro',1);closeSheet();toast('Pro unlocked on this device');RENDER[tab]();return}
   if(ds.act==='prolock'){try{localStorage.removeItem('ap-pro')}catch(e){}toast('Showing the free view again');RENDER[tab]();return}
