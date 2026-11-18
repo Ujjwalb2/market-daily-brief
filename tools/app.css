@@ -721,3 +721,76 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .subbar button svg{width:15px;height:15px;flex:none}
 .subbar button span{overflow:hidden;text-overflow:ellipsis}
 @media (max-width:359px){.subbar button svg{display:none}}
+
+/* Profits booked banner + locked live calls (Pro teaser) */
+.pbk{margin-top:16px;padding:16px;border-radius:20px;color:var(--text-primary);border:1px solid rgba(0,201,154,.28);
+  background:radial-gradient(120% 80% at 100% 0%,rgba(0,201,154,.2),rgba(0,201,154,0) 60%),linear-gradient(180deg,var(--surface-raised),var(--surface-raised))}
+#calls .pbk{margin:0 0 14px}
+.pbh{display:flex;align-items:baseline;gap:10px}.pbh .eb{flex:1;color:var(--warn-text)}.pbh small{font:500 12px/1 var(--font-sans);color:var(--text-tertiary)}
+.pbn{display:flex;align-items:center;gap:12px;margin-top:8px}
+.pbn b{font:800 44px/1 var(--font-sans);letter-spacing:-1.5px;color:var(--up-text);font-variant-numeric:tabular-nums}
+.pbn span{display:grid;gap:3px;font:700 19px/1.15 var(--font-sans)}.pbn small{font:500 12.5px/1.3 var(--font-sans);color:var(--text-tertiary)}
+.pbb{display:flex;align-items:flex-end;gap:10px;margin-top:14px;padding-bottom:4px;border-bottom:1px solid var(--border-decorative)}
+.pbb>div{flex:1;display:grid;justify-items:center;gap:4px}
+.pbb em{font:700 14px/1 var(--font-sans);font-style:normal;font-variant-numeric:tabular-nums}
+.pbb i{display:block;width:70%;max-width:46px;border-radius:8px 8px 2px 2px;background:linear-gradient(180deg,#2BE0B4,#00A47E);box-shadow:0 8px 20px rgba(0,201,154,.25)}
+.pbb span{font:600 10.5px/1.2 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;color:var(--text-tertiary);padding-bottom:6px}
+.pbb .net{flex:1.4;align-self:center;justify-items:end;text-align:right}.pbb .net em{font-size:17px;color:var(--up-text)}.pbb .net span{text-transform:none;letter-spacing:0;font-weight:500;font-size:11.5px}
+.pbc{margin-top:14px;background:linear-gradient(90deg,#F0A04B,#F5B969);color:#101827;font-weight:700}
+.pbf{margin:10px 0 0;font:400 11.5px/1.4 var(--font-sans);color:var(--text-tertiary)}
+.tc.lk{position:relative;overflow:hidden}
+.tc.lk .lkb{filter:blur(5px);opacity:.55;user-select:none;pointer-events:none}
+.lkov{position:absolute;left:0;right:0;bottom:0;top:64px;display:grid;justify-items:center;align-content:center;gap:6px;padding:16px;text-align:center;
+  background:linear-gradient(180deg,rgba(16,24,39,0),rgba(16,24,39,.55) 35%)}
+:root[data-theme="light"] .lkov{background:linear-gradient(180deg,rgba(248,250,252,0),rgba(248,250,252,.7) 35%)}
+.lki{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#F0A04B,#F5B969);color:#101827;box-shadow:0 8px 22px rgba(240,160,75,.35)}
+.lki svg{width:20px;height:20px}
+.lkov b{font:700 16px/1.2 var(--font-sans)}.lkov small{font:500 12.5px/1.3 var(--font-sans);color:var(--text-secondary)}.lkov .btn{margin-top:6px}
+.prol{margin:0 0 14px;padding:0;list-style:none;display:grid;gap:8px}
+.prol li{position:relative;padding-left:24px;font:500 14px/1.4 var(--font-sans);color:var(--text-secondary)}
+.prol li::before{content:"✓";position:absolute;left:0;top:0;color:var(--up-text);font-weight:700}
+
+/* brief card: tapping the headline opens Markets > News */
+.brief .bl{display:block;color:inherit;text-decoration:none}
+.brief .bln{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font:600 13px/1 var(--font-sans);color:var(--link)}
+.brief .bln i{font-style:normal;transition:transform .2s}.brief .bl:active .bln i,.brief .bl:hover .bln i{transform:translateX(3px)}
+
+/* brief card: tapping the headline opens Markets > News */
+.brief .bl{display:block;color:inherit;text-decoration:none}
+.brief .bln{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font:600 13px/1 var(--font-sans);color:var(--link)}
+.brief .bln i{font-style:normal;transition:transform .2s}.brief .bl:hover .bln i,.brief .bl:active .bln i{transform:translateX(3px)}
+/* locked call: potential stays visible, the stock and levels sit under the lock */
+.tc.lk .lkz{position:relative;margin-top:2px;border-radius:14px;overflow:hidden}
+.tc.lk .lkov{top:0}
+.tc.lk .lkz{min-height:200px}
+.tc.lk .lkb{padding-top:8px}
+.tc.lk .lkov{gap:5px;padding:12px}
+.tc.lk .lkn{letter-spacing:2px;color:var(--text-tertiary)}
+
+/* market ticker under the greeting + Overview panel that drops down from the top */
+.tick{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--surface-raised);border:1px solid var(--border-decorative);
+  font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-align:left}
+.tick span{display:inline-flex;align-items:baseline;gap:5px}.tick b{color:var(--text-primary);font-weight:600;font-variant-numeric:tabular-nums}
+.tick em{font-style:normal;font-weight:600}.tick em.u{color:var(--up-text)}.tick em.d{color:var(--slate-500)}
+.tick i{width:1px;height:12px;background:var(--border-decorative)}.tick .tcv{margin-left:auto;font-size:15px;color:var(--text-tertiary)}
+.ovw{position:fixed;inset:0;z-index:70;background:rgba(8,12,20,0);transition:background .25s}
+.ovw.on{background:var(--scrim)}
+.ovw[hidden]{display:none}
+.ovp{position:absolute;left:0;right:0;top:0;max-height:92vh;overflow:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 10px;border-radius:0 0 24px 24px;
+  background:var(--surface-elevated);border-bottom:1px solid var(--border-glass);box-shadow:0 24px 60px rgba(0,0,0,.4);transform:translateY(-102%);transition:transform .3s cubic-bezier(.2,.9,.25,1)}
+.ovw.on .ovp{transform:none}
+.ovh{display:flex;align-items:center;margin-bottom:6px}.ovh h2{margin:0;font:700 24px/1.2 var(--font-sans);letter-spacing:-.4px}
+.ovx{width:36px;height:36px;border-radius:50%;background:var(--surface-glass);color:var(--text-secondary);font-size:15px}
+.ovg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.ovi{display:grid;gap:4px;padding:12px 12px 8px;border-radius:16px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.ovi b{font:700 19px/1.15 var(--font-sans);font-variant-numeric:tabular-nums}
+.ovi em{font:600 12px/1 var(--font-sans);font-style:normal;white-space:pre}.ovi em.u{color:var(--up-text)}.ovi em.d{color:var(--slate-500)}.ovi em.w{color:var(--warn-text)}
+.ovi svg{width:100%;height:40px;margin-top:4px}
+.ovc{margin:12px 0;font:400 12px/1.4 var(--font-sans);color:var(--text-tertiary)}
+.ovgrab{width:40px;height:5px;margin:12px auto 2px;border-radius:9999px;background:var(--track)}
+@media (prefers-reduced-motion:reduce){.ovp,.ovw{transition:none}}
+.ovh .sp{flex:1}
+.ovn{display:flex;align-items:flex-end;height:40px;margin-top:4px;font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.tick{gap:8px;padding:9px 10px;font-size:12px}
+.tick span{gap:4px}
+.tick{gap:6px}

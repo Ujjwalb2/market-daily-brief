@@ -51,7 +51,7 @@ var TABS=[['today','Today'],['markets','Markets'],['ideas','Ideas'],['journal','
 app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+'<main class="scr" id="s-rewards" aria-label="Streak and rewards"></main>'+
   '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
   '<div class="tabs"><nav aria-label="App"><i class="tind" aria-hidden="true"></i>'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
-  '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div>';
+  '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div><div class="ovw" id="ovw" hidden role="dialog" aria-modal="true" aria-label="Market overview"><div class="ovp" id="ovwP"></div></div>';
 
 var tab='today',prevH='#today',lastTab='';
 function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1];if(t!=='rewards'&&!TABS.some(function(x){return x[0]===t}))t='today';if(t!=='rewards')prevH='#'+h.join('/');tab=t;
@@ -207,11 +207,11 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',S=D.sotd,lrn=learne
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+
-    '<div class="hello"><h1>'+hi+', Trader</h1><p>'+esc(D.date.replace(/^(\w{3})\w*,\s*(\d+)\s+(\w{3})\w*/,'$1 $2 $3'))+(nx?' \u00B7 '+nx.t+' '+esc(nx.b):'')+'</p></div>'+
+    '<div class="hello"><h1>'+hi+', Trader</h1><p>'+esc(D.date.replace(/^(\w{3})\w*,\s*(\d+)\s+(\w{3})\w*/,'$1 $2 $3'))+(nx?' \u00B7 '+nx.t+' '+esc(nx.b):'')+'</p>'+tickHTML()+'</div>'+
     morningHTML()+
-    '<section class="brief card" aria-labelledby="tH"><div class="eb">Today’s brief · '+mmss(D.audio.dur)+'</div><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+
+    '<section class="brief card" aria-labelledby="tH"><div class="eb">Today’s brief · '+mmss(D.audio.dur)+'</div><a class="bl" href="#markets/filings"><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+'<span class="bln">Today’s news <i aria-hidden="true">→</i></span></a>'+
       '<div class="bp"><button type="button" class="play" data-act="listen" aria-label="Play the brief"></button><div class="bt"><b id="bpT">Listen</b><small id="bpS">7 chapters</small><span class="bpb"><i id="bpBar"></i></span></div><button type="button" class="btn g s" data-act="chapters">Chapters</button></div></section>'+
-    '<div class="strip" role="group" aria-label="Yesterday’s close">'+idx.map(function(x){var v=x.d[x.d.length-1][1],w=x.n==='India VIX';return '<a class="nm" href="#markets/indices" data-ix="'+esc(x.n)+'"><span>'+(x.n==='Nifty Bank'?'Bank Nifty':x.n)+'</span><b>'+num(v,2)+'</b><em class="'+(w?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pct.replace(/^[+−-]/,'')+'</em></a>'}).join('')+'</div>'+
+    (locked()?profitHTML('home'):'')+
     '<div class="h2"><h2>Spotlight</h2><small id="spC">1 of '+SL.length+'</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-roledescription="carousel" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" aria-roledescription="slide" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
@@ -220,6 +220,30 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
   morningSlide();
   var hh=$('#hero');if(hh&&wasAll===false&&allDone())hh.classList.add('win');wasAll=allDone();
   var tr=$('#spTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12,i=Math.round(tr.scrollLeft/w);$$('.dots i',s).forEach(function(d,j){d.classList.toggle('on',j===i)});$('#spC').textContent=(i+1)+' of '+SL.length},{passive:true})}
+
+
+/* ---------------- market overview: pull down from the top (or tap the ticker) to see the indices ---------------- */
+var SENSEX={n:'Sensex',v:81879.40,pts:'+773.00',pct:'+0.95%',up:true};
+function ixShort(n){return n==='Nifty Bank'?'Bank Nifty':n}
+function tickHTML(){var a=IDX.filter(function(x){return x.n==='Nifty 50'}).concat([SENSEX]);
+  return '<button type="button" class="tick" data-act="ovw" aria-label="Open market overview">'+a.map(function(x){return '<span>'+(x.n==='Nifty 50'?'Nifty':ixShort(x.n))+' <b>'+num(x.d?x.d[x.d.length-1][1]:x.v,2)+'</b> <em class="'+(x.up?'u':'d')+'">'+x.pct+'</em></span>'}).join('<i></i>')+'<span class="tcv" aria-hidden="true">⌄</span></button>'}
+function ovSpark(x){var v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,W=150,H=40;
+  var pts=v.map(function(y,i){return (i/(v.length-1)*W).toFixed(1)+','+(H-3-(y-lo)/r*(H-6)).toFixed(1)}).join(' ');
+  var c=x.vix?'var(--amber)':x.up?'var(--teal)':'var(--slate-500)';
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g'+x.n.replace(/\W/g,'')+'" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="'+c+'" stop-opacity=".28"/><stop offset="1" stop-color="'+c+'" stop-opacity="0"/></linearGradient></defs>'+
+    '<polygon points="0,'+H+' '+pts+' '+W+','+H+'" fill="url(#g'+x.n.replace(/\W/g,'')+')"/><polyline points="'+pts+'" fill="none" stroke="'+c+'" stroke-width="1.8" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>'}
+function ovwHTML(){var d0=IDX[0].d[0][0],d1=IDX[0].d[IDX[0].d.length-1][0];
+  return '<div class="ovh"><h2>Overview</h2><span class="sp"></span><button type="button" class="ovx" data-ovx aria-label="Close overview">✕</button></div>'+
+    '<div class="ovg">'+[IDX.filter(function(x){return x.n==='Nifty 50'})[0],SENSEX].concat(IDX.filter(function(x){return /^(Midcap 100|India VIX)$/.test(x.n)})).map(function(x){var v=x.d?x.d[x.d.length-1][1]:x.v;return '<a class="ovi" href="#markets/indices"'+(x.d?' data-ix="'+esc(x.n)+'"':'')+' data-ovgo><span class="eb">'+esc(ixShort(x.n))+'</span><b>'+num(v,2)+'</b><em class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pts+'  '+x.pct+'</em>'+(x.d?ovSpark(x):'<span class="ovn">BSE · close only</span>')+'</a>'}).join('')+'</div>'+
+    '<p class="ovc">Charts show '+esc(d0)+' to '+esc(d1)+'. Prices are from the last close.</p><a class="btn g full" href="#markets/indices" data-ovgo>All '+IDX.length+' indices in Markets →</a><div class="ovgrab" aria-hidden="true"></div>'}
+function openOvw(){var o=$('#ovw');$('#ovwP').innerHTML=ovwHTML();o.hidden=false;document.body.style.overflow='hidden';requestAnimationFrame(function(){o.classList.add('on')});setTimeout(function(){var b=$('#ovwP [data-ovx]');if(b)b.focus()},280)}
+document.addEventListener('click',function(e){var o=$('#ovw');if(!o||o.hidden)return;if(e.target===o||e.target.closest('[data-ovx]'))return closeOvw();if(e.target.closest('[data-ovgo]'))closeOvw()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeOvw()});
+function closeOvw(){var o=$('#ovw');if(o.hidden)return;o.classList.remove('on');document.body.style.overflow='';setTimeout(function(){o.hidden=true},260)}
+(function(){var y0=0,x0=0,can=false,pn=null;
+  document.addEventListener('touchstart',function(e){var t=e.touches[0];y0=t.clientY;x0=t.clientX;pn=e.target.closest('#ovwP');can=!pn&&window.scrollY<=0&&$('#sheet').hidden&&$('#ovw').hidden&&!e.target.closest('.steps,.sp-tr,.chips,.subbar,.brow,input,textarea')},{passive:true});
+  document.addEventListener('touchend',function(e){var t=e.changedTouches[0],dy=t.clientY-y0,dx=Math.abs(t.clientX-x0);
+    if(can&&dy>90&&dy>dx*1.5)openOvw();else if(pn&&dy<-60&&-dy>dx)closeOvw();can=false;pn=null},{passive:true})})();
 
 /* ---------------- MARKETS ---------------- */
 var ixSel='Nifty 50',mvSeg='stocks',scSeg='sc-vol',calType='all';
@@ -287,12 +311,37 @@ function rIdeas(){var s=$('#s-ideas'),S=D.sotd;
       '<ul class="why">'+sotdWhy().map(function(w){return '<li>'+w+'</li>'}).join('')+'<li class="r">Check the stop before you act: the day’s high was ₹'+num(S.day_hi,0)+'. Analysis, not advice.</li></ul>'+
       '<div style="display:flex;gap:10px;margin-top:16px"><a class="btn p s" href="'+L.screener+'">Screen similar</a><button type="button" class="btn g s" data-act="others">Also near highs</button></div></div></section>'+
     '<section class="sec" id="calls"><div class="h2"><h2>Trade calls</h2>'+infoBtn('calls')+'<span class="sp"></span><small id="tcC">1 of '+CALLS.length+'</small></div>'+
-      '<div class="tcw"><div class="tc-tr" id="tcTr">'+CALLS.map(callCard).join('')+'</div></div><a class="trl" href="#ideas/record"><span><b>'+CLW+' of '+CL.length+'</b> recent calls hit target</span><span>See the track record \u203A</span></a><p class="note">Research advice from the AlphaPad desk. Prices are indicative.</p></section>'+
+      profitHTML()+'<div class="tcw"><div class="tc-tr" id="tcTr">'+CALLS.map(locked()?lockedCard:callCard).join('')+'</div></div><a class="trl" href="#ideas/record"><span><b>'+CLW+' of '+CL.length+'</b> recent calls hit target</span><span>See the track record \u203A</span></a><p class="note">Research advice from the AlphaPad desk. Prices are indicative.</p></section>'+
     '<section class="sec" id="record"><div class="h2"><h2>Track record</h2><span class="sp"></span><small>closed in the last 30 days</small></div>'+trackHTML()+'</section>'+
     '<section class="sec" id="baskets"><div class="h2"><h2>Baskets</h2><span class="sp"></span><a href="'+L.baskets+'">+ Build</a></div><div class="card" style="padding:0 16px"><div class="list">'+
       D.baskets.map(function(b){return '<a class="row" href="'+L.baskets+'"><span class="ic t">'+I(ICO.bk)+'</span><span class="tx"><b>'+esc(b.n)+'</b><small>'+esc(b.m)+'</small></span><span class="vl u">'+esc(b.r)+'<small class="muted">1 year</small></span></a>'}).join('')+'</div></div><p class="note">Past returns are not a promise of future returns. Not investment advice.</p></section>';
   var tr=$('#tcTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12;$('#tcC').textContent=(Math.round(tr.scrollLeft/w)+1)+' of '+CALLS.length},{passive:true})}
 
+
+
+/* ---------------- Pro teaser: live calls stay hidden, booked profits are shown ----------------
+   To remove the teaser later, set PRO_LOCK=false (or open the app with ?pro=1). */
+var PRO_LOCK=true;
+function locked(){return PRO_LOCK&&!store.get('ap-pro',0)&&!/[?&]pro=1/.test(location.search)}
+function segOf(k){return /fut/i.test(k)?'Futures':/stock|equity|positional|swing|delivery/i.test(k)?'Equity':'Options'}
+function profitHTML(where){var wins=CL.filter(function(x){return x.ret>0}),loss=CL.filter(function(x){return x.ret<=0}),net=CL.reduce(function(a,x){return a+x.pnl},0),segs=['Options','Futures','Equity'],
+    cnt=segs.map(function(g){return [g,wins.filter(function(x){return segOf(x.k)===g}).length,CL.filter(function(x){return segOf(x.k)===g}).length]}).filter(function(x){return x[2]}),mx=Math.max.apply(null,cnt.map(function(x){return x[1]}).concat([1])),
+    days=CL.map(function(x){return x.cl}).sort(),from=dshort(days[0]),to=dshort(days[days.length-1]);
+  return '<section class="pbk'+(where?' '+where:'')+'" aria-label="Profits booked"><div class="pbh"><span class="eb">Performance on AlphaPad</span><small>'+from+' – '+to+'</small></div>'+
+    '<div class="pbn"><b>'+wins.length+'</b><span>profits booked<small>of '+CL.length+' calls closed · '+loss.length+' closed at a loss</small></span></div>'+
+    '<div class="pbb">'+cnt.map(function(x){return '<div><em>'+x[1]+'</em><i style="height:'+(18+x[1]/mx*46).toFixed(0)+'px"></i><span>'+x[0]+'</span></div>'}).join('')+'<div class="net"><em>'+inr(net,true)+'</em><span>net on the suggested size</span></div></div>'+
+    (locked()?'<button type="button" class="btn full pbc" data-act="pro">Unlock today’s '+CALLS.length+' live calls →</button>':'<a class="btn full pbc" href="#ideas/calls">See today’s calls →</a>')+
+    '<p class="pbf">Every closed call is counted, losses included. Past results do not promise future returns.</p></section>'}
+function lockedCard(c){var nm=String(c.n),e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
+  return '<article class="tc lk" aria-label="Locked trade call"><div class="hd"><div><b class="lkn">••••••••</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div><span class="tag">Active</span></div>'+
+  '<div class="pot"><div class="h"><span>Potential left</span><b>'+(pc>=0?'+':'')+pc.toFixed(0)+'% <span class="u">to target</span></b></div><div class="bar" role="img" aria-label="'+done.toFixed(0)+'% of the way from entry to target"><i style="width:'+done.toFixed(1)+'%"></i><span style="left:'+done.toFixed(1)+'%"></span></div><div class="l"><span>Entry</span><span>'+done.toFixed(0)+'% of the way</span><span>Target</span></div></div>'+
+  '<div class="lkz"><div class="lkb" aria-hidden="true"><div class="legs"><div><i class="b">Buy</i><span>•••• ••••</span><b>₹•••</b></div><div><i class="s">Sell</i><span>•••• ••••</span><b>₹•••</b></div></div>'+
+  '<div class="lv4"><div>Entry<b>₹•••</b></div><div>Target<b>₹•••</b></div><div>Stop loss<b>₹•••</b></div><div>Last<b>₹•••</b></div></div></div>'+
+  '<div class="lkov"><span class="lki" aria-hidden="true">'+I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',2)+'</span><b>Unlock the stock and levels</b><small>'+CL.filter(function(x){return x.ret>0}).length+' of the last '+CL.length+' calls booked profit</small><button type="button" class="btn p s" data-act="pro">Unlock with Pro</button></div></div></article>'}
+function proSheet(){var w=CL.filter(function(x){return x.ret>0}).length;
+  sheet('AlphaPad Pro','<p>See every live call the moment the desk posts it.</p><ul class="prol"><li>All live trade calls: entry, target, stop loss and size</li><li>Alerts when a call hits target or stop</li><li>Full track record and option payoffs</li><li>Everything else in AlphaPad stays free</li></ul>'+
+    '<div class="facts"><div>Profits booked<b>'+w+' of '+CL.length+'</b></div><div>Closed at a loss<b>'+(CL.length-w)+'</b></div><div>Live now<b>'+CALLS.length+' calls</b></div></div>'+
+    '<button type="button" class="btn p full" style="margin-top:14px" data-act="prook">Unlock Pro</button><button type="button" class="btn g full" style="margin-top:8px" data-close>Not now</button><p class="note" style="text-align:center">Prototype: unlocking here only changes this device.</p>')}
 
 /* ---------------- track record: every closed call, losses included ---------------- */
 var trF='all';
@@ -401,6 +450,7 @@ function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lr
       .map(function(r){return '<a class="row" href="'+r[0]+'"'+(r[5]?' target="_blank" rel="noopener"':'')+'><span class="ic '+r[2]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[3]+'</b><small>'+r[4]+'</small></span><span class="go" aria-hidden="true">'+(r[5]?I(ICO.ext):'›')+'</span></a>'}).join('')+'</div></div>'+
     '<div class="h2"><h2>Settings</h2></div><div class="card"><div class="fld" style="margin:0"><span>Theme</span><div class="seg" role="group" aria-label="Theme">'+[['dark','Dark'],['light','Light']].map(function(t){return '<button type="button" data-theme-set="'+t[0]+'" aria-pressed="'+(th===t[0])+'">'+t[1]+'</button>'}).join('')+'</div></div>'+
       '<div class="list" style="margin-top:8px"><button type="button" class="row" data-act="setup"><span class="ic i">'+I(ICO.setup)+'</span><span class="tx"><b>Change my screen</b><small>Answer the 3 questions again</small></span><span class="go">›</span></button>'+
+      (PRO_LOCK?(store.get('ap-pro',0)?'<button type="button" class="row" data-act="prolock"><span class="ic a">'+I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>')+'</span><span class="tx"><b>Show the free view</b><small>Lock live calls again (demo)</small></span></button>':'<button type="button" class="row" data-act="pro"><span class="ic a">'+I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>')+'</span><span class="tx"><b>AlphaPad Pro</b><small>Unlock live trade calls</small></span><span class="go">›</span></button>'):'')+
       '<button type="button" class="row rst" id="rstB"><span class="ic s">'+I(ICO.reset)+'</span><span class="tx"><b>Start fresh</b><small id="rstS">Clears everything saved on this device</small></span></button></div></div>'+
     '<p class="note">AlphaPad by Springpad. Analysis, not investment advice. Prototype with sample data.</p>'}
 
@@ -531,6 +581,10 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='listen')return toggleAudio();
   if(ds.act==='chapters'){e.preventDefault();return chapters()}
   if(ds.act==='streak')return;
+  if(ds.act==='pro')return proSheet();
+  if(ds.act==='ovw')return openOvw();
+  if(ds.act==='prook'){store.set('ap-pro',1);closeSheet();toast('Pro unlocked on this device');RENDER[tab]();return}
+  if(ds.act==='prolock'){try{localStorage.removeItem('ap-pro')}catch(e){}toast('Showing the free view again');RENDER[tab]();return}
   if(ds.act==='tomorning'){setTimeout(function(){var c=$('#morning');if(c)c.scrollIntoView({block:'center',behavior:'smooth'})},80);return}
   if(ds.act==='setup'){closeSheet();onboard();return}
   if(ds.act==='others'){var o=D.sotd.others;return sheet('Also near 52-week highs','<div class="list">'+o.map(function(x){return '<div class="row"><span class="tx"><b>'+esc(x[0])+'</b><small>'+esc(x[1])+' · '+esc(x[3])+'</small></span><span class="vl u">+'+x[2].toFixed(2)+'%</span></div>'}).join('')+'</div>')}
