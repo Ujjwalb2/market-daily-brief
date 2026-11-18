@@ -923,3 +923,14 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .tkf .tkw{-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 100%);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 100%)}
 .tick.tkf .tkd{display:flex;align-items:center;justify-content:center;gap:0}
 .tick.tkf .tkd{width:64px;background:linear-gradient(90deg,transparent,var(--surface-raised) 45%)}
+
+/* Home: live calls once Pro is unlocked, in the same card as the teaser */
+.pbk.live .pbh .eb{color:var(--up-text)}
+.lvl{display:grid;gap:10px;margin-top:12px}
+.lvr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;padding:12px;border-radius:14px;background:var(--surface-glass);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.lvt{display:grid;gap:3px;min-width:0}.lvt b{font:700 16px/1.2 var(--font-sans)}.lvt small{font:500 12px/1.3 var(--font-sans);color:var(--text-tertiary)}
+.lvp{display:grid;justify-items:end;gap:3px}.lvp b{font:800 18px/1 var(--font-sans);color:var(--up-text);font-variant-numeric:tabular-nums}.lvp small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.lvb{grid-column:1/-1;height:6px;border-radius:9999px;background:var(--track);overflow:hidden}.lvb i{display:block;height:100%;border-radius:inherit;background:var(--teal)}
+.lvx{grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;font:500 12px/1 var(--font-sans);color:var(--text-tertiary)}
+.lvx b{color:var(--text-primary);font-weight:600;font-variant-numeric:tabular-nums}.lvx b.u{color:var(--up-text)}
+.pv+.pbk.home{margin-top:22px}
