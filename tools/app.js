@@ -157,7 +157,7 @@ function onboard(){var ans={},step=0;ob=document.createElement('div');ob.classNa
 /* ---------------- your morning: a daily checklist that keeps the streak ---------------- */
 var MKEY='ap-morning-2026-11-12';
 function mstate(){return store.get(MKEY,{})}
-function mark(k){var m=mstate();if(m[k])return;m[k]=Date.now();store.set(MKEY,m);if(tab==='today')paintMorning()}
+function mark(k){var m=mstate();if(m[k])return;var was=mDone()===goals().length;m[k]=Date.now();store.set(MKEY,m);if(tab==='today')paintMorning();if(!was&&mDone()===goals().length)toast('Morning done: +10 season points, streak '+streakNow())}
 var STEP={
   brief:['Listen to the brief','7 chapters · '+mmss(D.audio.dur),function(){return !!mstate().brief},'@listen'],
   calls:['Check today’s calls',CALLS.length+' active · track record inside',function(){return !!mstate().calls},'#ideas/calls'],
@@ -167,8 +167,8 @@ var STEP={
 function mDone(){return goals().filter(function(k){return STEP[k][2]()}).length}
 function streakNow(){return D.streak.n+(mDone()===goals().length?1:0)}
 function morningHTML(){var g=goals(),d=mDone(),all=d===g.length,pct=d/g.length*100;
-  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><div class="mring" style="--p:'+pct.toFixed(0)+'" aria-hidden="true"><b>'+d+'/'+g.length+'</b></div><div><h2 id="mH">'+(all?'Morning done 🔥 '+streakNow():'Your morning')+'</h2><small>'+(all?'See you tomorrow at 7:30.':(g.length-d)+' step'+(g.length-d>1?'s':'')+' left to keep your '+D.streak.n+'-day streak')+'</small></div></div>'+
-    '<ol class="steps">'+g.map(function(k){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1];return '<li><a class="stp'+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><i aria-hidden="true">'+(ok?'✓':'')+'</i><span class="tx"><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="go" aria-hidden="true">'+(ok?'':'›')+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol></section>'}
+  return '<section class="card morning'+(all?' all':'')+'" id="morning" aria-labelledby="mH"><div class="mh"><div class="mring" style="--p:'+pct.toFixed(0)+'" aria-hidden="true"><b>'+d+'/'+g.length+'</b></div><div><h2 id="mH">'+(all?'Morning done 🔥 '+streakNow():'Your morning')+'</h2><small>'+(all?'+10 season points. See you tomorrow at 7:30.':(g.length-d)+' step'+(g.length-d>1?'s':'')+' left to keep your '+D.streak.n+'-day streak')+'</small></div></div>'+
+    '<ol class="steps">'+g.map(function(k){var s=STEP[k],ok=s[2](),sub=typeof s[1]==='function'?s[1]():s[1];return '<li><a class="stp'+(ok?' ok':'')+'" href="'+(s[3][0]==='@'?'#today':s[3])+'"'+(s[3]==='@listen'?' data-act="listen"':'')+'><i aria-hidden="true">'+(ok?'✓':'')+'</i><span class="tx"><b>'+s[0]+'</b><small>'+sub+'</small></span><span class="go" aria-hidden="true">'+(ok?'':'›')+'</span><span class="sr">'+(ok?'done':'to do')+'</span></a></li>'}).join('')+'</ol>'+mfootHTML()+'</section>'}
 function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createElement('div');t.innerHTML=morningHTML();c.replaceWith(t.firstChild);var sc=$$('[data-act="streak"]');sc.forEach(function(b){b.innerHTML='🔥 '+streakNow()})}
 
 /* ---------------- TODAY ---------------- */
@@ -376,12 +376,9 @@ function nextReview(){var n=todo()[0];if(n)setTimeout(function(){reviewForm(n.id
 var LKEY='sp-learn-2026-11-12',lrnI=0;
 function learned(){return store.get(LKEY,[])}
 function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'dark',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
-  var MSL=(typeof MS!=='undefined'?MS:[[7,'Week regular'],[30,'Month regular'],[100,'Market habit'],[250,'Market veteran']]);
   s.innerHTML=top('You')+
     '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>Your screen: '+presetName()+' · <button type="button" class="l" style="color:var(--link);font-weight:600" data-act="setup">Change</button></small></div></div>'+
-    '<section class="sec" id="streak"><div class="h2"><h2>Streak</h2><span class="sp"></span><small>Rank #'+S.rank+' this week</small></div><div class="card stk"><div class="n"><b>\uD83D\uDD25 '+streakNow()+'</b><span>market days in a row<br><span class="muted">'+(S.next-S.n)+' day to your '+S.next+'-day mark</span></span></div>'+
-      '<div class="wk">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i title="'+({done:'Done',hol:'Market holiday',today:'Today',off:'Weekend','':'Coming up'})[d[1]]+'">'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
-      '<div class="ms">'+MSL.map(function(m){return '<div class="'+(S.n>=m[0]?'got':'')+'"><b>'+m[0]+'</b>'+m[1]+'</div>'}).join('')+'</div></div></section>'+
+    freeHTML()+streakHTML()+seasonHTML()+badgesHTML()+
     '<section class="sec" id="learn"><div class="h2"><h2>Learn today</h2><span class="sp"></span><small>'+lr.length+' of '+LEARN.length+' done</small></div><div class="card lrn">'+(all?'<div class="ok">✓ All 3 ideas learned. Streak kept for today.</div>':'')+
       '<div class="kind"><span class="eb">'+esc(x.kind)+'</span>'+(got?'<span class="tag" style="margin-left:auto">✓ Learned</span>':'')+'</div><h3>'+esc(x.h)+'</h3><p>'+x.one+'</p>'+
       '<div class="ft"><button type="button" class="navb" data-lrn="-1" aria-label="Previous idea">‹</button><div class="pg" aria-hidden="true">'+LEARN.map(function(l,j){return '<i class="'+(lr.indexOf(l.id)>=0?'done':'')+(j===lrnI?' on':'')+'"></i>'}).join('')+'</div><button type="button" class="navb" data-lrn="1" aria-label="Next idea">›</button><span class="sp"></span>'+
@@ -394,10 +391,101 @@ function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lr
       '<button type="button" class="row rst" id="rstB"><span class="ic s">'+I(ICO.reset)+'</span><span class="tx"><b>Start fresh</b><small id="rstS">Clears everything saved on this device</small></span></button></div></div>'+
     '<p class="note">AlphaPad by Springpad. Analysis, not investment advice. Prototype with sample data.</p>'}
 
+/* ---------------- rewards: streak freezes, milestones, badges, seasons, free days ----------------
+   Sample history before today (prototype). Everything done today is added live on top. */
+var HIST={total:34,longest:23,freezes:1,season:238,weeks:6,week:34,lastWeek:60};
+function reviewsOk(){var rv=store.get('ap-journal-review',{});return Object.keys(rv).map(function(k){return rv[k]}).filter(function(r){return r&&r.status==='ok'})}
+function planKept(){return reviewsOk().filter(function(r){return r.rules&&RULES.every(function(x){return r.rules[x[0]]})}).length}
+function allDone(){return mDone()===goals().length}
+function totalDays(){return HIST.total+(allDone()?1:0)}
+function longest(){return Math.max(HIST.longest,streakNow())}
+function freezes(){return Math.min(2,HIST.freezes+(streakNow()>=7&&D.streak.n<7?1:0))}
+var MILES=[[3,'Getting started','First badge'],[7,'Week regular','+1 streak freeze and a weekly report card'],[21,'Habit formed','+3 free days and a group session with the RA'],[50,'Committed','+7 free days and advanced backtest templates'],[100,'Market habit','+15 free days and a 1-on-1 call with a SEBI-registered RA']];
+/* id, icon, name, how to earn, progress() -> [have, need], free days it adds */
+var BADGES=[
+  ['start','🌱','Getting started','Finish 3 market mornings',function(){return [totalDays(),3]},0],
+  ['week','📅','Week regular','Reach a 7-day streak',function(){return [longest(),7]},0],
+  ['habit','🧠','Habit formed','Finish 21 market mornings',function(){return [totalDays(),21]},0],
+  ['comeback','💪','Comeback','Come back after a break and finish 5 mornings in a row',function(){return [streakNow(),5]},0],
+  ['review','📝','Reviewer','Review every trade for a whole week',function(){return [1,1]},1],
+  ['early','🌅','Early bird','Hear the brief before 9:15 on 10 days',function(){return [10,10]},1],
+  ['plan','🎯','Plan keeper','Follow all 5 rules on 10 reviewed trades',function(){return [7+planKept(),10]},1],
+  ['learner','📚','Learner','Learn all 3 ideas on 10 days',function(){return [9+(learned().length>=LEARN.length?1:0),10]},1],
+  ['stop','🛡️','Stop-loss always','Set a stop-loss before entry on every trade for a week',function(){return [3,5]},1],
+  ['fifty','⭐','Committed','Finish 50 market mornings',function(){return [totalDays(),50]},0],
+  ['hund','🏆','Market habit','Finish 100 market mornings',function(){return [totalDays(),100]},0],
+  ['hof','👑','Hall of Fame','Get featured in a Monday shoutout',function(){return [0,1]},0]];
+function bp(b){var p=b[4]();return [Math.min(p[0],p[1]),p[1]]}
+function bGot(b){var p=bp(b);return p[0]>=p[1]}
+function freeLog(){var l=[['Full weeks of mornings',HIST.weeks,HIST.weeks+' weeks × 1 day'],['21-day milestone',3,'Habit formed']];
+  if(totalDays()>=50)l.push(['50-day milestone',7,'Committed']);
+  BADGES.forEach(function(b){if(b[5]&&bGot(b))l.push([b[2]+' badge',b[5],'Badge reward'])});return l}
+function freeDays(){return Math.min(30,freeLog().reduce(function(a,x){return a+x[1]},0))}
+function seasonLive(){var p=[],r=reviewsOk().length,l=learned().length,k=planKept();
+  if(allDone())p.push(['Full morning today',10]);if(r)p.push(['Trades reviewed × '+r,5*r]);if(l)p.push(['Ideas learned × '+l,5*l]);if(k)p.push(['Trades on plan × '+k,5*k]);return p}
+function liveSum(){return seasonLive().reduce(function(a,x){return a+x[1]},0)}
+function seasonScore(){return HIST.season+liveSum()}
+var BOARD=[['Aarav S.',412],['Meera K.',389],['Rohan P.',366],['Ishita R.',341],['Kabir M.',330],['Ananya D.',318],['Vikram T.',305],['Sneha J.',296],['Arjun N.',281],['Pooja V.',270],['Dev B.',262],['Nikhil A.',251],['Riya G.',229],['Karan L.',214],['Tanvi H.',198],['Sahil C.',176],['Meghna P.',153],['Omkar R.',121]];
+var TIERS=[['gold','Gold',300],['silver','Silver',200],['bronze','Bronze',100],['start','Starter',0]];
+function tierOf(v){for(var i=0;i<TIERS.length;i++)if(v>=TIERS[i][2])return i;return TIERS.length-1}
+function myRank(){var v=seasonScore();return BOARD.filter(function(x){return x[1]>v}).length+1}
+var SEASON={name:'November season',ends:'30 Nov',left:18,players:'1,284'};
+var SHOUT={week:'2–6 Nov',cat:'Most consistent',why:'Everyone who finished every market morning last week',names:['Meera K.','Rohan P.','Ishita R.','Aditya S.','Farah Q.','Gaurav M.','Lakshmi V.','Neel D.'],more:37};
+var ROT=['Most consistent','Most improved','Best reviewer','Best learner'];
+var HOF=[['Aarav S.','Most consistent','26–30 Oct'],['Kabir M.','Best reviewer','19–23 Oct'],['Ananya D.','Most improved','12–16 Oct'],['Vikram T.','Best learner','5–9 Oct']];
+function tierPill(i){return '<span class="tier '+TIERS[i][0]+'"><i aria-hidden="true"></i>'+TIERS[i][1]+'</span>'}
+
+function freeHTML(){var n=freeDays(),stops=[[7,'1 week'],[15,'Half month'],[30,'Month free']],nx=stops.filter(function(s){return n<s[0]})[0];
+  return '<section class="sec" id="rewards"><div class="h2"><h2>Free days</h2><span class="sp"></span><small>Renews 2 Dec</small></div><div class="card fd">'+
+    '<div class="fdh"><b>'+n+'</b><span>free days of AlphaPad earned<br><span class="muted">'+(nx?(nx[0]-n)+' more to reach '+nx[1].toLowerCase():'A full month free on your next renewal')+'</span></span></div>'+
+    '<div class="fdt" role="img" aria-label="'+n+' of 30 free days"><div class="fdbar"><i style="width:'+(n/30*100).toFixed(1)+'%"></i></div>'+stops.map(function(s){return '<span class="stop'+(n>=s[0]?' got':'')+'" style="left:'+(s[0]/30*100).toFixed(1)+'%"><i></i><b>'+s[0]+'</b><small>'+s[1]+'</small></span>'}).join('')+'</div>'+
+    '<ul class="fdl">'+freeLog().map(function(x){return '<li><span><b>'+esc(x[0])+'</b><small>'+esc(x[2])+'</small></span><em>+'+x[1]+' day'+(x[1]>1?'s':'')+'</em></li>'}).join('')+'</ul>'+
+    '<p class="cap">Taken off your next renewal automatically. Up to 30 days per renewal; days expire after 12 months and only extend a paid plan.</p></div></section>'}
+
+function streakHTML(){var S=D.streak,f=freezes(),t=totalDays(),nm=MILES.filter(function(m){return t<m[0]})[0];
+  return '<section class="sec" id="streak"><div class="h2"><h2>Streak</h2><span class="sp"></span><small>Market days only</small></div><div class="card stk"><div class="n"><b>🔥 '+streakNow()+'</b><span>market days in a row<br><span class="muted">Longest '+longest()+' · weekends and holidays never count</span></span></div>'+
+    '<div class="wk">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i title="'+({done:'Done',hol:'Market holiday',today:'Today',off:'Weekend','':'Coming up'})[d[1]]+'">'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
+    '<div class="frz"><span class="fz">'+[0,1].map(function(i){return '<i class="'+(i<f?'on':'')+'" aria-hidden="true">🧊</i>'}).join('')+'</span><span><b>'+f+' of 2 freezes ready</b><small>A missed day uses one. Earn one every 7 days. Missed and no freeze? Do both mornings within 24 hours to repair it.</small></span></div></div>'+
+    '<div class="h2 sm"><h3>Milestones</h3><span class="sp"></span><small>'+t+' mornings done</small></div><ol class="ladder card">'+MILES.map(function(m){var g=t>=m[0],cur=m===nm;return '<li class="'+(g?'got':'')+(cur?' cur':'')+'"><i aria-hidden="true">'+(g?'✓':m[0])+'</i><span><b>'+m[0]+' days · '+m[1]+'</b><small>'+m[2]+'</small>'+(cur?'<span class="lbar"><em style="width:'+(t/m[0]*100).toFixed(0)+'%"></em></span><small class="muted">'+(m[0]-t)+' to go</small>':'')+'</span></li>'}).join('')+'</ol>'+
+    '<p class="cap">Milestones count every morning you finish, so a broken streak never takes them away.</p></section>'}
+
+function seasonHTML(){var v=seasonScore(),ti=tierOf(v),nx=ti>0?TIERS[ti-1]:null,live=seasonLive(),gold=BOARD.filter(function(x){return x[1]>=300});
+  if(v>=300)gold=gold.concat([['You',v]]).sort(function(a,b){return b[1]-a[1]});
+  var wk=HIST.week+liveSum();
+  return '<section class="sec" id="season"><div class="h2"><h2>Season</h2><span class="sp"></span><small>'+SEASON.left+' days left</small></div><div class="card sea">'+
+    '<div class="seh"><div><span class="eb">'+SEASON.name+'</span><b>'+v+'</b><small>points · #'+myRank()+' of '+SEASON.players+'</small></div>'+tierPill(ti)+'</div>'+
+    (nx?'<div class="tb"><span class="lbar"><em style="width:'+((v-TIERS[ti][2])/(nx[2]-TIERS[ti][2])*100).toFixed(0)+'%"></em></span><small>'+(nx[2]-v)+' points to '+nx[1]+'</small></div>':'<div class="tb"><small>Top tier. Everyone in Gold is named on the board.</small></div>')+
+    '<ul class="fdl"><li><span><b>Before today</b><small>1–11 Nov</small></span><em>'+HIST.season+'</em></li>'+live.map(function(x){return '<li><span><b>'+esc(x[0])+'</b><small>Today</small></span><em>+'+x[1]+'</em></li>'}).join('')+'</ul>'+
+    '<p class="cap">+10 full morning · +5 each trade reviewed · +5 each idea learned · +5 each trade on plan. Points never come from profit or how much you trade. Resets on 1 Dec; badges and free days stay.</p>'+
+    '<div class="gold"><span class="eb">In Gold this season · '+gold.length+'</span><div class="names">'+gold.map(function(x){return '<span class="nmc'+(x[0]==='You'?' me':'')+'">'+esc(x[0])+'</span>'}).join('')+'</div></div>'+
+    '<button type="button" class="btn g s full" data-act="board">See every tier</button></div>'+
+    '<div class="card sho"><span class="eb">Monday shoutout · '+SHOUT.week+'</span><h3>'+SHOUT.cat+'</h3><p class="muted">'+SHOUT.why+'</p><div class="names">'+SHOUT.names.map(function(x){return '<span class="nmc">'+esc(x)+'</span>'}).join('')+'<span class="nmc more">+'+SHOUT.more+' more</span></div>'+
+      '<div class="rot" aria-label="Category rotation">'+ROT.map(function(r,i){return '<span class="'+(i===0?'now':i===1?'next':'')+'">'+r+(i===1?' · next':'')+'</span>'}).join('')+'</div>'+
+      '<div class="qual"><b>Next Monday, 16 Nov: Most improved</b><small>Beat last week’s '+HIST.lastWeek+' points to be named. You have '+wk+' so far this week.</small><span class="lbar"><em style="width:'+Math.min(100,wk/HIST.lastWeek*100).toFixed(0)+'%"></em></span></div>'+
+      '<div class="hof"><span class="eb">Hall of Fame</span>'+HOF.map(function(h){return '<div><i aria-hidden="true">👑</i><b>'+esc(h[0])+'</b><small>'+h[1]+' · '+h[2]+'</small></div>'}).join('')+'</div>'+
+      '<p class="cap">Anyone featured rests for 4 weeks and moves to the Hall of Fame, so new names get a turn.</p></div></section>'}
+
+function badgesHTML(){var got=BADGES.filter(bGot).length;
+  return '<section class="sec" id="badges"><div class="h2"><h2>Badges</h2><span class="sp"></span><small>'+got+' of '+BADGES.length+'</small></div><div class="bdg">'+
+    BADGES.map(function(b){var p=bp(b),g=p[0]>=p[1];return '<button type="button" class="bd'+(g?' got':'')+'" data-badge="'+b[0]+'" aria-label="'+esc(b[2])+(g?', earned':', '+p[0]+' of '+p[1])+'"><span class="be" aria-hidden="true">'+b[1]+'</span><b>'+b[2]+'</b>'+(g?'<small>Earned</small>':'<span class="lbar"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>')+'</button>'}).join('')+'</div></section>'}
+
+function badgeSheet(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;var p=bp(b),g=p[0]>=p[1];
+  sheet(b[1]+' '+b[2],'<p>'+b[3]+'.</p><div class="facts"><div>Progress<b>'+p[0]+' of '+p[1]+'</b></div><div>Status<b>'+(g?'Earned':'In progress')+'</b></div><div>Reward<b>'+(b[5]?'+'+b[5]+' free day':'Badge')+'</b></div></div>'+
+    (g?'':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
+
+function boardSheet(){var v=seasonScore(),all=BOARD.concat([['You',v]]).sort(function(a,b){return b[1]-a[1]});
+  sheet(SEASON.name,'<p class="muted">Everyone who reaches a tier is listed in it. Ends '+SEASON.ends+'.</p>'+TIERS.map(function(t,i){var hi=i?TIERS[i-1][2]:1e9,ps=all.filter(function(x){return x[1]>=t[2]&&x[1]<hi});if(!ps.length)return '';
+    return '<div class="tg">'+tierPill(i)+'<small>'+t[2]+'+ points</small></div><div class="list">'+ps.map(function(x){return '<div class="row'+(x[0]==='You'?' me':'')+'"><span class="tx"><b>'+esc(x[0])+'</b></span><span class="vl">'+x[1]+'</span></div>'}).join('')+'</div>'}).join('')+
+    '<p class="cap">Sample names for the prototype.</p>')}
+
+function mfootHTML(){var v=seasonScore();return '<a class="mfoot" href="#you/season"><span>⭐ <b>'+v+'</b> pts</span><span>#'+myRank()+' · '+TIERS[tierOf(v)][1]+'</span><span>🎁 <b>'+freeDays()+'</b> free days</span><span class="go" aria-hidden="true">›</span></a>'}
+
 /* ---------------- streak sheet + global clicks ---------------- */
-function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Open AlphaPad on a market day and learn the day’s 3 ideas to keep it going.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
-  '<div class="facts"><div>Rank<b>#'+S.rank+'</b></div><div>Next mark<b>'+S.next+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a>')}
-document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl]');if(!a)return;var ds=a.dataset;
+function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
+  '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#you/rewards" data-close>Free days, badges and season</a>')}
+document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge]');if(!a)return;var ds=a.dataset;
+  if(ds.badge)return badgeSheet(ds.badge);
+  if(ds.act==='board')return boardSheet();
   if(ds.act==='listen')return toggleAudio();
   if(ds.act==='chapters'){e.preventDefault();return chapters()}
   if(ds.act==='streak')return streakSheet();
