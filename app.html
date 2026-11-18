@@ -1106,6 +1106,34 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 /* News filings: same box height on every switch; longer lists scroll inside it */
 #filings .list.fl{height:252px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:2px}
 #filings .list.fl.more{-webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(180deg,#000 calc(100% - 28px),transparent)}
+
+/* live timeline */
+#tlS{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--font-sans);color:var(--text-secondary)}
+.ld{width:8px;height:8px;border-radius:50%;background:var(--slate-500)}.ld.on{background:var(--teal);box-shadow:0 0 0 0 rgba(0,201,154,.6);animation:ldp 1.8s ease-out infinite}.ld.pre{background:var(--amber)}
+@keyframes ldp{to{box-shadow:0 0 0 7px rgba(0,201,154,0)}}@media (prefers-reduced-motion:reduce){.ld.on{animation:none}}
+.tl .now{display:flex;align-items:center;gap:8px;padding:6px 0 4px;color:var(--teal)}
+.tl .now::before{left:-20px;top:50%;margin-top:-5px;width:10px;height:10px;background:var(--teal);box-shadow:0 0 0 4px rgba(0,201,154,.2)}
+.tl .now span{font:700 12px/1 var(--font-sans);letter-spacing:.3px}
+.tl .now small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.tl .now::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(0,201,154,.5),rgba(0,201,154,0))}
+.tl li.past b,.tl li.past time{color:var(--text-tertiary);font-weight:500}
+.tl li.next b{color:var(--text-primary)}
+.tl li.next::before{background:var(--surface-canvas);box-shadow:inset 0 0 0 3px var(--teal)}
+.tl li .g.nx{background:var(--fin-positive-soft);color:var(--up-text);font-weight:600}
+.tl li.next.ev::before,.tl li.next::before{background:var(--surface-canvas);box-shadow:inset 0 0 0 3px var(--teal)}
+
+/* listed IPO track record pop-up */
+.irs{display:grid;gap:12px;padding:16px;border-radius:18px;background:radial-gradient(120% 90% at 100% 0%,rgba(0,201,154,.14),rgba(0,201,154,0) 60%),var(--surface-raised);border:1px solid var(--border-decorative)}
+.irh{display:flex;align-items:baseline;gap:8px}.irh b{font:800 30px/1 var(--font-sans);letter-spacing:-.6px;color:var(--up-text)}.irh small{font:500 13px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.irb{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.irb>div{display:grid;gap:4px;padding:10px;border-radius:12px;background:var(--surface-glass);border-top:3px solid var(--slate-500)}
+.irb>.t{border-top-color:var(--teal)}.irb>.a{border-top-color:var(--amber)}
+.irb small,.irb span{font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}.irb b{font:800 17px/1 var(--font-sans);font-variant-numeric:tabular-nums}.irb b.u{color:var(--up-text)}
+.irl{margin-top:14px}.irl .row{gap:12px}.irl .row:last-child{border-bottom:0}
+.irl .ipr{width:44px;height:44px;flex:none}.irl .ipr b{font-size:14px}
+.irl .tx small+small{margin-top:2px}
+.irg{display:grid;justify-items:end;gap:3px;flex:none}.irg b{font:800 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}.irg.u b{color:var(--up-text)}.irg.d b{color:var(--slate-500)}.irg small{font:500 11px/1 var(--font-sans);color:var(--text-tertiary)}
+.irl .tx small{white-space:normal;overflow:visible;text-overflow:clip}
 </style>
 </head>
 <body>
@@ -1263,7 +1291,9 @@ function chapters(){sheet('Today’s brief','<p>'+esc(D.head)+' '+esc(D.sub)+'</
 /* ---------------- shared bits ---------------- */
 function spark(v,W,H,pad){pad=pad||3;var lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1;return v.map(function(x,i){return (i*W/(v.length-1)).toFixed(1)+','+(H-pad-(x-lo)/r*(H-2*pad)).toFixed(1)}).join(' ')}
 function bar(label,val,w,cls,right){return '<div class="br"><b>'+label+'</b><span class="vl '+(right||'')+'">'+val+'</span><span class="tr"><i class="'+(cls||'')+'" style="width:'+Math.max(2,Math.min(100,w)).toFixed(0)+'%"></i></span></div>'}
-var now=new Date(),nowM=now.getHours()*60+now.getMinutes(),toM=function(t){var a=t.split(':');return +a[0]*60+ +a[1]};
+function istNow(){var q=/[?&]t=(\d\d):?(\d\d)/.exec(location.search);if(q)return {h:+q[1],m:+q[2],wd:4};var f=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',weekday:'short',hourCycle:'h23'}).formatToParts(new Date()),g=function(t){return (f.filter(function(x){return x.type===t})[0]||{}).value};
+  return {h:+g('hour'),m:+g('minute'),wd:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(g('weekday'))}}
+var now=new Date(),IST=istNow(),nowM=IST.h*60+IST.m,toM=function(t){var a=t.split(':');return +a[0]*60+ +a[1]};
 var DAYS=(typeof DAY!=='undefined'?DAY:[]);
 function nextEv(){var up=DAYS.filter(function(e){return e.t&&toM(e.t)>=nowM});return up[0]}
 
@@ -1410,11 +1440,32 @@ function ipoHTML(){var H=IPOS.map(function(x,i){return [x,i]}).filter(function(q
         '<span class="ipf2"><span><small>Price band</small><b>'+(/^₹/.test(x.band)?x.band:'Soon')+'</b></span><span><small>Allotment</small><b>'+ipoDate(x,/^Allot/)+'</b></span><span><small>Listing</small><b>'+ipoDate(x,/^List/)+'</b></span><span class="go" aria-hidden="true">›</span></span></a>'}).join('')+'</div>'+
     '<div class="mdots ipd" aria-hidden="true">'+H.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
     '<p class="ipnote">AlphaPad score is our in-house rating out of 10. Sample IPOs for the prototype.</p></section>'}
+/* listed IPOs: the score we gave before listing, and how each has done against its issue price (sample data) */
+var IPOREC=[
+  {n:'Kestrel Energy',d:'12 Nov',sc:7.8,iss:101,lst:118.4,cur:121.6},
+  {n:'Tidewater Ports',d:'28 Oct',sc:7.2,iss:240,lst:262.1,cur:281.5},
+  {n:'Saffron Retail',d:'21 Oct',sc:5.4,iss:332,lst:318.0,cur:289.7},
+  {n:'Brightline Health',d:'14 Oct',sc:6.6,iss:415,lst:441.2,cur:452.9},
+  {n:'Quarry Infra',d:'6 Oct',sc:4.9,iss:78,lst:74.5,cur:61.2},
+  {n:'Ember Fintech',d:'29 Sep',sc:7.5,iss:560,lst:648.0,cur:702.3},
+  {n:'Coral Textiles',d:'19 Sep',sc:5.8,iss:145,lst:151.3,cur:139.4},
+  {n:'Vantage Auto Parts',d:'8 Sep',sc:6.9,iss:302,lst:330.5,cur:347.1}];
+function pctOf(a,b){return (a/b-1)*100}
+function sgn(v){return (v>=0?'+':'−')+Math.abs(v).toFixed(1)+'%'}
+function ipoRecSheet(){var R=IPOREC.map(function(x){return {x:x,g:pctOf(x.cur,x.iss),l:pctOf(x.lst,x.iss)}}),up=R.filter(function(r){return r.g>=0}).length;
+  var band=[['Strong','7 and above',function(v){return v>=7},'t'],['Fair','6 to 6.9',function(v){return v>=6&&v<7},'a'],['Weak','below 6',function(v){return v<6},'s']].map(function(b){var L=R.filter(function(r){return b[2](r.x.sc)});return {b:b,n:L.length,avg:L.length?L.reduce(function(a,r){return a+r.g},0)/L.length:0}});
+  sheet('Listed IPO track record','<p class="muted" style="margin-top:0">The AlphaPad score we gave before each IPO opened, and how it has done since against its issue price.</p>'+
+    '<div class="irs"><div class="irh"><b>'+up+' of '+R.length+'</b><small>trading above the issue price</small></div>'+
+      '<div class="irb">'+band.map(function(z){return '<div class="'+z.b[3]+'"><small>'+z.b[0]+' score</small><b class="'+(z.avg>=0?'u':'')+'">'+sgn(z.avg)+'</b><span>avg · '+z.n+' IPO'+(z.n===1?'':'s')+'</span></div>'}).join('')+'</div></div>'+
+    '<div class="card irl" style="padding:0 14px"><div class="list">'+R.map(function(r){var x=r.x;
+      return '<div class="row irr">'+ipoRing(x.sc)+'<span class="tx"><b>'+esc(x.n)+'</b><small>'+x.d+' · Issue ₹'+num(x.iss,0)+'</small><small>Now ₹'+num(x.cur,1)+' · Day 1 '+sgn(r.l)+'</small></span><span class="irg '+(r.g>=0?'u':'d')+'"><b>'+sgn(r.g)+'</b><small>since issue</small></span></div>'}).join('')+'</div></div>'+
+    '<p class="note">Gain or loss is from the issue price (upper end of the band) to the latest close; Day 1 is the listing-day close. Every listed IPO we scored is shown, losses included. Sample data for the prototype. Past results do not promise future returns.</p>')}
 function ipoListHTML(){
   return '<p class="muted ipintro">Every IPO with AlphaPad’s in-house score out of 10. Tap one for the full report.</p>'+
     IPOG.map(function(g){var L=IPOS.map(function(x,i){return [x,i]}).filter(function(q){return q[0].st===g[0]});if(!L.length)return '';
       return '<h3 class="iph3">'+g[1]+' <small>'+L.length+'</small></h3><div class="card ipls" style="padding:0 14px"><div class="list">'+L.map(function(q){var x=q[0],t=ipoTone(x.sc);
         return '<a class="row ipro" href="#ipos/'+q[1]+'">'+ipoRing(x.sc)+'<span class="tx"><b>'+esc(x.n)+'</b><small>'+esc(x.stt)+' · '+x.size+'</small></span><span class="vl"><span class="ips '+({t:'open',a:'list',s:'mute'})[t[1]]+'">'+t[0]+'</span></span><span class="go" aria-hidden="true">›</span></a>'}).join('')+'</div></div>'}).join('')+
+    '<a class="trl" href="#markets/ipos" data-act="iporec"><span><b>'+IPOREC.filter(function(x){return x.cur>=x.iss}).length+' of '+IPOREC.length+'</b> listed IPOs above issue price</span><span>See the track record ›</span></a>'+
     '<p class="note">Sample IPOs for the prototype.</p>'}
 function ipoReportHTML(i){var x=IPOS[i],t=ipoTone(x.sc);
   return '<div class="ipr-h">'+ipoRing(x.sc,true)+'<div><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span><b>AlphaPad score: '+t[0]+'</b><small>'+esc(x.sec)+'</small></div></div>'+
@@ -1477,6 +1528,21 @@ function closeOvw(){var o=$('#ovw');if(o.hidden)return;o.classList.remove('on');
   document.addEventListener('touchend',function(e){var t=e.changedTouches[0],dy=t.clientY-y0,dx=Math.abs(t.clientX-x0);
     if(can&&dy>90&&dy>dx*1.5)openOvw();else if(pn&&dy<-60&&-dy>dx)closeOvw();can=false;pn=null},{passive:true})})();
 
+
+/* ---------------- live day timeline (India time, refreshed every 30 s) ---------------- */
+function hhmm(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+function inFor(d){return d<60?d+' min':Math.floor(d/60)+'h'+(d%60?' '+d%60+'m':'')}
+function tlStatus(){var m=nowM,wk=IST.wd>0&&IST.wd<6;
+  if(!wk)return '<i class="ld off"></i>Market closed · weekend';
+  if(m>=555&&m<930)return '<i class="ld on"></i>Market open · closes in '+inFor(930-m);
+  if(m>=540&&m<555)return '<i class="ld pre"></i>Pre-open · opens in '+inFor(555-m);
+  if(m<540)return '<i class="ld off"></i>Opens in '+inFor(555-m);
+  return '<i class="ld off"></i>Market closed'}
+function tlHTML(){var m=nowM,nI=DAYS.findIndex(function(e){return toM(e.t)>=m}),nowLi='<li class="now" aria-label="Now"><span>Now '+hhmm(m)+'</span>'+(nI<0?'<small>Day’s events done</small>':'<small>Next in '+inFor(toM(DAYS[nI].t)-m)+'</small>')+'</li>';
+  return DAYS.map(function(e,i){var t=toM(e.t),past=t<m,cur=i===nI;
+    return (cur?nowLi:'')+'<li class="'+(past?'past':'')+(cur?' next':'')+(e.ev?' ev':'')+'"><time>'+e.t+'</time><b>'+esc(e.b)+'</b>'+(cur?'<span class="g nx">Up next</span>':'<span class="g">'+esc(e.g)+'</span>')+'</li>'}).join('')+(nI<0?nowLi:'')}
+function tlTick(){IST=istNow();var m=IST.h*60+IST.m;if(m===nowM&&$('#tlO'))return;nowM=m;var o=$('#tlO'),st=$('#tlS');if(o)o.innerHTML=tlHTML();if(st)st.innerHTML=tlStatus()}
+setInterval(tlTick,30000);document.addEventListener('visibilitychange',function(){if(!document.hidden)tlTick()});
 /* ---------------- MARKETS ---------------- */
 var flSeg=0,ixSel='Nifty 50',mvSeg='stocks',scSeg='sc-vol',calType='all';
 function ixChart(x){var W=340,H=150,P=6,v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1;
@@ -1507,7 +1573,7 @@ function rMarkets(){setTimeout(flFade,0);var s=$('#s-markets'),x=IDX.filter(func
       (function(){var FL=['Orders','Results','People'].map(function(k){return D.filings.filter(function(g){return g.h.indexOf(k)===0})[0]}).filter(Boolean),NM={Orders:'Orders',Results:'Results',People:'People'};if(!FL.length)FL=D.filings;if(flSeg>=FL.length)flSeg=0;
         return '<div class="seg flseg" role="group" aria-label="Filings view">'+FL.map(function(g,i){return '<button type="button" data-fl="'+i+'" aria-pressed="'+(i===flSeg)+'" aria-label="'+esc(g.h)+', '+g.items.length+'">'+esc(NM[g.h.split(/[ ,&]/)[0]]||g.h)+'<small>'+g.items.length+'</small></button>'}).join('')+'</div>'+
         [FL[flSeg]].map(function(g){return '<div class="list fl">'+g.items.map(function(it){return '<a class="row" href="'+esc(it.href)+'" target="_blank" rel="noopener"><span class="tm">'+it.t+'</span><span class="tx"><b>'+esc(it.s)+(it.fo?' <span class="tag">F&amp;O</span>':'')+'</b><small>'+esc(it.x)+'</small></span><span class="go" aria-hidden="true">'+I(ICO.ext)+'</span></a>'}).join('')+'</div>'}).join('')})()+'</section>'+
-    '<section class="sec" id="cal"><div class="h2"><h2>Today</h2><span class="sp"></span><small>IST</small></div><div class="card tlc"><ol class="tl">'+DAYS.map(function(e,i){var past=toM(e.t)<nm;return (i===nI?'<li class="now" aria-label="Now">Now '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</li>':'')+'<li class="'+(past?'past':'')+(i===nI?' next':'')+(e.ev?' ev':'')+'"><time>'+e.t+'</time><b>'+esc(e.b)+'</b><span class="g">'+esc(e.g)+'</span></li>'}).join('')+'</ol></div>'+
+    '<section class="sec" id="cal"><div class="h2"><h2>Today</h2><span class="sp"></span><small id="tlS">'+tlStatus()+'</small></div><div class="card tlc"><ol class="tl" id="tlO">'+tlHTML()+'</ol></div>'+
       '<div class="h2"><h2>Coming up</h2></div><div class="seg ctseg" role="group" aria-label="Show events">'+['all'].concat(types).map(function(k){return '<button type="button" data-ct="'+k+'" aria-pressed="'+(calType===k)+'"'+(k==='all'?'':' aria-label="'+esc(TYPES[k].n)+'"')+'>'+(k==='all'?'All':({earn:'Results',fno:'Expiry',eco:'Economy',hol:'Holidays'})[k]||TYPES[k].n)+'</button>'}).join('')+'</div>'+
       (up.length?'<div class="card calc">'+(function(){var G=[];up.forEach(function(e){var k=e.d.toDateString(),g=G[G.length-1];if(g&&g.k===k)g.e.push(e);else G.push({k:k,d:e.d,e:[e]})});
         return G.map(function(g){var wd=g.d.toLocaleDateString('en-IN',{weekday:'short'});return '<div class="cday"><span class="dt"><small>'+wd+'</small><b>'+g.d.getDate()+'</b><small>'+g.d.toLocaleDateString('en-IN',{month:'short'})+'</small></span><div class="cev">'+
@@ -1849,6 +1915,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
   if(ds.act==='record'){e.preventDefault();return recSheet()}
+  if(ds.act==='iporec'){e.preventDefault();return ipoRecSheet()}
   if(ds.act==='ixpick')return sheet('Choose an index','<div class="list ixl">'+IDX.map(function(i){var v=i.d[i.d.length-1][1];return '<button type="button" class="row'+(i.n===ixSel?' on':'')+'" data-ix="'+esc(i.n)+'" data-close><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span>'+(i.n===ixSel?'<span class="ck" aria-hidden="true">✓</span>':'')+'</button>'}).join('')+'</div>');
   if(ds.act==='prook'){store.set('ap-pro',1);closeSheet();toast('Pro unlocked on this device');RENDER[tab]();return}
   if(ds.act==='prolock'){try{localStorage.removeItem('ap-pro')}catch(e){}toast('Showing the free view again');RENDER[tab]();return}
