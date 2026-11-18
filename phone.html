@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* On a real phone, skip the frame and open the app full screen. Add ?frame=1 to keep the frame. */
+(function(){try{var small=Math.min(screen.width,innerWidth)<=600||(matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<=820);
+  if(small&&!/[?&]frame=1/.test(location.search))location.replace('app.html'+location.hash)}catch(e){}})();
+</script>
 <title>Phone Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
