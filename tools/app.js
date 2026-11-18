@@ -282,9 +282,9 @@ function rMarkets(){var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===
   var nm=nowM,nI=DAYS.findIndex(function(e){return toM(e.t)>=nm});
   s.innerHTML=top('Markets',streakChip())+
     '<div class="mk-nav"><div class="chips" role="navigation" aria-label="Sections">'+NAV.map(function(n){return '<button type="button" data-jump="'+n[0]+'">'+n[1]+'</button>'}).join('')+'</div></div>'+
-    '<section class="sec" id="indices"><div class="chips" style="margin-top:6px" aria-label="Choose an index">'+IDX.map(function(i){return '<button type="button" data-ix="'+esc(i.n)+'" aria-pressed="'+(i.n===x.n)+'">'+esc(i.n.replace('Nifty Bank','Bank Nifty'))+'</button>'}).join('')+'</div>'+
+    '<section class="sec" id="indices"><button type="button" class="ixpick" data-act="ixpick" aria-haspopup="dialog">'+I(ICO.markets,2)+'<span>'+esc(ixShort(x.n))+'</span><small>'+IDX.length+' indices</small><i aria-hidden="true">⌄</i></button>'+
       '<div class="ixh"><b>'+num(last,2)+'</b><em class="'+(x.n==='India VIX'?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pts+' ('+x.pct+')</em><small>'+esc(x.n)+' · '+(m>=0?'+':'−')+Math.abs(m).toFixed(1)+'% in a month · 11 Nov close</small></div>'+
-      '<div class="ixc" id="ixc">'+ixChart(x)+'</div></section>'+
+      '<div class="ixc" id="ixc">'+ixChart(x)+'</div>'+(function(){var v=x.d.map(function(q){return q[1]}),hi=Math.max.apply(null,v),lo=Math.min.apply(null,v);return '<div class="ixs"><div><small>Month high</small><b>'+num(hi,2)+'</b></div><div><small>Month low</small><b>'+num(lo,2)+'</b></div><div><small>From low</small><b class="u">+'+((last/lo-1)*100).toFixed(1)+'%</b></div></div>'})()+'</section>'+
     '<section class="sec" id="fo"><div class="h2"><h2>F&amp;O levels · Nifty</h2>'+infoBtn('fo')+'<span class="sp"></span><small>'+esc(D.fo.exp)+'</small></div>'+
       '<div class="fo3">'+D.fo.k.map(function(k,i){return '<div class="'+['s','m','r'][i]+'"><span>'+esc(k[0])+'</span><b>'+esc(k[1])+'</b><small>'+esc(k[2])+'</small></div>'}).join('')+'</div>'+
       '<div class="foch">'+D.fo.svg+'</div><a class="btn g full" style="margin-top:14px" href="'+L.studio+'">Open Option Studio '+I(ICO.ext)+'</a></section>'+
@@ -605,6 +605,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='streak')return;
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
+  if(ds.act==='ixpick')return sheet('Choose an index','<div class="list ixl">'+IDX.map(function(i){var v=i.d[i.d.length-1][1];return '<button type="button" class="row'+(i.n===ixSel?' on':'')+'" data-ix="'+esc(i.n)+'" data-close><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span>'+(i.n===ixSel?'<span class="ck" aria-hidden="true">✓</span>':'')+'</button>'}).join('')+'</div>');
   if(ds.act==='prook'){store.set('ap-pro',1);closeSheet();toast('Pro unlocked on this device');RENDER[tab]();return}
   if(ds.act==='prolock'){try{localStorage.removeItem('ap-pro')}catch(e){}toast('Showing the free view again');RENDER[tab]();return}
   if(ds.act==='tomorning'){setTimeout(function(){var c=$('#morning');if(c)c.scrollIntoView({block:'center',behavior:'smooth'})},80);return}

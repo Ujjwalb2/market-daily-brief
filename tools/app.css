@@ -900,3 +900,16 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .fy-lv small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}.fy-lv b{font:700 17px/1 var(--font-sans);font-variant-numeric:tabular-nums}
 .fy-r{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--border-decorative);font:500 14px/1.3 var(--font-sans)}
 .fy-r b{font-weight:700;font-variant-numeric:tabular-nums}.fy-r b.u{color:var(--up-text)}
+
+/* Markets: index picker button + sheet (no sideways row), month stats, no repeated headings, filters wrap */
+.ixpick{display:flex;align-items:center;gap:8px;width:100%;margin-top:4px;padding:12px 14px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary);text-align:left}
+.ixpick svg{width:18px;height:18px;color:var(--up-text)}.ixpick span{font:700 16px/1 var(--font-sans)}.ixpick small{flex:1;font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary)}.ixpick i{font-style:normal;font-size:16px;color:var(--text-tertiary)}
+.ixs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.ixs div{display:grid;gap:4px;padding:10px;border-radius:12px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.ixs small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}.ixs b{font:700 14.5px/1 var(--font-sans);font-variant-numeric:tabular-nums}.ixs b.u{color:var(--up-text)}
+.ixl .row{width:100%;text-align:left;color:var(--text-primary)}.ixl .row.on b{color:var(--up-text)}.ixl .ck{color:var(--up-text);font-weight:700;margin-left:6px}
+.ixl .vl.w{color:var(--warn-text)}.ixl .vl.d{color:var(--slate-500)}
+#movers>.h2 h2,#filings>.h2 h2{display:none}
+#movers>.h2{margin-top:14px}#filings>.h2{margin-top:14px;justify-content:flex-start}
+#s-markets .chips{flex-wrap:wrap;overflow:visible;margin:0;padding:2px 0;row-gap:2px}
+.ixpick{margin-top:14px}
