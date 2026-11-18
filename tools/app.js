@@ -414,12 +414,11 @@ function lvizOf(id){var v=(typeof LVIZ!=='undefined'&&LVIZ[id])||'';return v.rep
 function learnHTML(){var lr=learned(),all=lr.length>=LEARN.length,first=Math.max(0,LEARN.findIndex(function(x){return lr.indexOf(x.id)<0}));
   return '<section class="sec" id="learn"><div class="lnh"><span>Three short ideas a day · learn all 3 to keep your streak</span><small id="lnC">'+lr.length+' of '+LEARN.length+' done</small></div>'+
     (all?'<div class="lnok">✓ All 3 ideas learned. Streak kept for today.</div>':'')+
-    '<div class="hlt lnt" data-noswipe data-first="'+first+'" aria-label="Ideas to learn, swipe for more">'+LEARN.map(function(x,i){var got=lr.indexOf(x.id)>=0,t=LTONE[x.id]||'i';
+    '<div class="lnt" aria-label="Ideas to learn">'+LEARN.map(function(x,i){var got=lr.indexOf(x.id)>=0,t=LTONE[x.id]||'i';
       return '<article class="lc '+t+'" aria-label="'+(i+1)+' of '+LEARN.length+': '+esc(x.h)+'"><div class="lck"><span class="ic '+t+'">'+I(ICO.learn,2)+'</span><span class="eb">'+esc(x.kind)+'</span>'+(got?'<span class="tag lgot">✓ Learned</span>':'')+'</div>'+
         '<h3>'+esc(x.h)+'</h3>'+lvizOf(x.id)+'<p class="one">'+x.one+'</p>'+
-        '<div class="lcf">'+(got?'<span class="muted">'+(i<LEARN.length-1?'Swipe for the next idea →':'Done for today')+'</span>':'<button type="button" class="btn p s" data-got="'+x.id+'">Got it</button><span class="muted">'+(i+1)+' of '+LEARN.length+'</span>')+'</div></article>'}).join('')+'</div>'+
-    '<div class="mdots lnd" aria-hidden="true">'+LEARN.map(function(x,i){return '<i class="'+(lr.indexOf(x.id)>=0?'ok':'')+(i===first?' on':'')+'"></i>'}).join('')+'</div></section>'}
-function lrnSlide(go){var tr=$('#s-ideas .lnt');if(!tr)return;var n=go!=null?go:+tr.dataset.first;if(n>0)tr.scrollLeft=tr.children[n].offsetLeft-tr.children[0].offsetLeft;
+        '<div class="lcf">'+(got?'<span class="muted">'+(i<LEARN.length-1?'Next idea below ↓':'Done for today')+'</span>':'<button type="button" class="btn p s" data-got="'+x.id+'">Got it</button><span class="muted">'+(i+1)+' of '+LEARN.length+'</span>')+'</div></article>'}).join('')+'</div></section>'}
+function lrnSlide(go){return;var tr=$('#s-ideas .lnt');if(!tr)return;var n=go!=null?go:+tr.dataset.first;if(n>0)tr.scrollLeft=tr.children[n].offsetLeft-tr.children[0].offsetLeft;
   var dots=$$('#s-ideas .lnd i'),sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)})};tr.addEventListener('scroll',sync,{passive:true});sync()}
 /* ---------------- IDEAS ---------------- */
 var rs=function(x){return parseFloat(String(x).replace(/[₹,]/g,''))};
@@ -549,6 +548,7 @@ function jcal(m,tr){var y=+m.slice(0,4),mo=+m.slice(5,7),days=new Date(y,mo,0).g
     var p=list.reduce(function(s,t){return s+t.pnl},0),a=(0.12+Math.abs(p)/mx*0.5).toFixed(2);
     cells.push('<button type="button" class="'+(p>=0?'p':'n')+(jDay===key?' sel':'')+'" style="--a:'+a+'" data-day="'+key+'" aria-label="'+dlong(key)+', '+list.length+' trades, '+inr(p,true)+'">'+d+'<small>'+(Math.abs(p)>=1000?(p<0?'−':'+')+(Math.abs(p)/1000).toFixed(1)+'k':inr(p,true))+'</small></button>')}
   return '<div class="jcal" role="group" aria-label="'+mname(m)+' by day">'+['Mon','Tue','Wed','Thu','Fri'].map(function(w){return '<span class="hd">'+w+'</span>'}).join('')+cells.join('')+'</div>'}
+var jTF='all';
 function rJournal(){var s=$('#s-journal'),ms=MONTHS(),mi=ms.indexOf(jMonth);if(mi<0){jMonth=ms[ms.length-1];mi=ms.length-1}
   var tr=ALL.filter(function(t){return t.d.slice(0,7)===jMonth}),st=stats(tr),td=todo(),ins=insights(tr),mist={};tr.forEach(function(t){(t.mistakes||[]).forEach(function(k){mist[k]=(mist[k]||0)+1})});
   var mk=Object.keys(mist).sort(function(a,b){return mist[b]-mist[a]}),mmx=mk.length?mist[mk[0]]:1;
@@ -560,11 +560,17 @@ function rJournal(){var s=$('#s-journal'),ms=MONTHS(),mi=ms.indexOf(jMonth);if(m
       '<div><span>Profit factor</span><b>'+st.pf.toFixed(2)+'</b><small>gross win ÷ gross loss</small></div><div><span>Avg win / loss</span><b>'+(st.al?(st.aw/st.al).toFixed(2):'–')+'×</b><small>'+inr(st.aw)+' / '+inr(st.al)+'</small></div></div>'+
     '<div class="h2"><h2>Equity curve</h2><span class="sp"></span><small>running P&amp;L</small></div><div class="eq">'+equity(tr)+'</div>'+
     '<div class="h2"><h2>Calendar</h2><span class="sp"></span><small>tap a day</small></div>'+jcal(jMonth,tr)+
-    (ins.length?'<div class="h2"><h2>Insights</h2></div><div class="ins">'+ins.map(function(x){return '<div class="'+x[0]+'">'+x[1]+'</div>'}).join('')+'</div>':'')+
+    (ins.length?'<div class="h2 jhide"><h2>Insights</h2></div><div class="ins">'+ins.map(function(x){return '<div class="'+x[0]+'">'+x[1]+'</div>'}).join('')+'</div>':'')+
     '<div class="h2"><h2>Plan score</h2><span class="sp"></span><small>5 rules per trade</small></div><div class="card"><div class="score"><span class="big">'+st.score.toFixed(1)+'</span><small>out of 5 on average.<br>'+(mk.length?'Most missed: <b>'+mk[0].toLowerCase()+'</b>.':'Every rule kept.')+'</small></div>'+
       (mk.length?'<div class="bars mist" style="margin-top:14px">'+mk.map(function(k){return bar(k,mist[k]+'×',mist[k]/mmx*100,'a')}).join('')+'</div>':'')+'</div>'+
-    '<div class="h2"><h2>Trades</h2><span class="sp"></span><small>'+st.n+' this month</small></div><div class="card" style="padding:0 16px"><div class="list">'+
-      tr.slice().reverse().slice(0,40).map(function(t){var i=ALL.indexOf(t);return '<button type="button" class="row" data-trade="'+i+'"><span class="tx"><b>'+esc(t.sym)+(t.confirmed?' <span class="tag">today</span>':'')+'</b><small>'+dt(t.d).toLocaleDateString('en-IN',{day:'numeric',month:'short'})+' '+t.t+' · '+esc(t.setup||'')+'</small></span><span class="vl '+(t.pnl>=0?'u':'d')+'">'+inr(t.pnl,true)+'<small class="muted">'+(t.score!=null?t.score+'/5':'')+'</small></span></button>'}).join('')+'</div></div>'+
+    '<div class="h2 jtr"><h2>Trades</h2><small>'+st.n+' this month · '+st.w+' won · '+st.l+' lost</small></div>'+
+    '<div class="seg jtseg" role="group" aria-label="Show trades">'+[['all','All '+st.n],['win','Wins '+st.w],['loss','Losses '+st.l]].map(function(b){return '<button type="button" data-jt="'+b[0]+'" aria-pressed="'+(jTF===b[0])+'">'+b[1]+'</button>'}).join('')+'</div>'+
+    (function(){var L=tr.slice().reverse().filter(function(t){return jTF==='all'||(jTF==='win'?t.pnl>0:t.pnl<0)}),G=[];L.forEach(function(t){var g=G[G.length-1];if(g&&g.d===t.d)g.t.push(t);else G.push({d:t.d,t:[t]})});
+      if(!G.length)return '<p class="muted" style="margin-top:12px">No trades of this kind this month.</p>';
+      return G.map(function(g){var dp=g.t.reduce(function(a,t){return a+t.pnl},0);
+        return '<div class="jday"><button type="button" class="jdh" data-day="'+g.d+'"><b>'+dt(g.d).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})+'</b><small>'+g.t.length+' trade'+(g.t.length>1?'s':'')+'</small><span class="'+(dp>=0?'u':'d')+'">'+inr(dp,true)+'</span></button>'+
+          '<div class="card jdl"><div class="list">'+g.t.map(function(t){var i=ALL.indexOf(t),sc=t.score,cl=sc==null?'':sc>=5?'t':sc>=3?'a':'s';
+            return '<button type="button" class="row" data-trade="'+i+'"><span class="tx"><b>'+esc(t.sym)+(t.confirmed?' <span class="tag">today</span>':'')+'</b><small>'+t.t+' · '+esc(t.setup||'No setup')+'</small></span><span class="vl '+(t.pnl>=0?'u':'d')+'">'+inr(t.pnl,true)+(sc!=null?'<span class="jps '+cl+'">Plan '+sc+'/5</span>':'')+'</span></button>'}).join('')+'</div></div></div>'}).join('')})()+
     '<p class="note">Sample trades to show how your journal looks. Charges and taxes are not deducted.</p>';
   badge()}
 function dayBody(d){var list=ALL.filter(function(t){return t.d===d}),p=list.reduce(function(s,t){return s+t.pnl},0),n=notes[d]||{};
@@ -731,7 +737,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
     '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';}
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#you/rewards" data-close>Free days, badges and season</a>')}
-document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
+document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-jt],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
   if(ds.call!=null)setTimeout(function(){var tr=$('#tcTr');if(tr&&tr.children[+ds.call])tr.scrollTo({left:tr.children[+ds.call].offsetLeft-tr.firstChild.offsetLeft,behavior:'smooth'})},450);
   if(ds.subGo){var spot=a.getAttribute('data-spot');if(spot!=null)setTimeout(function(){var el=document.getElementById('spot-'+spot);if(el){var y=el.getBoundingClientRect().top+scrollY-150;window.scrollTo({top:y,behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1200)}},60);var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.tile){closeSheet();return tileSheet(ds.tile)}
@@ -755,6 +761,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.jump){var el=document.getElementById(ds.jump);if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
   if(ds.ix&&a.tagName==='BUTTON'){ixSel=ds.ix;rMarkets();return}
   if(ds.ix&&a.tagName==='A'){ixSel=ds.ix;return}
+  if(ds.jt){jTF=ds.jt;var y8=scrollY;rJournal();applySub('journal','trades');scrollTo(0,y8);return}
   if(ds.mv){mvSeg=ds.mv;var y=scrollY;rMarkets();scrollTo(0,y);return}
   if(ds.fl!=null){flSeg=+ds.fl;var y2=scrollY;rMarkets();flFade();scrollTo(0,y2);return}
   if(ds.sc){scSeg=ds.sc;var y2=scrollY;rMarkets();scrollTo(0,y2);return}
@@ -766,7 +773,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.day)return openDay(ds.day);
   if(ds.m){var ms=MONTHS(),i=ms.indexOf(jMonth)+ +ds.m;if(i>=0&&i<ms.length){jMonth=ms[i];jDay=null;rJournal()}return}
   if(ds.lrn){lrnI=(lrnI+ +ds.lrn+LEARN.length)%LEARN.length;var y4=scrollY;rYou();scrollTo(0,y4);return}
-  if(ds.got){var l=learned();if(l.indexOf(ds.got)<0)l.push(ds.got);store.set(LKEY,l);var nx=LEARN.findIndex(function(x){return l.indexOf(x.id)<0});if(nx>=0)lrnI=nx;var y5=scrollY;rIdeas();applySub('ideas','learn');scrollTo(0,y5);setTimeout(function(){var tr=$('#s-ideas .lnt');if(tr&&nx>=0)tr.scrollTo({left:tr.children[nx].offsetLeft-tr.children[0].offsetLeft,behavior:'smooth'})},250);if(typeof paintMorning==='function')paintMorning();toast(l.length>=LEARN.length?'All 3 learned. Streak kept for today.':(LEARN.length-l.length)+' left to keep your streak');return}
+  if(ds.got){var l=learned();if(l.indexOf(ds.got)<0)l.push(ds.got);store.set(LKEY,l);var nx=LEARN.findIndex(function(x){return l.indexOf(x.id)<0});if(nx>=0)lrnI=nx;var y5=scrollY;rIdeas();applySub('ideas','learn');scrollTo(0,y5);setTimeout(function(){var c=$$('#s-ideas .lnt .lc')[nx];if(c&&nx>=0)window.scrollTo({top:c.getBoundingClientRect().top+scrollY-150,behavior:'smooth'})},200);if(typeof paintMorning==='function')paintMorning();toast(l.length>=LEARN.length?'All 3 learned. Streak kept for today.':(LEARN.length-l.length)+' left to keep your streak');return}
   if(ds.themeSet){root.setAttribute('data-theme',ds.themeSet);store.set('today-theme',ds.themeSet);try{localStorage.setItem('today-theme',ds.themeSet)}catch(err){}var y6=scrollY;rYou();scrollTo(0,y6);return}
 });
 var armed=0;document.addEventListener('click',function(e){var b=e.target.closest('#rstB');if(!b)return;
@@ -795,7 +802,7 @@ function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;v
   kids.forEach(function(c){if(c.tagName==='HEADER')return;var d=defs.filter(function(x){return subStart(c,x[3])})[0];if(d){cur=d[0];found[cur]=1}
     c.dataset.sub=(c.classList.contains('note')||c.classList.contains('tick'))?'*':(cur||'-')});
   var live=defs.filter(function(x){return found[x[0]]});if(!live.length)return;
-  if(sec){var el=document.getElementById(sec);if(el){var host=kids.filter(function(c){return c===el||c.contains(el)})[0];if(host&&host.dataset.sub&&found[host.dataset.sub])subSel[t]=host.dataset.sub}}
+  if(sec&&found[sec])subSel[t]=sec;else if(sec){var el=document.getElementById(sec);if(el){var host=kids.filter(function(c){return c===el||c.contains(el)})[0];if(host&&host.dataset.sub&&found[host.dataset.sub])subSel[t]=host.dataset.sub}}
   if(!subSel[t]||!found[subSel[t]])subSel[t]=live[0][0];
   var k=subSel[t],all=SHOWALL[t]===k;
   kids.forEach(function(c){if(c.tagName==='HEADER')return;var g=c.dataset.sub;c.classList.toggle('sub-off',!(g==='*'||(all&&g!=='-')||g===k));c.classList.remove('ssl-r','ssl-l');if(subDir&&!c.classList.contains('sub-off')){void c.offsetWidth;c.classList.add('ssl-'+subDir)}});subDir='';
