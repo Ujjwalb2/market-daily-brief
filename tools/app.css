@@ -1005,3 +1005,11 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .ipdt div{display:grid;gap:4px;padding:10px 8px;border-radius:12px;background:var(--surface-glass);text-align:center}.ipdt small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}.ipdt b{font:700 13.5px/1 var(--font-sans)}
 .ipc .hg{font:600 13px/1 var(--font-sans);color:var(--link)}
 .ipbars+.facts{margin-top:16px}
+
+/* IPO cards: same height as the Market highlights cards */
+.ipc{height:171px;gap:0;align-content:space-between}
+.ipc .ipn{gap:5px;justify-items:start}.ipc .ipn b{font-size:21px;margin-top:4px}
+.ipf1{display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px solid var(--border-decorative);font:600 13px/1.2 var(--font-sans);color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.ipf1>span:first-child{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ipf1 .hg{flex:none}
+.hlc{height:171px;min-height:0}

@@ -242,10 +242,8 @@ function ipoHTML(){
   return '<section class="pv ipo"><div class="pvh"><b>IPOs</b><small id="ipoC">1 of '+IPOS.length+'</small></div>'+
     '<div class="hlt ipt" data-noswipe aria-label="IPOs, swipe for more">'+IPOS.map(function(x,i){var t=ipoTone(x.sc);
       return '<button type="button" class="ipc" data-act="ipo" data-i="'+i+'" aria-label="'+esc(x.n)+': '+esc(x.stt)+', AlphaPad score '+x.sc.toFixed(1)+'. Open report">'+
-        '<span class="iph"><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span></span>'+
-        '<span class="ipm"><span class="ipn"><b>'+esc(x.n)+'</b><small>'+esc(x.sec)+'</small></span><span class="ipsc">'+ipoRing(x.sc)+'<small>'+t[0]+'</small></span></span>'+
-        '<span class="ipf"><span>Size<b>'+x.size+'</b></span><span>Price<b>'+x.band+'</b></span><span>Demand<b>'+x.sub+'</b></span></span>'+
-        '<span class="hg">Read the report →</span></button>'}).join('')+'</div>'+
+        '<span class="ipm"><span class="ipn"><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span><b>'+esc(x.n)+'</b><small>'+esc(x.sec)+'</small></span><span class="ipsc">'+ipoRing(x.sc)+'<small>'+t[0]+'</small></span></span>'+
+        '<span class="ipf1"><span>'+x.size+' · '+x.band+' · '+x.sub+'</span><span class="hg">Report →</span></span></button>'}).join('')+'</div>'+
     '<div class="mdots ipd" aria-hidden="true">'+IPOS.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
     '<p class="ipnote">AlphaPad score is our in-house rating out of 10. Sample IPOs for the prototype.</p></section>'}
 function ipoSheet(i){var x=IPOS[i],t=ipoTone(x.sc);
