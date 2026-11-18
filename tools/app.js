@@ -186,8 +186,8 @@ function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createEl
 var CL=D.closed||[],CLW=CL.filter(function(c){return c.how==='target'}).length;
 function fyRows(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],st=stats(ALL.filter(function(x){return x.d.slice(0,7)===mo})),v=seasonScore(),nx=nextEv();
   var R=[
-    ['a',ICO.journal,'Your trading this month',st.n+' trades · '+st.wr.toFixed(0)+'% win rate',inr(st.net,true),st.net>=0?'u':'','#journal/overview'],
-    locked()?['a',ICO.tc,'Your live calls',CALLS.length+' posted today · locked','Unlock','','@pro']:['i',ICO.tc,'Your live calls',CALLS.length+' active · '+CLW+' of '+CL.length+' recent hit target','','','#ideas/calls'],
+    ['b',ICO.journal,'Your month',st.n+' trades · '+st.wr.toFixed(0)+'% win rate',inr(st.net,true),st.net>=0?'u':'','#journal/overview'],
+    locked()?['i',ICO.tc,'Your live calls',CALLS.length+' posted today · locked','Unlock','','@pro']:['i',ICO.tc,'Your live calls',CALLS.length+' active · '+CLW+' of '+CL.length+' recent hit target','','','#ideas/calls'],
     ['t',ICO.star,'Your rewards',freeDays()+' free days · '+TIERS[tierOf(v)][1]+' · #'+myRank(),v+' pts','','#rewards']];
   var X={options:['a',ICO.fo,'Your expiry: Nifty '+D.fo.exp.replace(/^Expiry\s*/,''),'Support '+D.fo.k[0][1]+' · max pain '+D.fo.k[1][1]+' · resistance '+D.fo.k[2][1],'','','#markets/fo'],
     investor:['t',ICO.bk,'Your baskets',D.baskets[0].n,D.baskets[0].r,'u','#ideas/baskets'],

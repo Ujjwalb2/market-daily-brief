@@ -937,3 +937,14 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 
 /* Home: calls card sits right under the morning steps */
 #s-today .pbk.home{margin-top:22px}
+
+/* list-row icons: brighter tiles, bigger bolder glyphs, a coloured edge so they read at a glance */
+.row>.ic{width:40px;height:40px;border-radius:12px;border:1px solid transparent}
+.row>.ic svg{width:21px;height:21px;stroke-width:2.2}
+.row>.ic.t{background:linear-gradient(145deg,rgba(0,201,154,.30),rgba(0,201,154,.10));border-color:rgba(0,201,154,.35)}
+.row>.ic.a{background:linear-gradient(145deg,rgba(240,160,75,.30),rgba(240,160,75,.10));border-color:rgba(240,160,75,.35)}
+.row>.ic.b{background:linear-gradient(145deg,rgba(50,130,232,.32),rgba(50,130,232,.10));border-color:rgba(50,130,232,.38);color:#6AA8F5}
+.row>.ic.i{background:linear-gradient(145deg,rgba(63,91,217,.40),rgba(63,91,217,.14));border-color:rgba(99,123,235,.45);color:#9DB0FF}
+.row>.ic.s{background:linear-gradient(145deg,rgba(123,135,153,.30),rgba(123,135,153,.10));border-color:rgba(123,135,153,.35)}
+:root[data-theme="light"] .row>.ic.b{color:var(--blue)}:root[data-theme="light"] .row>.ic.i{color:var(--indigo-500)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .row>.ic.b{color:var(--blue)}:root:not([data-theme="dark"]) .row>.ic.i{color:var(--indigo-500)}}
