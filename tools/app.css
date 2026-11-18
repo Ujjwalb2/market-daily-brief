@@ -948,3 +948,9 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .row>.ic.s{background:linear-gradient(145deg,rgba(123,135,153,.30),rgba(123,135,153,.10));border-color:rgba(123,135,153,.35)}
 :root[data-theme="light"] .row>.ic.b{color:var(--blue)}:root[data-theme="light"] .row>.ic.i{color:var(--indigo-500)}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .row>.ic.b{color:var(--blue)}:root:not([data-theme="dark"]) .row>.ic.i{color:var(--indigo-500)}}
+
+/* Home live calls: one call at a time, swipe for the next */
+.pbk.live .lvl{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pbk.live .lvl::-webkit-scrollbar{display:none}
+.pbk.live .lvr{scroll-snap-align:start;scroll-snap-stop:always}
+.pbk.live .lvd{margin:12px 0 2px}

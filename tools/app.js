@@ -238,7 +238,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     forYou()+
     '<p class="note">Analysis, not investment advice. Prices are from the 11 Nov close.</p>';
   paintAudio();
-  morningSlide();
+  morningSlide();liveSlide();
   var hh=$('#hero');if(hh&&wasAll===false&&allDone())hh.classList.add('win');wasAll=allDone();
   var tr=$('#spTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12,i=Math.round(tr.scrollLeft/w);$$('.dots i',s).forEach(function(d,j){d.classList.toggle('on',j===i)});$('#spC').textContent=(i+1)+' of '+SL.length},{passive:true})}
 
@@ -355,14 +355,18 @@ function profitHTML(where){var wins=CL.filter(function(x){return x.ret>0}),loss=
     (locked()?'<button type="button" class="btn full pbc" data-act="pro">Unlock today’s '+CALLS.length+' live calls →</button>':'<a class="btn full pbc" href="#ideas/calls">See today’s calls →</a>')+
     '<p class="pbf">Every closed call is counted, losses included. Past results do not promise future returns.</p></section>'}
 function liveHTML(){var w=CL.filter(function(x){return x.ret>0}).length;
-  return '<section class="pbk home live" aria-label="Live trade calls"><div class="pbh"><span class="eb">Live trade calls</span><small>'+CALLS.length+' active · Pro</small></div>'+
-    '<div class="lvl">'+CALLS.map(function(c,i){var e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),pc=(t-l)/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
+  return '<section class="pbk home live" aria-label="Live trade calls"><div class="pbh"><span class="eb">Live trade calls</span><small id="lvC">1 of '+CALLS.length+' live</small></div>'+
+    '<div class="lvl" data-noswipe aria-label="Live trade calls, swipe for more">'+CALLS.map(function(c,i){var e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),pc=(t-l)/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
       return '<a class="lvr" href="#ideas/calls" data-call="'+i+'"><div class="lvt"><b>'+esc(c.n)+'</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div>'+
         '<div class="lvp"><b>'+(pc>=0?'+':'')+pc.toFixed(0)+'%</b><small>left to target</small></div>'+
         '<div class="lvb" role="img" aria-label="'+done.toFixed(0)+'% of the way from entry to target"><i style="width:'+done.toFixed(1)+'%"></i></div>'+
         '<div class="lvx"><span>Entry <b>'+c.lv[0]+'</b></span><span>Last <b>'+c.lv[3]+'</b></span><span>Target <b class="u">'+c.lv[1]+'</b></span></div></a>'}).join('')+'</div>'+
+    (CALLS.length>1?'<div class="mdots lvd" aria-hidden="true">'+CALLS.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>':'')+
     '<a class="btn full pbc" href="#ideas/calls">Open all calls with levels →</a>'+
     '<p class="pbf">'+w+' of the last '+CL.length+' closed calls booked profit. Analysis, not investment advice.</p></section>'}
+function liveSlide(){var tr=$('#s-today .lvl');if(!tr||!tr.children.length)return;var n=tr.children.length,dots=$$('#s-today .lvd i');
+  var sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});var c=$('#lvC');if(c)c.textContent=(i+1)+' of '+n+' live'};
+  tr.addEventListener('scroll',sync,{passive:true});sync()}
 function lockedCard(c){var nm=String(c.n),e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
   return '<article class="tc lk" aria-label="Locked trade call"><div class="hd"><div><b class="lkn">••••••••</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div><span class="tag">Active</span></div>'+
   '<div class="pot"><div class="h"><span>Potential left</span><b>'+(pc>=0?'+':'')+pc.toFixed(0)+'% <span class="u">to target</span></b></div><div class="bar" role="img" aria-label="'+done.toFixed(0)+'% of the way from entry to target"><i style="width:'+done.toFixed(1)+'%"></i><span style="left:'+done.toFixed(1)+'%"></span></div><div class="l"><span>Entry</span><span>'+done.toFixed(0)+'% of the way</span><span>Target</span></div></div>'+
