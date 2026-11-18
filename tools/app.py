@@ -9,6 +9,29 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 JS_DATA = ['IDX', 'DAY', 'TYPES', 'E', 'EVENTS', 'MVS', 'OIB', 'OIQ', 'CALLS', 'LEARN']
 
+# Closed trade calls for the track record (sample data for the prototype; every call is listed, losses included).
+# name, strategy, legs, posted, closed, entry, target, stop, exit, how it closed, quantity
+CLOSED = [
+    ('TATAMOTORS', 'Call spread', 'Buy CALL 720 · Sell CALL 740', '2026-10-28', '2026-11-04', 6.10, 14.00, 3.00, 13.60, 'target', 1400),
+    ('HDFCBANK', 'Stock · positional', 'Buy 1,688 shares', '2026-10-20', '2026-11-06', 1652.0, 1760.0, 1598.0, 1758.0, 'target', 60),
+    ('NIFTY', 'Put spread', 'Buy PUT 24800 · Sell PUT 24600', '2026-10-30', '2026-11-03', 58.0, 120.0, 30.0, 29.0, 'stop', 75),
+    ('ICICIBANK', 'Call', 'Buy CALL 1300', '2026-10-27', '2026-10-31', 18.5, 34.0, 10.0, 33.2, 'target', 700),
+    ('INFY', 'Stock · swing', 'Buy 1,520 shares', '2026-10-15', '2026-10-29', 1498.0, 1580.0, 1460.0, 1461.0, 'stop', 30),
+    ('BANKNIFTY', 'Call spread', 'Buy CALL 55000 · Sell CALL 55500', '2026-11-05', '2026-11-09', 142.0, 300.0, 80.0, 296.0, 'target', 35),
+    ('SBIN', 'Stock · swing', 'Buy 812 shares', '2026-10-22', '2026-11-05', 804.0, 860.0, 778.0, 838.0, 'early', 120),
+    ('RELIANCE', 'Put', 'Buy PUT 1400', '2026-11-02', '2026-11-04', 22.0, 40.0, 13.0, 12.6, 'stop', 500),
+    ('LT', 'Call spread', 'Buy CALL 3600 · Sell CALL 3700', '2026-10-24', '2026-11-03', 31.0, 70.0, 18.0, 68.5, 'target', 175),
+    ('M&M', 'Stock · positional', 'Buy 3,050 shares', '2026-10-09', '2026-11-10', 2988.0, 3300.0, 2860.0, 3296.0, 'target', 25),
+]
+
+
+def closed():
+    out = []
+    for n, k, legs, po, cl, en, tg, sl, ex, how, q in CLOSED:
+        out.append({'n': n, 'k': k, 'legs': legs, 'po': po, 'cl': cl, 'en': en, 'tg': tg, 'sl': sl, 'ex': ex, 'how': how, 'q': q,
+                    'ret': round((ex - en) / en * 100, 1), 'pnl': round((ex - en) * q)})
+    return sorted(out, key=lambda x: x['cl'], reverse=True)
+
 
 def _decl(src, name):
     """Return the full `const NAME=...;` statement from a script, matching brackets and skipping strings."""
@@ -106,11 +129,11 @@ def data(home):
     d['filings'] = _filings(home)
     d['sotd'].update({k: SOTD[k] for k in ('date', 's', 'name', 'ind', 'fo', 'close', 'chg', 'day_hi', 'old_hi', 'old_hi_d', 'l52', 'l52_d', 'vx', 'dl', 'sma20', 'oi')})
     d['sotd']['others'] = [list(x) for x in SOTD['others']]
+    d['closed'] = closed()
     return d, jd_build(), jd_pending()
 
 
 def page(home):
-    from variants import OB_CSS, OB_JS
     script = re.findall(r'<script[^>]*>(.*?)</script>', home, re.S)
     src = max(script, key=len)
     decls = '\n'.join(_decl(src, n) for n in JS_DATA)
@@ -128,7 +151,7 @@ def page(home):
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>try{{var t=localStorage.getItem('today-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}}catch(e){{}}</script>
-<style>{css}{OB_CSS}</style>
+<style>{css}</style>
 </head>
 <body>
 <div id="app"></div>
@@ -137,7 +160,6 @@ def page(home):
 window.CD={dj(d)};window.JD={dj(jd)};window.JDP={dj(jp)};
 </script>
 <script>{js}</script>
-{OB_JS}
 </body>
 </html>
 '''
