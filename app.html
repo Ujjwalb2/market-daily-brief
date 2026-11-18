@@ -1023,6 +1023,22 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .ipf1>span:first-child{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ipf1 .hg{flex:none}
 .hlc{height:171px;min-height:0}
+
+/* All IPOs list */
+.pv.ipo .pvh small{margin-right:12px}
+.pv.ipo .pvh .ipall{font:600 13px/1 var(--font-sans);color:var(--link)}
+.ipls .row{width:100%;text-align:left;color:var(--text-primary);gap:12px}
+.ipls .ipr{width:44px;height:44px;flex:none}.ipls .ipr b{font-size:14px}
+.ipls .row:last-child{border-bottom:0}
+.ipls .ips{height:22px;font-size:11.5px}
+.iph3 small{font:500 13px/1 var(--font-sans);color:var(--text-tertiary);margin-left:4px}
+.ipback{display:inline-block;margin:0 0 12px;font:600 13.5px/1 var(--font-sans);color:var(--link)}
+
+/* IPO pages */
+.ipc{text-decoration:none}
+.ippg{padding-bottom:24px}
+.ipintro{margin:4px 0 0}
+#s-ipos .ipr-h{margin-top:6px}
 </style>
 </head>
 <body>
@@ -1121,19 +1137,20 @@ function stats(tr){var w=tr.filter(function(t){return t.pnl>0}),l=tr.filter(func
 
 /* ---------------- shell ---------------- */
 var TABS=[['today','Today'],['markets','Markets'],['ideas','Ideas'],['journal','Journal'],['you','You']];
-app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+'<main class="scr" id="s-rewards" aria-label="Streak and rewards"></main>'+
+app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+'<main class="scr" id="s-rewards" aria-label="Streak and rewards"></main><main class="scr" id="s-ipos" aria-label="IPOs"></main>'+
   '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><a class="nw" id="mNews" href="#markets/filings">News <i aria-hidden="true">→</i></a><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
   '<div class="tabs"><nav aria-label="App"><i class="tind" aria-hidden="true"></i>'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
   '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div><div class="ovw" id="ovw" hidden role="dialog" aria-modal="true" aria-label="Market overview"><div class="ovp" id="ovwP"></div></div>';
 
 var tab='today',prevH='#today',lastTab='';
-function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1];if(t!=='rewards'&&!TABS.some(function(x){return x[0]===t}))t='today';if(t!=='rewards')prevH='#'+h.join('/');tab=t;
+function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1],pg=PAGES.indexOf(t)>=0;if(!pg&&!TABS.some(function(x){return x[0]===t}))t='today';if(!pg)prevH='#'+h.join('/');backH=lastH;lastH='#'+h.join('/');tab=t;
   var ni=TABS.findIndex(function(x){return x[0]===t}),oi=TABS.findIndex(function(x){return x[0]===lastTab}),nv=$('.tabs nav');
   if(nv){nv.style.setProperty('--i',ni<0?(oi<0?0:oi):ni);nv.classList.toggle('noind',ni<0)}
-  var dir=t===lastTab?'':(t==='rewards'?'up':(lastTab==='rewards'?'dn':(ni>oi?'r':'l')));
+  var dir=t===lastTab?(pg&&sec!==lastSec?'r':''):(pg?'up':(PAGES.indexOf(lastTab)>=0?'dn':(ni>oi?'r':'l')));lastSec=sec;
   $$('.scr').forEach(function(s){var on=s.id==='s-'+t;s.classList.toggle('on',on);s.classList.remove('sl-r','sl-l','sl-up','sl-dn');if(on&&dir){void s.offsetWidth;s.classList.add('sl-'+dir)}});lastTab=t;$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   if(t==='markets')mark('watch');if(t==='ideas'&&(sec==='calls'||!sec))mark('calls');
   setTimeout(paintAudio,0);subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(sec&&!SUBS[t]){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
+var PAGES=['rewards','ipos'],backH='',lastH='',lastSec;
 function go(h){if(location.hash==='#'+h)route();else location.hash=h}
 addEventListener('hashchange',route);
 function badge(){var n=todo().length,b=$('#jBadge');b.hidden=!n;b.textContent=n}
@@ -1307,27 +1324,41 @@ var IPOS=[
   {n:'Orion Pharma',sec:'Pharmaceuticals · Mainboard',st:'soon',stt:'Opens 20 Nov',size:'₹900 cr',band:'Price band soon',lot:'–',min:'–',sub:'Not open yet',dates:[['Opens','20 Nov'],['Closes','24 Nov'],['Allotment','27 Nov'],['Lists','1 Dec']],
    sc:6.8,parts:[['Business',7.5],['Financials',7],['Valuation',6],['Promoters & governance',6.5]],
    good:['Export business with approvals in regulated markets','Cash from operations has stayed positive'],
-   watch:['Score is early: it will be updated once the price band is out','One product brings in a large share of sales']}];
+   watch:['Score is early: it will be updated once the price band is out','One product brings in a large share of sales']},
+  {n:'Kestrel Energy',sec:'Renewable power · Mainboard',st:'done',stt:'Listed 12 Nov',size:'₹2,050 cr',band:'₹96–101',lot:'148 shares',min:'₹14,948',sub:'38.5x subscribed',dates:[['Opened','4 Nov'],['Closed','6 Nov'],['Allotment','9 Nov'],['Listed','12 Nov']],
+   sc:7.8,parts:[['Business',8.5],['Financials',7.5],['Valuation',7],['Promoters & governance',8]],
+   good:['Long power-sale contracts give steady, visible cash flows','Strong demand from every investor group'],
+   watch:['Heavy borrowing to fund new projects','Earnings depend on weather and grid availability']}];
+var IPOG=[['open','Open now'],['soon','Opening soon'],['list','Listing soon'],['done','Recently listed']];
 function ipoTone(v){return v>=7?['Strong','t']:v>=6?['Fair','a']:['Weak','s']}
 function ipoRing(v,big){var r=big?30:22,c=2*Math.PI*r,w=big?76:56,t=ipoTone(v);
   return '<span class="ipr '+t[1]+(big?' big':'')+'" role="img" aria-label="AlphaPad score '+v.toFixed(1)+' out of 10, '+t[0]+'"><svg viewBox="0 0 '+w+' '+w+'" aria-hidden="true"><circle cx="'+w/2+'" cy="'+w/2+'" r="'+r+'" fill="none" stroke="var(--track)" stroke-width="'+(big?6:5)+'"/><circle cx="'+w/2+'" cy="'+w/2+'" r="'+r+'" fill="none" stroke="currentColor" stroke-width="'+(big?6:5)+'" stroke-linecap="round" stroke-dasharray="'+(c*v/10).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 '+w/2+' '+w/2+')"/></svg><b>'+v.toFixed(1)+'</b></span>'}
-function ipoHTML(){
-  return '<section class="pv ipo"><div class="pvh"><b>IPOs</b><small id="ipoC">1 of '+IPOS.length+'</small></div>'+
-    '<div class="hlt ipt" data-noswipe aria-label="IPOs, swipe for more">'+IPOS.map(function(x,i){var t=ipoTone(x.sc);
-      return '<button type="button" class="ipc" data-act="ipo" data-i="'+i+'" aria-label="'+esc(x.n)+': '+esc(x.stt)+', AlphaPad score '+x.sc.toFixed(1)+'. Open report">'+
+function ipoHTML(){var H=IPOS.map(function(x,i){return [x,i]}).filter(function(q){return q[0].st!=='done'});
+  return '<section class="pv ipo"><div class="pvh"><b>IPOs</b><small id="ipoC">1 of '+H.length+'</small><a class="l ipall" href="#ipos">See all '+IPOS.length+' →</a></div>'+
+    '<div class="hlt ipt" data-noswipe aria-label="IPOs, swipe for more">'+H.map(function(q){var x=q[0],i=q[1],t=ipoTone(x.sc);
+      return '<a class="ipc" href="#ipos/'+i+'" aria-label="'+esc(x.n)+': '+esc(x.stt)+', AlphaPad score '+x.sc.toFixed(1)+'. Open report">'+
         '<span class="ipm"><span class="ipn"><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span><b>'+esc(x.n)+'</b><small>'+esc(x.sec)+'</small></span><span class="ipsc">'+ipoRing(x.sc)+'<small>'+t[0]+'</small></span></span>'+
-        '<span class="ipf1"><span>'+x.size+' · '+x.band+' · '+x.sub+'</span><span class="hg">Report →</span></span></button>'}).join('')+'</div>'+
-    '<div class="mdots ipd" aria-hidden="true">'+IPOS.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
+        '<span class="ipf1"><span>'+x.size+' · '+x.band+' · '+x.sub+'</span><span class="hg">Report →</span></span></a>'}).join('')+'</div>'+
+    '<div class="mdots ipd" aria-hidden="true">'+H.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
     '<p class="ipnote">AlphaPad score is our in-house rating out of 10. Sample IPOs for the prototype.</p></section>'}
-function ipoSheet(i){var x=IPOS[i],t=ipoTone(x.sc);
-  sheet(x.n,'<div class="ipr-h">'+ipoRing(x.sc,true)+'<div><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span><b>AlphaPad score: '+t[0]+'</b><small>'+esc(x.sec)+'</small></div></div>'+
+function ipoListHTML(){
+  return '<p class="muted ipintro">Every IPO with AlphaPad’s in-house score out of 10. Tap one for the full report.</p>'+
+    IPOG.map(function(g){var L=IPOS.map(function(x,i){return [x,i]}).filter(function(q){return q[0].st===g[0]});if(!L.length)return '';
+      return '<h3 class="iph3">'+g[1]+' <small>'+L.length+'</small></h3><div class="card ipls" style="padding:0 14px"><div class="list">'+L.map(function(q){var x=q[0],t=ipoTone(x.sc);
+        return '<a class="row ipro" href="#ipos/'+q[1]+'">'+ipoRing(x.sc)+'<span class="tx"><b>'+esc(x.n)+'</b><small>'+esc(x.stt)+' · '+x.size+'</small></span><span class="vl"><span class="ips '+({t:'open',a:'list',s:'mute'})[t[1]]+'">'+t[0]+'</span></span><span class="go" aria-hidden="true">›</span></a>'}).join('')+'</div></div>'}).join('')+
+    '<p class="note">Sample IPOs for the prototype. Analysis, not investment advice.</p>'}
+function ipoReportHTML(i){var x=IPOS[i],t=ipoTone(x.sc);
+  return '<div class="ipr-h">'+ipoRing(x.sc,true)+'<div><span class="ips '+x.st+'">'+(x.st==='open'?'<i></i>':'')+esc(x.stt)+'</span><b>AlphaPad score: '+t[0]+'</b><small>'+esc(x.sec)+'</small></div></div>'+
     '<div class="ipbars">'+x.parts.map(function(q){return '<div><span>'+q[0]+'</span><i><em class="'+ipoTone(q[1])[1]+'" style="width:'+q[1]*10+'%"></em></i><b>'+q[1].toFixed(1)+'</b></div>'}).join('')+'</div>'+
     '<div class="facts"><div>Issue size<b>'+x.size+'</b></div><div>Price band<b>'+x.band+'</b></div><div>Lot<b>'+x.lot+'</b></div><div>Min. amount<b>'+x.min+'</b></div><div>Demand<b>'+x.sub+'</b></div></div>'+
     '<h3 class="iph3">What looks good</h3><ul class="ipl g">'+x.good.map(function(g){return '<li>'+g+'</li>'}).join('')+'</ul>'+
     '<h3 class="iph3">What to watch</h3><ul class="ipl w">'+x.watch.map(function(g){return '<li>'+g+'</li>'}).join('')+'</ul>'+
     '<h3 class="iph3">Key dates</h3><div class="ipdt">'+x.dates.map(function(d){return '<div><small>'+d[0]+'</small><b>'+d[1]+'</b></div>'}).join('')+'</div>'+
-    '<a class="btn g full" style="margin-top:14px" href="#markets/cal" data-close>See all IPO dates in Calendar</a>'+
-    '<p class="note">AlphaPad’s in-house score, based on the offer document. Sample data for the prototype. Analysis, not investment advice.</p>')}
+    '<a class="btn g full" style="margin-top:16px" href="#ipos">See all IPOs</a><a class="btn g full" style="margin-top:8px" href="#markets/cal">IPO dates in Calendar</a>'+
+    '<p class="note">AlphaPad’s in-house score, based on the offer document. Sample data for the prototype. Analysis, not investment advice.</p>'}
+function rIpos(){var sc=$('#s-ipos'),n=subSec!=null&&IPOS[+subSec]?+subSec:-1;
+  sc.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>'+(n<0?'All IPOs':esc(IPOS[n].n))+'</h1><span class="sp"></span></header>'+
+    '<div class="ippg">'+(n<0?ipoListHTML():ipoReportHTML(n))+'</div>'}
 function homePreview(mid){var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
   return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
     '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
@@ -1722,7 +1753,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.call!=null)setTimeout(function(){var tr=$('#tcTr');if(tr&&tr.children[+ds.call])tr.scrollTo({left:tr.children[+ds.call].offsetLeft-tr.firstChild.offsetLeft,behavior:'smooth'})},450);
   if(ds.subGo){var spot=a.getAttribute('data-spot');if(spot!=null)setTimeout(function(){var el=document.getElementById('spot-'+spot);if(el){var y=el.getBoundingClientRect().top+scrollY-150;window.scrollTo({top:y,behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1200)}},60);var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.tile){closeSheet();return tileSheet(ds.tile)}
-  if(a.hasAttribute('data-back')){e.preventDefault();location.hash=prevH==='#rewards'?'#today':prevH;return}
+  if(a.hasAttribute('data-back')){e.preventDefault();location.hash=(tab==='ipos'&&subSec!=null&&backH==='#ipos')?'#ipos':(PAGES.indexOf(prevH.slice(1).split('/')[0])>=0?'#today':prevH);return}
   if(ds.badge)return badgeSheet(ds.badge);
   if(ds.act==='board')return boardSheet();
   if(ds.act==='listen')return toggleAudio();
@@ -1730,7 +1761,6 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='streak')return;
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
-  if(ds.act==='ipo')return ipoSheet(+ds.i);
   if(ds.act==='ixpick')return sheet('Choose an index','<div class="list ixl">'+IDX.map(function(i){var v=i.d[i.d.length-1][1];return '<button type="button" class="row'+(i.n===ixSel?' on':'')+'" data-ix="'+esc(i.n)+'" data-close><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span>'+(i.n===ixSel?'<span class="ck" aria-hidden="true">✓</span>':'')+'</button>'}).join('')+'</div>');
   if(ds.act==='prook'){store.set('ap-pro',1);closeSheet();toast('Pro unlocked on this device');RENDER[tab]();return}
   if(ds.act==='prolock'){try{localStorage.removeItem('ap-pro')}catch(e){}toast('Showing the free view again');RENDER[tab]();return}
@@ -1802,7 +1832,7 @@ function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;v
 [['today','rToday'],['markets','rMarkets'],['ideas','rIdeas'],['journal','rJournal'],['you','rYou']].forEach(function(x){var f={rToday:rToday,rMarkets:rMarkets,rIdeas:rIdeas,rJournal:rJournal,rYou:rYou}[x[1]],w=function(){f.apply(this,arguments);applySub(x[0],subSec);subSec=null};
   if(x[1]==='rToday')rToday=w;else if(x[1]==='rMarkets')rMarkets=w;else if(x[1]==='rIdeas')rIdeas=w;else if(x[1]==='rJournal')rJournal=w;else rYou=w});
 var subSec=null;
-var RENDER={today:rToday,markets:rMarkets,ideas:rIdeas,journal:rJournal,you:rYou,rewards:rRewards};
+var RENDER={today:rToday,markets:rMarkets,ideas:rIdeas,journal:rJournal,you:rYou,rewards:rRewards,ipos:rIpos};
 if(!root.getAttribute('data-theme'))root.setAttribute('data-theme',matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
 badge();route();paintAudio();
 if(!profile()||/[?&]setup=1/.test(location.search))setTimeout(onboard,/[?&]nosplash/.test(location.search)?60:500);
