@@ -804,6 +804,29 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .tick{gap:8px;padding:9px 10px;font-size:12px}
 .tick span{gap:4px}
 .tick{gap:6px}
+
+/* market ticker: flows sideways on its own; tap it for the overview */
+.tick{position:relative;gap:0;padding:0;height:36px}
+.tkw{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 90%,transparent)}
+.tkt{display:inline-flex;align-items:center;gap:10px;padding-left:10px;white-space:nowrap;animation:tk 26s linear infinite}
+.tkt i{width:1px;height:12px;background:var(--border-decorative)}
+.tick:hover .tkt,.tick:focus-visible .tkt{animation-play-state:paused}
+@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.tkt{animation:none}}
+.tick .tcv{flex:none;width:32px;text-align:center;margin:0}
+.tick em.w{color:var(--warn-text)}
+.hello h1{margin-bottom:2px}
+/* bottom audio bar: play, the brief, and a way to the full news */
+.mini .nw{flex:none;display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 12px;border-radius:9999px;background:var(--surface-glass);font:600 12.5px/1 var(--font-sans);color:var(--text-primary)}
+.mini .nw i{font-style:normal;color:var(--link)}
+.mini .x[hidden]{display:none}
+.mini.idle .pp{font-size:13px;box-shadow:0 6px 16px rgba(63,91,217,.4)}
+
+/* top tabs: labels never cut off; icons only where there is room */
+.subbar button span{overflow:visible;text-overflow:clip}
+.subbar button{padding:0 2px;letter-spacing:-.1px}
+@media (max-width:430px){.subbar button svg{display:none}.subbar button[aria-current] svg{display:block}}
+@media (max-width:374px){.subbar button[aria-current] svg{display:none}.subbar button{font-size:12px}}
 </style>
 </head>
 <body>
@@ -903,7 +926,7 @@ function stats(tr){var w=tr.filter(function(t){return t.pnl>0}),l=tr.filter(func
 /* ---------------- shell ---------------- */
 var TABS=[['today','Today'],['markets','Markets'],['ideas','Ideas'],['journal','Journal'],['you','You']];
 app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+'<main class="scr" id="s-rewards" aria-label="Streak and rewards"></main>'+
-  '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
+  '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><a class="nw" id="mNews" href="#markets/filings">News <i aria-hidden="true">→</i></a><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
   '<div class="tabs"><nav aria-label="App"><i class="tind" aria-hidden="true"></i>'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
   '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div><div class="ovw" id="ovw" hidden role="dialog" aria-modal="true" aria-label="Market overview"><div class="ovp" id="ovwP"></div></div>';
 
@@ -914,7 +937,7 @@ function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=
   var dir=t===lastTab?'':(t==='rewards'?'up':(lastTab==='rewards'?'dn':(ni>oi?'r':'l')));
   $$('.scr').forEach(function(s){var on=s.id==='s-'+t;s.classList.toggle('on',on);s.classList.remove('sl-r','sl-l','sl-up','sl-dn');if(on&&dir){void s.offsetWidth;s.classList.add('sl-'+dir)}});lastTab=t;$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   if(t==='markets')mark('watch');if(t==='ideas'&&(sec==='calls'||!sec))mark('calls');
-  subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(sec&&!SUBS[t]){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
+  setTimeout(paintAudio,0);subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(sec&&!SUBS[t]){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
 function go(h){if(location.hash==='#'+h)route();else location.hash=h}
 addEventListener('hashchange',route);
 function badge(){var n=todo().length,b=$('#jBadge');b.hidden=!n;b.textContent=n}
@@ -942,8 +965,8 @@ var INFO_TXT={
 var A=new Audio(D.audio.src);A.preload='none';var CH=D.audio.ch;
 function chAt(t){var i=0;CH.forEach(function(c,j){if(t>=c[1])i=j});return i}
 function paintAudio(){var t=A.currentTime,d=A.duration||D.audio.dur,i=chAt(t),on=!A.paused;
-  $('#mini').hidden=!(on||t>0);root.classList.toggle('playing',!$('#mini').hidden);
-  $('#mCh').textContent=CH[i][0];$('#mT').textContent='Chapter '+(i+1)+' of '+CH.length+' · '+mmss(t)+' / '+mmss(d);$('#mPr').style.width=(t/d*100)+'%';
+  var idle=!on&&!(t>0);$('#mini').hidden=idle&&tab!=='today';root.classList.toggle('playing',!$('#mini').hidden);$('#mini').classList.toggle('idle',idle);$('#mX').hidden=idle;
+  if(idle){$('#mCh').textContent='Today’s brief';$('#mT').textContent=mmss(d)+' · '+CH.length+' chapters · tap to listen'}else{$('#mCh').textContent=CH[i][0];$('#mT').textContent='Chapter '+(i+1)+' of '+CH.length+' · '+mmss(t)+' / '+mmss(d)}$('#mPr').style.width=(t/d*100)+'%';
   $('#mPP').textContent=on?'❚❚':'▶';$('#mPP').setAttribute('aria-label',on?'Pause':'Play');
   $$('.play[data-act="listen"]').forEach(function(b){b.textContent=on?'\u275A\u275A':'\u25B6';b.setAttribute('aria-label',on?'Pause the brief':'Play the brief')});
   if($('#bpT')){$('#bpT').textContent=on?'Playing':t>0?'Paused \u00B7 '+mmss(t):'Listen';$('#bpS').textContent=t>0?'Chapter '+(i+1)+' \u00B7 '+CH[i][0]:'7 chapters';$('#bpBar').style.width=(t/d*100)+'%'}
@@ -952,7 +975,7 @@ function paintAudio(){var t=A.currentTime,d=A.duration||D.audio.dur,i=chAt(t),on
 function toggleAudio(){if(A.paused)A.play().catch(function(){toast('Audio could not start. Try again.')});else A.pause();paintAudio()}
 ['timeupdate','play','pause','loadedmetadata'].forEach(function(e){A.addEventListener(e,paintAudio)});A.addEventListener('ended',function(){A.currentTime=0;paintAudio()});
 $('#mPP').onclick=toggleAudio;$('#mX').onclick=function(){A.pause();A.currentTime=0;paintAudio()};
-$('#mOpen').onclick=chapters;
+$('#mOpen').onclick=function(){if(A.paused&&!(A.currentTime>0))toggleAudio();else chapters()};
 function chapters(){sheet('Today’s brief','<p>'+esc(D.head)+' '+esc(D.sub)+'</p><div class="list chs" id="chs">'+CH.map(function(c,j){return '<button type="button" class="row" data-ch="'+j+'"><span class="tx"><b>'+esc(c[0])+'</b><small>Chapter '+(j+1)+' · starts at '+mmss(c[1])+'</small></span><span class="go">▶</span></button>'}).join('')+'</div>'+
   '<a class="btn g full" style="margin-top:16px" href="'+L.brief+'">Read the full brief '+I(ICO.ext)+'</a>',function(p){p.addEventListener('click',function(e){var r=e.target.closest('[data-ch]');if(!r)return;A.currentTime=CH[+r.dataset.ch][1];A.play().catch(function(){});paintAudio()});paintAudio()})}
 
@@ -1061,10 +1084,10 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',S=D.sotd,lrn=learne
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();
   var hi=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   s.innerHTML='<header class="top"><a class="logo" href="#today" aria-label="AlphaPad"><span>α</span>lphaPad</a><span class="sp"></span>'+heroHTML()+avatar()+'</header>'+
-    '<div class="hello"><h1>'+hi+', Trader</h1><p>'+esc(D.date.replace(/^(\w{3})\w*,\s*(\d+)\s+(\w{3})\w*/,'$1 $2 $3'))+(nx?' \u00B7 '+nx.t+' '+esc(nx.b):'')+'</p>'+tickHTML()+'</div>'+
+    '<div class="hello"><h1>'+hi+', Trader</h1>'+tickHTML()+'</div>'+
     morningHTML()+
     '<section class="brief card" aria-labelledby="tH"><div class="eb">Today’s brief · '+mmss(D.audio.dur)+'</div><a class="bl" href="#markets/filings"><h2 id="tH">'+esc(D.head)+'</h2>'+(D.sub?'<p class="sub">'+esc(D.sub)+'</p>':'')+'<span class="bln">Today’s news <i aria-hidden="true">→</i></span></a>'+
-      '<div class="bp"><button type="button" class="play" data-act="listen" aria-label="Play the brief"></button><div class="bt"><b id="bpT">Listen</b><small id="bpS">7 chapters</small><span class="bpb"><i id="bpBar"></i></span></div><button type="button" class="btn g s" data-act="chapters">Chapters</button></div></section>'+
+      '</section>'+
     (locked()?profitHTML('home'):'')+
     '<div class="h2"><h2>Spotlight</h2><small id="spC">1 of '+SL.length+'</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-roledescription="carousel" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" aria-roledescription="slide" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
@@ -1079,8 +1102,9 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
 /* ---------------- market overview: pull down from the top (or tap the ticker) to see the indices ---------------- */
 var SENSEX={n:'Sensex',v:81879.40,pts:'+773.00',pct:'+0.95%',up:true};
 function ixShort(n){return n==='Nifty Bank'?'Bank Nifty':n}
-function tickHTML(){var a=IDX.filter(function(x){return x.n==='Nifty 50'}).concat([SENSEX]);
-  return '<button type="button" class="tick" data-act="ovw" aria-label="Open market overview">'+a.map(function(x){return '<span>'+(x.n==='Nifty 50'?'Nifty':ixShort(x.n))+' <b>'+num(x.d?x.d[x.d.length-1][1]:x.v,2)+'</b> <em class="'+(x.up?'u':'d')+'">'+x.pct+'</em></span>'}).join('<i></i>')+'<span class="tcv" aria-hidden="true">⌄</span></button>'}
+function tickHTML(){var a=IDX.filter(function(x){return x.n==='Nifty 50'}).concat([SENSEX],IDX.filter(function(x){return /^(Nifty Bank|Midcap 100|India VIX)$/.test(x.n)}));
+  var one=a.map(function(x){return '<span>'+(x.n==='Nifty 50'?'Nifty':ixShort(x.n))+' <b>'+num(x.d?x.d[x.d.length-1][1]:x.v,2)+'</b> <em class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pct+'</em></span><i></i>'}).join('');
+  return '<button type="button" class="tick" data-act="ovw" aria-label="Market overview: '+a.map(function(x){return ixShort(x.n)+' '+x.pct}).join(', ')+'"><span class="tkw" aria-hidden="true"><span class="tkt">'+one+one+'</span></span><span class="tcv" aria-hidden="true">⌄</span></button>'}
 function ovSpark(x){var v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,W=150,H=40;
   var pts=v.map(function(y,i){return (i/(v.length-1)*W).toFixed(1)+','+(H-3-(y-lo)/r*(H-6)).toFixed(1)}).join(' ');
   var c=x.vix?'var(--amber)':x.up?'var(--teal)':'var(--slate-500)';

@@ -794,3 +794,26 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .tick{gap:8px;padding:9px 10px;font-size:12px}
 .tick span{gap:4px}
 .tick{gap:6px}
+
+/* market ticker: flows sideways on its own; tap it for the overview */
+.tick{position:relative;gap:0;padding:0;height:36px}
+.tkw{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 90%,transparent)}
+.tkt{display:inline-flex;align-items:center;gap:10px;padding-left:10px;white-space:nowrap;animation:tk 26s linear infinite}
+.tkt i{width:1px;height:12px;background:var(--border-decorative)}
+.tick:hover .tkt,.tick:focus-visible .tkt{animation-play-state:paused}
+@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.tkt{animation:none}}
+.tick .tcv{flex:none;width:32px;text-align:center;margin:0}
+.tick em.w{color:var(--warn-text)}
+.hello h1{margin-bottom:2px}
+/* bottom audio bar: play, the brief, and a way to the full news */
+.mini .nw{flex:none;display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 12px;border-radius:9999px;background:var(--surface-glass);font:600 12.5px/1 var(--font-sans);color:var(--text-primary)}
+.mini .nw i{font-style:normal;color:var(--link)}
+.mini .x[hidden]{display:none}
+.mini.idle .pp{font-size:13px;box-shadow:0 6px 16px rgba(63,91,217,.4)}
+
+/* top tabs: labels never cut off; icons only where there is room */
+.subbar button span{overflow:visible;text-overflow:clip}
+.subbar button{padding:0 2px;letter-spacing:-.1px}
+@media (max-width:430px){.subbar button svg{display:none}.subbar button[aria-current] svg{display:block}}
+@media (max-width:374px){.subbar button[aria-current] svg{display:none}.subbar button{font-size:12px}}
