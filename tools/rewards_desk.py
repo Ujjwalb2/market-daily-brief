@@ -117,7 +117,7 @@ function closeSub(){sub.hidden=true;sub.innerHTML='';if(last&&last.focus)last.fo
 /*BLOCK*/
 function bodyHTML(){var v=seasonScore(),ti=tierOf(v);
   return '<div class="rwd-sum">'+
-    '<a href="#rwd-rewards"><span>Free days</span><b>'+freeDays()+'</b><small>off your next renewal</small></a>'+
+    '<a href="#rwd-rewards"><span>Free days</span><b>'+freeDays()+'</b><small>for next month’s subscription</small></a>'+
     '<a href="#rwd-season"><span>Season</span><b>'+v+'</b><small>#'+myRank()+' · '+TIERS[ti][1]+'</small></a>'+
     '<a href="#rwd-streak"><span>Streak</span><b>🔥 '+streakNow()+'</b><small>'+freezes()+' of 2 freezes ready</small></a>'+
     '<a href="#rwd-badges"><span>Badges</span><b>'+BADGES.filter(bGot).length+'</b><small>of '+BADGES.length+' earned</small></a></div>'+

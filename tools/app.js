@@ -647,12 +647,12 @@ function tierPill(i){return '<span class="tier '+TIERS[i][0]+'"><i aria-hidden="
 
 function freeHTML(){var n=freeDays(),stops=[[2,'2 days'],[5,'5 days'],[7,'Week free']],nx=stops.filter(function(s){return n<s[0]})[0];
   return '<section class="sec" id="rewards"><div class="h2"><h2>Free days</h2><span class="sp"></span><small>Renews 2 Dec</small></div><div class="card fd">'+
-    '<div class="fdh"><b>'+n+'</b><span>free days earned this month<br><span class="muted">'+(nx?(nx[0]-n)+' more to reach '+nx[1].toLowerCase():'A full week free on your next renewal')+'</span></span></div>'+
+    '<div class="fdh"><b>'+n+'</b><span>free days earned this month<br><span class="muted">'+(nx?(nx[0]-n)+' more to reach '+nx[1].toLowerCase():'A full week free on next month’s subscription')+'</span></span></div>'+
     '<div class="fdt" role="img" aria-label="'+n+' of '+FD_MAX+' free days"><div class="fdbar"><i style="width:'+(n/FD_MAX*100).toFixed(1)+'%"></i></div>'+stops.map(function(s){return '<span class="stop'+(n>=s[0]?' got':'')+'" style="left:'+(s[0]/FD_MAX*100).toFixed(1)+'%"><i></i><b>'+s[0]+'</b><small>'+s[1]+'</small></span>'}).join('')+'</div>'+
     (function(){var L=freeLog(),raw=L.reduce(function(a,x){return a+x[1]},0);
       return '<ul class="fdl">'+L.map(function(x){return '<li><span><b>'+esc(x[0])+'</b><small>'+esc(x[2])+'</small></span><em>+'+x[1]+' day'+(x[1]>1?'s':'')+'</em></li>'}).join('')+
         '<li class="fdtot"><span><b>Total this month</b><small>'+(raw>FD_MAX?'You earned '+raw+'; the most per month is '+FD_MAX:'Up to '+FD_MAX+' days (1 week) per month')+'</small></span><em>'+n+' of '+FD_MAX+' days</em></li></ul>'})()+
-    '<p class="cap">At most 1 extra week for every month you pay for. Added to your plan at the 2 Dec renewal; only extends a paid plan.</p></div></section>'}
+    '<p class="cap">At most 1 extra week for every month you pay for. Free days can only be used on next month’s subscription: they are added when you renew on 2 Dec and lapse if you don’t renew.</p></div></section>'}
 
 function streakHTML(){var S=D.streak,f=freezes(),t=totalDays(),nm=MILES.filter(function(m){return t<m[0]})[0];
   return '<section class="sec" id="streak"><div class="h2"><h2>Streak</h2><span class="sp"></span><small>Market days only</small></div><div class="card stk"><div class="n"><b>🔥 '+streakNow()+'</b><span>market days in a row<br><span class="muted">Longest '+longest()+' · weekends and holidays never count</span></span></div>'+
@@ -712,7 +712,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
     '<div class="rhead"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak · longest '+longest()+'</small>'+weekHTML()+
       '<button type="button" class="frl" data-tile="freeze">'+[0,1].map(function(i){return '<i class="'+(i<freezes()?'on':'')+'">🧊</i>'}).join('')+' '+freezes()+' of 2 freezes ready <em>›</em></button></div>'+
     '<div class="rgrid">'+
-      tile('free','🎁','Free days',fd,'of '+FD_MAX+' this month · added on 2 Dec',fd/FD_MAX)+
+      tile('free','🎁','Free days',fd,'of '+FD_MAX+' · for your Dec subscription',fd/FD_MAX)+
       tile('season','⭐','Season',v+' <span class="tier '+TIERS[ti][0]+'"><i></i>'+TIERS[ti][1]+'</span>',nx?(nx[2]-v)+' pts to '+nx[1]+' · #'+myRank():'#'+myRank()+' · top tier',nx?(v-TIERS[ti][2])/(nx[2]-TIERS[ti][2]):1)+
       tile('miles','🏁','Next milestone',nm?nm[0]+' days':'All done',nm?(nm[0]-t)+' to go · '+nm[2].split(' and ')[0]:'You reached 100',nm?t/nm[0]:1)+
       tile('badges','🏅','Badges',bg+' <small>of '+BADGES.length+'</small>','Tap to see what’s next',bg/BADGES.length)+'</div>'+
