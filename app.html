@@ -1050,6 +1050,11 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 /* highlight + IPO cards: same height, but grow on narrow phones rather than cut text */
 .hlc,.ipc{height:auto;min-height:171px}
 #s-markets #ipos .ipintro{margin-top:14px}
+
+/* News: filings switch (like Movers) */
+.flseg button small{font:600 11.5px/1 var(--font-sans);opacity:.7;margin-left:2px}
+.flsub{display:flex;align-items:center;gap:8px;margin:14px 0 2px;font:600 12px/1.2 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:var(--text-tertiary)}
+.flsub i{width:8px;height:8px;border-radius:50%;background:var(--slate-500)}.flsub i.g{background:var(--teal)}.flsub i.b{background:var(--blue)}.flsub i.w{background:var(--amber)}
 </style>
 </head>
 <body>
@@ -1422,7 +1427,7 @@ function closeOvw(){var o=$('#ovw');if(o.hidden)return;o.classList.remove('on');
     if(can&&dy>90&&dy>dx*1.5)openOvw();else if(pn&&dy<-60&&-dy>dx)closeOvw();can=false;pn=null},{passive:true})})();
 
 /* ---------------- MARKETS ---------------- */
-var ixSel='Nifty 50',mvSeg='stocks',scSeg='sc-vol',calType='all';
+var flSeg=0,ixSel='Nifty 50',mvSeg='stocks',scSeg='sc-vol',calType='all';
 function ixChart(x){var W=340,H=150,P=6,v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1;
   var X=function(i){return P+i*(W-2*P)/(v.length-1)},Y=function(y){return P+(hi-y)/r*(H-2*P-14)};
   var pts=v.map(function(y,i){return X(i).toFixed(1)+','+Y(y).toFixed(1)}).join(' ');
@@ -1448,7 +1453,9 @@ function rMarkets(){var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===
       '<a class="btn g full" style="margin-top:12px" href="'+L.screener+'">Open the screener '+I(ICO.ext)+'</a></section>'+
     '<section class="sec" id="ipos">'+ipoListHTML()+'</section>'+
     '<section class="sec" id="filings"><div class="h2"><h2>What’s happening</h2><span class="sp"></span><small>Filings · 13 Nov</small></div>'+
-      D.filings.map(function(g){return '<div class="flh"><i class="'+g.c+'"></i>'+esc(g.h)+'</div><div class="list fl">'+g.items.map(function(it){return '<a class="row" href="'+esc(it.href)+'" target="_blank" rel="noopener"><span class="tm">'+it.t+'</span><span class="tx"><b>'+esc(it.s)+(it.fo?' <span class="tag">F&amp;O</span>':'')+'</b><small>'+esc(it.x)+'</small></span><span class="go" aria-hidden="true">'+I(ICO.ext)+'</span></a>'}).join('')+'</div>'}).join('')+'</section>'+
+      (function(){var FL=['Orders','Results','People'].map(function(k){return D.filings.filter(function(g){return g.h.indexOf(k)===0})[0]}).filter(Boolean),NM={Orders:'Orders & deals',Results:'Results',People:'People & risks'};if(!FL.length)FL=D.filings;if(flSeg>=FL.length)flSeg=0;
+        return '<div class="seg flseg" role="group" aria-label="Filings view">'+FL.map(function(g,i){return '<button type="button" data-fl="'+i+'" aria-pressed="'+(i===flSeg)+'">'+esc(NM[g.h.split(/[ ,&]/)[0]]||g.h)+' <small>'+g.items.length+'</small></button>'}).join('')+'</div>'+
+        '<p class="flsub"><i class="'+FL[flSeg].c+'"></i>'+esc(FL[flSeg].h)+'</p>'+[FL[flSeg]].map(function(g){return '<div class="list fl">'+g.items.map(function(it){return '<a class="row" href="'+esc(it.href)+'" target="_blank" rel="noopener"><span class="tm">'+it.t+'</span><span class="tx"><b>'+esc(it.s)+(it.fo?' <span class="tag">F&amp;O</span>':'')+'</b><small>'+esc(it.x)+'</small></span><span class="go" aria-hidden="true">'+I(ICO.ext)+'</span></a>'}).join('')+'</div>'}).join('')})()+'</section>'+
     '<section class="sec" id="cal"><div class="h2"><h2>Today</h2><span class="sp"></span><small>IST</small></div><ol class="tl">'+DAYS.map(function(e,i){var past=toM(e.t)<nm;return (i===nI?'<li class="now" aria-label="Now">Now '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</li>':'')+'<li class="'+(past?'past':'')+(i===nI?' next':'')+(e.ev?' ev':'')+'"><time>'+e.t+'</time><b>'+esc(e.b)+'</b><span class="g">'+esc(e.g)+'</span></li>'}).join('')+'</ol>'+
       '<div class="h2"><h2>Coming up</h2></div><div class="chips">'+['all'].concat(types).map(function(k){return '<button type="button" data-ct="'+k+'" aria-pressed="'+(calType===k)+'">'+(k==='all'?'All':TYPES[k].n)+'</button>'}).join('')+'</div>'+
       '<div class="list cal" style="margin-top:8px">'+(up.length?up.map(function(e){return '<div class="row"><span class="dt"><b>'+e.d.getDate()+'</b><small>'+e.d.toLocaleDateString('en-IN',{month:'short'})+'</small></span><span class="tx"><b><i class="ty '+e.t+'"></i>'+esc(e.title)+'</b><small>'+esc(e.note)+'</small></span></div>'}).join(''):'<p class="muted">Nothing of this kind coming up.</p>')+'</div></section>'+
@@ -1763,7 +1770,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
     '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';}
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#you/rewards" data-close>Free days, badges and season</a>')}
-document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
+document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
   if(ds.call!=null)setTimeout(function(){var tr=$('#tcTr');if(tr&&tr.children[+ds.call])tr.scrollTo({left:tr.children[+ds.call].offsetLeft-tr.firstChild.offsetLeft,behavior:'smooth'})},450);
   if(ds.subGo){var spot=a.getAttribute('data-spot');if(spot!=null)setTimeout(function(){var el=document.getElementById('spot-'+spot);if(el){var y=el.getBoundingClientRect().top+scrollY-150;window.scrollTo({top:y,behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1200)}},60);var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.tile){closeSheet();return tileSheet(ds.tile)}
@@ -1786,6 +1793,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.ix&&a.tagName==='BUTTON'){ixSel=ds.ix;rMarkets();return}
   if(ds.ix&&a.tagName==='A'){ixSel=ds.ix;return}
   if(ds.mv){mvSeg=ds.mv;var y=scrollY;rMarkets();scrollTo(0,y);return}
+  if(ds.fl!=null){flSeg=+ds.fl;var y2=scrollY;rMarkets();scrollTo(0,y2);return}
   if(ds.sc){scSeg=ds.sc;var y2=scrollY;rMarkets();scrollTo(0,y2);return}
   if(ds.ct){calType=ds.ct;var y3=scrollY;rMarkets();scrollTo(0,y3);return}
   if(ds.tr){trF=ds.tr;var y7=scrollY;rIdeas();scrollTo(0,y7);return}
