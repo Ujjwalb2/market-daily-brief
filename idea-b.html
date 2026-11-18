@@ -1925,11 +1925,21 @@ addEventListener('DOMContentLoaded',function(){
 
 <style>
 html.rwd-open .ob-tip,html.rwd-open .ob-ov{visibility:hidden}
-.rwd-pill{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:9999px;border:1px solid rgba(0,201,154,.35);background:rgba(0,201,154,.12);color:inherit;
-  font:500 12.5px/1 Inter,system-ui,sans-serif;white-space:nowrap;cursor:pointer;vertical-align:middle}
-.rwd-pill b{font-weight:700;font-variant-numeric:tabular-nums}.rwd-pill i{width:1px;height:14px;background:currentColor;opacity:.25}
-.rwd-pill:hover{border-color:#00C99A}
-.rwd-pill.float{position:fixed;right:20px;bottom:20px;z-index:8000;height:42px;padding:0 16px;background:#171B26;color:#F8FAFC;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.rwd-pill{display:inline-flex;align-items:center;gap:7px;height:38px;margin-left:20px;padding:0 12px 0 4px;border-radius:9999px;cursor:pointer;white-space:nowrap;vertical-align:middle;flex:none;
+  background:linear-gradient(90deg,rgba(240,160,75,.16),rgba(240,160,75,.06));border:1px solid rgba(240,160,75,.3);color:#F8FAFC;font:500 12px/1 Inter,system-ui,sans-serif}
+.rwd-pill.all{background:linear-gradient(90deg,rgba(0,201,154,.18),rgba(0,201,154,.06));border-color:rgba(0,201,154,.35)}
+.rwd-pill:hover{border-color:rgba(240,160,75,.6)}.rwd-pill.all:hover{border-color:rgba(0,201,154,.7)}
+.rwd-pill .rr{--p:0;position:relative;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#00C99A calc(var(--p)*1%),rgba(255,255,255,.1) 0)}
+.rwd-pill .rr::before{content:"";position:absolute;inset:3px;border-radius:50%;background:#101827}
+.rwd-pill .rr span{position:relative;font-size:14px;line-height:1}
+.rwd-pill b{font:800 17px/1 Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.rwd-pill small{font:500 12px/1 Inter,system-ui,sans-serif;color:#CBD5E1}
+.rwd-pill em{font-style:normal;font-size:16px;line-height:1;color:#8793A5}
+:root[data-theme="light"] .rwd-pill{color:#101827}:root[data-theme="light"] .rwd-pill small{color:#34445B}:root[data-theme="light"] .rwd-pill em{color:#34445B}
+:root[data-theme="light"] .rwd-pill .rr{background:conic-gradient(#00C99A calc(var(--p)*1%),rgba(16,24,39,.1) 0)}:root[data-theme="light"] .rwd-pill .rr::before{background:#FFFFFF}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .rwd-pill{color:#101827}:root:not([data-theme="dark"]) .rwd-pill small{color:#34445B}:root:not([data-theme="dark"]) .rwd-pill .rr::before{background:#FFFFFF}}
+.rwd-pill.float{position:fixed;right:20px;bottom:20px;z-index:8000;height:42px;background-color:#171B26;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.rwd-hide{display:none!important}
 </style>
 </head>
 <body>
@@ -2610,7 +2620,7 @@ function bodyHTML(){var v=seasonScore(),ti=tierOf(v);
     '<a href="#rwd-streak"><span>Streak</span><b>🔥 '+streakNow()+'</b><small>'+freezes()+' of 2 freezes ready</small></a>'+
     '<a href="#rwd-badges"><span>Badges</span><b>'+BADGES.filter(bGot).length+'</b><small>of '+BADGES.length+' earned</small></a></div>'+
     '<div class="rwd-cols"><div>'+freeHTML()+streakHTML()+'</div><div>'+seasonHTML()+badgesHTML()+'</div></div>'}
-function paintPills(){var t='🎁 <b>'+freeDays()+'</b> free days<i></i>⭐ <b>'+seasonScore()+'</b> pts';[].forEach.call(document.querySelectorAll('.rwd-pill'),function(b){b.innerHTML=t})}
+function paintPills(){var d=dayDone(),p=d?100:Math.min(100,learned().length/3*100),t='<span class="rr" style="--p:'+p.toFixed(0)+'"><span aria-hidden="true">\uD83D\uDD25</span></span><b>'+streakNow()+'</b><small>day streak</small><em aria-hidden="true">\u203A</em>';[].forEach.call(document.querySelectorAll('.rwd-pill'),function(b){b.innerHTML=t;b.classList.toggle('all',d);b.setAttribute('aria-label',streakNow()+' day streak. Open streak and rewards')})}
 function open(sec){if(!pn)build();pn.querySelector('.rwd-bd').innerHTML=bodyHTML().replace(/id="(rewards|streak|season|badges)"/g,'id="rwd-$1"');
   scrim.hidden=false;pn.hidden=false;requestAnimationFrame(function(){scrim.classList.add('on');pn.classList.add('on')});document.documentElement.style.overflow='hidden';document.documentElement.classList.add('rwd-open');
   setTimeout(function(){var el=sec&&pn.querySelector('#rwd-'+sec);if(el)el.scrollIntoView({block:'start'});else pn.querySelector('.rwd-x').focus()},60)}
@@ -2632,9 +2642,8 @@ function build(){var host=document.createElement('div');host.id='rwd-host';docum
     if(a.dataset.act==='board')return boardSheet()})}
 function pill(){var b=document.createElement('button');b.type='button';b.className='rwd-pill';b.setAttribute('aria-label','Open your rewards');return b}
 function place(){var vis=function(e){return e&&e.getClientRects().length},t;
-  if(vis(t=document.querySelector('.dstreak')))t.parentNode.insertBefore(pill(),t.nextSibling);
-  else if(vis(t=document.getElementById('stkB')))t.parentNode.insertBefore(pill(),t.nextSibling);
-  else if(vis(t=document.querySelector('.stk-strip'))){var p=pill();p.style.marginLeft='auto';t.appendChild(p)}
+  if(vis(t=document.querySelector('.ap-bar .ap-logo')))t.parentNode.insertBefore(pill(),t.nextSibling);
+  else if(vis(t=document.getElementById('stkB'))){var p=pill();p.style.marginLeft='0';t.parentNode.insertBefore(p,t);t.classList.add('rwd-hide');var pp=document.getElementById('stkP');if(pp)pp.classList.add('rwd-hide')}
   else{var f=pill();f.classList.add('float');document.body.appendChild(f)}
   paintPills()}
 document.addEventListener('click',function(e){var a=e.target.closest('.rwd-pill,a[href="#rewards"],a[href^="#rewards/"]');if(!a)return;e.preventDefault();open((a.getAttribute('href')||'').split('/')[1])});

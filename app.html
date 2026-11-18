@@ -834,7 +834,8 @@ function presetFor(a){if(a.what==='fo')return 'options';if(a.what==='swing')retu
 function defaultGoals(a){var g={fo:['brief','calls','journal'],swing:['calls','watch','journal'],long:['brief','watch','learn'],explore:['brief','learn','watch']}[a&&a.what]||['brief','calls','journal','learn'];return a&&a.exp==='new'&&g.indexOf('learn')<0?g.slice(0,2).concat(['learn']):g}
 var profile=function(){return store.get('ap-profile',null)};
 function presetName(){var p=profile();return p&&!p.skipped?NAMES[p.preset]:'Basic'}
-function goals(){var p=profile();return p&&p.answers&&p.answers.goals&&p.answers.goals.length?p.answers.goals:defaultGoals(p&&p.answers)}
+/* the steps you picked come first; the morning always has at least 3 so the flow is visible */
+function goals(){var p=profile(),a=p&&p.answers,g=(a&&a.goals&&a.goals.length?a.goals:defaultGoals(a)).slice();defaultGoals(a).concat(['brief','calls','journal','learn','watch']).forEach(function(k){if(g.length<3&&g.indexOf(k)<0)g.push(k)});return g}
 function beginner(){var p=profile();return !!(p&&p.answers&&p.answers.exp==='new')}
 var ob=null;
 function onboard(){var ans={},step=0;ob=document.createElement('div');ob.className='onb';ob.setAttribute('role','dialog');ob.setAttribute('aria-modal','true');ob.setAttribute('aria-label','Set up AlphaPad');document.body.appendChild(ob);document.body.style.overflow='hidden';
