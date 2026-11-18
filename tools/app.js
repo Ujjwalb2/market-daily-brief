@@ -222,8 +222,8 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
 function homePreview(mid){var SL=spotSlides().slice(0,2),F=fyRows().slice(0,2);
-  return '<section class="pv"><div class="pvh"><b>Market highlights</b><button type="button" class="l" data-sub-go="spot">See all '+spotSlides().length+' →</button></div><div class="card" style="padding:0 16px"><div class="list">'+
-    SL.map(function(x,i){return '<button type="button" class="row" data-sub-go="spot" data-spot="'+i+'"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span class="tx"><b>'+x.t+(x.v?' <small class="muted" style="display:inline">'+x.v+'</small>':'')+'</b><small>'+x.k.replace(/<[^>]+>/g,'')+'</small></span>'+(x.d?'<span class="vl u">'+x.d+'</span>':'')+'<span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div></section>'+(mid||'')+
+  return (mid||'')+'<section class="pv"><div class="pvh"><b>Market highlights</b><button type="button" class="l" data-sub-go="spot">See all '+spotSlides().length+' →</button></div><div class="card" style="padding:0 16px"><div class="list">'+
+    SL.map(function(x,i){return '<button type="button" class="row" data-sub-go="spot" data-spot="'+i+'"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span class="tx"><b>'+x.t+(x.v?' <small class="muted" style="display:inline">'+x.v+'</small>':'')+'</b><small>'+x.k.replace(/<[^>]+>/g,'')+'</small></span>'+(x.d?'<span class="vl u">'+x.d+'</span>':'')+'<span class="go" aria-hidden="true">›</span></button>'}).join('')+'</div></div></section>'+
     '<section class="pv"><div class="pvh"><b>For you</b><button type="button" class="l" data-sub-go="foryou">See all →</button></div><div class="card" style="padding:0 16px"><div class="list">'+F.map(fyRow).join('')+'</div></div></section>'}
 
 function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}),SL=spotSlides(),hr=new Date().getHours();

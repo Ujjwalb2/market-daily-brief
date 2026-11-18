@@ -934,3 +934,6 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .lvx{grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;font:500 12px/1 var(--font-sans);color:var(--text-tertiary)}
 .lvx b{color:var(--text-primary);font-weight:600;font-variant-numeric:tabular-nums}.lvx b.u{color:var(--up-text)}
 .pv+.pbk.home{margin-top:22px}
+
+/* Home: calls card sits right under the morning steps */
+#s-today .pbk.home{margin-top:22px}
