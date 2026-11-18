@@ -666,3 +666,58 @@ section.sec{scroll-margin-top:118px}
 .subbar button[aria-current]{background:none;border:0;color:#fff}
 .subbar button[aria-current] svg{color:#fff}
 @media (prefers-reduced-motion:reduce){.subbar .ind{transition:none}}
+
+/* smooth tab changes: the new screen slides in from the side you moved towards */
+.scr.on{animation:none}
+.scr.sl-r{animation:slR .3s cubic-bezier(.2,.8,.2,1)}
+.scr.sl-l{animation:slL .3s cubic-bezier(.2,.8,.2,1)}
+.scr.sl-up{animation:slU .3s cubic-bezier(.2,.8,.2,1)}
+.scr.sl-dn{animation:scrIn .25s ease}
+@keyframes slR{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes slL{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes slU{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+/* bottom bar highlight that glides between tabs */
+.tabs nav{position:relative}
+.tind{position:absolute;left:0;top:0;bottom:0;width:20%;pointer-events:none;transform:translateX(calc(var(--i,0)*100%));transition:transform .35s cubic-bezier(.3,1.25,.5,1),opacity .2s}
+.tind::before{content:"";position:absolute;left:50%;top:7px;width:52px;height:30px;margin-left:-26px;border-radius:9999px;background:rgba(0,201,154,.14)}
+.tind::after{content:"";position:absolute;left:50%;top:0;width:24px;height:3px;margin-left:-12px;border-radius:0 0 4px 4px;background:var(--teal)}
+.tabs nav.noind .tind{opacity:0}
+.tabs a{z-index:1}
+.tabs a svg{transition:transform .25s}.tabs a[aria-current=page] svg{transform:translateY(-1px)}
+@media (prefers-reduced-motion:reduce){.scr.sl-r,.scr.sl-l,.scr.sl-up,.scr.sl-dn{animation:none}.tind{transition:none}}
+/* top tabs: soft fade on an edge that has more tabs behind it */
+.subbar.more-r{-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent)}
+.subbar.more-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 18%);mask-image:linear-gradient(90deg,transparent,#000 18%)}
+.subbar.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
+/* filters inside a section are quieter than the top tabs: text with an underline, not pills */
+.chips{gap:4px}
+.chips button{height:34px;padding:0 10px;border:0;border-radius:0;background:none;color:var(--text-tertiary);box-shadow:inset 0 -2px 0 transparent;transition:color .2s,box-shadow .2s}
+.chips button[aria-pressed=true]{background:none;border:0;color:var(--text-primary);box-shadow:inset 0 -2px 0 var(--teal)}
+.subbar button[aria-current]{text-shadow:none}
+:root[data-theme="light"] .subbar .ind{box-shadow:0 4px 12px rgba(63,91,217,.25)}
+
+/* Up next: ends every top tab with where to go next, so short sections never end in empty space */
+.upnext{margin-top:28px;padding:16px;border-radius:20px;background:linear-gradient(160deg,rgba(63,91,217,.14),rgba(63,91,217,0) 70%),var(--surface-raised);border:1px solid var(--border-decorative)}
+.upnext .eb{margin-bottom:10px}
+.unx{display:flex;align-items:center;gap:14px;width:100%;padding:12px;border-radius:14px;background:var(--surface-glass);text-align:left;color:var(--text-primary)}
+.unx .tx{flex:1;display:grid;gap:3px}.unx b{font:700 16px/1.2 var(--font-sans)}.unx small{font:400 13px/1.35 var(--font-sans);color:var(--text-tertiary)}
+.unx .go{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--action-primary);color:#fff;font-size:16px}
+.unl{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.unl button{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:9999px;border:1px solid var(--border-decorative);font:600 12.5px/1 var(--font-sans);color:var(--text-secondary)}
+.unl svg{width:15px;height:15px}
+.swh{margin:12px 0 0;text-align:center;font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+@media (hover:hover) and (pointer:fine){.swh{display:none}}
+.ssl-r{animation:slR .28s cubic-bezier(.2,.8,.2,1)}.ssl-l{animation:slL .28s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){.ssl-r,.ssl-l{animation:none}}
+
+/* nothing may make the page wider than the phone (slides used to, which made phones zoom out) */
+html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
+.scr{overflow-x:clip}
+
+/* top tabs: at most four, always fit the width, never scroll sideways */
+.subbar{overflow:visible;-webkit-mask-image:none!important;mask-image:none!important}
+.subbar .sbt{width:auto;min-width:0}
+.subbar button{flex:1 1 0;min-width:0;gap:5px;padding:0 4px;font-size:12.5px}
+.subbar button svg{width:15px;height:15px;flex:none}
+.subbar button span{overflow:hidden;text-overflow:ellipsis}
+@media (max-width:359px){.subbar button svg{display:none}}

@@ -50,12 +50,15 @@ function stats(tr){var w=tr.filter(function(t){return t.pnl>0}),l=tr.filter(func
 var TABS=[['today','Today'],['markets','Markets'],['ideas','Ideas'],['journal','Journal'],['you','You']];
 app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+'<main class="scr" id="s-rewards" aria-label="Streak and rewards"></main>'+
   '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
-  '<div class="tabs"><nav aria-label="App">'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
+  '<div class="tabs"><nav aria-label="App"><i class="tind" aria-hidden="true"></i>'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
   '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div>';
 
-var tab='today',prevH='#today';
+var tab='today',prevH='#today',lastTab='';
 function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1];if(t!=='rewards'&&!TABS.some(function(x){return x[0]===t}))t='today';if(t!=='rewards')prevH='#'+h.join('/');tab=t;
-  $$('.scr').forEach(function(s){s.classList.toggle('on',s.id==='s-'+t)});$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  var ni=TABS.findIndex(function(x){return x[0]===t}),oi=TABS.findIndex(function(x){return x[0]===lastTab}),nv=$('.tabs nav');
+  if(nv){nv.style.setProperty('--i',ni<0?(oi<0?0:oi):ni);nv.classList.toggle('noind',ni<0)}
+  var dir=t===lastTab?'':(t==='rewards'?'up':(lastTab==='rewards'?'dn':(ni>oi?'r':'l')));
+  $$('.scr').forEach(function(s){var on=s.id==='s-'+t;s.classList.toggle('on',on);s.classList.remove('sl-r','sl-l','sl-up','sl-dn');if(on&&dir){void s.offsetWidth;s.classList.add('sl-'+dir)}});lastTab=t;$$('.tabs a').forEach(function(a){if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   if(t==='markets')mark('watch');if(t==='ideas'&&(sec==='calls'||!sec))mark('calls');
   subSec=sec||null;if(!sec&&SUBS[t])subSel[t]=subSel[t]||null;RENDER[t]();if(sec&&!SUBS[t]){var el=document.getElementById(sec);if(el)setTimeout(function(){el.scrollIntoView({block:'start'})},30)}else window.scrollTo(0,0)}
 function go(h){if(location.hash==='#'+h)route();else location.hash=h}
@@ -520,7 +523,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#you/rewards" data-close>Free days, badges and season</a>')}
 document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-sub-go]');if(!a)return;var ds=a.dataset;
-  if(ds.subGo){subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo(0,0);return}
+  if(ds.subGo){var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.tile){closeSheet();return tileSheet(ds.tile)}
   if(a.hasAttribute('data-back')){e.preventDefault();location.hash=prevH==='#rewards'?'#today':prevH;return}
   if(ds.badge)return badgeSheet(ds.badge);
@@ -557,13 +560,18 @@ var armed=0;document.addEventListener('click',function(e){var b=e.target.closest
    Each entry: key, label, icon, and where that part starts on the screen ('h2:Title' = the heading with that title). */
 var SUBS={
   today:[['home','Home','home','.hello'],['brief','Brief','brief','section.brief'],['spot','Spotlight','star','h2:Spotlight'],['foryou','For you','you','h2:For you']],
-  markets:[['indices','Indices','markets','#indices'],['fo','F&O','fo','#fo'],['movers','Movers','mv','#movers'],['scan','Scan','scan','#scan'],['filings','Filings','file','#filings'],['cal','Calendar','cal','#cal']],
+  markets:[['indices','Indices','markets','#indices'],['movers','Movers','mv','#movers'],['filings','News','file','#filings'],['cal','Calendar','cal','#cal']],
   ideas:[['sd','Pick','sd','#sd'],['calls','Calls','tc','#calls'],['record','Record','chart','#record'],['baskets','Baskets','bk','#baskets']],
   journal:[['review','Review','inbox','#review'],['overview','Overview','chart','.mnav'],['insights','Insights','bulb','h2:Insights'],['trades','Trades','list','h2:Trades']],
   you:[['profile','Profile','you','.prof'],['learn','Learn','learn','#learn'],['tools','Tools','bt','h2:Tools'],['settings','Settings','gear','h2:Settings']]};
+var SUBDESC={home:'Everything for today in one place',brief:'Listen or read in five minutes',spot:'Stock of the day and the big moves',foryou:'Picked for your setup',
+  indices:'Nifty, Bank Nifty, VIX and F&O levels',movers:'Gainers, losers, OI build-up and scans',filings:'Results and company filings',cal:'Events and timings today',
+  sd:'Today’s stock of the day and why',calls:'Active calls from the desk',record:'Every closed call, wins and losses',baskets:'Ready-made stock baskets',
+  review:'Tag today’s trades in a minute',overview:'P&L, win rate and calendar',insights:'Patterns and your plan score',trades:'Every trade, one by one',
+  profile:'Your streak, rewards and badges',learn:'Three short ideas a day',tools:'Backtesting, screener and more',settings:'Theme and your screen'};
 var SHOWALL={today:'home'},subSel={};
 function subStart(c,m){if(m.slice(0,3)==='h2:')return c.classList.contains('h2')&&(c.textContent||'').trim().indexOf(m.slice(3))===0;return c.matches(m)}
-var subInd={};
+var subInd={},subDir='';
 function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;var old=$('.subbar',scr);if(old)old.remove();
   var kids=[].slice.call(scr.children),grp=null,found={},cur=null;
   kids.forEach(function(c){if(c.tagName==='HEADER')return;var d=defs.filter(function(x){return subStart(c,x[3])})[0];if(d){cur=d[0];found[cur]=1}
@@ -572,7 +580,7 @@ function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;v
   if(sec){var el=document.getElementById(sec);if(el){var host=kids.filter(function(c){return c===el||c.contains(el)})[0];if(host&&host.dataset.sub&&found[host.dataset.sub])subSel[t]=host.dataset.sub}}
   if(!subSel[t]||!found[subSel[t]])subSel[t]=live[0][0];
   var k=subSel[t],all=SHOWALL[t]===k;
-  kids.forEach(function(c){if(c.tagName==='HEADER')return;var g=c.dataset.sub;c.classList.toggle('sub-off',!(g==='*'||(all&&g!=='-')||g===k))});
+  kids.forEach(function(c){if(c.tagName==='HEADER')return;var g=c.dataset.sub;c.classList.toggle('sub-off',!(g==='*'||(all&&g!=='-')||g===k));c.classList.remove('ssl-r','ssl-l');if(subDir&&!c.classList.contains('sub-off')){void c.offsetWidth;c.classList.add('ssl-'+subDir)}});subDir='';
   var bar=document.createElement('nav');bar.className='subbar';bar.setAttribute('aria-label','Sections');
   bar.innerHTML='<div class="sbt"><i class="ind" aria-hidden="true"></i>'+live.map(function(x){return '<button type="button" data-sub-go="'+x[0]+'"'+(x[0]===k?' aria-current="true"':'')+'>'+I(ICO[x[2]]||ICO.today,2)+'<span>'+x[1]+'</span></button>'}).join('')+'</div>';
   var hd=$('header',scr);if(hd)hd.after(bar);else scr.prepend(bar);
@@ -580,7 +588,19 @@ function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;v
   if(on){var to={x:on.offsetLeft,w:on.offsetWidth};if(pv){ind.style.transition='none';ind.style.transform='translateX('+pv.x+'px)';ind.style.width=pv.w+'px';ind.offsetWidth;ind.style.transition=''}
     ind.style.transform='translateX('+to.x+'px)';ind.style.width=to.w+'px';subInd[t]=to;
     bar.scrollLeft=Math.max(0,on.offsetLeft-bar.offsetWidth/2+on.offsetWidth/2)}
+  var edge=function(){bar.classList.toggle('more-r',bar.scrollLeft+bar.clientWidth<bar.scrollWidth-6);bar.classList.toggle('more-l',bar.scrollLeft>6)};edge();bar.addEventListener('scroll',edge,{passive:true})
+  var up=$('.upnext',scr);if(up)up.remove();
+  if(!all&&live.length>1){var ix=live.findIndex(function(x){return x[0]===k}),nx=live[(ix+1)%live.length],o=document.createElement('section');o.className='upnext';o.dataset.sub='*';
+    o.innerHTML='<div class="eb">'+(ix+1<live.length?'Up next':'Back to the start')+'</div><button type="button" class="unx" data-sub-go="'+nx[0]+'"><span class="ic i">'+I(ICO[nx[2]]||ICO.today,2)+'</span><span class="tx"><b>'+nx[1]+'</b><small>'+SUBDESC[nx[0]]+'</small></span><span class="go" aria-hidden="true">→</span></button>'+
+      '<div class="unl">'+live.filter(function(x){return x[0]!==k&&x[0]!==nx[0]}).map(function(x){return '<button type="button" data-sub-go="'+x[0]+'">'+I(ICO[x[2]]||ICO.today,2)+x[1]+'</button>'}).join('')+'</div><p class="swh">Swipe left or right to switch</p>';
+    var note=kids.filter(function(c){return c.classList.contains('note')}).pop();if(note)scr.insertBefore(o,note);else scr.appendChild(o)}
   if(t==='ideas'&&k==='calls')mark('calls')}
+/* swipe left or right on a screen to move between its top tabs */
+(function(){var x0=0,y0=0,t0=0,ok=false;
+  document.addEventListener('touchstart',function(e){var tt=e.touches[0];ok=!!(SUBS[tab]&&!e.target.closest('.steps,.sp-tr,.spw,.chips,.subbar,.brow,.strip,.jcal,.seg,.sheet,input,textarea,select,[data-noswipe]'));x0=tt.clientX;y0=tt.clientY;t0=Date.now()},{passive:true});
+  document.addEventListener('touchend',function(e){if(!ok)return;ok=false;var tt=e.changedTouches[0],dx=tt.clientX-x0,dy=tt.clientY-y0;if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.6||Date.now()-t0>700)return;
+    var bs=$$('#s-'+tab+' .subbar button'),cur=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),n=cur+(dx<0?1:-1);if(cur<0||n<0||n>=bs.length)return;
+    subSel[tab]=bs[n].dataset.subGo;subDir=dx<0?'r':'l';RENDER[tab]();window.scrollTo(0,0)},{passive:true})})();
 [['today','rToday'],['markets','rMarkets'],['ideas','rIdeas'],['journal','rJournal'],['you','rYou']].forEach(function(x){var f={rToday:rToday,rMarkets:rMarkets,rIdeas:rIdeas,rJournal:rJournal,rYou:rYou}[x[1]],w=function(){f.apply(this,arguments);applySub(x[0],subSec);subSec=null};
   if(x[1]==='rToday')rToday=w;else if(x[1]==='rMarkets')rMarkets=w;else if(x[1]==='rIdeas')rIdeas=w;else if(x[1]==='rJournal')rJournal=w;else rYou=w});
 var subSec=null;
