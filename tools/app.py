@@ -7,7 +7,7 @@ import html as _h, json, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-JS_DATA = ['IDX', 'DAY', 'TYPES', 'E', 'EVENTS', 'MVS', 'OIB', 'OIQ', 'CALLS', 'LEARN']
+JS_DATA = ['IDX', 'DAY', 'TYPES', 'E', 'EVENTS', 'MVS', 'OIB', 'OIQ', 'CALLS', 'LEARN', 'LVIZ']
 
 # Closed trade calls for the track record (sample data for the prototype; every call is listed, losses included).
 # name, strategy, legs, posted, closed, entry, target, stop, exit, how it closed, quantity

@@ -175,7 +175,7 @@ var STEP={
   brief:['Listen to the brief','7 chapters · '+mmss(D.audio.dur),function(){return !!mstate().brief},'@listen'],
   calls:['Check today’s calls',CALLS.length+' active · track record inside',function(){return !!mstate().calls},'#ideas/calls'],
   journal:['Review today’s trades',function(){var n=todo().length;return n?n+' fetched from your broker':'All reviewed'},function(){return todo().length===0},'#journal/review'],
-  learn:['Learn 3 ideas',function(){var l=learned().length;return l+' of '+LEARN.length+' done'},function(){return learned().length>=LEARN.length},'#you/learn'],
+  learn:['Learn 3 ideas',function(){var l=learned().length;return l+' of '+LEARN.length+' done'},function(){return learned().length>=LEARN.length},'#ideas/learn'],
   watch:['Check the market','Indices, F&O levels, filings',function(){return !!mstate().watch},'#markets']};
 function mDone(){return goals().filter(function(k){return STEP[k][2]()}).length}
 function streakNow(){return D.streak.n+(mDone()===goals().length?1:0)}
@@ -195,7 +195,7 @@ function fyRows(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-
     ['t',ICO.star,'Your rewards',freeDays()+' free days · '+TIERS[tierOf(v)][1]+' · #'+myRank(),v+' pts','','#rewards']];
   var X={options:['a',ICO.fo,'Your expiry: Nifty '+D.fo.exp.replace(/^Expiry\s*/,''),'Support '+D.fo.k[0][1]+' · max pain '+D.fo.k[1][1]+' · resistance '+D.fo.k[2][1],'','','#markets/fo'],
     investor:['t',ICO.bk,'Your baskets',D.baskets[0].n,D.baskets[0].r,'u','#ideas/baskets'],
-    learner:['i',ICO.learn,'Your learning',learned().length+' of '+LEARN.length+' ideas today','','','#you/learn'],
+    learner:['i',ICO.learn,'Your learning',learned().length+' of '+LEARN.length+' ideas today','','','#ideas/learn'],
     picker:['t',ICO.mv,'Your watch: top mover',MVS[0].n+' +'+MVS[0].v.toFixed(2)+'%','','','#markets/movers'],
     basic:['a',ICO.cal,'Coming up for you',nx?nx.t+' '+nx.b:'Market day done','','','#markets/cal']}[key];
   if(X)R.push(X);return R}
@@ -217,7 +217,7 @@ function forYou(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-
   var X;
   if(key==='options')X='<a class="fy-x" href="#markets/fo"><div class="fy-k"><span class="eb">Your expiry · Nifty</span><small>'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small></div><div class="fy-lv">'+D.fo.k.map(function(k,n){return '<div class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div></a>';
   else if(key==='investor')X='<a class="fy-x" href="#ideas/baskets"><div class="fy-k"><span class="eb">Your baskets</span></div>'+D.baskets.slice(0,2).map(function(b){return '<div class="fy-r"><span>'+esc(b.n)+'</span><b class="u">'+esc(b.r)+'</b></div>'}).join('')+'</a>';
-  else if(key==='learner'){var l=learned().length;X='<a class="fy-x" href="#you/learn"><div class="fy-k"><span class="eb">Your learning today</span><small>'+l+' of '+LEARN.length+'</small></div><span class="lbar"><em style="width:'+(l/LEARN.length*100)+'%"></em></span></a>'}
+  else if(key==='learner'){var l=learned().length;X='<a class="fy-x" href="#ideas/learn"><div class="fy-k"><span class="eb">Your learning today</span><small>'+l+' of '+LEARN.length+'</small></div><span class="lbar"><em style="width:'+(l/LEARN.length*100)+'%"></em></span></a>'}
   else if(key==='picker')X='<a class="fy-x" href="#markets/movers"><div class="fy-k"><span class="eb">Your watch · top movers</span></div>'+MVS.slice(0,3).map(function(m){return '<div class="fy-r"><span>'+esc(m.n)+'</span><b class="u">+'+m.v.toFixed(2)+'%</b></div>'}).join('')+'</a>';
   else X='<a class="fy-x" href="#markets/cal"><div class="fy-k"><span class="eb">Coming up for you</span></div><div class="fy-r"><span>'+(nx?esc(nx.b):'Market day done')+'</span><b>'+(nx?nx.t:'')+'</b></div></a>';
   return '<div class="h2 fyh"><h2>For you</h2></div>'+
@@ -407,6 +407,20 @@ function wireChart(x){var box=$('#ixc');if(!box)return;var svg=box.querySelector
   function off(){tip.hidden=true;cur.setAttribute('hidden','')}
   box.addEventListener('pointermove',function(e){at(e.clientX)});box.addEventListener('pointerdown',function(e){at(e.clientX)});box.addEventListener('pointerleave',off)}
 
+
+/* ---------------- Learn (Ideas → Learn): three idea cards with a picture each, swipe between them ---------------- */
+var LTONE={term:'i',relation:'a',learning:'t'};
+function lvizOf(id){var v=(typeof LVIZ!=='undefined'&&LVIZ[id])||'';return v.replace(/<button class="linkbtn" data-go="markets">([^<]*)<\/button>/g,'<a class="lk" href="#markets/indices">$1</a>')}
+function learnHTML(){var lr=learned(),all=lr.length>=LEARN.length,first=Math.max(0,LEARN.findIndex(function(x){return lr.indexOf(x.id)<0}));
+  return '<section class="sec" id="learn"><div class="lnh"><span>Three short ideas a day · learn all 3 to keep your streak</span><small id="lnC">'+lr.length+' of '+LEARN.length+' done</small></div>'+
+    (all?'<div class="lnok">✓ All 3 ideas learned. Streak kept for today.</div>':'')+
+    '<div class="hlt lnt" data-noswipe data-first="'+first+'" aria-label="Ideas to learn, swipe for more">'+LEARN.map(function(x,i){var got=lr.indexOf(x.id)>=0,t=LTONE[x.id]||'i';
+      return '<article class="lc '+t+'" aria-label="'+(i+1)+' of '+LEARN.length+': '+esc(x.h)+'"><div class="lck"><span class="ic '+t+'">'+I(ICO.learn,2)+'</span><span class="eb">'+esc(x.kind)+'</span>'+(got?'<span class="tag lgot">✓ Learned</span>':'')+'</div>'+
+        '<h3>'+esc(x.h)+'</h3>'+lvizOf(x.id)+'<p class="one">'+x.one+'</p>'+
+        '<div class="lcf">'+(got?'<span class="muted">'+(i<LEARN.length-1?'Swipe for the next idea →':'Done for today')+'</span>':'<button type="button" class="btn p s" data-got="'+x.id+'">Got it</button><span class="muted">'+(i+1)+' of '+LEARN.length+'</span>')+'</div></article>'}).join('')+'</div>'+
+    '<div class="mdots lnd" aria-hidden="true">'+LEARN.map(function(x,i){return '<i class="'+(lr.indexOf(x.id)>=0?'ok':'')+(i===first?' on':'')+'"></i>'}).join('')+'</div></section>'}
+function lrnSlide(go){var tr=$('#s-ideas .lnt');if(!tr)return;var n=go!=null?go:+tr.dataset.first;if(n>0)tr.scrollLeft=tr.children[n].offsetLeft-tr.children[0].offsetLeft;
+  var dots=$$('#s-ideas .lnd i'),sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)})};tr.addEventListener('scroll',sync,{passive:true});sync()}
 /* ---------------- IDEAS ---------------- */
 var rs=function(x){return parseFloat(String(x).replace(/[₹,]/g,''))};
 function callCard(c,i){var e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
@@ -443,8 +457,8 @@ function rIdeas(){var s=$('#s-ideas'),S=D.sotd;
             '<span class="bkbar" aria-hidden="true"><i class="'+(up?'':'d')+'" style="width:'+(Math.abs(v)/mx*100).toFixed(0)+'%"></i></span>'+
             '<span class="bkgo">View basket →</span></a>'}).join('')+'</div>'+
         '<a class="bkb" href="'+L.baskets+'" target="_blank" rel="noopener"><span class="ic i">'+I('<path d="M12 5v14M5 12h14"/>',2)+'</span><span><b>Build your own basket</b><small>Pick your own stocks and weights on AlphaPad</small></span><span class="go" aria-hidden="true">›</span></a>'+
-        '<p class="note">Past returns are not a promise of future returns. Not investment advice.</p>'})()+'</section>';
-  var tr=$('#tcTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12;$('#tcC').textContent=(Math.round(tr.scrollLeft/w)+1)+' of '+CALLS.length},{passive:true})}
+        '<p class="note">Past returns are not a promise of future returns. Not investment advice.</p>'})()+'</section>'+learnHTML();
+  lrnSlide();var tr=$('#tcTr');tr.addEventListener('scroll',function(){var w=tr.firstChild.offsetWidth+12;$('#tcC').textContent=(Math.round(tr.scrollLeft/w)+1)+' of '+CALLS.length},{passive:true})}
 
 
 
@@ -459,7 +473,7 @@ function profitHTML(where){var wins=CL.filter(function(x){return x.ret>0}),loss=
   return '<section class="pbk'+(where?' '+where:'')+'" aria-label="Profits booked"><div class="pbh"><span class="eb">Performance on AlphaPad</span><small>'+from+' – '+to+'</small></div>'+
     '<div class="pbn"><b>'+wins.length+'</b><span>profits booked<small>of '+CL.length+' calls closed · '+loss.length+' closed at a loss</small></span></div>'+
     '<div class="pbb">'+cnt.map(function(x){return '<div><em>'+x[1]+'</em><i style="height:'+(18+x[1]/mx*46).toFixed(0)+'px"></i><span>'+x[0]+'</span></div>'}).join('')+'<div class="net"><em>'+inr(net,true)+'</em><span>net on the suggested size</span></div></div>'+
-    (locked()?'<button type="button" class="btn full pbc" data-act="pro">Unlock today’s '+CALLS.length+' live calls →</button>':'<a class="btn full pbc" href="#ideas/calls">See today’s calls →</a>')+
+    (locked()?'<button type="button" class="btn full pbc" data-act="pro">Unlock today’s '+CALLS.length+' live calls →</button>':'')+
     '<p class="pbf">Every closed call is counted, losses included. Past results do not promise future returns.</p></section>'}
 function liveHTML(){var w=CL.filter(function(x){return x.ret>0}).length;
   return '<section class="pbk home live" aria-label="Live trade calls"><div class="pbh"><span class="eb">Live trade calls</span><small id="lvC">1 of '+CALLS.length+' live</small></div>'+
@@ -587,10 +601,6 @@ function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lr
   s.innerHTML=top('You')+
     '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>Your screen: '+presetName()+' · <button type="button" class="l" style="color:var(--link);font-weight:600" data-act="setup">Change</button></small></div></div>'+
     '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
-    '<section class="sec" id="learn"><div class="h2"><h2>Learn today</h2><span class="sp"></span><small>'+lr.length+' of '+LEARN.length+' done</small></div><div class="card lrn">'+(all?'<div class="ok">✓ All 3 ideas learned. Streak kept for today.</div>':'')+
-      '<div class="kind"><span class="eb">'+esc(x.kind)+'</span>'+(got?'<span class="tag" style="margin-left:auto">✓ Learned</span>':'')+'</div><h3>'+esc(x.h)+'</h3><p>'+x.one+'</p>'+
-      '<div class="ft"><button type="button" class="navb" data-lrn="-1" aria-label="Previous idea">‹</button><div class="pg" aria-hidden="true">'+LEARN.map(function(l,j){return '<i class="'+(lr.indexOf(l.id)>=0?'done':'')+(j===lrnI?' on':'')+'"></i>'}).join('')+'</div><button type="button" class="navb" data-lrn="1" aria-label="Next idea">›</button><span class="sp"></span>'+
-      (got?'':'<button type="button" class="btn p s" data-got="'+x.id+'">Got it</button>')+'</div></div></section>'+
     '<div class="h2"><h2>Tools</h2></div><div class="card" style="padding:0 16px"><div class="list">'+
       [[L.bt,ICO.bt,'i','Backtesting','Replay a past session candle by candle',1],[L.screener,ICO.scan,'a','Screener','Scan Nifty 500 stocks',0],[L.studio,ICO.studio,'b','Option Studio','Option chain and strategies',0],[L.baskets,ICO.bk,'t','Baskets','Build and track baskets',0],[L.lms,ICO.lms,'i','LMS','Courses and lessons',0],[L.brief,ICO.brief,'b','Full brief','Read today’s brief on the web',0]]
       .map(function(r){return '<a class="row" href="'+r[0]+'"'+(r[5]?' target="_blank" rel="noopener"':'')+'><span class="ic '+r[2]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[3]+'</b><small>'+r[4]+'</small></span><span class="go" aria-hidden="true">'+(r[5]?I(ICO.ext):'›')+'</span></a>'}).join('')+'</div></div>'+
@@ -756,7 +766,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.day)return openDay(ds.day);
   if(ds.m){var ms=MONTHS(),i=ms.indexOf(jMonth)+ +ds.m;if(i>=0&&i<ms.length){jMonth=ms[i];jDay=null;rJournal()}return}
   if(ds.lrn){lrnI=(lrnI+ +ds.lrn+LEARN.length)%LEARN.length;var y4=scrollY;rYou();scrollTo(0,y4);return}
-  if(ds.got){var l=learned();if(l.indexOf(ds.got)<0)l.push(ds.got);store.set(LKEY,l);var nx=LEARN.findIndex(function(x){return l.indexOf(x.id)<0});if(nx>=0)lrnI=nx;var y5=scrollY;rYou();scrollTo(0,y5);toast(l.length>=LEARN.length?'All 3 learned. Streak kept for today.':(LEARN.length-l.length)+' left to keep your streak');return}
+  if(ds.got){var l=learned();if(l.indexOf(ds.got)<0)l.push(ds.got);store.set(LKEY,l);var nx=LEARN.findIndex(function(x){return l.indexOf(x.id)<0});if(nx>=0)lrnI=nx;var y5=scrollY;rIdeas();applySub('ideas','learn');scrollTo(0,y5);setTimeout(function(){var tr=$('#s-ideas .lnt');if(tr&&nx>=0)tr.scrollTo({left:tr.children[nx].offsetLeft-tr.children[0].offsetLeft,behavior:'smooth'})},250);if(typeof paintMorning==='function')paintMorning();toast(l.length>=LEARN.length?'All 3 learned. Streak kept for today.':(LEARN.length-l.length)+' left to keep your streak');return}
   if(ds.themeSet){root.setAttribute('data-theme',ds.themeSet);store.set('today-theme',ds.themeSet);try{localStorage.setItem('today-theme',ds.themeSet)}catch(err){}var y6=scrollY;rYou();scrollTo(0,y6);return}
 });
 var armed=0;document.addEventListener('click',function(e){var b=e.target.closest('#rstB');if(!b)return;
@@ -769,9 +779,9 @@ var armed=0;document.addEventListener('click',function(e){var b=e.target.closest
 var SUBS={
   today:[['home','Home','home','.hello'],['spot','Spotlight','star','h2:Spotlight'],['foryou','For you','you','h2:For you']],
   markets:[['indices','Indices','markets','#indices'],['movers','Movers','mv','#movers'],['ipos','IPOs','ipo','#ipos'],['filings','News','file','#filings']],
-  ideas:[['sd','Pick','sd','#sd'],['calls','Calls','tc','#calls'],['baskets','Baskets','bk','#baskets']],
+  ideas:[['sd','Pick','sd','#sd'],['calls','Calls','tc','#calls'],['baskets','Baskets','bk','#baskets'],['learn','Learn','learn','#learn']],
   journal:[['review','Review','inbox','#review'],['overview','Overview','chart','.mnav'],['insights','Insights','bulb','h2:Insights'],['trades','Trades','list','h2:Trades']],
-  you:[['profile','Profile','you','.prof'],['learn','Learn','learn','#learn'],['tools','Tools','bt','h2:Tools'],['settings','Settings','gear','h2:Settings']]};
+  you:[['profile','Profile','you','.prof'],['tools','Tools','bt','h2:Tools'],['settings','Settings','gear','h2:Settings']]};
 var SUBDESC={home:'Everything for today in one place',brief:'Listen or read in five minutes',spot:'Stock of the day and the big moves',foryou:'Picked for your setup',
   indices:'Nifty, Bank Nifty, VIX and F&O levels',movers:'Gainers, losers, OI build-up and scans',ipos:'Open, upcoming and listed IPOs with our score',filings:'Filings, results and the calendar',cal:'Events and timings today',
   sd:'Today’s stock of the day and why',calls:'Active calls from the desk',record:'Every closed call, wins and losses',baskets:'Ready-made stock baskets',

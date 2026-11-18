@@ -1128,3 +1128,36 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 /* free days: total row */
 .fdl li.fdtot{margin-top:4px;padding-top:12px;border-top:1px solid var(--border-control);border-bottom:0}
 .fdl li.fdtot b{font-weight:700}.fdl li.fdtot em{font-weight:800;color:var(--up-text);white-space:nowrap}
+
+/* Ideas → Learn: picture cards */
+.lnh{display:flex;align-items:baseline;gap:10px;margin-top:14px;font:400 13px/1.4 var(--font-sans);color:var(--text-secondary)}.lnh span{flex:1}.lnh small{flex:none;font:600 12.5px/1 var(--font-sans);color:var(--up-text)}
+.lnok{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--fin-positive-soft);color:var(--up-text);font:600 13px/1.3 var(--font-sans)}
+.lnt{margin-top:12px}
+.lc{scroll-snap-align:start;scroll-snap-stop:always;display:grid;align-content:start;gap:12px;padding:16px;border-radius:20px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.lc.i{background:radial-gradient(120% 70% at 100% 0%,rgba(63,91,217,.22),rgba(63,91,217,0) 60%),var(--surface-raised);border-color:rgba(99,123,235,.32)}
+.lc.a{background:radial-gradient(120% 70% at 100% 0%,rgba(240,160,75,.18),rgba(240,160,75,0) 60%),var(--surface-raised);border-color:rgba(240,160,75,.3)}
+.lc.t{background:radial-gradient(120% 70% at 100% 0%,rgba(0,201,154,.16),rgba(0,201,154,0) 60%),var(--surface-raised);border-color:rgba(0,201,154,.28)}
+.lck{display:flex;align-items:center;gap:8px}.lck .ic{width:30px;height:30px;border-radius:9px}.lck .ic svg{width:16px;height:16px}.lck .eb{flex:1}
+.lgot{background:var(--fin-positive-soft)!important;color:var(--up-text)!important}
+.lc h3{margin:0;font:800 21px/1.2 var(--font-sans);letter-spacing:-.3px}
+.lc .one{margin:0;font:400 14px/1.5 var(--font-sans);color:var(--text-secondary)}.lc .one b{color:var(--text-primary);font-weight:600}
+.lcf{display:flex;align-items:center;gap:10px;margin-top:auto}.lcf .muted{font-size:12.5px}
+.lnd{margin-top:12px}
+/* the pictures */
+.lc .lviz{display:grid;gap:8px;padding:12px;border-radius:14px;background:var(--surface-glass);border:1px solid var(--border-decorative)}
+.lc .lviz svg{width:100%;height:auto;display:block}
+.lc .lviz .cap{font:500 12px/1.35 var(--font-sans);color:var(--text-tertiary)}.lc .lviz .cap .lk{color:var(--link);font-weight:600}
+.lc .cause{display:grid;grid-template-columns:minmax(0,1fr) 96px;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--fb-warning-soft)}
+.lc .cause .lbl{display:block;font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}.lc .cause b{display:block;margin:3px 0;font:800 19px/1.1 var(--font-sans)}.lc .cause .chg{font:600 12px/1.2 var(--font-sans);color:var(--warn-text)}
+.lc .cause svg{width:96px;height:36px}
+.lc .fan{height:22px}
+.lc .effects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.lc .effect{display:grid;gap:4px;padding:8px 6px;border-radius:10px;background:var(--surface-raised);font:600 11.5px/1.25 var(--font-sans);text-align:center}
+.lc .effect .d{font:600 11px/1.2 var(--font-sans);color:var(--up-text)}
+.lc .lrow{display:grid;grid-template-columns:88px minmax(0,1fr) 50px;align-items:center;gap:8px;font:500 12.5px/1.2 var(--font-sans);color:var(--text-secondary)}
+.lc .lrow .t{height:8px;border-radius:9999px;background:var(--track);overflow:hidden}.lc .lrow .t i{display:block;height:100%;border-radius:inherit}
+.lc .lrow b{text-align:right;font-variant-numeric:tabular-nums;color:var(--text-primary)}.lc .lrow.hi span,.lc .lrow.hi b{color:var(--up-text);font-weight:700}
+.lc .meter{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;height:10px;margin-top:4px}
+.lc .meter i{border-radius:9999px;background:var(--teal)}.lc .meter i:nth-child(1){opacity:.15}.lc .meter i:nth-child(2){opacity:.3}.lc .meter i:nth-child(3){opacity:.5}.lc .meter i:nth-child(4){opacity:.75}
+.lc .meter .pin{position:absolute;top:-4px;width:4px;height:18px;border-radius:2px;background:var(--text-primary);transform:translateX(-50%)}
+.lc .meter-l{display:flex;justify-content:space-between;gap:8px;font:500 11.5px/1.3 var(--font-sans);color:var(--text-tertiary)}
