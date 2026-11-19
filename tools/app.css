@@ -1191,3 +1191,51 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .jrv.ok{background:var(--surface-raised);border-color:rgba(0,201,154,.3)}.jrv.ok .ic{display:grid;place-items:center;background:var(--fin-positive-soft);border-color:rgba(0,201,154,.35);color:var(--up-text);font-weight:800}
 .jrv+.mnav{margin-top:14px}
 .jrl .row{width:100%;text-align:left;color:var(--text-primary)}.jrl .row:last-child{border-bottom:0}
+
+/* Markets → Invest: mutual funds */
+.invseg{margin-top:14px}
+.mfgo{margin-top:14px}
+.mfcta{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;color:var(--text-primary);background:radial-gradient(120% 120% at 100% 0%,rgba(63,91,217,.32),rgba(63,91,217,.06) 65%),var(--surface-raised);border:1px solid rgba(99,123,235,.4)}
+.mfcta>span:first-child{flex:1;display:grid;gap:4px}.mfcta b{font:700 16px/1.2 var(--font-sans)}.mfcta small{font:500 12px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.mfgl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mfg{display:grid;justify-items:center;gap:6px;padding:12px 4px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.mfg span{font-size:22px;line-height:1}.mfg b{font:600 11.5px/1.2 var(--font-sans);text-align:center}
+.sipc{display:grid;gap:14px}.card.sipc{padding:16px}
+.rg{display:grid;gap:8px}.rg>span{display:flex;justify-content:space-between;align-items:baseline}.rg b{font:500 13px/1 var(--font-sans);color:var(--text-secondary)}.rg em{font:800 16px/1 var(--font-sans);font-style:normal;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.rg input{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:9999px;background:var(--track);outline-offset:6px}
+.rg input::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--white);border:4px solid var(--indigo-500);box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.rg input::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--white);border:4px solid var(--indigo-500)}
+.sipr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sipr div{display:grid;gap:4px;padding:10px;border-radius:12px;background:var(--surface-glass)}.sipr small{font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}.sipr b{font:800 16px/1.1 var(--font-sans);font-variant-numeric:tabular-nums}.sipr b.u{color:var(--up-text)}
+.sipbar{display:flex;height:10px;margin-top:12px;border-radius:9999px;overflow:hidden;background:var(--track)}.sipbar i{background:var(--indigo-500)}.sipbar em{background:var(--teal)}
+.sipk{display:flex;gap:14px;margin-top:8px;font:500 12px/1 var(--font-sans);color:var(--text-tertiary)}.sipk i{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:50%;background:var(--indigo-500)}.sipk i.g{background:var(--teal)}
+.mfcmp{display:grid;gap:10px;padding:16px}
+.mfcr{display:grid;grid-template-columns:96px minmax(0,1fr) 72px;align-items:center;gap:10px;font:500 13px/1.2 var(--font-sans);color:var(--text-secondary)}
+.mfcr span{display:grid;gap:2px}.mfcr small{font-size:11px;color:var(--text-tertiary)}
+.mfcr i{height:10px;border-radius:9999px;background:var(--track);overflow:hidden}.mfcr em{display:block;height:100%;border-radius:inherit;background:var(--slate-500)}
+.mfcr b{text-align:right;font:700 13.5px/1 var(--font-sans);color:var(--text-primary);font-variant-numeric:tabular-nums}
+.mfcr.hi span{color:var(--text-primary);font-weight:700}.mfcr.hi em{background:var(--teal)}.mfcr.hi b{color:var(--up-text)}
+.mfn{margin:4px 0 0;font-size:12px}
+.mft .row,.mfnw .row{width:100%;color:var(--text-primary)}.mft .row:last-child,.mfnw .row:last-child{border-bottom:0}
+.mft .tx{display:grid;gap:3px}.mfb{display:block;height:5px;margin-top:5px;border-radius:9999px;background:var(--track);overflow:hidden}.mfb i{display:block;height:100%;border-radius:inherit;background:var(--teal)}
+.mfr{display:grid;justify-items:end;gap:3px;flex:none}.mfr b{font:800 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}.mfr b.u{color:var(--up-text)}.mfr small{font:500 11px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.mfnw .tm{flex:none;width:46px;font:600 12px/1.3 var(--font-sans);color:var(--text-tertiary)}
+.gout{display:grid;gap:6px;margin-top:16px;padding:16px;border-radius:16px;background:radial-gradient(120% 100% at 100% 0%,rgba(0,201,154,.18),rgba(0,201,154,.04) 60%),var(--surface-raised);border:1px solid rgba(0,201,154,.3)}
+.gout b{font:800 30px/1 var(--font-sans);letter-spacing:-.6px;color:var(--up-text);font-variant-numeric:tabular-nums}.gout small{font:500 12.5px/1.4 var(--font-sans);color:var(--text-secondary)}
+.mft .tx small,.mfnw .tx b{white-space:normal;overflow:visible;text-overflow:clip}
+.mfnw .tx b{font-weight:600;font-size:13.5px;line-height:1.35}
+.mfcta small{white-space:nowrap}
+
+/* Home: mutual fund cards (same height as highlights and IPOs) */
+.pv.mfh .pvh small{margin-right:12px;font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.mfhc{scroll-snap-align:start;scroll-snap-stop:always;display:grid;align-content:space-between;gap:8px;min-height:171px;padding:16px;border-radius:20px;color:var(--text-primary);background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.mfhc.i{background:radial-gradient(120% 90% at 100% 0%,rgba(63,91,217,.24),rgba(63,91,217,0) 60%),var(--surface-raised);border-color:rgba(99,123,235,.35)}
+.mfhc.t{background:radial-gradient(120% 90% at 100% 0%,rgba(0,201,154,.18),rgba(0,201,154,0) 60%),var(--surface-raised);border-color:rgba(0,201,154,.3)}
+.mfhc.a{background:radial-gradient(120% 90% at 100% 0%,rgba(240,160,75,.18),rgba(240,160,75,0) 60%),var(--surface-raised);border-color:rgba(240,160,75,.3)}
+.mfe{display:flex;gap:8px}.mfe i{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--surface-glass);font-style:normal;font-size:20px}
+.mfbig{font:800 30px/1 var(--font-sans);letter-spacing:-.6px;font-variant-numeric:tabular-nums}.mfbig.u{color:var(--up-text)}.mfbig small{font:600 13px/1 var(--font-sans);letter-spacing:0;color:var(--text-tertiary)}
+.mfs{font:400 13.5px/1.4 var(--font-sans);color:var(--text-secondary)}
+.mfhc .hg{font:600 13px/1 var(--font-sans);color:var(--link)}
+.mfd{margin-top:12px}
+/* deep links land below the sticky top bar and tabs */
+.scr [id]{scroll-margin-top:118px}
