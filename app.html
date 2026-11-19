@@ -1289,6 +1289,87 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .mvr{grid-template-columns:16px minmax(0,1fr) 40px 62px;gap:8px}
 .mvr b{white-space:normal;overflow:visible}
 .scl .tx small{white-space:normal}
+
+/* mutual fund cards, laid out like mf.springpad.in */
+.fc{display:grid;align-content:start;gap:10px;padding:14px 16px;border-radius:18px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.fch{display:flex;align-items:center;gap:10px}
+.fca{display:grid;place-items:center;width:42px;height:42px;flex:none;border-radius:50%;font:800 12px/1 var(--font-sans);letter-spacing:-.2px;border:1px solid var(--border-decorative)}
+.fca.i{background:rgba(63,91,217,.18);color:#9DB0FF}.fca.a{background:rgba(240,160,75,.16);color:var(--warn-text)}.fca.b{background:rgba(50,130,232,.18);color:#6AA8F5}.fca.t{background:rgba(0,201,154,.16);color:var(--up-text)}
+.fcn{display:grid;gap:3px;min-width:0}.fcn b{font:700 15px/1.25 var(--font-sans)}.fcn small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.fcc{justify-self:start;display:inline-block;padding:4px 9px;border-radius:7px;background:var(--amber);color:var(--navy-900);font:600 11.5px/1 var(--font-sans)}
+.fcm{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border-decorative)}
+.fcm span,.fcr span{display:grid;gap:4px}.fcm small,.fcr small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}.fcm b{font:600 13.5px/1.1 var(--font-sans);font-variant-numeric:tabular-nums}
+.fcr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.fcr b{font:800 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}.fcr b.u{color:var(--up-text)}.fcr b.d{color:var(--slate-500)}.fcr b.na{color:var(--text-tertiary)}
+.fcsel{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.fcsel .l{font:600 13px/1 var(--font-sans);color:var(--link)}
+.fcl{display:grid;gap:12px}
+.mft2 .fc{scroll-snap-align:start;scroll-snap-stop:always}
+.mfplan{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.mfplan>span:first-child{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:rgba(63,91,217,.18);font-size:18px}
+.mfplan>span:nth-child(2){flex:1;display:grid;gap:3px}.mfplan b{font:700 14.5px/1.2 var(--font-sans)}.mfplan small{font:500 12px/1.2 var(--font-sans);color:var(--text-tertiary)}.mfplan .go{color:var(--text-tertiary);font-size:20px}
+.mft2 .fc{min-height:171px;gap:8px}.mft2 .fc .fcc,.mft2 .fcn small{display:none}
+.mfcat{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}.mfcat small{font:500 12px/1 var(--font-sans);color:var(--text-tertiary)}
+
+/* Option chain sheet: covers the screen, fixed top bar, scrolling middle */
+.ochw{position:fixed;inset:0;z-index:80;background:rgba(8,12,20,0);transition:background .3s}.ochw.on{background:var(--scrim)}.ochw[hidden]{display:none}
+.ochp{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--surface-canvas);transform:translateY(100%);transition:transform .32s cubic-bezier(.2,.9,.25,1)}
+.ochw.on .ochp{transform:none}
+@media (prefers-reduced-motion:reduce){.ochp,.ochw{transition:none}}
+.ochtop{flex:none;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;border-bottom:1px solid var(--border-decorative);background:var(--surface-canvas)}
+.ochb{width:38px;height:38px;flex:none;border-radius:50%;background:var(--surface-glass);color:var(--text-primary);font-size:20px;line-height:1}
+.ocht{flex:1;min-width:0;display:grid;gap:3px;text-align:center}.ocht b{font:700 16px/1.2 var(--font-sans)}.ocht small{font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.ochseg{flex:none;margin:10px 16px 0}
+.ochm{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:8px 16px 20px;-webkit-overflow-scrolling:touch}
+.ochf{flex:none;display:block;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));text-align:center;border-top:1px solid var(--border-decorative);font:600 14px/1 var(--font-sans);color:var(--link);background:var(--surface-canvas)}
+.och{position:sticky;top:-8px;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);gap:6px;padding:10px 0 8px;background:var(--surface-canvas);font:600 11px/1 var(--font-sans);letter-spacing:.4px;text-transform:uppercase;color:var(--text-tertiary)}
+.och span:nth-child(2){text-align:center}.och span:last-child{text-align:right}
+.ocl{border-radius:14px;overflow:hidden;border:1px solid var(--border-decorative)}
+.ocr{display:grid;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr);align-items:stretch;border-bottom:1px solid var(--border-decorative)}
+.occ,.ocp{position:relative;display:flex;align-items:center;gap:6px;padding:8px 10px;min-height:46px}
+.occ{justify-content:space-between}.ocp{justify-content:space-between}
+.ocr.citm .occ,.ocr.pitm .ocp{background:rgba(240,160,75,.07)}
+.ocv{display:grid;gap:2px}.ocp .ocv{text-align:right}.ocv b{font:700 13.5px/1 var(--font-sans);font-variant-numeric:tabular-nums}.ocv small{font:600 10.5px/1 var(--font-sans);font-variant-numeric:tabular-nums;color:var(--text-tertiary)}.ocv small.u{color:var(--up-text)}.ocv small.d{color:var(--slate-500)}
+.ocb{display:block;height:5px;max-width:46%;border-radius:9999px}.ocb.c{background:var(--slate-500)}.ocb.p{background:var(--teal)}
+.ock{display:grid;place-content:center;justify-items:center;gap:3px;background:rgba(240,160,75,.12);border-left:1px solid var(--border-decorative);border-right:1px solid var(--border-decorative)}
+.ock b{font:800 13.5px/1 var(--font-sans);font-variant-numeric:tabular-nums}.ock small{font:500 10px/1 var(--font-sans);color:var(--text-tertiary)}
+.ocr.atm .ock{background:var(--amber)}.ocr.atm .ock b,.ocr.atm .ock small{color:var(--navy-900)}
+.ocs{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px;background:var(--text-primary);color:var(--surface-canvas);font:700 12px/1 var(--font-sans);font-variant-numeric:tabular-nums}.ocs em{font-style:normal;font-weight:600;opacity:.75}
+.ocn{margin:12px 2px 0;font:400 12px/1.45 var(--font-sans);color:var(--text-tertiary)}
+.osc{display:grid;gap:12px;margin-top:12px;padding:16px;border-radius:18px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.osh{display:flex;gap:12px}.osh>span:first-child{flex:1;display:grid;gap:4px}.osh small{font:600 11px/1 var(--font-sans);letter-spacing:.6px;text-transform:uppercase;color:var(--up-text)}.osh b{font:800 18px/1.2 var(--font-sans)}.osh em{font:400 12.5px/1.35 var(--font-sans);font-style:normal;color:var(--text-tertiary)}
+.oss{display:grid;place-content:center;justify-items:center;width:54px;height:54px;flex:none;border-radius:50%;border:3px solid var(--teal)}.oss b{font:800 17px/1 var(--font-sans)}.oss small{font:500 9.5px/1 var(--font-sans);color:var(--text-tertiary);letter-spacing:0;text-transform:none}
+.osl{display:flex;flex-wrap:wrap;gap:6px}.osl span{display:inline-flex;align-items:center;gap:6px;padding:5px 9px 5px 5px;border-radius:9999px;background:var(--surface-glass);font:600 12px/1 var(--font-sans)}
+.osl i{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;font:800 10.5px/1 var(--font-sans);font-style:normal}.osl .b i{background:var(--teal);color:var(--navy-900)}.osl .s i{background:var(--slate-500);color:var(--white)}
+.osm{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.osm span{display:grid;gap:4px;padding:10px;border-radius:12px;background:var(--surface-glass)}.osm small{font:500 11px/1 var(--font-sans);color:var(--text-tertiary)}.osm b{font:800 15px/1 var(--font-sans);font-variant-numeric:tabular-nums}.osm b.u{color:var(--up-text)}
+.osw{margin:0;padding:0 0 0 18px;display:grid;gap:5px;font:400 12.5px/1.4 var(--font-sans);color:var(--text-secondary)}
+.otp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.otc{display:grid;gap:6px;padding:12px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.otc>span{display:flex;justify-content:space-between;align-items:center}.otc>span small{font:700 11px/1 var(--font-sans);letter-spacing:.4px;color:var(--text-tertiary)}.otc em{font:800 12.5px/1 var(--font-sans);font-style:normal}.otc em.u{color:var(--up-text)}.otc em.d{color:var(--slate-500)}
+.otc b{font:700 13.5px/1.25 var(--font-sans)}.otc>small{font:500 11.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
+.foa{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+
+/* shared full-screen sheet + Risk Studio */
+.fsm{padding-top:14px}
+#s-you .list button.row{width:100%;text-align:left;color:var(--text-primary)}
+.rsl{width:100%;margin-top:8px;text-align:left}
+.rsc{display:grid;gap:12px;padding:16px;border-radius:18px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.rsh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}.rsh b{font:700 13px/1 var(--font-sans);letter-spacing:.3px;color:var(--text-secondary)}
+.rsq2{display:flex;gap:4px}.rsq2 button{height:28px;padding:0 9px;border-radius:9999px;background:var(--surface-glass);font:600 12px/1 var(--font-sans);color:var(--text-secondary)}.rsq2 button[aria-pressed=true]{background:var(--indigo-500);color:var(--white)}
+.rsside{width:150px;padding:3px}.rsside button{height:28px;font-size:12.5px}
+.rs2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rsf{display:grid;gap:6px}.rsf>span:first-child{font:500 12px/1 var(--font-sans);color:var(--text-tertiary)}
+.rsi{display:flex;align-items:center;gap:6px;height:44px;padding:0 12px;border-radius:10px;background:var(--surface-canvas);border:1px solid var(--border-control)}
+.rsi:focus-within{border-color:var(--indigo-500);box-shadow:0 0 0 3px rgba(63,91,217,.25)}
+.rsi i{font-style:normal;font:600 14px/1 var(--font-sans);color:var(--text-tertiary)}
+.rsi input{flex:1;min-width:0;border:0;outline:0;background:none;color:var(--text-primary);font:700 16px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.rso{display:grid;gap:12px;margin-top:14px;padding:16px;border-radius:18px;background:radial-gradient(120% 90% at 100% 0%,rgba(0,201,154,.16),rgba(0,201,154,0) 60%),var(--surface-raised);border:1px solid rgba(0,201,154,.3)}
+.rso.bad{background:var(--fb-warning-soft);border-color:rgba(240,160,75,.4);font:500 13.5px/1.4 var(--font-sans);color:var(--text-primary)}
+.rsq{display:grid;gap:4px}.rsq small{font:500 12px/1 var(--font-sans);color:var(--text-tertiary)}.rsq b{font:800 40px/1 var(--font-sans);letter-spacing:-1px;color:var(--up-text);font-variant-numeric:tabular-nums}.rsq em{font:500 12.5px/1.2 var(--font-sans);font-style:normal;color:var(--text-secondary)}
+.rsg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rsg span,.rst span{display:grid;gap:4px;padding:10px;border-radius:12px;background:var(--surface-glass)}
+.rsg small,.rst small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}.rsg b{font:800 17px/1 var(--font-sans);font-variant-numeric:tabular-nums}.rsg b.d{color:var(--slate-200)}.rsg em,.rst em{font:500 11.5px/1 var(--font-sans);font-style:normal;color:var(--text-tertiary)}.rst em.u{color:var(--up-text)}
+.rsd{display:flex;justify-content:space-between;font:500 13px/1 var(--font-sans);color:var(--text-secondary)}.rsd b{color:var(--text-primary);font-variant-numeric:tabular-nums}
+.rst{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.rst b{font:700 14px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.rs2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.rsf,.rsi{min-width:0}.rsi input{width:100%}
+.rsc{min-width:0;overflow:hidden}.rsh{flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -1392,7 +1473,8 @@ var TABS=[['today','Today'],['markets','Markets'],['ideas','Ideas'],['journal','
 app.innerHTML=TABS.map(function(t){return '<main class="scr" id="s-'+t[0]+'" aria-label="'+t[1]+'"></main>'}).join('')+'<main class="scr" id="s-rewards" aria-label="Streak and rewards"></main><main class="scr" id="s-ipos" aria-label="IPOs"></main>'+
   '<div class="mini" id="mini" hidden><div><button type="button" class="pp" id="mPP" aria-label="Pause">❚❚</button><button type="button" class="tx" id="mOpen" aria-label="Open chapters"><b id="mCh"></b><small id="mT"></small></button><a class="nw" id="mNews" href="#markets/filings">News <i aria-hidden="true">→</i></a><button type="button" class="x" id="mX" aria-label="Stop the brief">✕</button><i class="pr" id="mPr"></i></div></div>'+
   '<div class="tabs"><nav aria-label="App"><i class="tind" aria-hidden="true"></i>'+TABS.map(function(t){return '<a href="#'+t[0]+'" data-tab="'+t[0]+'">'+I(ICO[t[0]],1.9)+'<span>'+t[1]+'</span>'+(t[0]==='journal'?'<span class="badge" id="jBadge" hidden></span>':'')+'</a>'}).join('')+'</nav></div>'+
-  '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div><div class="ovw" id="ovw" hidden role="dialog" aria-modal="true" aria-label="Market overview"><div class="ovp" id="ovwP"></div></div>';
+  '<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="pn" id="sheetPn"></div></div><div class="toast" id="toast" role="status" hidden></div><div class="ochw" id="fs" hidden role="dialog" aria-modal="true" aria-labelledby="fsT"><div class="ochp"><header class="ochtop"><button type="button" class="ochb" data-fsx aria-label="Back">‹</button><span class="ocht" id="fsT"></span><button type="button" class="ochb" data-fsx aria-label="Close">✕</button></header><div class="ochm fsm" id="fsM"></div><a class="ochf" id="fsF" target="_blank" rel="noopener" hidden></a></div></div><div class="ochw" id="och" hidden role="dialog" aria-modal="true" aria-label="Option chain"><div class="ochp"><header class="ochtop"><button type="button" class="ochb" data-ochx aria-label="Back">‹</button><span class="ocht"><b>NIFTY options</b><small>Expiry 23 Nov 2026 · lot 65 · spot 25,514.30</small></span><button type="button" class="ochb" data-ochx aria-label="Close">✕</button></header>'+
+  '<div class="seg ochseg" id="ochSeg" role="group" aria-label="Show"></div><div class="ochm" id="ochM"></div><a class="ochf" href="'+L.studio+'" target="_blank" rel="noopener">Build and analyse in Option Studio ↗</a></div></div><div class="ovw" id="ovw" hidden role="dialog" aria-modal="true" aria-label="Market overview"><div class="ovp" id="ovwP"></div></div>';
 
 var tab='today',prevH='#today',lastTab='';
 function route(){var h=(location.hash||'#today').slice(1).split('/'),t=h[0],sec=h[1],pg=PAGES.indexOf(t)>=0;if(!pg&&!TABS.some(function(x){return x[0]===t}))t='today';if(!pg)prevH='#'+h.join('/');backH=lastH;lastH='#'+h.join('/');tab=t;
@@ -1635,14 +1717,12 @@ function ipoReportHTML(i){var x=IPOS[i],t=ipoTone(x.sc);
 function rIpos(){var sc=$('#s-ipos'),n=subSec!=null&&IPOS[+subSec]?+subSec:-1;
   sc.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>'+(n<0?'All IPOs':esc(IPOS[n].n))+'</h1><span class="sp"></span></header>'+
     '<div class="ippg">'+(n<0?ipoListHTML():ipoReportHTML(n))+'</div>'}
-function mfHomeHTML(){var F=MFT.funds.slice().sort(function(a,b){return (b.r[1]||0)-(a.r[1]||0)})[0],fv=sipFV(5000,10,12);
-  var C=[
-    ['i','#markets/mfgoal','Plan a goal','<span class="mfe">'+GOALS.slice(0,4).map(function(g){return '<i>'+g[1]+'</i>'}).join('')+'</span>','How much SIP for a child’s education, retirement or a house?','Plan a goal'],
-    ['t','#markets/sipc','SIP calculator','<b class="mfbig">'+rupL(fv)+'</b>','₹5,000 a month for 10 years at 12%. You put in ₹6 L.','Try the calculator'],
-    ['a','#markets/mftop','Top Flexi Cap fund','<b class="mfbig u">'+F.r[1].toFixed(2)+'%<small> a year · 3Y</small></b>',esc(F.n)+' · AUM ₹'+num(F.aum,0)+' Cr','See top funds']];
-  return '<section class="pv mfh"><div class="pvh"><b>Mutual funds</b><small id="mfC">1 of '+C.length+'</small><a class="l ipall" href="#markets/mf">See all →</a></div>'+
-    '<div class="hlt mft2" data-noswipe aria-label="Mutual funds, swipe for more">'+C.map(function(c){return '<a class="mfhc '+c[0]+'" href="'+c[1]+'"><span class="eb">'+c[2]+'</span>'+c[3]+'<span class="mfs">'+c[4]+'</span><span class="hg">'+c[5]+' →</span></a>'}).join('')+'</div>'+
-    '<div class="mdots mfd" aria-hidden="true">'+C.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></section>'}
+function mfHomeHTML(){var F=MFT.funds;
+  return '<section class="pv mfh"><div class="pvh"><b>Top performing funds</b><small id="mfC">1 of '+F.length+'</small><a class="l ipall" href="#markets/mftop">See all →</a></div>'+
+    '<div class="mfcat"><span class="fcc">'+esc(MFT.cat)+'</span><small>Regular plans · Growth</small></div>'+
+    '<div class="hlt mft2" data-noswipe aria-label="Top performing mutual funds, swipe for more">'+F.map(function(f){return fundCard(f,'a','#markets/mftop')}).join('')+'</div>'+
+    '<div class="mdots mfd" aria-hidden="true">'+F.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
+    '<a class="mfplan" href="#markets/mfgoal"><span aria-hidden="true">🎯</span><span><b>Plan a goal with a SIP</b><small>Child education, retirement, a house…</small></span><span class="go" aria-hidden="true">›</span></a></section>'}
 function homePreview(mid){var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
   return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
     '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
@@ -1709,7 +1789,7 @@ function tlTick(){IST=istNow();var m=IST.h*60+IST.m;if(m===nowM&&$('#tlO'))retur
 setInterval(tlTick,30000);document.addEventListener('visibilitychange',function(){if(!document.hidden)tlTick()});
 
 /* ---------------- Markets → Invest: mutual funds (from mf.springpad.in) and IPOs ---------------- */
-var invSeg='mf',MFU='https://mf.springpad.in/',MFS='https://mfview.springpad.in/signup';
+L.risk='https://dev.alphapad.in/risk-calculator';var invSeg='mf',MFU='https://mf.springpad.in/',MFS='https://mfview.springpad.in/signup';
 /* top Flexi Cap funds as listed on mf.springpad.in (Regular plan, Growth), 19 Nov 2026 */
 var MFT={cat:'Equity: Flexi Cap',asof:'19 Nov 2026',funds:[
   {n:'ITI Flexi Cap Fund',l:'17 Feb 2023',aum:1619.63,r:[12.75,16.91,null]},
@@ -1726,17 +1806,24 @@ function sipOut(m,y,r){var fv=sipFV(m,y,r),inv=m*y*12,g=fv-inv;
     '<div class="sipbar" aria-hidden="true"><i style="width:'+(inv/fv*100).toFixed(1)+'%"></i><em style="width:'+(g/fv*100).toFixed(1)+'%"></em></div><div class="sipk"><span><i></i>Invested</span><span><i class="g"></i>Gain</span></div>'}
 function rng(name,lab,min,max,step,val,fmt){return '<label class="rg"><span><b>'+lab+'</b><em data-rv="'+name+'">'+fmt(val)+'</em></span><input type="range" name="'+name+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'"></label>'}
 var FM={m:function(v){return '₹'+(+v).toLocaleString('en-IN')},y:function(v){return v+' yrs'},r:function(v){return v+'%'},t:function(v){return rupL(+v)}};
+var MFAB={'ITI Flexi Cap Fund':['ITI','i'],'Taurus Flexi Cap Fund':['TA','a'],'Bank of India Flexi Cap Fund':['BOI','b'],'360 ONE FlexiCap Fund':['360','t']};
+function fundCard(f,tag,href){var ab=MFAB[f.n]||[f.n.slice(0,2).toUpperCase(),'i'],r=function(v){return v==null||v===0?'<b class="na">–</b>':'<b class="'+(v>=0?'u':'d')+'">'+v.toFixed(2)+'%</b>'};
+  return '<'+tag+' class="fc"'+(href?' href="'+href+'"'+(/^http/.test(href)?' target="_blank" rel="noopener"':''):'')+'>'+
+    '<span class="fch"><span class="fca '+ab[1]+'">'+ab[0]+'</span><span class="fcn"><b>'+esc(f.n)+'</b><small>Regular · Growth</small></span></span>'+
+    '<span class="fcc">'+esc(MFT.cat)+'</span>'+
+    '<span class="fcm"><span><small>Launched</small><b>'+f.l+'</b></span><span><small>AUM</small><b>₹'+num(f.aum,0)+' Cr</b></span></span>'+
+    '<span class="fcr"><span><small>1Y</small>'+r(f.r[0])+'</span><span><small>3Y</small>'+r(f.r[1])+'</span><span><small>5Y</small>'+r(f.r[2])+'</span></span></'+tag+'>'}
 function mfHTML(){var F=MFT.funds,mx=Math.max.apply(null,F.map(function(f){return f.r[1]||0}));
   var cmp=[['Bank',3],['Fixed deposit',6],['Gold',9],['Sensex',11],['Mutual fund',15]].map(function(x){return [x[0],x[1],sipFV(5000,25,x[1])]}),cmx=cmp[cmp.length-1][2];
   return '<div class="mfgo"><a class="mfcta" href="'+MFS+'" target="_blank" rel="noopener"><span><b>Start a SIP with SpringPad</b><small>AMFI-registered · ARN-256518</small></span><span class="btn p s">Sign up</span></a></div>'+
+    '<div class="h2" id="mftop"><h2>Top performing funds</h2></div><div class="fcsel"><span class="fcc">'+esc(MFT.cat)+'</span><a class="l" href="'+MFU+'" target="_blank" rel="noopener">70+ categories ↗</a></div>'+
+    '<div class="fcl">'+F.map(function(f){return fundCard(f,'a',MFU)}).join('')+'</div>'+
     '<div class="h2" id="mfgoal"><h2>Plan a goal</h2><span class="sp"></span><small>tap one</small></div>'+
     '<div class="mfgl">'+GOALS.map(function(g,i){return '<button type="button" class="mfg" data-goal="'+i+'"><span aria-hidden="true">'+g[1]+'</span><b>'+g[2]+'</b></button>'}).join('')+'</div>'+
     '<div class="h2"><h2>SIP calculator</h2></div><div class="card sipc" id="sipc">'+rng('m','Monthly SIP',500,100000,500,5000,FM.m)+rng('y','For',1,40,1,10,FM.y)+rng('r','Expected return',4,20,0.5,12,FM.r)+'<div class="sipo">'+sipOut(5000,10,12)+'</div></div>'+
-    '<div class="h2"><h2>₹5,000 a month for 25 years</h2></div><div class="card mfcmp">'+cmp.map(function(c){return '<div class="mfcr'+(c[0]==='Mutual fund'?' hi':'')+'"><span>'+c[0]+'<small>@'+c[1]+'%</small></span><i><em style="width:'+(c[2]/cmx*100).toFixed(1)+'%"></em></i><b>'+rupL(c[2])+'</b></div>'}).join('')+
+    '<div class="h2"><h2>₹5,000 a month for 25 years</h2><span class="sp"></span><small>where it grows to</small></div><div class="card mfcmp">'+cmp.map(function(c){return '<div class="mfcr'+(c[0]==='Mutual fund'?' hi':'')+'"><span>'+c[0]+'<small>@'+c[1]+'%</small></span><i><em style="width:'+(c[2]/cmx*100).toFixed(1)+'%"></em></i><b>'+rupL(c[2])+'</b></div>'}).join('')+
       '<p class="muted mfn">Same illustrative rates as mf.springpad.in. Not a promise of returns.</p></div>'+
-    '<div class="h2" id="mftop"><h2>Top funds · Flexi Cap</h2><span class="sp"></span><small>Regular · Growth</small></div><div class="card" style="padding:0 14px"><div class="list mft">'+F.map(function(f){var r3=f.r[1];
-      return '<a class="row" href="'+MFU+'" target="_blank" rel="noopener"><span class="tx"><b>'+esc(f.n)+'</b><small>Since '+f.l+'</small><small>AUM ₹'+num(f.aum,0)+' Cr</small><span class="mfb"><i style="width:'+(r3/mx*100).toFixed(0)+'%"></i></span></span><span class="mfr"><b class="u">'+r3.toFixed(2)+'%</b><small>3Y a year</small><small>1Y '+f.r[0].toFixed(1)+'% · 5Y '+(f.r[2]?f.r[2].toFixed(1)+'%':'–')+'</small></span></a>'}).join('')+'</div></div>'+
-    '<a class="trl" href="'+MFU+'" target="_blank" rel="noopener"><span>70+ categories, fund comparison, portfolio overlap and more calculators</span><span>mf.springpad.in ↗</span></a>'+
+    '<a class="trl" href="'+MFU+'" target="_blank" rel="noopener"><span>Fund comparison, portfolio overlap and more calculators</span><span>mf.springpad.in ↗</span></a>'+
     '<div class="h2"><h2>Mutual fund news</h2></div><div class="card" style="padding:0 14px"><div class="list mfnw">'+MFNEWS.map(function(n){return '<a class="row" href="'+MFU+'" target="_blank" rel="noopener"><span class="tm">'+n[0]+'</span><span class="tx"><b>'+esc(n[1])+'</b></span><span class="go" aria-hidden="true">'+I(ICO.ext)+'</span></a>'}).join('')+'</div></div>'+
     '<p class="note">Returns as listed on mf.springpad.in on '+MFT.asof+'; past returns do not promise future returns. Mutual fund investments are subject to market risks, read all scheme-related documents carefully. SpringPad is an AMFI-registered mutual fund distributor (ARN-256518) and earns commission on distribution; this is not investment advice.</p>'}
 function goalSheet(i){var g=GOALS[i],T=g[3],Y=g[4],R=12;
@@ -1745,6 +1832,58 @@ function goalSheet(i){var g=GOALS[i],T=g[3],Y=g[4],R=12;
     '<a class="btn p full" style="margin-top:14px" href="'+MFS+'" target="_blank" rel="noopener">Start this SIP on SpringPad ↗</a><p class="note">An estimate only, not a promise of returns. Mutual fund investments are subject to market risks.</p>',
     function(pn){pn.addEventListener('input',function(e){var f=e.target;if(f.type!=='range')return;var c=$('#gsc',pn),v=function(n){return +$('[name='+n+']',c).value};$('[data-rv='+f.name+']',c).textContent=FM[f.name](f.value);$('#gso',pn).innerHTML=out(v('t'),v('y'),v('r'))})})}
 document.addEventListener('input',function(e){var f=e.target;if(f.type!=='range'||!f.closest('#sipc'))return;var c=$('#sipc'),v=function(n){return +$('[name='+n+']',c).value};$('[data-rv='+f.name+']',c).textContent=FM[f.name](f.value);$('.sipo',c).innerHTML=sipOut(v('m'),v('y'),v('r'))});
+
+/* ---------------- Option chain + strategies (from Option Studio), a full-screen sheet ---------------- */
+var OCH={u:'NIFTY',exp:'23 Nov 2026',spot:25514.30,chg:'+286.35 (+1.14%)',lot:65,asof:'19 Nov 2026',rows:[[24500,1054.00,40.98,19.57,4.20,-58.42,33,228],[24550,985.95,39.94,9.78,4.80,-59.66,1,36],[24600,950.75,44.94,9.41,4.95,-65.26,11,92],[24650,900.60,48.69,9.01,5.05,-71.23,1,53],[24700,855.75,53.57,17.34,5.90,-72.69,8,116],[24750,805.45,54.66,16.49,6.35,-75.99,1,37],[24800,750.65,59.64,8.22,7.10,-78.25,10,130],[24850,706.05,64.01,15.22,7.90,-80.20,2,58],[24900,660.90,69.96,15.52,9.30,-80.98,13,120],[24950,609.45,75.23,14.60,11.10,-81.36,2,58],[25000,563.00,80.30,14.53,13.80,-80.90,53,270],[25050,515.15,84.77,14.10,16.55,-80.98,5,51],[25100,465.30,90.07,13.44,20.40,-80.42,25,142],[25150,425.55,97.98,13.72,24.75,-79.95,12,82],[25200,380.05,104.00,13.41,31.35,-78.42,57,197],[25250,338.95,109.94,13.30,39.00,-77.06,24,92],[25300,298.40,115.92,13.12,48.50,-75.42,87,210],[25350,260.10,121.74,12.94,59.45,-73.59,25,116],[25400,225.00,126.81,12.85,73.60,-71.47,82,143],[25450,192.50,131.51,12.79,90.60,-68.97,36,47],[25500,162.00,135.29,12.70,110.65,-66.28,165,135],[25550,135.85,137.92,12.72,134.35,-63.28,53,16],[25600,111.70,136.90,12.64,160.00,-60.73,102,23],[25650,91.00,136.67,12.57,188.10,-57.77,36,4],[25700,72.35,128.96,12.54,220.80,-55.04,103,10],[25750,57.10,122.61,12.49,255.00,-52.23,32,2],[25800,45.35,114.93,12.56,292.90,-49.57,96,8],[25850,35.00,100.57,12.57,332.75,-46.91,30,1],[25900,26.25,82.29,12.80,377.75,-43.64,79,1],[25950,19.95,64.20,12.72,419.45,-42.71,51,0],[26000,15.20,50.50,12.68,463.10,-39.94,283,26],[26050,11.40,31.79,14.70,527.90,-35.60,35,0],[26100,8.65,14.57,13.39,559.85,-35.77,75,1],[26150,6.80,5.43,16.02,627.95,-32.05,21,0],[26200,5.30,-6.19,14.28,658.00,-32.23,85,0],[26250,3.75,-24.24,17.00,725.90,-27.56,21,0],[26300,3.40,-23.60,17.15,770.00,-27.84,65,1],[26350,2.95,-25.32,24.49,900.00,-10.09,17,0],[26400,2.50,-29.58,15.13,851.40,-23.28,85,0],[26450,1.90,-37.70,35.92,1165.40,0.00,16,0],[26500,1.85,-36.21,17.37,955.00,-24.49,191,4]]};
+var OSTR=[
+  {n:'Bull Call Spread',tag:'Bullish pick',d:'Defined-risk debit spread · Hedged upside',sc:84,legs:[['B','ATM CE'],['S','OTM CE']],mp:'₹11,450',ml:'₹7,300',pr:54,why:['Every short leg is covered by a protective long leg','Auto-rolls expiry when 4 or fewer days are left, to avoid gamma traps']},
+  {n:'Iron Condor',tag:'Range-bound pick',d:'4-leg credit spread · Positive theta decay',sc:88,legs:[['B','OTM PE'],['S','PE'],['S','CE'],['B','OTM CE']],mp:'₹9,200',ml:'₹9,550',pr:66,why:['Collects net credit while the outer wings cap the maximum loss','Earns daily time decay inside the expected ±1 SD zone']},
+  {n:'Bear Put Spread',tag:'Downside hedge',d:'Defined-risk bearish spread · Capped cost',sc:81,legs:[['B','ATM PE'],['S','OTM PE']],mp:'₹13,125',ml:'₹5,625',pr:51,why:['The short OTM put offsets time decay and lowers the breakeven','1 : 2.33 risk-to-reward on a pullback target']}];
+var OTPL=[['NIFTY','+2.5%','Nifty Upside Spread','Defined risk','u'],['NIFTY','Flat','Nifty Range-Bound Decay','Short-premium wings',''],['BANKNIFTY','−2.5%','BankNifty Pullback Hedge','Bearish spread','d'],['RELIANCE','+4%','Reliance Breakout Setup','Rising IV','u']];
+var ochSeg='chain';
+function ochChain(){var R=OCH.rows,mc=Math.max.apply(null,R.map(function(r){return r[6]})),mpo=Math.max.apply(null,R.map(function(r){return r[7]})),sp=OCH.spot,f2=function(v){return v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})},pc=function(v){return '<small class="'+(v>0?'u':v<0?'d':'')+'">'+(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(2)+'%</small>'};
+  var put=false,out='';R.forEach(function(r){if(!put&&r[0]>sp){put=true;out+='<div class="ocs" id="ocSpot"><span>'+OCH.u+' '+f2(sp)+'</span><em>'+OCH.chg+'</em></div>'}
+    out+='<div class="ocr'+(r[0]<sp?' citm':' pitm')+(Math.abs(r[0]-sp)<50?' atm':'')+'"><div class="occ"><span class="ocv"><b>'+f2(r[1])+'</b>'+pc(r[2])+'</span><i class="ocb c" style="width:'+(r[6]/mc*100).toFixed(0)+'%"></i></div>'+
+      '<div class="ock"><b>'+r[0]+'</b><small>IV '+r[3].toFixed(1)+'</small></div><div class="ocp"><i class="ocb p" style="width:'+(r[7]/mpo*100).toFixed(0)+'%"></i><span class="ocv"><b>'+f2(r[4])+'</b>'+pc(r[5])+'</span></div></div>'});
+  return '<div class="och"><span>Call LTP · OI</span><span>Strike</span><span>OI · Put LTP</span></div><div class="ocl">'+out+'</div>'+
+    '<p class="ocn">Shaded rows are in the money. Bars show open interest, longest = most. Snapshot from Option Studio on '+OCH.asof+'.</p>'}
+function ochStrat(){return '<p class="ocn" style="margin-top:4px">Ranked, defined-risk setups. Every short leg is hedged with a long one.</p>'+
+  OSTR.map(function(x){return '<div class="osc"><div class="osh"><span><small>'+x.tag+'</small><b>'+x.n+'</b><em>'+x.d+'</em></span><span class="oss" aria-label="Score '+x.sc+' of 100"><b>'+x.sc+'</b><small>score</small></span></div>'+
+    '<div class="osl">'+x.legs.map(function(l){return '<span class="'+(l[0]==='B'?'b':'s')+'"><i>'+l[0]+'</i>'+l[1]+'</span>'}).join('')+'</div>'+
+    '<div class="osm"><span><small>Max profit</small><b class="u">'+x.mp+'</b></span><span><small>Max loss</small><b>'+x.ml+'</b></span><span><small>Probability</small><b>'+x.pr+'%</b></span></div>'+
+    '<ul class="osw">'+x.why.map(function(w){return '<li>'+w+'</li>'}).join('')+'</ul></div>'}).join('')+
+  '<div class="h2"><h2>One-tap templates</h2><span class="sp"></span><small>live scan in Option Studio</small></div><div class="otp">'+OTPL.map(function(t){return '<a class="otc" href="'+L.studio+'" target="_blank" rel="noopener"><span><small>'+t[0]+'</small><em class="'+t[4]+'">'+t[1]+'</em></span><b>'+t[2]+'</b><small>'+t[3]+'</small></a>'}).join('')+'</div>'+
+  '<p class="ocn">Figures are samples from Option Studio, model estimates using Black-Scholes assumptions; real results and broker margins will differ. Research by Springpad Wealth Solutions, a SEBI-registered Research Analyst. Not investment advice.</p>'}
+function ochBody(){$('#ochSeg').innerHTML=[['chain','Option chain'],['strat','Strategies']].map(function(b){return '<button type="button" data-och="'+b[0]+'" aria-pressed="'+(ochSeg===b[0])+'">'+b[1]+'</button>'}).join('');
+  var m=$('#ochM');m.innerHTML=ochSeg==='chain'?ochChain():ochStrat();m.scrollTop=0;if(ochSeg==='chain')requestAnimationFrame(function(){var s=$('#ocSpot');if(s)m.scrollTop=s.offsetTop-m.clientHeight/2})}
+function openChain(seg){ochSeg=seg||'chain';var o=$('#och');o.hidden=false;ochBody();document.body.style.overflow='hidden';requestAnimationFrame(function(){o.classList.add('on')});setTimeout(function(){var b=$('#och [data-ochx]');if(b)b.focus()},320)}
+function closeChain(){var o=$('#och');if(o.hidden)return;o.classList.remove('on');document.body.style.overflow='';setTimeout(function(){o.hidden=true},300)}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeChain();closeFS()}});
+
+/* ---------------- full-screen sheet (shared) + Risk Studio: size a trade from what you are willing to lose ---------------- */
+function openFS(title,sub,body,foot,after){var o=$('#fs'),old=$('#fsM');old.parentNode.replaceChild(old.cloneNode(false),old);$('#fsT').innerHTML='<b>'+title+'</b><small>'+sub+'</small>';$('#fsM').innerHTML=body;$('#fsM').scrollTop=0;
+  var f=$('#fsF');if(foot){f.hidden=false;f.href=foot[0];f.textContent=foot[1]}else f.hidden=true;
+  o.hidden=false;document.body.style.overflow='hidden';requestAnimationFrame(function(){o.classList.add('on')});if(after)after($('#fsM'))}
+function closeFS(){var o=$('#fs');if(o.hidden)return;o.classList.remove('on');document.body.style.overflow='';setTimeout(function(){o.hidden=true},300)}
+var RS={cap:100000,risk:1,alloc:25,side:'long',en:1000,sl:950};
+function rsNum(v){return '₹'+Math.round(v).toLocaleString('en-IN')}
+function rsOut(){var r=RS,d=r.side==='long'?r.en-r.sl:r.sl-r.en,ra=r.cap*r.risk/100,ok=r.en>0&&r.sl>0&&d>0;
+  if(!ok)return '<div class="rso bad">'+(r.en>0&&r.sl>0?'For a '+(r.side==='long'?'long':'short')+' trade the stop-loss must be '+(r.side==='long'?'below':'above')+' the entry.':'Enter an entry price and a stop-loss to size the trade.')+'</div>';
+  var qr=Math.floor(ra/d),qa=Math.floor(r.cap*r.alloc/100/r.en),q=Math.max(0,Math.min(qr,qa)),cap=q*r.en,loss=q*d,capped=qa<qr,sg=r.side==='long'?1:-1;
+  return '<div class="rso"><div class="rsq"><small>Quantity to '+(r.side==='long'?'buy':'sell')+'</small><b>'+q.toLocaleString('en-IN')+'</b><em>'+(capped?'Capped by your '+r.alloc+'% max allocation':'Set by your '+r.risk+'% risk per trade')+'</em></div>'+
+    '<div class="rsg"><span><small>Capital deployed</small><b>'+rsNum(cap)+'</b><em>'+(cap/r.cap*100).toFixed(1)+'% of capital</em></span><span><small>Max loss at stop</small><b class="d">'+rsNum(loss)+'</b><em>'+(loss/r.cap*100).toFixed(2)+'% of capital</em></span></div>'+
+    '<div class="rsd"><span>Stop distance</span><b>₹'+d.toFixed(2)+' · '+(d/r.en*100).toFixed(2)+'%</b></div>'+
+    '<div class="rst">'+[1,2,3].map(function(k){var t=r.en+sg*d*k;return '<span><small>'+k+'R target</small><b>₹'+t.toFixed(2)+'</b><em class="u">+'+rsNum(q*d*k)+'</em></span>'}).join('')+'</div></div>'}
+function rsForm(){var r=RS,num=function(n,l,v,st,suf){return '<label class="rsf"><span>'+l+'</span><span class="rsi">'+(suf==='₹'?'<i>₹</i>':'')+'<input type="number" inputmode="decimal" name="'+n+'" value="'+v+'" step="'+st+'" min="0">'+(suf==='%'?'<i>%</i>':'')+'</span></label>'};
+  return '<div class="rsc"><div class="rsh"><b>1 · Your account</b></div>'+num('cap','Trading capital',r.cap,1000,'₹')+
+    '<div class="rsh"><b>2 · Risk</b><span class="rsq2">'+[0.5,1,1.5,2].map(function(v){return '<button type="button" data-rsr="'+v+'" aria-pressed="'+(r.risk===v)+'">'+v+'%</button>'}).join('')+'</span></div>'+
+    '<div class="rs2">'+num('risk','Risk per trade',r.risk,0.1,'%')+num('alloc','Max allocation',r.alloc,1,'%')+'</div>'+
+    '<div class="rsh"><b>3 · Trade</b><span class="seg rsside">'+[['long','Long'],['short','Short']].map(function(b){return '<button type="button" data-rss="'+b[0]+'" aria-pressed="'+(r.side===b[0])+'">'+b[1]+'</button>'}).join('')+'</span></div>'+
+    '<div class="rs2">'+num('en','Entry price',r.en,0.05,'₹')+num('sl','Stop-loss',r.sl,0.05,'₹')+'</div></div><div id="rsOut">'+rsOut()+'</div>'+
+    '<p class="ocn">Quantity = (capital × risk %) ÷ stop distance, capped so the position stays within your max allocation. Brokerage, STT and charges are not included. A sizing aid, not investment advice.</p>'}
+function openRisk(){openFS('Risk Studio','Size every trade from what you are willing to lose',rsForm(),[L.risk,'Full Risk Studio on AlphaPad ↗'],function(m){
+  m.addEventListener('input',function(e){var f=e.target;if(!f.name||!(f.name in RS))return;RS[f.name]=parseFloat(f.value)||0;if(f.name==='risk')$$('[data-rsr]',m).forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.rsr===RS.risk))});$('#rsOut',m).innerHTML=rsOut()});
+  m.addEventListener('click',function(e){var b=e.target.closest('[data-rsr],[data-rss]');if(!b)return;if(b.dataset.rsr){RS.risk=+b.dataset.rsr;$('[name=risk]',m).value=RS.risk;$$('[data-rsr]',m).forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}else{RS.side=b.dataset.rss;$$('[data-rss]',m).forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}$('#rsOut',m).innerHTML=rsOut()})})}
 /* ---------------- MARKETS ---------------- */
 var flSeg=0,ixSel='Nifty 50',mvSeg='stocks',scSeg='sc-vol',calType='all';
 function ixChart(x){var W=340,H=150,P=6,v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,pad=r*.08,lo2=lo-pad,hi2=hi+pad;
@@ -1772,7 +1911,7 @@ function rMarkets(){setTimeout(flFade,0);var s=$('#s-markets'),x=IDX.filter(func
       '<div class="ixc" id="ixc">'+ixChart(x)+'</div>'+ixDates(x)+(function(){var v=x.d.map(function(q){return q[1]}),hi=Math.max.apply(null,v),lo=Math.min.apply(null,v);return '<div class="ixs"><div><small>Month high</small><b>'+num(hi,2)+'</b></div><div><small>Month low</small><b>'+num(lo,2)+'</b></div><div><small>From low</small><b class="u">+'+((last/lo-1)*100).toFixed(1)+'%</b></div></div>'})()+ixList()+'</section>'+
     '<section class="sec" id="fo"><div class="h2"><h2>F&amp;O levels · Nifty</h2>'+infoBtn('fo')+'<span class="sp"></span><small>'+esc(D.fo.exp)+'</small></div>'+
       '<div class="fo3">'+D.fo.k.map(function(k,i){return '<div class="'+['s','m','r'][i]+'"><span>'+esc(k[0])+'</span><b>'+esc(k[1])+'</b><small>'+esc(k[2])+'</small></div>'}).join('')+'</div>'+
-      '<div class="foch">'+D.fo.svg+'</div><a class="btn g full" style="margin-top:14px" href="'+L.studio+'">Open Option Studio '+I(ICO.ext)+'</a></section>'+
+      '<div class="foch">'+D.fo.svg+'</div><div class="foa"><button type="button" class="btn p" data-act="chain">Option chain</button><button type="button" class="btn g" data-act="chain" data-seg="strat">Strategies</button></div></section>'+
     '<section class="sec" id="movers"><div class="h2"><h2>Movers</h2>'+(mvSeg==='oi'?infoBtn('oib'):'')+'</div><div class="seg" role="group" aria-label="Movers view">'+[['stocks','Nifty 100'],['sectors','Sectors'],['oi','OI buildup']].map(function(b){return '<button type="button" data-mv="'+b[0]+'" aria-pressed="'+(mvSeg===b[0])+'">'+b[1]+'</button>'}).join('')+'</div><div style="margin-top:14px">'+movers()+'</div></section>'+
     '<section class="sec" id="scan"><div class="h2"><h2>Market scan</h2><span class="sp"></span><small>Nifty 500 · 11 Nov</small></div><div class="seg scseg" role="group" aria-label="Scan">'+Object.keys(SCN).map(function(k){return '<button type="button" data-sc="'+k+'" aria-pressed="'+(scSeg===k)+'">'+SCN[k]+'</button>'}).join('')+'</div>'+
       '<p class="mvcap">'+({'sc-vol':'Traded volume compared with each stock’s 20-day average','sc-del':'Share of traded shares taken for delivery, and the jump over usual','sc-hi':((/(\d+) stocks/.exec(scan.h)||[])[1]||'')+' stocks closed at a 20-day high','sc-lo':((/(\d+) stocks/.exec(scan.h)||[])[1]||'')+' stocks closed at a 20-day low'})[scSeg]+'</p>'+
@@ -1843,7 +1982,7 @@ function rIdeas(){var s=$('#s-ideas'),S=D.sotd;
       '<ul class="why">'+sotdWhy().map(function(w){return '<li>'+w+'</li>'}).join('')+'<li class="r">Check the stop before you act: the day’s high was ₹'+num(S.day_hi,0)+'. Analysis, not advice.</li></ul>'+
       '<div style="display:flex;gap:10px;margin-top:16px"><a class="btn p s" href="'+L.screener+'">Screen similar</a><button type="button" class="btn g s" data-act="others">Also near highs</button></div></div></section>'+
     '<section class="sec" id="calls"><div class="h2"><h2>Trade calls</h2>'+infoBtn('calls')+'<span class="sp"></span><small id="tcC">1 of '+CALLS.length+'</small></div>'+
-      profitHTML()+'<div class="tcw"><div class="tc-tr" id="tcTr">'+CALLS.map(locked()?lockedCard:callCard).join('')+'</div></div><a class="trl" href="#ideas/record" data-act="record"><span><b>'+CLW+' of '+CL.length+'</b> recent calls hit target</span><span>See the track record \u203A</span></a><p class="note">Research advice from the AlphaPad desk. Prices are indicative.</p></section>'+
+      profitHTML()+'<div class="tcw"><div class="tc-tr" id="tcTr">'+CALLS.map(locked()?lockedCard:callCard).join('')+'</div></div><a class="trl" href="#ideas/record" data-act="record"><span><b>'+CLW+' of '+CL.length+'</b> recent calls hit target</span><span>See the track record \u203A</span></a><button type="button" class="trl rsl" data-act="risk"><span><b>Size a call</b> before you take it</span><span>Risk Studio \u203A</span></button><p class="note">Research advice from the AlphaPad desk. Prices are indicative.</p></section>'+
     '<section class="sec" id="baskets">'+(function(){var B=D.baskets.slice().sort(function(x,y){return (parseFloat(y.r)||0)-(parseFloat(x.r)||0)}),mx=Math.max.apply(null,B.map(function(b){return Math.abs(parseFloat(b.r))||0}).concat([1])),
         RK={low:[1,'Low risk','t'],medium:[2,'Medium risk','a'],high:[3,'High risk','w']};
       return '<p class="bk-in">Ready-made stock baskets from the AlphaPad desk, ranked by 1-year return.</p>'+
@@ -2011,6 +2150,8 @@ function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lr
     '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>Your screen: '+presetName()+' · <button type="button" class="l" style="color:var(--link);font-weight:600" data-act="setup">Change</button></small></div></div>'+
     '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
     '<div class="h2" id="tools"><h2>Tools</h2></div><div class="card" style="padding:0 16px"><div class="list">'+
+      '<button type="button" class="row" data-act="risk"><span class="ic t">'+I('<path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>')+'</span><span class="tx"><b>Risk Studio</b><small>How many shares to buy for your risk</small></span><span class="go" aria-hidden="true">›</span></button>'+
+      '<button type="button" class="row" data-act="chain"><span class="ic a">'+I(ICO.studio)+'</span><span class="tx"><b>Option chain</b><small>Nifty chain and ranked strategies</small></span><span class="go" aria-hidden="true">›</span></button>'+
       [[L.bt,ICO.bt,'i','Backtesting','Replay past days, candle by candle',1],[L.screener,ICO.scan,'a','Screener','Scan Nifty 500 stocks',0],[L.studio,ICO.studio,'b','Option Studio','Option chain and strategies',0],[L.baskets,ICO.bk,'t','Baskets','Build and track baskets',0],[L.lms,ICO.lms,'i','LMS','Courses and lessons',0],[L.brief,ICO.brief,'b','Full brief','Read today’s brief on the web',0]]
       .map(function(r){return '<a class="row" href="'+r[0]+'"'+(r[5]?' target="_blank" rel="noopener"':'')+'><span class="ic '+r[2]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[3]+'</b><small>'+r[4]+'</small></span><span class="go" aria-hidden="true">'+(r[5]?I(ICO.ext):'›')+'</span></a>'}).join('')+'</div></div>'+
     '<div class="h2" id="settings"><h2>Settings</h2></div><div class="card"><div class="fld" style="margin:0"><span>Theme</span><div class="seg" role="group" aria-label="Theme">'+[['dark','Dark'],['light','Light']].map(function(t){return '<button type="button" data-theme-set="'+t[0]+'" aria-pressed="'+(th===t[0])+'">'+t[1]+'</button>'}).join('')+'</div></div>'+
@@ -2140,7 +2281,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
     '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';}
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#rewards" data-close>Free days, badges and season</a>')}
-document.addEventListener('click',function(e){var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-jt],[data-inv],[data-goal],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
+document.addEventListener('click',function(e){if(e.target.closest('[data-ochx]')){closeChain();return}if(e.target.closest('[data-fsx]')){closeFS();return}var och=e.target.closest('[data-och]');if(och){ochSeg=och.dataset.och;ochBody();return}var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-jt],[data-inv],[data-goal],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
   if(ds.call!=null)setTimeout(function(){var tr=$('#tcTr');if(tr&&tr.children[+ds.call])tr.scrollTo({left:tr.children[+ds.call].offsetLeft-tr.firstChild.offsetLeft,behavior:'smooth'})},450);
   if(ds.subGo){var spot=a.getAttribute('data-spot');if(spot!=null)setTimeout(function(){var el=document.getElementById('spot-'+spot);if(el){var y=el.getBoundingClientRect().top+scrollY-150;window.scrollTo({top:y,behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1200)}},60);var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.tile){closeSheet();return tileSheet(ds.tile)}
@@ -2152,6 +2293,8 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='streak')return;
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
+  if(ds.act==='chain')return openChain(ds.seg);
+  if(ds.act==='risk')return openRisk();
   if(ds.act==='jrev')return jRevSheet();
   if(ds.act==='record'){e.preventDefault();return recSheet()}
   if(ds.act==='iporec'){e.preventDefault();return ipoRecSheet()}
