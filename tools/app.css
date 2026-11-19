@@ -1239,3 +1239,20 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .mfd{margin-top:12px}
 /* deep links land below the sticky top bar and tabs */
 .scr [id]{scroll-margin-top:118px}
+
+/* Markets → Indices */
+.ixt{display:flex;align-items:baseline;gap:10px;margin-top:14px}.ixt h2{flex:1;margin:0;font:700 20px/1.2 var(--font-sans)}.ixt .l{font:600 13px/1 var(--font-sans);color:var(--link)}
+.ixh{margin-top:6px}
+.ixc{height:180px;margin:14px 46px 0 0}
+.ixc .gl{stroke:var(--border-decorative);stroke-dasharray:3 4}
+.ixy{position:absolute;right:-46px;width:42px;transform:translateY(-50%);text-align:right;font:500 10.5px/1 var(--font-sans);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.ixdot{position:absolute;right:-5px;width:10px;height:10px;border-radius:50%;transform:translateY(-50%);box-shadow:0 0 0 4px rgba(0,201,154,.18)}
+.ixx{display:flex;justify-content:space-between;margin:6px 46px 0 0;font:500 11px/1 var(--font-sans);color:var(--text-tertiary)}
+.ixs{margin-top:14px}
+.ixlh{margin-top:20px}
+.ixall .row{width:100%;gap:12px;text-align:left;color:var(--text-primary)}.ixall .row:last-child{border-bottom:0}
+.ixall .row.on{background:linear-gradient(90deg,rgba(63,91,217,.14),rgba(63,91,217,0));margin:0 -14px;padding-left:14px;padding-right:14px;width:calc(100% + 28px)}
+.ixall .row.on b{color:#9DB0FF}
+.ixsp{width:74px;height:28px;flex:none}.ixsp svg{width:100%;height:100%}
+.ixall .vl{min-width:62px;text-align:right;font-weight:700}.ixall .vl.w{color:var(--warn-text)}
+.ixc .cur[hidden]{display:none}

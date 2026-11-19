@@ -1249,6 +1249,23 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .mfd{margin-top:12px}
 /* deep links land below the sticky top bar and tabs */
 .scr [id]{scroll-margin-top:118px}
+
+/* Markets → Indices */
+.ixt{display:flex;align-items:baseline;gap:10px;margin-top:14px}.ixt h2{flex:1;margin:0;font:700 20px/1.2 var(--font-sans)}.ixt .l{font:600 13px/1 var(--font-sans);color:var(--link)}
+.ixh{margin-top:6px}
+.ixc{height:180px;margin:14px 46px 0 0}
+.ixc .gl{stroke:var(--border-decorative);stroke-dasharray:3 4}
+.ixy{position:absolute;right:-46px;width:42px;transform:translateY(-50%);text-align:right;font:500 10.5px/1 var(--font-sans);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.ixdot{position:absolute;right:-5px;width:10px;height:10px;border-radius:50%;transform:translateY(-50%);box-shadow:0 0 0 4px rgba(0,201,154,.18)}
+.ixx{display:flex;justify-content:space-between;margin:6px 46px 0 0;font:500 11px/1 var(--font-sans);color:var(--text-tertiary)}
+.ixs{margin-top:14px}
+.ixlh{margin-top:20px}
+.ixall .row{width:100%;gap:12px;text-align:left;color:var(--text-primary)}.ixall .row:last-child{border-bottom:0}
+.ixall .row.on{background:linear-gradient(90deg,rgba(63,91,217,.14),rgba(63,91,217,0));margin:0 -14px;padding-left:14px;padding-right:14px;width:calc(100% + 28px)}
+.ixall .row.on b{color:#9DB0FF}
+.ixsp{width:74px;height:28px;flex:none}.ixsp svg{width:100%;height:100%}
+.ixall .vl{min-width:62px;text-align:right;font-weight:700}.ixall .vl.w{color:var(--warn-text)}
+.ixc .cur[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -1707,12 +1724,19 @@ function goalSheet(i){var g=GOALS[i],T=g[3],Y=g[4],R=12;
 document.addEventListener('input',function(e){var f=e.target;if(f.type!=='range'||!f.closest('#sipc'))return;var c=$('#sipc'),v=function(n){return +$('[name='+n+']',c).value};$('[data-rv='+f.name+']',c).textContent=FM[f.name](f.value);$('.sipo',c).innerHTML=sipOut(v('m'),v('y'),v('r'))});
 /* ---------------- MARKETS ---------------- */
 var flSeg=0,ixSel='Nifty 50',mvSeg='stocks',scSeg='sc-vol',calType='all';
-function ixChart(x){var W=340,H=150,P=6,v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1;
-  var X=function(i){return P+i*(W-2*P)/(v.length-1)},Y=function(y){return P+(hi-y)/r*(H-2*P-14)};
-  var pts=v.map(function(y,i){return X(i).toFixed(1)+','+Y(y).toFixed(1)}).join(' ');
-  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="'+esc(x.n)+' daily closes, '+x.d[0][0]+' to '+x.d[x.d.length-1][0]+'"><line class="gl" x1="0" x2="'+W+'" y1="'+Y(hi).toFixed(1)+'" y2="'+Y(hi).toFixed(1)+'"/><line class="gl" x1="0" x2="'+W+'" y1="'+Y(lo).toFixed(1)+'" y2="'+Y(lo).toFixed(1)+'"/>'+
-    '<polyline class="ln'+(x.n==='India VIX'?' w':'')+'" points="'+pts+'" vector-effect="non-scaling-stroke"/><line class="cur" id="ixCur" x1="0" x2="0" y1="0" y2="'+(H-14)+'" hidden/>'+
-    '<text x="0" y="'+H+'">'+x.d[0][0]+'</text><text x="'+W+'" y="'+H+'" text-anchor="end">'+x.d[x.d.length-1][0]+'</text></svg><span class="tip" id="ixTip" hidden></span>'}
+function ixChart(x){var W=340,H=150,P=6,v=x.d.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,pad=r*.08,lo2=lo-pad,hi2=hi+pad;
+  var X=function(i){return P+i*(W-2*P)/(v.length-1)},Y=function(y){return (hi2-y)/(hi2-lo2)*H};
+  var pts=v.map(function(y,i){return X(i).toFixed(1)+','+Y(y).toFixed(1)}).join(' '),c=x.vix?'var(--amber)':x.up?'var(--teal)':'var(--slate-500)',lv=[hi,(hi+lo)/2,lo],last=v[v.length-1],mid=x.d[Math.floor((x.d.length-1)/2)][0];
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="'+esc(x.n)+' daily closes, '+x.d[0][0]+' to '+x.d[x.d.length-1][0]+'"><defs><linearGradient id="ixg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="'+c+'" stop-opacity=".28"/><stop offset="1" stop-color="'+c+'" stop-opacity="0"/></linearGradient></defs>'+
+    lv.map(function(l){return '<line class="gl" x1="0" x2="'+W+'" y1="'+Y(l).toFixed(1)+'" y2="'+Y(l).toFixed(1)+'" vector-effect="non-scaling-stroke"/>'}).join('')+
+    '<polygon points="'+X(0).toFixed(1)+','+H+' '+pts+' '+X(v.length-1).toFixed(1)+','+H+'" fill="url(#ixg)"/>'+
+    '<polyline class="ln" style="stroke:'+c+'" points="'+pts+'" vector-effect="non-scaling-stroke"/><line class="cur" id="ixCur" x1="0" x2="0" y1="0" y2="'+H+'" hidden vector-effect="non-scaling-stroke"/></svg>'+
+    lv.map(function(l){return '<span class="ixy" style="top:'+(Y(l)/H*100).toFixed(1)+'%">'+num(l,0)+'</span>'}).join('')+
+    '<span class="ixdot" style="top:'+(Y(last)/H*100).toFixed(1)+'%;background:'+c+'"></span>'+
+    '<span class="tip" id="ixTip" hidden></span>'}
+function ixDates(x){var d=x.d;return '<div class="ixx"><span>'+d[0][0]+'</span><span>'+d[Math.floor((d.length-1)/2)][0]+'</span><span>'+d[d.length-1][0]+'</span></div>'}
+function ixList(){return '<div class="h2 ixlh"><h2>All indices</h2><span class="sp"></span><small>tap one to chart it</small></div><div class="card ixall" style="padding:0 14px"><div class="list">'+
+  IDX.map(function(i){var v=i.d[i.d.length-1][1],on=i.n===ixSel;return '<button type="button" class="row'+(on?' on':'')+'" data-ix="'+esc(i.n)+'"'+(on?' aria-current="true"':'')+'><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="ixsp">'+ovSpark(i)+'</span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span></button>'}).join('')+'</div></div>'}
 function rMarkets(){setTimeout(flFade,0);var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0],last=x.d[x.d.length-1][1],m=(last/x.d[0][1]-1)*100;
   var NAV=[['indices','Indices'],['fo','F&O levels'],['movers','Movers'],['scan','Scan'],['ipos','IPOs'],['filings','Filings'],['cal','Calendar']];
   var scan=SC(scSeg),SCN={'sc-vol':'Volume','sc-del':'Delivery','sc-hi':'20D highs','sc-lo':'20D lows'};
@@ -1720,9 +1744,9 @@ function rMarkets(){setTimeout(flFade,0);var s=$('#s-markets'),x=IDX.filter(func
   var nm=nowM,nI=DAYS.findIndex(function(e){return toM(e.t)>=nm});
   s.innerHTML=top('Markets',streakChip())+
     '<div class="mk-nav"><div class="chips" role="navigation" aria-label="Sections">'+NAV.map(function(n){return '<button type="button" data-jump="'+n[0]+'">'+n[1]+'</button>'}).join('')+'</div></div>'+
-    '<section class="sec" id="indices"><button type="button" class="ixpick" data-act="ixpick" aria-haspopup="dialog">'+I(ICO.markets,2)+'<span>'+esc(ixShort(x.n))+'</span><small>'+IDX.length+' indices</small><i aria-hidden="true">⌄</i></button>'+
-      '<div class="ixh"><b>'+num(last,2)+'</b><em class="'+(x.n==='India VIX'?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pts+' ('+x.pct+')</em><small>'+esc(x.n)+' · '+(m>=0?'+':'−')+Math.abs(m).toFixed(1)+'% in a month · 11 Nov close</small></div>'+
-      '<div class="ixc" id="ixc">'+ixChart(x)+'</div>'+(function(){var v=x.d.map(function(q){return q[1]}),hi=Math.max.apply(null,v),lo=Math.min.apply(null,v);return '<div class="ixs"><div><small>Month high</small><b>'+num(hi,2)+'</b></div><div><small>Month low</small><b>'+num(lo,2)+'</b></div><div><small>From low</small><b class="u">+'+((last/lo-1)*100).toFixed(1)+'%</b></div></div>'})()+'</section>'+
+    '<section class="sec" id="indices"><div class="ixt"><h2>'+esc(ixShort(x.n))+'</h2><button type="button" class="l" data-act="ixpick" aria-haspopup="dialog">Change ⌄</button></div>'+
+      '<div class="ixh"><b>'+num(last,2)+'</b><em class="'+(x.n==='India VIX'?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pts+' ('+x.pct+')</em><small>'+(m>=0?'+':'−')+Math.abs(m).toFixed(1)+'% in a month · 11 Nov close</small></div>'+
+      '<div class="ixc" id="ixc">'+ixChart(x)+'</div>'+ixDates(x)+(function(){var v=x.d.map(function(q){return q[1]}),hi=Math.max.apply(null,v),lo=Math.min.apply(null,v);return '<div class="ixs"><div><small>Month high</small><b>'+num(hi,2)+'</b></div><div><small>Month low</small><b>'+num(lo,2)+'</b></div><div><small>From low</small><b class="u">+'+((last/lo-1)*100).toFixed(1)+'%</b></div></div>'})()+ixList()+'</section>'+
     '<section class="sec" id="fo"><div class="h2"><h2>F&amp;O levels · Nifty</h2>'+infoBtn('fo')+'<span class="sp"></span><small>'+esc(D.fo.exp)+'</small></div>'+
       '<div class="fo3">'+D.fo.k.map(function(k,i){return '<div class="'+['s','m','r'][i]+'"><span>'+esc(k[0])+'</span><b>'+esc(k[1])+'</b><small>'+esc(k[2])+'</small></div>'}).join('')+'</div>'+
       '<div class="foch">'+D.fo.svg+'</div><a class="btn g full" style="margin-top:14px" href="'+L.studio+'">Open Option Studio '+I(ICO.ext)+'</a></section>'+
@@ -2111,7 +2135,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('[data-act]
   if(ds.act==='others'){var o=D.sotd.others;return sheet('Also near 52-week highs','<div class="list">'+o.map(function(x){return '<div class="row"><span class="tx"><b>'+esc(x[0])+'</b><small>'+esc(x[1])+' · '+esc(x[3])+'</small></span><span class="vl u">+'+x[2].toFixed(2)+'%</span></div>'}).join('')+'</div>')}
   if(ds.info){var t=INFO_TXT[ds.info];return info(t[0],t[1],t[2])}
   if(ds.jump){var el=document.getElementById(ds.jump);if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
-  if(ds.ix&&a.tagName==='BUTTON'){ixSel=ds.ix;rMarkets();return}
+  if(ds.ix&&a.tagName==='BUTTON'){ixSel=ds.ix;rMarkets();if(a.closest('.ixall'))window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.ix&&a.tagName==='A'){ixSel=ds.ix;return}
   if(ds.jt){jTF=ds.jt;var y8=scrollY;rJournal();applySub('journal','trades');scrollTo(0,y8);return}
   if(ds.inv){invSeg=ds.inv;var y9=scrollY;rMarkets();applySub('markets','invest');scrollTo(0,y9);return}
