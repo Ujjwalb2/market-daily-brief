@@ -1974,7 +1974,7 @@ var MFT={cat:'Equity: Flexi Cap',asof:'19 Nov 2026',funds:[
   {n:'Bank of India Flexi Cap Fund',l:'5 Jun 2020',aum:3133.66,r:[9.85,16.29,14.68]},
   {n:'360 ONE FlexiCap Fund',l:'4 Jun 2023',aum:2197.45,r:[7.75,15.72,null]}]};
 var MFNEWS=[['18 Nov','Nippon India Mutual Fund launches a new CRISIL-index fund'],['17 Nov','Kotak Mutual Fund SIF launches Infinity Equity Long-Short'],['16 Nov','SBI Mutual Fund launches SBI BSE India Defence ETF']];
-var GOALS=[['edu','🎓','Child education',2500000,12],['wealth','📈','Wealth creation',10000000,20],['marry','💍','Kids marriage',3000000,18],['retire','🏖️','Retirement',20000000,25],['car','🚗','Buying a car',1000000,4],['trip','✈️','Vacation',300000,2],['home','🏠','Property',5000000,10],['other','🎯','Other goal',1000000,5]];
+var MFGOALS=[['edu','🎓','Child education',2500000,12],['wealth','📈','Wealth creation',10000000,20],['marry','💍','Kids marriage',3000000,18],['retire','🏖️','Retirement',20000000,25],['car','🚗','Buying a car',1000000,4],['trip','✈️','Vacation',300000,2],['home','🏠','Property',5000000,10],['other','🎯','Other goal',1000000,5]];
 function rupL(v){v=Math.round(v);return v>=1e7?'₹'+(v/1e7).toFixed(2).replace(/\.?0+$/,'')+' Cr':v>=1e5?'₹'+(v/1e5).toFixed(2).replace(/\.?0+$/,'')+' L':'₹'+v.toLocaleString('en-IN')}
 function sipFV(m,y,r){var i=r/1200,n=y*12;return i?m*((Math.pow(1+i,n)-1)/i)*(1+i):m*n}
 function sipNeed(fv,y,r){var i=r/1200,n=y*12;return i?fv/(((Math.pow(1+i,n)-1)/i)*(1+i)):fv/n}
@@ -1996,14 +1996,14 @@ function mfHTML(){var F=MFT.funds,mx=Math.max.apply(null,F.map(function(f){retur
     '<div class="h2" id="mftop"><h2>Top performing funds</h2></div><div class="fcsel"><span class="fcc">'+esc(MFT.cat)+'</span><a class="l" href="'+MFU+'" target="_blank" rel="noopener">70+ categories ↗</a></div>'+
     '<div class="fcl">'+F.map(function(f){return fundCard(f,'a',MFU)}).join('')+'</div>'+
     '<div class="h2" id="mfgoal"><h2>Plan a goal</h2><span class="sp"></span><small>tap one</small></div>'+
-    '<div class="mfgl">'+GOALS.map(function(g,i){return '<button type="button" class="mfg" data-goal="'+i+'"><span aria-hidden="true">'+g[1]+'</span><b>'+g[2]+'</b></button>'}).join('')+'</div>'+
+    '<div class="mfgl">'+MFGOALS.map(function(g,i){return '<button type="button" class="mfg" data-goal="'+i+'"><span aria-hidden="true">'+g[1]+'</span><b>'+g[2]+'</b></button>'}).join('')+'</div>'+
     '<div class="h2"><h2>SIP calculator</h2></div><div class="card sipc" id="sipc">'+rng('m','Monthly SIP',500,100000,500,5000,FM.m)+rng('y','For',1,40,1,10,FM.y)+rng('r','Expected return',4,20,0.5,12,FM.r)+'<div class="sipo">'+sipOut(5000,10,12)+'</div></div>'+
     '<div class="h2"><h2>₹5,000 a month for 25 years</h2><span class="sp"></span><small>where it grows to</small></div><div class="card mfcmp">'+cmp.map(function(c){return '<div class="mfcr'+(c[0]==='Mutual fund'?' hi':'')+'"><span>'+c[0]+'<small>@'+c[1]+'%</small></span><i><em style="width:'+(c[2]/cmx*100).toFixed(1)+'%"></em></i><b>'+rupL(c[2])+'</b></div>'}).join('')+
       '<p class="muted mfn">Same illustrative rates as mf.springpad.in. Not a promise of returns.</p></div>'+
     '<a class="trl" href="'+MFU+'" target="_blank" rel="noopener"><span>Fund comparison, portfolio overlap and more calculators</span><span>mf.springpad.in ↗</span></a>'+
     '<div class="h2"><h2>Mutual fund news</h2></div><div class="card" style="padding:0 14px"><div class="list mfnw">'+MFNEWS.map(function(n){return '<a class="row" href="'+MFU+'" target="_blank" rel="noopener"><span class="tm">'+n[0]+'</span><span class="tx"><b>'+esc(n[1])+'</b></span><span class="go" aria-hidden="true">'+I(ICO.ext)+'</span></a>'}).join('')+'</div></div>'+
     '<p class="note">Returns as listed on mf.springpad.in on '+MFT.asof+'; past returns do not promise future returns. Mutual fund investments are subject to market risks, read all scheme-related documents carefully. SpringPad is an AMFI-registered mutual fund distributor (ARN-256518) and earns commission on distribution; this is not investment advice.</p>'}
-function goalSheet(i){var g=GOALS[i],T=g[3],Y=g[4],R=12;
+function goalSheet(i){var g=MFGOALS[i],T=g[3],Y=g[4],R=12;
   var out=function(t,y,r){var need=sipNeed(t,y,r);return '<div class="gout"><small>You need a monthly SIP of about</small><b>'+rupL(need)+'</b><small>to reach '+rupL(t)+' in '+y+' years at '+r+'% a year. You put in '+rupL(need*y*12)+'.</small></div>'};
   sheet(g[1]+' '+g[2],'<p class="muted" style="margin-top:0">Move the sliders to set your goal.</p><div class="sipc" id="gsc">'+rng('t','Goal amount',100000,50000000,100000,T,FM.t)+rng('y','In',1,40,1,Y,FM.y)+rng('r','Expected return',4,20,0.5,R,FM.r)+'</div><div id="gso">'+out(T,Y,R)+'</div>'+
     '<a class="btn p full" style="margin-top:14px" href="'+MFS+'" target="_blank" rel="noopener">Start this SIP on SpringPad ↗</a><p class="note">An estimate only, not a promise of returns. Mutual fund investments are subject to market risks.</p>',
@@ -2473,14 +2473,16 @@ function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lr
 
 /* ---------------- rewards: streak freezes, milestones, badges, seasons, free days ----------------
    Sample history before today (prototype). Everything done today is added live on top. */
-var HIST={total:34,longest:23,freezes:1,season:238,weeks:6,week:34,lastWeek:60};
+var HIST={q:26,total:34,longest:23,freezes:1,season:238,weeks:6,week:34,lastWeek:60};
 function reviewsOk(){var rv=store.get('ap-journal-review',{});return Object.keys(rv).map(function(k){return rv[k]}).filter(function(r){return r&&r.status==='ok'})}
 function planKept(){return reviewsOk().filter(function(r){return r.rules&&RULES.every(function(x){return r.rules[x[0]]})}).length}
 function allDone(){return mDone()===goals().length}
 function totalDays(){return HIST.total+(allDone()?1:0)}
+var QTR={name:'Oct–Dec',ends:'31 Dec',restarts:'1 Jan',days:62};
+function qDays(){return HIST.q+(allDone()?1:0)}
 function longest(){return Math.max(HIST.longest,streakNow())}
 function freezes(){return Math.min(2,HIST.freezes+(streakNow()>=7&&D.streak.n<7?1:0))}
-var MILES=[[3,'Getting started','First badge'],[7,'Week regular','+1 streak freeze'],[21,'Habit formed','+2 free days and a group session with the RA'],[50,'Committed','+3 free days and advanced backtest templates'],[100,'Market habit','+5 free days and a 1-on-1 call with a SEBI-registered RA']];
+var MILES=[[10,'Warm-up','Quarter badge'],[20,'Steady','+1 streak freeze'],[35,'Habit formed','+1 free day and a group session with the RA'],[50,'Committed','Advanced backtest templates'],[60,'Every morning','+2 free days and a 1-on-1 call with a SEBI-registered RA']];
 /* id, icon, name, how to earn, progress() -> [have, need], free days it adds */
 var BADGES=[
   ['start','🌱','Getting started','Finish 3 market mornings',function(){return [totalDays(),3]},0],
@@ -2497,8 +2499,8 @@ var BADGES=[
   ['hof','👑','Hall of Fame','Get featured in a Monday shoutout',function(){return [0,1]},0]];
 function bp(b){var p=b[4]();return [Math.min(p[0],p[1]),p[1]]}
 function bGot(b){var p=bp(b);return p[0]>=p[1]}
-function freeLog(){var fw=Math.floor(HIST.weeks/2),l=[];if(fw)l.push(['Full weeks of mornings',fw,HIST.weeks+' full weeks · 1 day per 2 weeks']);if(totalDays()>=21)l.push(['21-day milestone',2,'Habit formed']);
-  if(totalDays()>=50)l.push(['50-day milestone',3,'Committed']);if(totalDays()>=100)l.push(['100-day milestone',5,'Market habit']);
+function freeLog(){var fw=Math.floor(HIST.weeks/2),l=[];if(fw)l.push(['Full weeks of mornings',fw,HIST.weeks+' full weeks · 1 day per 2 weeks']);if(qDays()>=35)l.push(['35 mornings this quarter',1,'Habit formed milestone']);
+  if(qDays()>=60)l.push(['60 mornings this quarter',2,'Every morning milestone']);
   BADGES.forEach(function(b){if(b[5]&&bGot(b))l.push([b[2]+' badge',b[5],'Badge reward'])});return l}
 var FD_MAX=7;
 function freeDays(){return Math.min(FD_MAX,freeLog().reduce(function(a,x){return a+x[1]},0))}
@@ -2525,12 +2527,12 @@ function freeHTML(){var n=freeDays(),stops=[[2,'2 days'],[5,'5 days'],[7,'Week f
         '<li class="fdtot"><span><b>Total this month</b><small>'+(raw>FD_MAX?'You earned '+raw+'; the most per month is '+FD_MAX:'Up to '+FD_MAX+' days (1 week) per month')+'</small></span><em>'+n+' of '+FD_MAX+' days</em></li></ul>'})()+
     '<p class="cap">At most 1 extra week for every month you pay for. Free days can only be used on next month’s subscription: they are added when you renew on 2 Dec and lapse if you don’t renew.</p></div></section>'}
 
-function streakHTML(){var S=D.streak,f=freezes(),t=totalDays(),nm=MILES.filter(function(m){return t<m[0]})[0];
+function streakHTML(){var S=D.streak,f=freezes(),t=qDays(),nm=MILES.filter(function(m){return t<m[0]})[0];
   return '<section class="sec" id="streak"><div class="h2"><h2>Streak</h2><span class="sp"></span><small>Market days only</small></div><div class="card stk"><div class="n"><b>🔥 '+streakNow()+'</b><span>market days in a row<br><span class="muted">Longest '+longest()+' · weekends and holidays never count</span></span></div>'+
     '<div class="wk">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i title="'+({done:'Done',hol:'Market holiday',today:'Today',off:'Weekend','':'Coming up'})[d[1]]+'">'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
     '<div class="frz"><span class="fz">'+[0,1].map(function(i){return '<i class="'+(i<f?'on':'')+'" aria-hidden="true">🧊</i>'}).join('')+'</span><span><b>'+f+' of 2 freezes ready</b><small>A missed day uses one. Earn one every 7 days. Missed and no freeze? Do both mornings within 24 hours to repair it.</small></span></div></div>'+
-    '<div class="h2 sm"><h3>Milestones</h3><span class="sp"></span><small>'+t+' mornings done</small></div><ol class="ladder card">'+MILES.map(function(m){var g=t>=m[0],cur=m===nm;return '<li class="'+(g?'got':'')+(cur?' cur':'')+'"><i aria-hidden="true">'+(g?'✓':m[0])+'</i><span><b>'+m[0]+' days · '+m[1]+'</b><small>'+m[2]+'</small>'+(cur?'<span class="lbar"><em style="width:'+(t/m[0]*100).toFixed(0)+'%"></em></span><small class="muted">'+(m[0]-t)+' to go</small>':'')+'</span></li>'}).join('')+'</ol>'+
-    '<p class="cap">Milestones count every morning you finish, so a broken streak never takes them away.</p></section>'}
+    '<div class="h2 sm"><h3>Milestones · '+QTR.name+'</h3><span class="sp"></span><small>'+t+' of ~'+QTR.days+' mornings</small></div><ol class="ladder card">'+MILES.map(function(m){var g=t>=m[0],cur=m===nm;return '<li class="'+(g?'got':'')+(cur?' cur':'')+'"><i aria-hidden="true">'+(g?'✓':m[0])+'</i><span><b>'+m[0]+' mornings · '+m[1]+'</b><small>'+m[2]+'</small>'+(cur?'<span class="lbar"><em style="width:'+(t/m[0]*100).toFixed(0)+'%"></em></span><small class="muted">'+(m[0]-t)+' to go</small>':'')+'</span></li>'}).join('')+'</ol>'+
+    '<p class="cap">Milestones count every morning you finish this quarter, so a broken streak never takes them away. They restart on '+QTR.restarts+'; badges and free days you earned stay.</p></section>'}
 
 function seasonHTML(){var v=seasonScore(),ti=tierOf(v),nx=ti>0?TIERS[ti-1]:null,live=seasonLive(),gold=BOARD.filter(function(x){return x[1]>=300});
   if(v>=300)gold=gold.concat([['You',v]]).sort(function(a,b){return b[1]-a[1]});
@@ -2585,9 +2587,9 @@ function tileSheet(k){
   if(k==='free')return sheet('🎁 Free days',strip(freeHTML()));
   if(k==='season'||k==='shout'){var h=strip(seasonHTML()),i=h.indexOf('<div class="card sho">');return k==='season'?sheet('⭐ '+SEASON.name,h.slice(0,i)+'</section>'):sheet('📣 Monday shoutout','<section>'+h.slice(i))}
   if(k==='badges')return sheet('🏅 Badges',strip(badgesHTML()));
-  if(k==='miles'){var s=streakHTML(),a=s.indexOf('<ol class="ladder'),b=s.indexOf('</ol>')+5;return sheet('🏁 Milestones','<p>'+totalDays()+' market mornings done. Breaking a streak never takes these away.</p>'+s.slice(a,b))}
+  if(k==='miles'){var s=streakHTML(),a=s.indexOf('<ol class="ladder'),b=s.indexOf('</ol>')+5;return sheet('🏁 Milestones · '+QTR.name,'<p>'+qDays()+' market mornings done this quarter. Breaking a streak never takes these away. They restart on '+QTR.restarts+'.</p>'+s.slice(a,b))}
   if(k==='freeze')return sheet('🧊 Streak freezes','<p>A missed market day uses a freeze, so your streak survives. You earn one every 7 days and can hold 2.</p><p>No freeze left? Do both mornings within 24 hours to repair the streak.</p><div class="facts"><div>Ready<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Counts<b>Market days</b></div></div>')}
-function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDays(),nm=MILES.filter(function(m){return t<m[0]})[0],fd=freeDays(),bs=BADGES.slice().sort(function(a,b){return bGot(b)-bGot(a)}),bg=BADGES.filter(bGot).length,nx=ti>0?TIERS[ti-1]:null;
+function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=qDays(),nm=MILES.filter(function(m){return t<m[0]})[0],fd=freeDays(),bs=BADGES.slice().sort(function(a,b){return bGot(b)-bGot(a)}),bg=BADGES.filter(bGot).length,nx=ti>0?TIERS[ti-1]:null;
   var tile=function(k,ic,lab,val,sub,p){return '<button type="button" class="rt" data-tile="'+k+'"><span class="eb">'+ic+' '+lab+'</span><b>'+val+'</b><small>'+sub+'</small><span class="lbar"><em style="width:'+Math.min(100,p*100).toFixed(0)+'%"></em></span></button>'};
   s.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>Streak & rewards</h1><span class="sp"></span></header>'+
     '<div class="rhead"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak · longest '+longest()+' · '+totalDays()+' mornings in all</small><span class="carry">Never resets with the season</span>'+weekHTML()+
@@ -2595,7 +2597,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
     '<div class="rgrid">'+
       tile('free','🎁','Free days',fd,'of '+FD_MAX+' · for your Dec subscription',fd/FD_MAX)+
       tile('season','⭐','Season',v+' <span class="tier '+TIERS[ti][0]+'"><i></i>'+TIERS[ti][1]+'</span>',nx?(nx[2]-v)+' pts to '+nx[1]+' · #'+myRank():'#'+myRank()+' · top tier',nx?(v-TIERS[ti][2])/(nx[2]-TIERS[ti][2]):1)+
-      tile('miles','🏁','Next milestone',nm?nm[0]+' days':'All done',nm?(nm[0]-t)+' to go · '+nm[2].split(' and ')[0]:'You reached 100',nm?t/nm[0]:1)+
+      tile('miles','🏁','Quarter milestone',nm?t+' <small>of '+nm[0]+'</small>':'All done',nm?(nm[0]-t)+' to go · '+nm[2].split(' and ')[0]:'All 5 this quarter · restarts '+QTR.restarts,nm?t/nm[0]:1)+
       tile('badges','🏅','Badges',bg+' <small>of '+BADGES.length+'</small>','Tap to see what’s next',bg/BADGES.length)+'</div>'+
     shoutCard()+lbHTML()+
     '<div class="h2"><h2>Badges</h2><span class="sp"></span><button type="button" class="l" data-tile="badges">See all</button></div><div class="brow">'+bs.map(function(b){var g=bGot(b);return '<button type="button" class="bc'+(g?' got':'')+'" data-badge="'+b[0]+'"><span aria-hidden="true">'+b[1]+'</span><small>'+b[2]+'</small></button>'}).join('')+'</div>'+
