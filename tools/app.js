@@ -203,7 +203,8 @@ var FYTIP={options:'Support is where buyers usually step in and resistance where
   watch:'India VIX is the market’s fear gauge: under 13 is calm, over 20 means big swings are expected.',
   learn:'Three short ideas a day. Finishing all three counts for your streak.',
   brief:'Five minutes on what happened overnight and what to watch today.'};
-var fyTipN=0;function fyTip(k){return beginner()&&FYTIP[k]&&fyTipN++<2?'<p class="fy-tip"><span aria-hidden="true">💡</span>'+FYTIP[k]+'</p>':''}
+var fyTipN=0;function fyTip(k){return beginner()&&FYTIP[k]&&fyTipN++<2?'<span class="fy-tip"><i aria-hidden="true">💡</i><span>'+FYTIP[k]+'</span></span>':''}
+function fyWithTip(h,k){var t=fyTip(k);if(!t||!h)return h;var i=h.lastIndexOf('</');return h.slice(0,i)+t+h.slice(i)}
 function fyLead(key){var nx=nextEv();
   if(key==='options')return '<a class="fy-x" href="#markets/fo"><div class="fy-k"><span class="eb">Your expiry · Nifty</span><small>'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small></div><div class="fy-lv">'+D.fo.k.map(function(k,n){return '<div class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div></a>';
   if(key==='investor')return '<a class="fy-x" href="#ideas/baskets"><div class="fy-k"><span class="eb">Your baskets</span></div>'+D.baskets.slice(0,2).map(function(b){return '<div class="fy-r"><span>'+esc(b.n)+'</span><b class="u">'+esc(b.r)+'</b></div>'}).join('')+'</a>';
@@ -235,13 +236,12 @@ function forYou(){var p=profile(),a=(p&&!p.skipped&&p.answers)||{},key=(p&&!p.sk
     mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'}),g=goals(),pro=a.exp==='pro';fyTipN=0;
   if(key==='learner'&&g.indexOf('learn')<0)g=['learn'].concat(g);
   var lead=fyLead(key),leadK=key==='options'||key==='investor'||key==='picker'||key==='basic'?key:null;
-  var leadTip=lead&&leadK?fyTip(leadK):'';
-  var big=g.filter(function(k){return k!=='brief'}).map(function(k){return fyCard(k,st,mname,tr)+fyTip(k)}).join('');
+  if(lead&&leadK)lead=fyWithTip(lead,leadK);
+  var big=g.filter(function(k){return k!=='brief'}).map(function(k){return fyWithTip(fyCard(k,st,mname,tr),k)}).join('');
   var rest=['journal','calls','watch','learn'].filter(function(k){return g.indexOf(k)<0}).concat(['rewards']);
   return '<div class="h2 fyh"><h2>For you</h2></div>'+
-    '<div class="fy-who"><span>Set up for <b id="fyName">'+presetName()+'</b>'+(a.exp?' · '+EXPN[a.exp]:'')+'</span><button type="button" class="l" data-act="setup">Change</button></div>'+
-    '<div class="fy-gl" aria-label="Your morning picks">'+g.map(function(k){return '<span>'+GSHORT[k]+'</span>'}).join('')+(beginner()?'<span class="tp">Tips on</span>':pro?'<span class="tp">Short mode</span>':'')+'</div>'+
-    '<div class="fy">'+lead+leadTip+big+
+    '<div class="fy-me"><span class="ic" aria-hidden="true">'+I(ICO.you,2)+'</span><span class="tx"><b id="fyName">'+presetName()+'</b><small>'+(a.exp?EXPN[a.exp]+' · ':'')+g.map(function(k){return GSHORT[k]}).join(', ')+'</small></span><button type="button" class="fy-chg" data-act="setup">Change</button></div>'+
+    '<div class="fy">'+lead+big+
     '<div class="fy-mh"><span class="eb">Also here</span></div><div class="card fy-more">'+rest.map(function(k){return fyShort(k,st)}).join('')+'</div></div>'}
 
 /* Home previews: two highlights and two of your things, each with a way to see all */

@@ -1559,3 +1559,16 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .fy-more .vl{font:700 13.5px/1 var(--font-sans);font-variant-numeric:tabular-nums}.fy-more .vl.u{color:var(--up-text)}
 .fy-more .go{color:var(--text-tertiary);font-size:18px}
 .fy-gl{margin:2px 0 14px}
+
+/* For you: tidy */
+.fy-me{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 12px 12px 14px;border-radius:16px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.fy-me .ic{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;flex:none;background:var(--surface-hover);color:var(--link)}.fy-me .ic svg{width:18px;height:18px}
+.fy-me .tx{flex:1;display:grid;gap:3px;min-width:0}.fy-me .tx b{font:600 15px/1.2 var(--font-sans)}
+.fy-me .tx small{font:400 12.5px/1.35 var(--font-sans);color:var(--text-tertiary)}
+.fy-chg{flex:none;height:32px;padding:0 14px;border-radius:9999px;border:1px solid var(--border-glass);background:var(--surface-glass);font:600 13px/1 var(--font-sans);color:var(--text-primary)}
+.fy{margin-top:12px}
+.fy-tip{display:flex;gap:8px;margin:4px 0 0;padding:10px 0 0;border-top:1px solid var(--border-decorative);background:none;border-radius:0;font:400 12.5px/1.45 var(--font-sans);color:var(--text-secondary);text-align:left}
+.fy-tip i{font-style:normal}
+:root[data-theme="light"] .fy-lv b,:root[data-theme="light"] .fy-r b.u{color:var(--text-primary)}
+:root[data-theme="light"] .fy-cl em{color:var(--link)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .fy-lv b,:root:not([data-theme="dark"]) .fy-r b.u{color:var(--text-primary)}:root:not([data-theme="dark"]) .fy-cl em{color:var(--link)}}

@@ -1569,6 +1569,19 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .fy-more .vl{font:700 13.5px/1 var(--font-sans);font-variant-numeric:tabular-nums}.fy-more .vl.u{color:var(--up-text)}
 .fy-more .go{color:var(--text-tertiary);font-size:18px}
 .fy-gl{margin:2px 0 14px}
+
+/* For you: tidy */
+.fy-me{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 12px 12px 14px;border-radius:16px;background:var(--surface-raised);border:1px solid var(--border-decorative)}
+.fy-me .ic{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;flex:none;background:var(--surface-hover);color:var(--link)}.fy-me .ic svg{width:18px;height:18px}
+.fy-me .tx{flex:1;display:grid;gap:3px;min-width:0}.fy-me .tx b{font:600 15px/1.2 var(--font-sans)}
+.fy-me .tx small{font:400 12.5px/1.35 var(--font-sans);color:var(--text-tertiary)}
+.fy-chg{flex:none;height:32px;padding:0 14px;border-radius:9999px;border:1px solid var(--border-glass);background:var(--surface-glass);font:600 13px/1 var(--font-sans);color:var(--text-primary)}
+.fy{margin-top:12px}
+.fy-tip{display:flex;gap:8px;margin:4px 0 0;padding:10px 0 0;border-top:1px solid var(--border-decorative);background:none;border-radius:0;font:400 12.5px/1.45 var(--font-sans);color:var(--text-secondary);text-align:left}
+.fy-tip i{font-style:normal}
+:root[data-theme="light"] .fy-lv b,:root[data-theme="light"] .fy-r b.u{color:var(--text-primary)}
+:root[data-theme="light"] .fy-cl em{color:var(--link)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .fy-lv b,:root:not([data-theme="dark"]) .fy-r b.u{color:var(--text-primary)}:root:not([data-theme="dark"]) .fy-cl em{color:var(--link)}}
 </style>
 </head>
 <body>
@@ -1823,7 +1836,8 @@ var FYTIP={options:'Support is where buyers usually step in and resistance where
   watch:'India VIX is the market’s fear gauge: under 13 is calm, over 20 means big swings are expected.',
   learn:'Three short ideas a day. Finishing all three counts for your streak.',
   brief:'Five minutes on what happened overnight and what to watch today.'};
-var fyTipN=0;function fyTip(k){return beginner()&&FYTIP[k]&&fyTipN++<2?'<p class="fy-tip"><span aria-hidden="true">💡</span>'+FYTIP[k]+'</p>':''}
+var fyTipN=0;function fyTip(k){return beginner()&&FYTIP[k]&&fyTipN++<2?'<span class="fy-tip"><i aria-hidden="true">💡</i><span>'+FYTIP[k]+'</span></span>':''}
+function fyWithTip(h,k){var t=fyTip(k);if(!t||!h)return h;var i=h.lastIndexOf('</');return h.slice(0,i)+t+h.slice(i)}
 function fyLead(key){var nx=nextEv();
   if(key==='options')return '<a class="fy-x" href="#markets/fo"><div class="fy-k"><span class="eb">Your expiry · Nifty</span><small>'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small></div><div class="fy-lv">'+D.fo.k.map(function(k,n){return '<div class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div></a>';
   if(key==='investor')return '<a class="fy-x" href="#ideas/baskets"><div class="fy-k"><span class="eb">Your baskets</span></div>'+D.baskets.slice(0,2).map(function(b){return '<div class="fy-r"><span>'+esc(b.n)+'</span><b class="u">'+esc(b.r)+'</b></div>'}).join('')+'</a>';
@@ -1855,13 +1869,12 @@ function forYou(){var p=profile(),a=(p&&!p.skipped&&p.answers)||{},key=(p&&!p.sk
     mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'}),g=goals(),pro=a.exp==='pro';fyTipN=0;
   if(key==='learner'&&g.indexOf('learn')<0)g=['learn'].concat(g);
   var lead=fyLead(key),leadK=key==='options'||key==='investor'||key==='picker'||key==='basic'?key:null;
-  var leadTip=lead&&leadK?fyTip(leadK):'';
-  var big=g.filter(function(k){return k!=='brief'}).map(function(k){return fyCard(k,st,mname,tr)+fyTip(k)}).join('');
+  if(lead&&leadK)lead=fyWithTip(lead,leadK);
+  var big=g.filter(function(k){return k!=='brief'}).map(function(k){return fyWithTip(fyCard(k,st,mname,tr),k)}).join('');
   var rest=['journal','calls','watch','learn'].filter(function(k){return g.indexOf(k)<0}).concat(['rewards']);
   return '<div class="h2 fyh"><h2>For you</h2></div>'+
-    '<div class="fy-who"><span>Set up for <b id="fyName">'+presetName()+'</b>'+(a.exp?' · '+EXPN[a.exp]:'')+'</span><button type="button" class="l" data-act="setup">Change</button></div>'+
-    '<div class="fy-gl" aria-label="Your morning picks">'+g.map(function(k){return '<span>'+GSHORT[k]+'</span>'}).join('')+(beginner()?'<span class="tp">Tips on</span>':pro?'<span class="tp">Short mode</span>':'')+'</div>'+
-    '<div class="fy">'+lead+leadTip+big+
+    '<div class="fy-me"><span class="ic" aria-hidden="true">'+I(ICO.you,2)+'</span><span class="tx"><b id="fyName">'+presetName()+'</b><small>'+(a.exp?EXPN[a.exp]+' · ':'')+g.map(function(k){return GSHORT[k]}).join(', ')+'</small></span><button type="button" class="fy-chg" data-act="setup">Change</button></div>'+
+    '<div class="fy">'+lead+big+
     '<div class="fy-mh"><span class="eb">Also here</span></div><div class="card fy-more">'+rest.map(function(k){return fyShort(k,st)}).join('')+'</div></div>'}
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
