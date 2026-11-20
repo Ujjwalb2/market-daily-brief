@@ -189,41 +189,60 @@ function paintMorning(){var c=$('#morning');if(!c)return;var t=document.createEl
 
 /* ---------------- TODAY ---------------- */
 var CL=D.closed||[],CLW=CL.filter(function(c){return c.how==='target'}).length;
-function fyRows(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],st=stats(ALL.filter(function(x){return x.d.slice(0,7)===mo})),v=seasonScore(),nx=nextEv();
-  var R=[
-    ['b',ICO.journal,'Your month',st.n+' trades · '+st.wr.toFixed(0)+'% win rate',inr(st.net,true),st.net>=0?'u':'','#journal/overview'],
-    locked()?['i',ICO.tc,'Your live calls',CALLS.length+' posted today · locked','Unlock','','@pro']:['i',ICO.tc,'Your live calls',CALLS.length+' active · '+CLW+' of '+CL.length+' recent hit target','','','#ideas/calls'],
-    ['t',ICO.star,'Your rewards',freeDays()+' free days · '+TIERS[tierOf(v)][1]+' · #'+myRank(),v+' pts','','#rewards']];
-  var X={options:['a',ICO.fo,'Your expiry: Nifty '+D.fo.exp.replace(/^Expiry\s*/,''),'Support '+D.fo.k[0][1]+' · max pain '+D.fo.k[1][1]+' · resistance '+D.fo.k[2][1],'','','#markets/fo'],
-    investor:['t',ICO.bk,'Your baskets',D.baskets[0].n,D.baskets[0].r,'u','#ideas/baskets'],
-    learner:['i',ICO.learn,'Your learning',learned().length+' of '+LEARN.length+' ideas today','','','#ideas/learn'],
-    picker:['t',ICO.mv,'Your watch: top mover',MVS[0].n+' +'+MVS[0].v.toFixed(2)+'%','','','#markets/movers'],
-    basic:['a',ICO.cal,'Coming up for you',nx?nx.t+' '+nx.b:'Market day done','','','#markets/cal']}[key];
-  if(X)R.push(X);return R}
+/* For you: built from all three setup answers.
+   what you trade -> the card it leads with; your morning picks -> full cards in the order you picked them,
+   the rest as short rows; experience -> plain-language tips for new traders, no tips for experienced ones */
+var EXPN={new:'Just starting',some:'A year or two',pro:'Several years'};
+var GSHORT={brief:'Brief',calls:'Calls',journal:'Journal',learn:'Learn',watch:'Market'};
+var FYTIP={options:'Support is where buyers usually step in and resistance where sellers do. Max pain is the strike where most option buyers lose money at expiry.',
+  investor:'A basket is a ready-made group of stocks you buy together, so one idea is spread over several companies.',
+  picker:'Top movers are a place to start your research, not a buy list. Check why a stock moved before you trade it.',
+  basic:'Market timings and results can move prices, so it helps to know what is coming before you trade.',
+  journal:'Win rate is the share of your trades that made money. Profit factor is money made divided by money lost: above 1 means your winners outweigh your losers.',
+  calls:'A call is a trade idea with an entry price, a target and a stop-loss. The stop-loss is where you exit if it goes wrong.',
+  watch:'India VIX is the market’s fear gauge: under 13 is calm, over 20 means big swings are expected.',
+  learn:'Three short ideas a day. Finishing all three counts for your streak.',
+  brief:'Five minutes on what happened overnight and what to watch today.'};
+var fyTipN=0;function fyTip(k){return beginner()&&FYTIP[k]&&fyTipN++<2?'<p class="fy-tip"><span aria-hidden="true">💡</span>'+FYTIP[k]+'</p>':''}
+function fyLead(key){var nx=nextEv();
+  if(key==='options')return '<a class="fy-x" href="#markets/fo"><div class="fy-k"><span class="eb">Your expiry · Nifty</span><small>'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small></div><div class="fy-lv">'+D.fo.k.map(function(k,n){return '<div class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div></a>';
+  if(key==='investor')return '<a class="fy-x" href="#ideas/baskets"><div class="fy-k"><span class="eb">Your baskets</span></div>'+D.baskets.slice(0,2).map(function(b){return '<div class="fy-r"><span>'+esc(b.n)+'</span><b class="u">'+esc(b.r)+'</b></div>'}).join('')+'</a>';
+  if(key==='picker')return '<a class="fy-x" href="#markets/movers"><div class="fy-k"><span class="eb">Your watch · top movers</span></div>'+MVS.slice(0,3).map(function(m){return '<div class="fy-r"><span>'+esc(m.n)+'</span><b class="u">+'+m.v.toFixed(2)+'%</b></div>'}).join('')+'</a>';
+  if(key==='learner')return '';
+  return '<a class="fy-x" href="#markets/cal"><div class="fy-k"><span class="eb">Coming up for you</span></div><div class="fy-r"><span>'+(nx?esc(nx.b):'Market day done')+'</span><b>'+(nx?nx.t:'')+'</b></div></a>'}
+function fyCard(k,st,mname,tr){
+  if(k==='journal'){var cum=0,pts=tr.map(function(x){cum+=x.pnl;return cum}),lo=Math.min.apply(null,[0].concat(pts)),hi=Math.max.apply(null,[0].concat(pts)),rg=(hi-lo)||1,W=300,H=56;
+    var line=pts.map(function(y,i){return (pts.length>1?i/(pts.length-1)*W:0).toFixed(1)+','+(H-4-(y-lo)/rg*(H-8)).toFixed(1)}).join(' '),zero=(H-4-(0-lo)/rg*(H-8)).toFixed(1);
+    return '<a class="fy-hero" href="#journal/overview"><div class="fy-k"><span class="eb">Your '+mname+'</span><span class="go" aria-hidden="true">›</span></div>'+
+      '<div class="fy-n"><b class="'+(st.net>=0?'u':'')+'">'+inr(st.net,true)+'</b><small>net P&amp;L</small></div>'+
+      '<svg class="fy-sp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="'+W+'" y1="'+zero+'" y2="'+zero+'" stroke="var(--border-decorative)" stroke-dasharray="3 4"/><polyline points="'+line+'" fill="none" stroke="'+(st.net>=0?'var(--teal)':'var(--slate-500)')+'" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>'+
+      '<div class="fy-3"><div><b>'+st.n+'</b><small>trades</small></div><div><b>'+st.wr.toFixed(0)+'%</b><small>win rate</small></div><div><b>'+(st.pf?st.pf.toFixed(2):'–')+'</b><small>profit factor</small></div></div></a>'}
+  if(k==='calls')return locked()?'<button type="button" class="fy-x fy-cl lk" data-act="pro"><div class="fy-k"><span class="eb">Your trade ideas</span><em>Unlock →</em></div><b>'+CALLS.length+' live calls</b><small>Locked · '+CL.filter(function(x){return x.ret>0}).length+' of the last '+CL.length+' booked profit</small></button>'
+    :'<a class="fy-x fy-cl" href="#ideas/calls"><div class="fy-k"><span class="eb">Your trade ideas</span><em>Open →</em></div><b>'+CALLS.length+' live calls</b><small>'+CLW+' of the last '+CL.length+' hit target</small></a>';
+  if(k==='learn'){var l=learned().length;return '<a class="fy-x" href="#ideas/learn"><div class="fy-k"><span class="eb">Your learning today</span><small>'+l+' of '+LEARN.length+'</small></div><span class="lbar"><em style="width:'+(l/LEARN.length*100)+'%"></em></span></a>'}
+  if(k==='watch')return '<a class="fy-x" href="#markets/indices"><div class="fy-k"><span class="eb">Your market</span><span class="go" aria-hidden="true">›</span></div>'+IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}).map(function(x){return '<div class="fy-r"><span>'+esc(ixShort(x.n))+'</span><b>'+num(x.d[x.d.length-1][1],2)+' <i class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pct+'</i></b></div>'}).join('')+'</a>';
+  if(k==='brief')return '<div class="fy-x fy-br"><button type="button" class="fy-play" data-act="listen" aria-label="Play the brief">▶</button><span><b>Today’s brief</b><small>'+mmss(D.audio.dur)+' · 7 chapters</small></span><a class="l" href="#markets/filings">Read</a></div>';
+  return ''}
+function fyShort(k,st){var v=seasonScore(),R={
+    journal:['b',ICO.journal,'Your month',st.n+' trades · '+st.wr.toFixed(0)+'% win rate',inr(st.net,true),st.net>=0?'u':'','#journal/overview'],
+    calls:locked()?['i',ICO.tc,'Live calls',CALLS.length+' posted · locked','Unlock','','@pro']:['i',ICO.tc,'Live calls',CALLS.length+' active · '+CLW+' of '+CL.length+' hit target','','','#ideas/calls'],
+    learn:['i',ICO.learn,'Learning',learned().length+' of '+LEARN.length+' ideas today','','','#ideas/learn'],
+    watch:['t',ICO.markets,'Market','Nifty, Bank Nifty and VIX','','','#markets/indices'],
+    brief:['i',ICO.brief,'Today’s brief',mmss(D.audio.dur)+' · 7 chapters','','','#markets/filings'],
+    rewards:['t',ICO.star,'Your rewards',freeDays()+' free days · '+TIERS[tierOf(v)][1]+' · #'+myRank(),v+' pts','','#rewards']}[k];return R?fyRow(R):''}
 function fyRow(r){var pro=r[6]==='@pro';return '<'+(pro?'button type="button" data-act="pro"':'a href="'+r[6]+'"')+' class="row"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></'+(pro?'button':'a')+'>'}
-function forYou(){var p=profile(),key=(p&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(x){return x.d.slice(0,7)===mo}),st=stats(tr),v=seasonScore(),ti=tierOf(v),nx=nextEv();
-  /* your month: running P&L line */
-  var cum=0,pts=tr.map(function(x){cum+=x.pnl;return cum}),lo=Math.min.apply(null,[0].concat(pts)),hi=Math.max.apply(null,[0].concat(pts)),rg=(hi-lo)||1,W=300,H=56;
-  var line=pts.map(function(y,i){return (pts.length>1?i/(pts.length-1)*W:0).toFixed(1)+','+(H-4-(y-lo)/rg*(H-8)).toFixed(1)}).join(' '),zero=(H-4-(0-lo)/rg*(H-8)).toFixed(1);
-  var mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'});
-  var hero='<a class="fy-hero" href="#journal/overview"><div class="fy-k"><span class="eb">Your '+mname+'</span><span class="go" aria-hidden="true">›</span></div>'+
-    '<div class="fy-n"><b class="'+(st.net>=0?'u':'')+'">'+inr(st.net,true)+'</b><small>net P&amp;L</small></div>'+
-    '<svg class="fy-sp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="'+W+'" y1="'+zero+'" y2="'+zero+'" stroke="var(--border-decorative)" stroke-dasharray="3 4"/><polyline points="'+line+'" fill="none" stroke="'+(st.net>=0?'var(--teal)':'var(--slate-500)')+'" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>'+
-    '<div class="fy-3"><div><b>'+st.n+'</b><small>trades</small></div><div><b>'+st.wr.toFixed(0)+'%</b><small>win rate</small></div><div><b>'+(st.pf?st.pf.toFixed(2):'–')+'</b><small>profit factor</small></div></div></a>';
-  /* two tiles: calls and rewards */
-  var calls=locked()?'<button type="button" class="fy-t lk" data-act="pro"><span class="ic a">'+I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',2)+'</span><b>'+CALLS.length+' live calls</b><small>Locked · '+CL.filter(function(x){return x.ret>0}).length+' of '+CL.length+' booked profit</small><em>Unlock →</em></button>'
-    :'<a class="fy-t" href="#ideas/calls"><span class="ic i">'+I(ICO.tc,2)+'</span><b>'+CALLS.length+' live calls</b><small>'+CLW+' of '+CL.length+' recent hit target</small><em>Open →</em></a>';
-  var rew='<a class="fy-t" href="#rewards"><span class="ic t">'+I(ICO.star,2)+'</span><b>'+freeDays()+' free days</b><small>'+v+' pts · '+TIERS[ti][1]+' · #'+myRank()+'</small><em>Rewards →</em></a>';
-  /* one card for what you trade */
-  var X;
-  if(key==='options')X='<a class="fy-x" href="#markets/fo"><div class="fy-k"><span class="eb">Your expiry · Nifty</span><small>'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small></div><div class="fy-lv">'+D.fo.k.map(function(k,n){return '<div class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div></a>';
-  else if(key==='investor')X='<a class="fy-x" href="#ideas/baskets"><div class="fy-k"><span class="eb">Your baskets</span></div>'+D.baskets.slice(0,2).map(function(b){return '<div class="fy-r"><span>'+esc(b.n)+'</span><b class="u">'+esc(b.r)+'</b></div>'}).join('')+'</a>';
-  else if(key==='learner'){var l=learned().length;X='<a class="fy-x" href="#ideas/learn"><div class="fy-k"><span class="eb">Your learning today</span><small>'+l+' of '+LEARN.length+'</small></div><span class="lbar"><em style="width:'+(l/LEARN.length*100)+'%"></em></span></a>'}
-  else if(key==='picker')X='<a class="fy-x" href="#markets/movers"><div class="fy-k"><span class="eb">Your watch · top movers</span></div>'+MVS.slice(0,3).map(function(m){return '<div class="fy-r"><span>'+esc(m.n)+'</span><b class="u">+'+m.v.toFixed(2)+'%</b></div>'}).join('')+'</a>';
-  else X='<a class="fy-x" href="#markets/cal"><div class="fy-k"><span class="eb">Coming up for you</span></div><div class="fy-r"><span>'+(nx?esc(nx.b):'Market day done')+'</span><b>'+(nx?nx.t:'')+'</b></div></a>';
+function forYou(){var p=profile(),a=(p&&!p.skipped&&p.answers)||{},key=(p&&!p.skipped&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(x){return x.d.slice(0,7)===mo}),st=stats(tr),
+    mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'}),g=goals(),pro=a.exp==='pro';fyTipN=0;
+  if(key==='learner'&&g.indexOf('learn')<0)g=['learn'].concat(g);
+  var lead=fyLead(key),leadK=key==='options'||key==='investor'||key==='picker'||key==='basic'?key:null;
+  var leadTip=lead&&leadK?fyTip(leadK):'';
+  var big=g.filter(function(k){return k!=='brief'}).map(function(k){return fyCard(k,st,mname,tr)+fyTip(k)}).join('');
+  var rest=['journal','calls','watch','learn'].filter(function(k){return g.indexOf(k)<0}).concat(['rewards']);
   return '<div class="h2 fyh"><h2>For you</h2></div>'+
-    '<div class="fy-who"><span>Set up for <b id="fyName">'+presetName()+'</b></span><button type="button" class="l" data-act="setup">Change</button></div>'+
-    '<div class="fy">'+hero+'<div class="fy-2">'+calls+rew+'</div>'+X+'</div>'}
+    '<div class="fy-who"><span>Set up for <b id="fyName">'+presetName()+'</b>'+(a.exp?' · '+EXPN[a.exp]:'')+'</span><button type="button" class="l" data-act="setup">Change</button></div>'+
+    '<div class="fy-gl" aria-label="Your morning picks">'+g.map(function(k){return '<span>'+GSHORT[k]+'</span>'}).join('')+(beginner()?'<span class="tp">Tips on</span>':pro?'<span class="tp">Short mode</span>':'')+'</div>'+
+    '<div class="fy">'+lead+leadTip+big+
+    '<div class="fy-mh"><span class="eb">Also here</span></div><div class="card fy-more">'+rest.map(function(k){return fyShort(k,st)}).join('')+'</div></div>'}
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
 /* ---------------- IPOs going live: name, AlphaPad in-house score, report (sample data, same IPOs as the calendar) ---------------- */
