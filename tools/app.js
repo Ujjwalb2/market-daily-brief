@@ -958,10 +958,9 @@ function badgeSheet(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if
   sheet(b[1]+' '+b[2],'<p>'+b[3]+'.</p><div class="facts"><div>Progress<b>'+p[0]+' of '+p[1]+'</b></div><div>Status<b>'+(g?'Earned':'In progress')+'</b></div><div>Reward<b>'+(b[5]?'+'+b[5]+' free day':'Badge')+'</b></div></div>'+
     (g?'':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
 
-function boardSheet(){var v=seasonScore(),all=BOARD.concat([['You',v]]).sort(function(a,b){return b[1]-a[1]});
-  sheet(SEASON.name,'<p class="muted">Everyone who reaches a tier is listed in it. Ends '+SEASON.ends+'.</p>'+TIERS.map(function(t,i){var hi=i?TIERS[i-1][2]:1e9,ps=all.filter(function(x){return x[1]>=t[2]&&x[1]<hi});if(!ps.length)return '';
-    return '<div class="tg">'+tierPill(i)+'<small>'+t[2]+'+ points</small></div><div class="list">'+ps.map(function(x){return '<div class="row'+(x[0]==='You'?' me':'')+'"><span class="tx"><b>'+esc(x[0])+'</b></span><span class="vl">'+x[1]+'</span></div>'}).join('')+'</div>'}).join('')+
-    '<p class="cap">Sample names for the prototype.</p>')}
+function boardSheet(){var all=lbAll();
+  sheet('🏆 '+SEASON.name,'<p class="muted">Ranked by season points. Ends '+SEASON.ends+'; points reset on 1 Dec, your streak doesn’t. Gold 300+ · Silver 200+ · Bronze 100+.</p><div class="card lb">'+all.map(lbRow).join('')+'</div>'+
+    '<p class="cap">Top '+BOARD.length+' of '+SEASON.players+' shown. Sample names for the prototype.</p>')}
 
 function mfootHTML(){var v=seasonScore();return '<a class="mfoot" href="#rewards"><span>⭐ <b>'+v+'</b> pts</span><span>#'+myRank()+' · '+TIERS[tierOf(v)][1]+'</span><span>🎁 <b>'+freeDays()+'</b> free days</span><span class="go" aria-hidden="true">›</span></a>'}
 
@@ -973,6 +972,17 @@ function heroHTML(){var g=goals(),d=mDone(),all=d===g.length;
   return '<a class="spill'+(all?' all':'')+'" id="hero" href="#rewards" aria-label="'+streakNow()+' day streak, '+d+' of '+g.length+' steps done today. Open streak and rewards"><span class="sring" style="--p:'+(d/g.length*100).toFixed(0)+'"><span aria-hidden="true">🔥</span></span><b>'+streakNow()+'</b><small>day streak</small><em aria-hidden="true">›</em></a>'}
 function paintHero(){var h=$('#hero');if(!h)return;var all=allDone(),t=document.createElement('div');t.innerHTML=heroHTML();var n=t.firstChild;if(wasAll===false&&all)n.classList.add('win');h.replaceWith(n);wasAll=all}
 function strip(h){return h.replace(/<div class="h2"><h2>[^<]*<\/h2><span class="sp"><\/span><small>[^<]*<\/small><\/div>/,'')}
+function shoutCard(){var wk=HIST.week+liveSum();
+  return '<button type="button" class="shl" data-tile="shout"><span class="shi" aria-hidden="true">📣</span><span class="shb"><span class="eb">Monday shoutout · '+SHOUT.week+'</span><b>'+SHOUT.cat+'</b>'+
+    '<span class="names">'+SHOUT.names.slice(0,2).map(function(x){return '<span class="nmc">'+esc(x)+'</span>'}).join('')+'<span class="nmc more">+'+(SHOUT.names.length-2+SHOUT.more)+' more</span></span>'+
+    '<span class="shq"><span><b>Next: Most improved</b></span><em>'+wk+' / '+HIST.lastWeek+' pts</em></span><span class="lbar"><em style="width:'+Math.min(100,wk/HIST.lastWeek*100).toFixed(0)+'%"></em></span></span><i class="go" aria-hidden="true">›</i></button>'}
+function lbAll(){return BOARD.concat([['You',seasonScore()]]).sort(function(a,b){return b[1]-a[1]})}
+function lbRow(x,i){var me=x[0]==='You',t=tierOf(x[1]);return '<div class="lbr'+(me?' me':'')+'"><span class="rk'+(i<3?' md':'')+'">'+(i<3?['🥇','🥈','🥉'][i]:'#'+(i+1))+'</span><b>'+esc(x[0])+'</b><span class="tier '+TIERS[t][0]+'"><i aria-hidden="true"></i>'+TIERS[t][1]+'</span><em>'+x[1]+'</em></div>'}
+function lbHTML(){var a=lbAll(),mi=a.findIndex(function(x){return x[0]==='You'}),rows=a.slice(0,3).map(lbRow).join('');
+  if(mi>3)rows+='<div class="lbgap" aria-hidden="true">⋯</div>'+lbRow(a[mi-1],mi-1)+lbRow(a[mi],mi);else if(mi===3)rows+=lbRow(a[3],3);
+  return '<div class="h2"><h2>Season leaderboard</h2><span class="sp"></span><small>'+SEASON.name.replace(' season','')+' · '+SEASON.left+' days left</small></div>'+
+    '<div class="card lb">'+rows+'<button type="button" class="btn g s full" data-act="board">See full leaderboard</button></div>'+
+    '<p class="note" style="margin-top:8px">Points reset on 1 Dec. Your streak, milestones, badges and free days carry over.</p>'}
 function tileSheet(k){
   if(k==='free')return sheet('🎁 Free days',strip(freeHTML()));
   if(k==='season'||k==='shout'){var h=strip(seasonHTML()),i=h.indexOf('<div class="card sho">');return k==='season'?sheet('⭐ '+SEASON.name,h.slice(0,i)+'</section>'):sheet('📣 Monday shoutout','<section>'+h.slice(i))}
@@ -982,15 +992,16 @@ function tileSheet(k){
 function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDays(),nm=MILES.filter(function(m){return t<m[0]})[0],fd=freeDays(),bs=BADGES.slice().sort(function(a,b){return bGot(b)-bGot(a)}),bg=BADGES.filter(bGot).length,nx=ti>0?TIERS[ti-1]:null;
   var tile=function(k,ic,lab,val,sub,p){return '<button type="button" class="rt" data-tile="'+k+'"><span class="eb">'+ic+' '+lab+'</span><b>'+val+'</b><small>'+sub+'</small><span class="lbar"><em style="width:'+Math.min(100,p*100).toFixed(0)+'%"></em></span></button>'};
   s.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>Streak & rewards</h1><span class="sp"></span></header>'+
-    '<div class="rhead"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak · longest '+longest()+'</small>'+weekHTML()+
+    '<div class="rhead"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak · longest '+longest()+' · '+totalDays()+' mornings in all</small><span class="carry">Never resets with the season</span>'+weekHTML()+
       '<button type="button" class="frl" data-tile="freeze">'+[0,1].map(function(i){return '<i class="'+(i<freezes()?'on':'')+'">🧊</i>'}).join('')+' '+freezes()+' of 2 freezes ready <em>›</em></button></div>'+
     '<div class="rgrid">'+
       tile('free','🎁','Free days',fd,'of '+FD_MAX+' · for your Dec subscription',fd/FD_MAX)+
       tile('season','⭐','Season',v+' <span class="tier '+TIERS[ti][0]+'"><i></i>'+TIERS[ti][1]+'</span>',nx?(nx[2]-v)+' pts to '+nx[1]+' · #'+myRank():'#'+myRank()+' · top tier',nx?(v-TIERS[ti][2])/(nx[2]-TIERS[ti][2]):1)+
       tile('miles','🏁','Next milestone',nm?nm[0]+' days':'All done',nm?(nm[0]-t)+' to go · '+nm[2].split(' and ')[0]:'You reached 100',nm?t/nm[0]:1)+
       tile('badges','🏅','Badges',bg+' <small>of '+BADGES.length+'</small>','Tap to see what’s next',bg/BADGES.length)+'</div>'+
+    shoutCard()+lbHTML()+
     '<div class="h2"><h2>Badges</h2><span class="sp"></span><button type="button" class="l" data-tile="badges">See all</button></div><div class="brow">'+bs.map(function(b){var g=bGot(b);return '<button type="button" class="bc'+(g?' got':'')+'" data-badge="'+b[0]+'"><span aria-hidden="true">'+b[1]+'</span><small>'+b[2]+'</small></button>'}).join('')+'</div>'+
-    '<button type="button" class="shl" data-tile="shout"><span class="eb">📣 Monday shoutout</span><b>'+SHOUT.cat+': '+SHOUT.names.slice(0,2).join(', ')+' +'+(SHOUT.names.length-2+SHOUT.more)+'</b><small>Next Monday: Most improved. Beat last week’s '+HIST.lastWeek+' pts to be named.</small></button>'+
+
     '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';}
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#rewards" data-close>Free days, badges and season</a>')}
