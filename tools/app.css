@@ -1647,3 +1647,30 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .psc em{font:600 13px/1 var(--font-sans);font-style:normal;color:var(--link);white-space:nowrap}
 .psc.inj,#s-journal .psc{margin-top:12px}
 button.psc{width:100%;text-align:left}
+
+/* connect broker → trading score (prototype flow) */
+.jc-dots{display:flex;gap:6px;justify-content:center;margin:4px 0 18px}.jc-dots i{width:22px;height:4px;border-radius:2px;background:var(--border-decorative)}.jc-dots i.on{background:var(--indigo-500)}
+.jc-h{margin:0 0 6px;font:700 22px/1.25 var(--font-sans);letter-spacing:-.3px;text-align:center}
+.jc-p{margin:0 auto 18px;max-width:360px;font:400 14.5px/1.5 var(--font-sans);color:var(--text-secondary);text-align:center}
+.jc-bk{display:grid;gap:8px}
+.jc-bk button{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary);text-align:left}
+.jc-bk b{flex:1;font:600 15px/1.2 var(--font-sans)}.jc-bk i{font-style:normal;color:var(--text-tertiary);font-size:20px}
+.jc-av,.jc-big{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--surface-hover);color:var(--link);font:800 16px/1 var(--font-sans);flex:none}
+.jc-big{width:64px;height:64px;border-radius:18px;font-size:28px;margin:0 auto 14px}
+.jc-safe{display:grid;gap:4px;margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--fin-positive-soft);font:400 13px/1.45 var(--font-sans);color:var(--text-secondary)}.jc-safe b{color:var(--text-primary);font-weight:600}
+.jc-mid{display:grid;justify-items:center;text-align:center}
+.jc-list{list-style:none;margin:0 0 18px;padding:12px 16px;display:grid;gap:8px;width:100%;max-width:340px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);text-align:left;font:500 14px/1.3 var(--font-sans)}
+.jc-list li{color:var(--text-primary)}.jc-list li.no{color:var(--text-tertiary)}
+.jc-mid .btn{max-width:360px}
+.jc-back{margin-top:10px;padding:10px;font:600 14px/1 var(--font-sans);color:var(--link)}
+.jc-note{margin:8px 0 0;font:400 12px/1.4 var(--font-sans);color:var(--text-tertiary)}
+.jc-run{list-style:none;margin:0;padding:0;display:grid;gap:12px;width:100%;max-width:360px;text-align:left}
+.jc-run li{display:flex;align-items:center;gap:12px;font:500 14.5px/1.3 var(--font-sans);color:var(--text-tertiary);transition:color .2s}
+.jc-run li i{width:22px;height:22px;border-radius:50%;border:2px solid var(--border-control);flex:none;display:grid;place-items:center;font-style:normal;font-size:12px;transition:all .2s}
+.jc-run li.done{color:var(--text-primary)}.jc-run li.done i{background:var(--teal);border-color:var(--teal);color:var(--navy-900)}.jc-run li.done i::after{content:'✓';font-weight:800}
+.jc-ring{width:168px;height:168px;margin:12px 0 10px}.jc-ring .arc{transition:stroke-dasharray 1.1s cubic-bezier(.2,.8,.2,1)}
+.jc-ring text{font:800 30px var(--font-sans);fill:var(--text-primary)}.jc-ring text.of{font:500 9.5px var(--font-sans);fill:var(--text-tertiary)}
+@media (prefers-reduced-motion:reduce){.jc-ring .arc,.jc-run li,.jc-run li i{transition:none}}
+.jc-run .jc-ck{display:grid;place-items:center;width:22px;height:22px;box-sizing:border-box;border-radius:50%;border:2px solid var(--border-control);flex:none;font:800 12px/1 var(--font-sans);color:var(--navy-900)}
+.jc-run li.done .jc-ck{background:var(--teal);border-color:var(--teal)}.jc-run li.done .jc-ck::after{content:'✓'}
+.jc-run .jc-ck{border:0!important;box-shadow:inset 0 0 0 2px var(--slate-400)}.jc-run li.done .jc-ck{box-shadow:none}

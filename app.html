@@ -1657,6 +1657,33 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .psc em{font:600 13px/1 var(--font-sans);font-style:normal;color:var(--link);white-space:nowrap}
 .psc.inj,#s-journal .psc{margin-top:12px}
 button.psc{width:100%;text-align:left}
+
+/* connect broker → trading score (prototype flow) */
+.jc-dots{display:flex;gap:6px;justify-content:center;margin:4px 0 18px}.jc-dots i{width:22px;height:4px;border-radius:2px;background:var(--border-decorative)}.jc-dots i.on{background:var(--indigo-500)}
+.jc-h{margin:0 0 6px;font:700 22px/1.25 var(--font-sans);letter-spacing:-.3px;text-align:center}
+.jc-p{margin:0 auto 18px;max-width:360px;font:400 14.5px/1.5 var(--font-sans);color:var(--text-secondary);text-align:center}
+.jc-bk{display:grid;gap:8px}
+.jc-bk button{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary);text-align:left}
+.jc-bk b{flex:1;font:600 15px/1.2 var(--font-sans)}.jc-bk i{font-style:normal;color:var(--text-tertiary);font-size:20px}
+.jc-av,.jc-big{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--surface-hover);color:var(--link);font:800 16px/1 var(--font-sans);flex:none}
+.jc-big{width:64px;height:64px;border-radius:18px;font-size:28px;margin:0 auto 14px}
+.jc-safe{display:grid;gap:4px;margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--fin-positive-soft);font:400 13px/1.45 var(--font-sans);color:var(--text-secondary)}.jc-safe b{color:var(--text-primary);font-weight:600}
+.jc-mid{display:grid;justify-items:center;text-align:center}
+.jc-list{list-style:none;margin:0 0 18px;padding:12px 16px;display:grid;gap:8px;width:100%;max-width:340px;border-radius:14px;background:var(--surface-raised);border:1px solid var(--border-decorative);text-align:left;font:500 14px/1.3 var(--font-sans)}
+.jc-list li{color:var(--text-primary)}.jc-list li.no{color:var(--text-tertiary)}
+.jc-mid .btn{max-width:360px}
+.jc-back{margin-top:10px;padding:10px;font:600 14px/1 var(--font-sans);color:var(--link)}
+.jc-note{margin:8px 0 0;font:400 12px/1.4 var(--font-sans);color:var(--text-tertiary)}
+.jc-run{list-style:none;margin:0;padding:0;display:grid;gap:12px;width:100%;max-width:360px;text-align:left}
+.jc-run li{display:flex;align-items:center;gap:12px;font:500 14.5px/1.3 var(--font-sans);color:var(--text-tertiary);transition:color .2s}
+.jc-run li i{width:22px;height:22px;border-radius:50%;border:2px solid var(--border-control);flex:none;display:grid;place-items:center;font-style:normal;font-size:12px;transition:all .2s}
+.jc-run li.done{color:var(--text-primary)}.jc-run li.done i{background:var(--teal);border-color:var(--teal);color:var(--navy-900)}.jc-run li.done i::after{content:'✓';font-weight:800}
+.jc-ring{width:168px;height:168px;margin:12px 0 10px}.jc-ring .arc{transition:stroke-dasharray 1.1s cubic-bezier(.2,.8,.2,1)}
+.jc-ring text{font:800 30px var(--font-sans);fill:var(--text-primary)}.jc-ring text.of{font:500 9.5px var(--font-sans);fill:var(--text-tertiary)}
+@media (prefers-reduced-motion:reduce){.jc-ring .arc,.jc-run li,.jc-run li i{transition:none}}
+.jc-run .jc-ck{display:grid;place-items:center;width:22px;height:22px;box-sizing:border-box;border-radius:50%;border:2px solid var(--border-control);flex:none;font:800 12px/1 var(--font-sans);color:var(--navy-900)}
+.jc-run li.done .jc-ck{background:var(--teal);border-color:var(--teal)}.jc-run li.done .jc-ck::after{content:'✓'}
+.jc-run .jc-ck{border:0!important;box-shadow:inset 0 0 0 2px var(--slate-400)}.jc-run li.done .jc-ck{box-shadow:none}
 </style>
 </head>
 <body>
@@ -2078,13 +2105,39 @@ function mfHomeHTML(){var F=MFT.funds;
     '<a class="mfplan" href="#markets/mfgoal"><span aria-hidden="true">🎯</span><span><b>Plan a goal with a SIP</b><small>Child education, retirement, a house…</small></span><span class="go" aria-hidden="true">›</span></a></section>'}
 /* Home: your trading score (plan rules kept, out of 5), or a nudge to start journaling */
 var JEMPTY=/[?&]nojournal/.test(location.search);
-function scoreHome(mo,inJ){mo=mo||MONTHS().slice(-1)[0];var tr=(JEMPTY&&!inJ)?[]:ALL.filter(function(t){return t.d.slice(0,7)===mo}),C=2*Math.PI*21;
-  if(!tr.length)return '<'+(inJ?'button type="button" data-act="jrev"':'a href="#journal/overview"')+' class="psc empty"><span class="psr"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="21" fill="none" stroke="var(--border-decorative)" stroke-width="5" stroke-dasharray="4 5"/><text x="26" y="31" text-anchor="middle">?</text></svg></span>'+
-    '<span class="tx"><span class="eb">Your trading score</span><b>Start journaling today</b><small>Review each trade against 5 plan rules and get your score out of 5.</small></span><em>Start →</em></'+(inJ?'button':'a')+'>';
+function jConn(){return store.get('ap-jconn',null)}
+function scoreHome(mo,inJ){mo=mo||MONTHS().slice(-1)[0];var tr=((JEMPTY||!jConn())&&!inJ)?[]:ALL.filter(function(t){return t.d.slice(0,7)===mo}),C=2*Math.PI*21;
+  if(!tr.length)return '<'+(inJ?'button type="button" data-act="jrev"':'button type="button" data-jconn')+' class="psc empty"><span class="psr"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="21" fill="none" stroke="var(--border-decorative)" stroke-width="5" stroke-dasharray="4 5"/><text x="26" y="31" text-anchor="middle">?</text></svg></span>'+
+    '<span class="tx"><span class="eb">Your trading score</span><b>Start journaling today</b><small>Review each trade against 5 plan rules and get your score out of 5.</small></span><em>Start →</em></button>';
   var st=stats(tr),sc=st.score,mist={};tr.forEach(function(t){(t.mistakes||[]).forEach(function(k){mist[k]=(mist[k]||0)+1})});var mk=Object.keys(mist).sort(function(a,b){return mist[b]-mist[a]});
   var col=sc>=4?'var(--teal)':sc>=3?'var(--amber)':'var(--slate-500)',mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'});
   return '<a class="psc'+(inJ?' inj':'')+'" href="#journal/insights"><span class="psr"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="21" fill="none" stroke="var(--border-decorative)" stroke-width="5"/><circle cx="26" cy="26" r="21" fill="none" stroke="'+col+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+(sc/5*C).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 26 26)"/><text x="26" y="31" text-anchor="middle">'+sc.toFixed(1)+'</text></svg></span>'+
-    '<span class="tx"><span class="eb">Trading score · '+mname+'</span><b>'+sc.toFixed(1)+' of 5 plan rules kept</b><small>'+(mk.length?'Most missed: '+String(MISTAKE[mk[0]]||mk[0]).toLowerCase()+' · ':'')+tr.length+' trades</small></span><span class="go" aria-hidden="true">›</span></a>'}
+    '<span class="tx"><span class="eb">Trading score · '+mname+'</span><b>'+sc.toFixed(1)+' of 5 plan rules kept</b><small>'+(mk.length?'Most missed: '+String(MISTAKE[mk[0]]||mk[0]).toLowerCase()+' · ':'')+tr.length+' trades'+(!inJ&&jConn()?' · '+esc(jConn().b):'')+'</small></span><span class="go" aria-hidden="true">›</span></a>'}
+/* connect-broker flow (prototype): pick broker → sign in on the broker's page → fetch trades → check against the plan → score */
+var BROKERS=['Zerodha','Upstox','Angel One','Groww','Dhan','Fyers','ICICI Direct','Kotak Securities'];
+function jcStep(n,b){var m=$('#fsM'),mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(t){return t.d.slice(0,7)===mo}),st=stats(tr),C=2*Math.PI*44;
+  var dots='<div class="jc-dots" aria-hidden="true">'+[1,2,3,4].map(function(i){return '<i class="'+(i<=n?'on':'')+'"></i>'}).join('')+'</div>';
+  if(n===1)m.innerHTML=dots+'<h2 class="jc-h">Connect your broker</h2><p class="jc-p">We read your trades so your journal fills itself. Nothing to type.</p>'+
+    '<div class="jc-bk">'+BROKERS.map(function(x){return '<button type="button" data-jcb="'+esc(x)+'"><span class="jc-av" aria-hidden="true">'+esc(x.charAt(0))+'</span><b>'+esc(x)+'</b><i aria-hidden="true">›</i></button>'}).join('')+'</div>'+
+    '<div class="jc-safe"><b>🔒 Read-only</b><span>AlphaPad can see your orders and trades. It can never place an order, move money or see your password.</span></div>';
+  if(n===2)m.innerHTML=dots+'<div class="jc-mid"><span class="jc-big" aria-hidden="true">'+esc(b.charAt(0))+'</span><h2 class="jc-h">Sign in on '+esc(b)+'</h2><p class="jc-p">You’ll log in on '+esc(b)+'’s own page and approve read-only access. AlphaPad never sees your password.</p>'+
+    '<ul class="jc-list"><li>✓ Orders and trades</li><li>✓ Positions and holdings</li><li class="no">✕ Placing orders</li><li class="no">✕ Funds and withdrawals</li></ul>'+
+    '<button type="button" class="btn p full" data-jcgo="3" data-b="'+esc(b)+'">Continue to '+esc(b)+'</button><button type="button" class="jc-back" data-jcgo="1">Pick another broker</button>'+
+    '<p class="jc-note">Prototype: no real login happens here.</p></div>';
+  if(n===3){m.innerHTML=dots+'<div class="jc-mid"><h2 class="jc-h">Fetching your trades</h2><p class="jc-p">Connected to '+esc(b)+'. This takes a few seconds.</p><ol class="jc-run">'+
+      [['Connected to '+b],['Reading this month’s orders'],['Matching buys and sells into '+tr.length+' trades'],['Tagging setups and stop-losses'],['Checking each trade against your 5 plan rules']].map(function(x,i){return '<li data-i="'+i+'"><span class="jc-ck" aria-hidden="true"></span>'+esc(x[0])+'</li>'}).join('')+'</ol></div>';
+    var li=$$('.jc-run li',m),k=0;(function tick(){if(!$('#fsM')||$('#fsM')!==m)return;if(k<li.length){li[k].classList.add('done');k++;setTimeout(tick,520)}else setTimeout(function(){if($('#fsM')===m)jcStep(4,b)},450)})()}
+  if(n===4){var sc=st.score,mist={};tr.forEach(function(t){(t.mistakes||[]).forEach(function(z){mist[z]=(mist[z]||0)+1})});var mk=Object.keys(mist).sort(function(a,c){return mist[c]-mist[a]}),col=sc>=4?'var(--teal)':sc>=3?'var(--amber)':'var(--slate-500)';
+    store.set('ap-jconn',{b:b,at:Date.now()});
+    m.innerHTML=dots+'<div class="jc-mid"><span class="eb">Your trading score · '+mname(mo).split(' ')[0]+'</span><svg class="jc-ring" viewBox="0 0 100 100" aria-label="'+sc.toFixed(1)+' out of 5"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--border-decorative)" stroke-width="8"/><circle class="arc" cx="50" cy="50" r="44" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 '+C.toFixed(1)+'" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle">'+sc.toFixed(1)+'</text><text class="of" x="50" y="72" text-anchor="middle">out of 5</text></svg>'+
+      '<h2 class="jc-h">'+(sc>=4?'Good discipline':sc>=3?'Room to tighten up':'Plenty to work on')+'</h2><p class="jc-p">Across '+tr.length+' trades this month you kept '+sc.toFixed(1)+' of your 5 plan rules on average.'+(mk.length?' The one you missed most: <b>'+String(MISTAKE[mk[0]]||mk[0]).toLowerCase()+'</b> ('+mist[mk[0]]+' times).':'')+'</p>'+
+      '<a class="btn p full" href="#journal/insights" data-fsx>See what to fix</a><button type="button" class="jc-back" data-fsx>Done</button></div>';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){var a=$('.jc-ring .arc',m);if(a)a.setAttribute('stroke-dasharray',(sc/5*C).toFixed(1)+' '+C.toFixed(1))})});
+    if(tab==='today'){var y=scrollY;rToday();applySub('today','home');scrollTo(0,y)}}
+  m.scrollTop=0}
+function openJConn(){openFS('Your trading score','Connect once · about a minute','',null,function(m){jcStep(1);
+  m.addEventListener('click',function(e){var b=e.target.closest('[data-jcb]');if(b)return jcStep(2,b.dataset.jcb);var g=e.target.closest('[data-jcgo]');if(g)return jcStep(+g.dataset.jcgo,g.dataset.b)})})}
+document.addEventListener('click',function(e){if(e.target.closest('[data-jconn]')){e.preventDefault();openJConn()}});
 function homePreview(mid){mid=mid||'';var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
   return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
     '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
