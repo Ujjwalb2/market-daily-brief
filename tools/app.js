@@ -246,17 +246,50 @@ function fyShort(k,st){var v=seasonScore(),R={
     rewards:['a',ICO.star,'Rewards',v+' pts · '+freeDays()+' free days',v+' pts','','#rewards']}[k];return R?fyTile(R):''}
 function fyTile(r){var pro=r[6]==='@pro';return '<'+(pro?'button type="button" data-act="pro"':'a href="'+r[6]+'"')+' class="fyal c-'+r[0]+'"><span class="fyb">'+I(r[1],2)+'</span><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></'+(pro?'button':'a')+'>'}
 function fyRow(r){var pro=r[6]==='@pro';return '<'+(pro?'button type="button" data-act="pro"':'a href="'+r[6]+'"')+' class="row"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></'+(pro?'button':'a')+'>'}
-function forYou(){var p=profile(),a=(p&&!p.skipped&&p.answers)||{},key=(p&&!p.skipped&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(x){return x.d.slice(0,7)===mo}),st=stats(tr),
-    mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'}),g=goals(),pro=a.exp==='pro';fyTipN=0;
-  if(key==='learner'&&g.indexOf('learn')<0)g=['learn'].concat(g);
-  var lead=fyLead(key),leadK=key==='options'||key==='investor'||key==='picker'||key==='basic'?key:null;
-  if(lead&&leadK)lead=fyWithTip(lead,leadK);
-  var big=g.filter(function(k){return k!=='brief'}).map(function(k){return fyWithTip(fyCard(k,st,mname,tr),k)}).join('');
-  var rest=['journal','calls','watch','learn'].filter(function(k){return g.indexOf(k)<0}).concat(['rewards']);
-  return '<div class="h2 fyh"><h2>For you</h2></div>'+
-    '<div class="fy-me"><span class="ic" aria-hidden="true">'+I(ICO.you,2)+'</span><span class="tx"><b id="fyName">'+presetName()+'</b><small>'+(a.exp?EXPN[a.exp]+' · ':'')+g.map(function(k){return GSHORT[k]}).join(', ')+'</small></span><button type="button" class="fy-chg" data-act="setup">Change</button></div>'+
-    '<div class="fy">'+lead+big+
-    '<div class="fy-mh"><span class="eb">Also here</span></div><div class="fy-alg">'+rest.map(function(k){return fyShort(k,st)}).join('')+'</div></div>'}
+/* For you formats and cards. The questions run once (first open); after that you pick a format from the
+   dropdown or edit the cards yourself. Your own set is saved and stays until you change it. */
+var FYC={expiry:['Nifty expiry levels','Support, max pain, resistance',ICO.fo,'a','options'],movers:['Top movers','Biggest gainers today',ICO.mv,'t','picker'],
+  baskets:['Your baskets','Returns of your baskets',ICO.bk,'t','investor'],coming:['Coming up','Next event in the market day',ICO.cal,'b','basic'],
+  calls:['Trade ideas','Live calls and their record',ICO.tc,'i','calls'],journal:['Your month','P&L, win rate, profit factor',ICO.journal,'b','journal'],
+  learn:['Learning today','Three short ideas a day',ICO.learn,'i','learn'],market:['Market','Nifty, Bank Nifty and VIX charts',ICO.markets,'t','watch'],
+  rewards:['Rewards','Points, tier and free days',ICO.star,'a','']};
+var FMT={fo:['Options & futures trader',['expiry','calls','journal','market','rewards']],swing:['Swing trader',['movers','calls','journal','market','rewards']],
+  long:['Long-term investor',['baskets','market','learn','coming','rewards']],explore:['Still finding my style',['learn','coming','market','calls','rewards']],
+  all:['A bit of everything',['calls','market','journal','learn','coming','rewards']]};
+var fyEdit=false,fyMenu=false;
+function fyState(){var st=store.get('ap-fy',null);if(st&&st.f)return st;var p=profile(),w=p&&!p.skipped&&p.answers&&p.answers.what;return {f:FMT[w]?w:'all',custom:null}}
+function fyCards(st){return (st.f==='custom'&&st.custom?st.custom:FMT[st.f][1]).filter(function(k){return FYC[k]})}
+function fyFmtName(st){return st.f==='custom'?'My cards':FMT[st.f][0]}
+function fyRender(k,st,mname,tr){var h=k==='expiry'?fyLead('options'):k==='movers'?fyLead('picker'):k==='baskets'?fyLead('investor'):k==='coming'?fyLead('basic'):k==='market'?fyCard('watch',st,mname,tr):
+    k==='rewards'?(function(){var v=seasonScore(),ti=tierOf(v),nx=ti>0?TIERS[ti-1]:null;return fyShell('a',ICO.star,'Your rewards','<small class="fyc-r">'+SEASON.left+' days left</small>','<span class="fybig"><b>'+v+'</b><span>season points<small>'+TIERS[ti][1]+' · #'+myRank()+(nx?' · '+(nx[2]-v)+' to '+nx[1]:'')+' · '+freeDays()+' free days</small></span></span>','#rewards','Streak & rewards →')})():fyCard(k,st,mname,tr);
+  return FYC[k][4]?fyWithTip(h,FYC[k][4]):h}
+function forYou(){var p=profile(),a=(p&&!p.skipped&&p.answers)||{},mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(x){return x.d.slice(0,7)===mo}),stt=stats(tr),
+    mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'}),S=fyState(),cards=fyCards(S);fyTipN=0;
+  var sub=a.exp==='new'?'New to trading · we explain terms':a.exp==='pro'?'Experienced · short and to the point':a.exp?'Knows the basics':'Pick a format or edit the cards';
+  var head='<div class="fy-me"><span class="ic" aria-hidden="true">'+I(ICO.you,2)+'</span><button type="button" class="fy-fmt" data-fyfmt aria-haspopup="listbox" aria-expanded="'+fyMenu+'"><b id="fyName">'+fyFmtName(S)+' <i aria-hidden="true">⌄</i></b><small>'+sub+'</small></button>'+
+    '<button type="button" class="fy-chg'+(fyEdit?' p':'')+'" data-fyedit>'+(fyEdit?'Done':'Edit')+'</button></div>';
+  var menu=fyMenu?'<div class="fy-menu" role="listbox" aria-label="Formats">'+(S.custom?[['custom','My cards',S.custom]]:[]).concat(Object.keys(FMT).map(function(k){return [k,FMT[k][0],FMT[k][1]]})).map(function(f){var on=S.f===f[0];
+      return '<button type="button" role="option" aria-selected="'+on+'" data-fyset="'+f[0]+'"><span><b>'+f[1]+'</b><small>'+f[2].map(function(k){return FYC[k][0]}).join(' · ')+'</small></span>'+(on?'<i aria-hidden="true">✓</i>':'')+'</button>'}).join('')+'</div>':'';
+  var body=cards.map(function(k,i){var h=fyRender(k,stt,mname,tr);if(!fyEdit)return h;
+      return '<div class="fyw"><div class="fyctl"><span>'+FYC[k][0]+'</span><button type="button" data-fyup="'+k+'"'+(i?'':' disabled')+' aria-label="Move '+FYC[k][0]+' up">↑</button><button type="button" data-fydn="'+k+'"'+(i<cards.length-1?'':' disabled')+' aria-label="Move '+FYC[k][0]+' down">↓</button><button type="button" class="rm" data-fyrm="'+k+'">Remove</button></div><div class="fyin">'+h+'</div></div>'}).join('');
+  var spare=Object.keys(FYC).filter(function(k){return cards.indexOf(k)<0});
+  var add=fyEdit?'<div class="fy-mh"><span class="eb">Add cards</span></div>'+(spare.length?'<div class="fy-add">'+spare.map(function(k){var c=FYC[k];return '<button type="button" data-fyadd="'+k+'" class="c-'+c[3]+'"><span class="fyb">'+I(c[2],2)+'</span><span><b>'+c[0]+'</b><small>'+c[1]+'</small></span><em>+ Add</em></button>'}).join('')+'</div>':'<p class="note">Every card is already on your page.</p>')+
+      '<p class="note">Your changes are saved as <b>My cards</b> and stay until you pick another format.</p>':
+    (cards.length?'':'<p class="note">No cards yet. Tap Edit to add some.</p>');
+  return '<div class="h2 fyh"><h2>For you</h2></div>'+head+menu+'<div class="fy'+(fyEdit?' editing':'')+'">'+body+add+'</div>'}
+function fyRepaint(){var y=scrollY;rToday();applySub('today','foryou');scrollTo(0,y)}
+function fySave(cards){var S=fyState();store.set('ap-fy',{f:'custom',custom:cards,last:S.f==='custom'?S.last:S.f})}
+document.addEventListener('click',function(e){var t=e.target.closest('[data-fyfmt],[data-fyedit],[data-fyset],[data-fyup],[data-fydn],[data-fyrm],[data-fyadd]');if(!t)return;var d=t.dataset,S=fyState(),c=fyCards(S).slice();
+  if('fyfmt' in d){fyMenu=!fyMenu;fyEdit=false;return fyRepaint()}
+  if('fyedit' in d){fyEdit=!fyEdit;fyMenu=false;if(!fyEdit)toast('Saved. Your cards stay like this.');return fyRepaint()}
+  if(d.fyset){fyMenu=false;store.set('ap-fy',{f:d.fyset,custom:S.custom});toast(d.fyset==='custom'?'Showing your cards':'Format: '+FMT[d.fyset][0]);return fyRepaint()}
+  var k=d.fyup||d.fydn||d.fyrm||d.fyadd,i=c.indexOf(k);
+  if(d.fyup&&i>0){c.splice(i,1);c.splice(i-1,0,k)}
+  else if(d.fydn&&i>=0&&i<c.length-1){c.splice(i,1);c.splice(i+1,0,k)}
+  else if(d.fyrm&&i>=0)c.splice(i,1);
+  else if(d.fyadd&&i<0)c.push(k);
+  else return;
+  fySave(c);fyRepaint()});
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
 /* ---------------- IPOs going live: name, AlphaPad in-house score, report (sample data, same IPOs as the calendar) ---------------- */
@@ -893,7 +926,7 @@ var LKEY='sp-learn-2026-11-12',lrnI=0;
 function learned(){return store.get(LKEY,[])}
 function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'dark',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
   s.innerHTML=top('You')+
-    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>Your screen: '+presetName()+' · <button type="button" class="l" style="color:var(--link);font-weight:600" data-act="setup">Change</button></small></div></div>'+
+    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small></div></div>'+
     '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
     '<div class="h2" id="tools"><h2>Tools</h2></div><div class="card" style="padding:0 16px"><div class="list">'+
       '<button type="button" class="row" data-act="risk"><span class="ic t">'+I('<path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>')+'</span><span class="tx"><b>Risk Studio</b><small>How many shares to buy for your risk</small></span><span class="go" aria-hidden="true">›</span></button>'+
@@ -901,7 +934,7 @@ function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lr
       [[L.bt,ICO.bt,'i','Backtesting','Replay past days, candle by candle',1],[L.screener,ICO.scan,'a','Screener','Scan Nifty 500 stocks',0],[L.studio,ICO.studio,'b','Option Studio','Option chain and strategies',0],[L.baskets,ICO.bk,'t','Baskets','Build and track baskets',0],[L.lms,ICO.lms,'i','LMS','Courses and lessons',0],[L.brief,ICO.brief,'b','Full brief','Read today’s brief on the web',0]]
       .map(function(r){return '<a class="row" href="'+r[0]+'"'+(r[5]?' target="_blank" rel="noopener"':'')+'><span class="ic '+r[2]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[3]+'</b><small>'+r[4]+'</small></span><span class="go" aria-hidden="true">'+(r[5]?I(ICO.ext):'›')+'</span></a>'}).join('')+'</div></div>'+
     '<div class="h2" id="settings"><h2>Settings</h2></div><div class="card"><div class="fld" style="margin:0"><span>Theme</span><div class="seg" role="group" aria-label="Theme">'+[['dark','Dark'],['light','Light']].map(function(t){return '<button type="button" data-theme-set="'+t[0]+'" aria-pressed="'+(th===t[0])+'">'+t[1]+'</button>'}).join('')+'</div></div>'+
-      '<div class="list" style="margin-top:8px"><button type="button" class="row" data-act="setup"><span class="ic i">'+I(ICO.setup)+'</span><span class="tx"><b>Change my screen</b><small>Answer the 3 questions again</small></span><span class="go">›</span></button>'+
+      '<div class="list" style="margin-top:8px"><a class="row" href="#today/foryou"><span class="ic i">'+I(ICO.setup)+'</span><span class="tx"><b>Customise For you</b><small>Pick a format or add and remove cards</small></span><span class="go">›</span></a>'+
       (PRO_LOCK?(store.get('ap-pro',0)?'<button type="button" class="row" data-act="prolock"><span class="ic a">'+I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>')+'</span><span class="tx"><b>Show the free view</b><small>Lock live calls again (demo)</small></span></button>':'<button type="button" class="row" data-act="pro"><span class="ic a">'+I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>')+'</span><span class="tx"><b>AlphaPad Pro</b><small>Unlock live trade calls</small></span><span class="go">›</span></button>'):'')+
       '<button type="button" class="row rst" id="rstB"><span class="ic s">'+I(ICO.reset)+'</span><span class="tx"><b>Start fresh</b><small id="rstS">Clears everything saved on this device</small></span></button></div></div>'+
     '<p class="note">AlphaPad by Springpad. Analysis, not investment advice. Prototype with sample data.</p>'}
