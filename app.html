@@ -1482,6 +1482,17 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .ixac button{width:22px;height:22px;border-radius:50%;background:var(--surface-glass);color:var(--text-secondary);font-size:11px}
 .ixnote{width:100%;min-height:84px;padding:12px;border-radius:12px;background:var(--surface-raised);border:1px solid var(--border-control);color:var(--text-primary);font:400 14px/1.45 var(--font-sans);resize:vertical}
 .ixnote:focus{outline:0;border-color:var(--indigo-500);box-shadow:0 0 0 3px rgba(63,91,217,.25)}
+
+/* full-screen chart: index dropdown in the top bar */
+.ixdd{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin:0 auto;padding:4px 12px;border-radius:9999px;background:var(--surface-glass);border:1px solid var(--border-glass);color:var(--text-primary)}
+.ixdd b{font:700 16px/1.2 var(--font-sans)}.ixdd i{font-style:normal;font-size:14px;color:var(--text-tertiary);transition:transform .2s}.ixdd[aria-expanded=true] i{transform:rotate(180deg)}
+.ixmenu{position:absolute;left:12px;right:12px;top:calc(64px + env(safe-area-inset-top,0px));z-index:5;max-height:60vh;overflow-y:auto;padding:6px;border-radius:16px;background:var(--surface-elevated);border:1px solid var(--border-glass);box-shadow:0 18px 48px rgba(0,0,0,.45);animation:ixmIn .16s ease-out}
+@keyframes ixmIn{from{opacity:0;transform:translateY(-6px)}}@media (prefers-reduced-motion:reduce){.ixmenu{animation:none}}
+.ixmenu button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:12px;text-align:left;color:var(--text-primary)}
+.ixmenu button:hover,.ixmenu button[aria-selected=true]{background:rgba(63,91,217,.16)}
+.ixmenu span{flex:1;display:grid;gap:3px}.ixmenu b{font:600 14.5px/1.2 var(--font-sans)}.ixmenu small{font:500 12px/1 var(--font-sans);color:var(--text-tertiary);font-variant-numeric:tabular-nums}
+.ixmenu em{font:700 13px/1 var(--font-sans);font-style:normal;font-variant-numeric:tabular-nums}.ixmenu em.u{color:var(--up-text)}.ixmenu em.d{color:var(--slate-500)}.ixmenu em.w{color:var(--warn-text)}
+.ixmenu i{font-style:normal;color:var(--link);font-weight:800}
 </style>
 </head>
 <body>
@@ -2051,16 +2062,22 @@ function ixInfo(x){var d=x.d,v=d.map(function(q){return q[1]}),n=v.length,last=v
   return h}
 function ixFSBody(){var x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0];
   return '<div class="ixfsb">'+ixBlock(x,'F').replace('<button type="button" class="l" data-act="ixpick" data-slot="F" aria-haspopup="dialog">Change ⌄</button>','')+
-    ixDay(x)+ixActs(x)+ixInfo(x)+'<div class="h2" id="ixAlS"><h2>Price alerts</h2></div>'+ixAlerts(x)+'<div class="h2" id="ixNoS"><h2>Notes</h2></div>'+ixNotes(x)+'<div class="h2"><h2>Change index</h2></div><div class="ixgrid">'+IDX.map(function(i){var on=i.n===x.n;return '<button type="button" data-ixf="'+esc(i.n)+'" aria-pressed="'+on+'"><b>'+esc(ixShort(i.n))+'</b><small class="'+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</small></button>'}).join('')+'</div>'+
+    ixDay(x)+ixActs(x)+ixInfo(x)+'<div class="h2" id="ixAlS"><h2>Price alerts</h2></div>'+ixAlerts(x)+'<div class="h2" id="ixNoS"><h2>Notes</h2></div>'+ixNotes(x)+
     '<p class="ocn">Daily closes, '+x.d[0][0]+' to '+x.d[x.d.length-1][0]+'. Touch the chart to read a day. Data from NSE.</p></div>'}
-function openIxFS(){var x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0];
-  openFS(esc(ixShort(x.n)),'1-month chart · 11 Nov close',ixFSBody(),null,function(m){wireChart(x,'F');
+function ixTitle(x){return '<button type="button" class="ixdd" data-ixdd aria-haspopup="listbox" aria-expanded="false"><b>'+esc(ixShort(x.n))+'</b><i aria-hidden="true">⌄</i></button><small>1-month chart · 11 Nov close · tap to change</small>'}
+function ixMenu(open){var old=$('#ixMenu');if(old)old.remove();var bt=$('#fsT .ixdd');if(bt)bt.setAttribute('aria-expanded',String(!!open));if(!open)return;
+  var m=document.createElement('div');m.id='ixMenu';m.className='ixmenu';m.setAttribute('role','listbox');
+  m.innerHTML=IDX.map(function(i){var on=i.n===ixSel;return '<button type="button" role="option" aria-selected="'+on+'" data-ixf="'+esc(i.n)+'"><span><b>'+esc(ixShort(i.n))+'</b><small>'+num(i.d[i.d.length-1][1],2)+'</small></span><em class="'+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</em>'+(on?'<i aria-hidden="true">✓</i>':'')+'</button>'}).join('');
+  $('#fs .ochp').appendChild(m)}
+function ixSwitch(n){ixSel=n;ixMenu(false);var nx=IDX.filter(function(i){return i.n===ixSel})[0];$('#fsM').innerHTML=ixFSBody();$('#fsM').scrollTop=0;$('#fsT').innerHTML=ixTitle(nx);wireChart(nx,'F');if(tab==='markets')rMarkets()}
+function openIxFS(){var x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0];ixMenu(false);
+  openFS('','',ixFSBody(),null,function(m){$('#fsT').innerHTML=ixTitle(x);wireChart(x,'F');
     m.addEventListener('input',function(e){if(e.target.id!=='ixNote')return;var N=store.get('ap-ixnotes',{});N[ixSel]=e.target.value;store.set('ap-ixnotes',N)});
     m.addEventListener('click',function(e){var g=e.target.closest('[data-ixgo]');if(g){var t=$('#'+g.dataset.ixgo,m);if(t)$('#fsM').scrollTo({top:t.offsetTop-12,behavior:'smooth'});if(g.dataset.ixgo==='ixNoS')setTimeout(function(){var n=$('#ixNote',m);if(n)n.focus()},350);return}
       var ad=e.target.closest('[data-ad]');if(ad){$$('[data-ad]',m).forEach(function(z){z.setAttribute('aria-pressed',String(z===ad))});return}
       if(e.target.closest('[data-act="ixalset"]')){var pv=parseFloat($('#ixAp',m).value),dir=($('[data-ad][aria-pressed=true]',m)||{}).dataset;if(!(pv>0)){toast('Enter a price for the alert');return}var A=store.get('ap-alerts',{});(A[ixSel]=A[ixSel]||[]).push([dir?dir.ad:'above',pv]);store.set('ap-alerts',A);$('#ixAl',m).outerHTML=ixAlerts(IDX.filter(function(i){return i.n===ixSel})[0]);toast('Alert set: '+ixShort(ixSel)+' '+(dir&&dir.ad==='below'?'below':'above')+' '+num(pv,0));return}
       var rx=e.target.closest('[data-alx]');if(rx){var A2=store.get('ap-alerts',{});(A2[ixSel]||[]).splice(+rx.dataset.alx,1);store.set('ap-alerts',A2);$('#ixAl',m).outerHTML=ixAlerts(IDX.filter(function(i){return i.n===ixSel})[0]);return}
-      var b=e.target.closest('[data-ixf]');if(!b)return;ixSel=b.dataset.ixf;var y=$('#fsM').scrollTop;$('#fsM').innerHTML=ixFSBody();var nx=IDX.filter(function(i){return i.n===ixSel})[0];$('#fsT').innerHTML='<b>'+esc(ixShort(nx.n))+'</b><small>1-month chart · 11 Nov close</small>';wireChart(nx,'F');if(tab==='markets')rMarkets()})})}
+    })})}
 function ixList(){return '<div class="h2 ixlh"><h2>All indices</h2><span class="sp"></span><small>tap one to chart it</small></div><div class="card ixall" style="padding:0 14px"><div class="list">'+
   IDX.map(function(i){var v=i.d[i.d.length-1][1],on=i.n===ixSel;return '<button type="button" class="row'+(on?' on':'')+'" data-ix="'+esc(i.n)+'"'+(on?' aria-current="true"':'')+'><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="ixsp">'+ovSpark(i)+'</span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span></button>'}).join('')+'</div></div>'}
 function rMarkets(){setTimeout(flFade,0);var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0],last=x.d[x.d.length-1][1],m=(last/x.d[0][1]-1)*100;
@@ -2479,7 +2496,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=totalDa
     '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';}
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#rewards" data-close>Free days, badges and season</a>')}
-document.addEventListener('click',function(e){if(e.target.closest('[data-ochx]')){closeChain();return}if(e.target.closest('[data-fsx]')){closeFS();return}var och=e.target.closest('[data-och]');if(och){ochSeg=och.dataset.och;ochBody();return}var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-jt],[data-tcf],[data-callx],[data-inv],[data-goal],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
+document.addEventListener('click',function(e){if(e.target.closest('[data-ochx]')){closeChain();return}if(e.target.closest('[data-fsx]')){ixMenu(false);closeFS();return}var dd=e.target.closest('[data-ixdd]');if(dd){ixMenu(!$('#ixMenu'));return}var ixf=e.target.closest('#ixMenu [data-ixf]');if(ixf){ixSwitch(ixf.dataset.ixf);return}if($('#ixMenu')&&!e.target.closest('#ixMenu'))ixMenu(false);var och=e.target.closest('[data-och]');if(och){ochSeg=och.dataset.och;ochBody();return}var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-jt],[data-tcf],[data-callx],[data-inv],[data-goal],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
   if(ds.call!=null){e.preventDefault();return openCall(+ds.call)}if(false){setTimeout(function(){var tr=$('#tcTr'),c=tr&&tr.children[+ds.call];if(c){window.scrollTo({top:c.getBoundingClientRect().top+scrollY-130,behavior:'smooth'});c.classList.add('flash');setTimeout(function(){c.classList.remove('flash')},1600)}},450)}
   if(ds.subGo){var spot=a.getAttribute('data-spot');if(spot!=null)setTimeout(function(){var el=document.getElementById('spot-'+spot);if(el){var y=el.getBoundingClientRect().top+scrollY-150;window.scrollTo({top:y,behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1200)}},60);var bs=$$('#s-'+tab+' .subbar button'),a1=bs.findIndex(function(b){return b.hasAttribute('aria-current')}),a2=bs.findIndex(function(b){return b.dataset.subGo===ds.subGo});subDir=a2>a1?'r':'l';subSel[tab]=ds.subGo;RENDER[tab]();window.scrollTo({top:0,behavior:'smooth'});return}
   if(ds.tile){closeSheet();return tileSheet(ds.tile)}
