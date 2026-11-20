@@ -204,13 +204,22 @@ var FYTIP={options:'Support is where buyers usually step in and resistance where
   learn:'Three short ideas a day. Finishing all three counts for your streak.',
   brief:'Five minutes on what happened overnight and what to watch today.'};
 var fyTipN=0;function fyTip(k){return beginner()&&FYTIP[k]&&fyTipN++<2?'<span class="fy-tip"><i aria-hidden="true">💡</i><span>'+FYTIP[k]+'</span></span>':''}
-function fyWithTip(h,k){var t=fyTip(k);if(!t||!h)return h;var i=h.lastIndexOf('</');return h.slice(0,i)+t+h.slice(i)}
+function fyWithTip(h,k){var t=fyTip(k);if(!t||!h)return h;var i=h.indexOf('<span class="fyc-cta">');if(i<0)i=h.lastIndexOf('</');return h.slice(0,i)+t+h.slice(i)}
+/* card shell: tinted card, icon badge, eyebrow, optional right text, body, a call to action */
+function fyShell(tone,ic,eb,right,body,href,cta,act){var tag=act?'button type="button" data-act="'+act+'"':'a href="'+href+'"';
+  return '<'+tag+' class="fyc c-'+tone+'"><span class="fyc-h"><span class="fyb">'+I(ic,2)+'</span><span class="eb">'+eb+'</span><span class="sp"></span>'+(right||'<span class="go" aria-hidden="true">›</span>')+'</span>'+body+(cta?'<span class="fyc-cta">'+cta+'</span>':'')+'</'+(act?'button':'a')+'>'}
+function fySpark(x){var v=x.d.map(function(q){return q[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),r=(hi-lo)||1,W=100,H=26;
+  return '<svg class="fysp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+v.map(function(y,i){return (i/(v.length-1)*W).toFixed(1)+','+(H-2-(y-lo)/r*(H-4)).toFixed(1)}).join(' ')+'" fill="none" stroke="'+(x.vix?'var(--amber)':x.up?'var(--teal)':'var(--slate-500)')+'" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>'}
 function fyLead(key){var nx=nextEv();
-  if(key==='options')return '<a class="fy-x" href="#markets/fo"><div class="fy-k"><span class="eb">Your expiry · Nifty</span><small>'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small></div><div class="fy-lv">'+D.fo.k.map(function(k,n){return '<div class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div></a>';
-  if(key==='investor')return '<a class="fy-x" href="#ideas/baskets"><div class="fy-k"><span class="eb">Your baskets</span></div>'+D.baskets.slice(0,2).map(function(b){return '<div class="fy-r"><span>'+esc(b.n)+'</span><b class="u">'+esc(b.r)+'</b></div>'}).join('')+'</a>';
-  if(key==='picker')return '<a class="fy-x" href="#markets/movers"><div class="fy-k"><span class="eb">Your watch · top movers</span></div>'+MVS.slice(0,3).map(function(m){return '<div class="fy-r"><span>'+esc(m.n)+'</span><b class="u">+'+m.v.toFixed(2)+'%</b></div>'}).join('')+'</a>';
+  if(key==='options')return fyShell('a',ICO.fo,'Your expiry · Nifty','<small class="fyc-r">'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small>',
+    '<span class="fy-lv">'+D.fo.k.map(function(k,n){return '<span class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></span>'}).join('')+'</span>','#markets/fo','See F&amp;O levels →');
+  if(key==='investor')return fyShell('t',ICO.bk,'Your baskets','',
+    '<span class="fyg2">'+D.baskets.slice(0,2).map(function(b){var m=BKMETA[b.n]||[];return '<span class="fybk"><b>'+esc(b.r)+'</b><span>'+esc(b.n)+'</span><small>'+(m[1]?m[1]+' stocks · '+m[2]:'Basket')+'</small></span>'}).join('')+'</span>','#ideas/baskets','See all baskets →');
+  if(key==='picker'){var mx=Math.max.apply(null,MVS.slice(0,3).map(function(m){return Math.abs(m.v)}))||1;
+    return fyShell('t',ICO.mv,'Your watch · top movers','',
+    '<span class="fyg3">'+MVS.slice(0,3).map(function(m){return '<span class="fymv"><small>'+esc(m.n)+'</small><b>+'+m.v.toFixed(2)+'%</b><i style="width:'+(Math.abs(m.v)/mx*100).toFixed(0)+'%"></i></span>'}).join('')+'</span>','#markets/movers','All gainers and losers →')}
   if(key==='learner')return '';
-  return '<a class="fy-x" href="#markets/cal"><div class="fy-k"><span class="eb">Coming up for you</span></div><div class="fy-r"><span>'+(nx?esc(nx.b):'Market day done')+'</span><b>'+(nx?nx.t:'')+'</b></div></a>'}
+  return fyShell('b',ICO.cal,'Coming up for you','','<span class="fyev"><b>'+(nx?nx.t:'Done')+'</b><span>'+(nx?esc(nx.b):'The market day is over')+'</span></span>','#markets/cal','Today’s timeline →')}
 function fyCard(k,st,mname,tr){
   if(k==='journal'){var cum=0,pts=tr.map(function(x){cum+=x.pnl;return cum}),lo=Math.min.apply(null,[0].concat(pts)),hi=Math.max.apply(null,[0].concat(pts)),rg=(hi-lo)||1,W=300,H=56;
     var line=pts.map(function(y,i){return (pts.length>1?i/(pts.length-1)*W:0).toFixed(1)+','+(H-4-(y-lo)/rg*(H-8)).toFixed(1)}).join(' '),zero=(H-4-(0-lo)/rg*(H-8)).toFixed(1);
@@ -218,10 +227,14 @@ function fyCard(k,st,mname,tr){
       '<div class="fy-n"><b class="'+(st.net>=0?'u':'')+'">'+inr(st.net,true)+'</b><small>net P&amp;L</small></div>'+
       '<svg class="fy-sp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="'+W+'" y1="'+zero+'" y2="'+zero+'" stroke="var(--border-decorative)" stroke-dasharray="3 4"/><polyline points="'+line+'" fill="none" stroke="'+(st.net>=0?'var(--teal)':'var(--slate-500)')+'" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>'+
       '<div class="fy-3"><div><b>'+st.n+'</b><small>trades</small></div><div><b>'+st.wr.toFixed(0)+'%</b><small>win rate</small></div><div><b>'+(st.pf?st.pf.toFixed(2):'–')+'</b><small>profit factor</small></div></div></a>'}
-  if(k==='calls')return locked()?'<button type="button" class="fy-x fy-cl lk" data-act="pro"><div class="fy-k"><span class="eb">Your trade ideas</span><em>Unlock →</em></div><b>'+CALLS.length+' live calls</b><small>Locked · '+CL.filter(function(x){return x.ret>0}).length+' of the last '+CL.length+' booked profit</small></button>'
-    :'<a class="fy-x fy-cl" href="#ideas/calls"><div class="fy-k"><span class="eb">Your trade ideas</span><em>Open →</em></div><b>'+CALLS.length+' live calls</b><small>'+CLW+' of the last '+CL.length+' hit target</small></a>';
-  if(k==='learn'){var l=learned().length;return '<a class="fy-x" href="#ideas/learn"><div class="fy-k"><span class="eb">Your learning today</span><small>'+l+' of '+LEARN.length+'</small></div><span class="lbar"><em style="width:'+(l/LEARN.length*100)+'%"></em></span></a>'}
-  if(k==='watch')return '<a class="fy-x" href="#markets/indices"><div class="fy-k"><span class="eb">Your market</span><span class="go" aria-hidden="true">›</span></div>'+IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}).map(function(x){return '<div class="fy-r"><span>'+esc(ixShort(x.n))+'</span><b>'+num(x.d[x.d.length-1][1],2)+' <i class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pct+'</i></b></div>'}).join('')+'</a>';
+  if(k==='calls'){var won=CL.filter(function(x){return x.ret>0}).length,dots='<span class="fydots" aria-label="'+won+' of the last '+CL.length+' booked profit">'+CL.map(function(x){return '<i class="'+(x.ret>0?'u':'')+'"></i>'}).join('')+'</span>';
+    var body='<span class="fybig"><b>'+CALLS.length+'</b><span>live calls today<small>'+won+' of the last '+CL.length+' booked profit</small></span></span>'+dots;
+    return locked()?fyShell('a',ICO.tc,'Your trade ideas','<small class="fyc-r">Locked</small>',body,'',('Unlock today’s '+CALLS.length+' calls →'),'pro').replace('class="fyc c-a"','class="fyc c-a lk"'):fyShell('i',ICO.tc,'Your trade ideas','',body,'#ideas/calls','Open calls →')}
+  if(k==='learn'){var lr=learned(),l=lr.length,nx=LEARN.filter(function(x){return lr.indexOf(x.id)<0})[0],C=2*Math.PI*20;
+    return fyShell('i',ICO.learn,'Your learning today','<small class="fyc-r">'+l+' of '+LEARN.length+'</small>',
+      '<span class="fyln"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="var(--border-decorative)" stroke-width="5"/><circle cx="24" cy="24" r="20" fill="none" stroke="var(--teal)" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+(l/LEARN.length*C).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 24 24)"/><text x="24" y="29" text-anchor="middle">'+l+'/'+LEARN.length+'</text></svg>'+
+      '<span>'+(nx?'<small>Next · '+esc(nx.kind)+'</small><b>'+esc(nx.h)+'</b>':'<small>All done today</small><b>Streak step kept ✓</b>')+'</span></span>','#ideas/learn',nx?'Learn it →':'Review today’s ideas →')}
+  if(k==='watch')return fyShell('t',ICO.markets,'Your market','<small class="fyc-r">1 month</small>','<span class="fyg3">'+IDX.filter(function(x){return /^(Nifty 50|Nifty Bank|India VIX)$/.test(x.n)}).map(function(x){return '<span class="fyix"><small>'+esc(ixShort(x.n))+'</small><b>'+num(x.d[x.d.length-1][1],x.vix?2:0)+'</b><em class="'+(x.vix?'w':x.up?'u':'d')+'">'+x.pct+'</em>'+fySpark(x)+'</span>'}).join('')+'</span>','#markets/indices','Open charts →');
   if(k==='brief')return '<div class="fy-x fy-br"><button type="button" class="fy-play" data-act="listen" aria-label="Play the brief">▶</button><span><b>Today’s brief</b><small>'+mmss(D.audio.dur)+' · 7 chapters</small></span><a class="l" href="#markets/filings">Read</a></div>';
   return ''}
 function fyShort(k,st){var v=seasonScore(),R={
@@ -230,7 +243,8 @@ function fyShort(k,st){var v=seasonScore(),R={
     learn:['i',ICO.learn,'Learning',learned().length+' of '+LEARN.length+' ideas today','','','#ideas/learn'],
     watch:['t',ICO.markets,'Market','Nifty, Bank Nifty and VIX','','','#markets/indices'],
     brief:['i',ICO.brief,'Today’s brief',mmss(D.audio.dur)+' · 7 chapters','','','#markets/filings'],
-    rewards:['t',ICO.star,'Your rewards',freeDays()+' free days · '+TIERS[tierOf(v)][1]+' · #'+myRank(),v+' pts','','#rewards']}[k];return R?fyRow(R):''}
+    rewards:['a',ICO.star,'Rewards',v+' pts · '+freeDays()+' free days',v+' pts','','#rewards']}[k];return R?fyTile(R):''}
+function fyTile(r){var pro=r[6]==='@pro';return '<'+(pro?'button type="button" data-act="pro"':'a href="'+r[6]+'"')+' class="fyal c-'+r[0]+'"><span class="fyb">'+I(r[1],2)+'</span><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></'+(pro?'button':'a')+'>'}
 function fyRow(r){var pro=r[6]==='@pro';return '<'+(pro?'button type="button" data-act="pro"':'a href="'+r[6]+'"')+' class="row"><span class="ic '+r[0]+'">'+I(r[1])+'</span><span class="tx"><b>'+r[2]+'</b><small>'+esc(r[3])+'</small></span>'+(r[4]?'<span class="vl '+r[5]+'">'+r[4]+'</span>':'')+'<span class="go" aria-hidden="true">›</span></'+(pro?'button':'a')+'>'}
 function forYou(){var p=profile(),a=(p&&!p.skipped&&p.answers)||{},key=(p&&!p.skipped&&p.preset)||'basic',mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(x){return x.d.slice(0,7)===mo}),st=stats(tr),
     mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'}),g=goals(),pro=a.exp==='pro';fyTipN=0;
@@ -242,7 +256,7 @@ function forYou(){var p=profile(),a=(p&&!p.skipped&&p.answers)||{},key=(p&&!p.sk
   return '<div class="h2 fyh"><h2>For you</h2></div>'+
     '<div class="fy-me"><span class="ic" aria-hidden="true">'+I(ICO.you,2)+'</span><span class="tx"><b id="fyName">'+presetName()+'</b><small>'+(a.exp?EXPN[a.exp]+' · ':'')+g.map(function(k){return GSHORT[k]}).join(', ')+'</small></span><button type="button" class="fy-chg" data-act="setup">Change</button></div>'+
     '<div class="fy">'+lead+big+
-    '<div class="fy-mh"><span class="eb">Also here</span></div><div class="card fy-more">'+rest.map(function(k){return fyShort(k,st)}).join('')+'</div></div>'}
+    '<div class="fy-mh"><span class="eb">Also here</span></div><div class="fy-alg">'+rest.map(function(k){return fyShort(k,st)}).join('')+'</div></div>'}
 
 /* Home previews: two highlights and two of your things, each with a way to see all */
 /* ---------------- IPOs going live: name, AlphaPad in-house score, report (sample data, same IPOs as the calendar) ---------------- */
