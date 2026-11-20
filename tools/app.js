@@ -959,7 +959,7 @@ function nextReview(){var n=todo()[0];if(n)setTimeout(function(){reviewForm(n.id
 /* ---------------- YOU ---------------- */
 var LKEY='sp-learn-2026-11-12',lrnI=0;
 function learned(){return store.get(LKEY,[])}
-function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'dark',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
+function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'light',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
   s.innerHTML=top('You')+
     '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small></div></div>'+
     '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
@@ -1208,7 +1208,7 @@ function applySub(t,sec){var defs=SUBS[t],scr=$('#s-'+t);if(!defs||!scr)return;v
   if(x[1]==='rToday')rToday=w;else if(x[1]==='rMarkets')rMarkets=w;else if(x[1]==='rIdeas')rIdeas=w;else if(x[1]==='rJournal')rJournal=w;else rYou=w});
 var subSec=null;
 var RENDER={today:rToday,markets:rMarkets,ideas:rIdeas,journal:rJournal,you:rYou,rewards:rRewards,ipos:rIpos};
-if(!root.getAttribute('data-theme'))root.setAttribute('data-theme',matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+if(!root.getAttribute('data-theme'))root.setAttribute('data-theme','light');
 badge();route();paintAudio();
 if(!profile()||/[?&]setup=1/.test(location.search))setTimeout(onboard,/[?&]nosplash/.test(location.search)?60:500);
 })();
