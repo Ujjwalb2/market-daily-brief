@@ -1645,3 +1645,5 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .psc.empty{background:radial-gradient(120% 90% at 0% 0%,rgba(63,91,217,.14),transparent 60%),var(--surface-raised);border-style:dashed;border-color:var(--border-control)}
 .psc.empty text{fill:var(--text-tertiary);font-size:18px}
 .psc em{font:600 13px/1 var(--font-sans);font-style:normal;color:var(--link);white-space:nowrap}
+.psc.inj,#s-journal .psc{margin-top:12px}
+button.psc{width:100%;text-align:left}
