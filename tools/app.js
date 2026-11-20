@@ -1086,6 +1086,11 @@ function lbHTML(){var a=lbAll(),mi=a.findIndex(function(x){return x[0]==='You'})
   return '<div class="h2"><h2>Season leaderboard</h2><span class="sp"></span><small>'+SEASON.name.replace(' season','')+' · '+SEASON.left+' days left</small></div>'+
     '<div class="card lb">'+rows+'<button type="button" class="btn g s full" data-act="board">See full leaderboard</button></div>'+
     '<p class="note" style="margin-top:8px">Points reset on 1 Dec. Your streak, milestones, badges and free days carry over.</p>'}
+/* streak screen: what is left today to keep the streak */
+function stkToday(){var g=goals(),d=mDone(),left=g.length-d;
+  return '<div class="stt"><div class="stt-h"><b>'+(left?'Today · '+left+' left to keep the streak':'Today · all done, streak kept 🔥')+'</b><small>'+d+' of '+g.length+'</small></div>'+
+    g.map(function(k){var st=STEP[k],ok=st[2](),sub=typeof st[1]==='function'?st[1]():st[1],m=SLOOK[k],lis=st[3]==='@listen';
+      return '<a class="stt-r'+(ok?' ok':'')+'" href="'+(lis?'#today':st[3])+'"'+(lis&&!ok?' data-act="listen"':'')+'><span class="stt-c" aria-hidden="true">'+(ok?'✓':'')+'</span><span class="tx"><b>'+st[0]+'</b><small>'+sub+'</small></span>'+(ok?'<em class="dn">Done</em>':'<em>'+m[2]+' →</em>')+'</a>'}).join('')+'</div>'}
 function tileSheet(k){
   if(k==='free')return sheet('🎁 Free days',strip(freeHTML()));
   if(k==='season'||k==='shout'){var h=strip(seasonHTML()),i=h.indexOf('<div class="card sho">');return k==='season'?sheet('⭐ '+SEASON.name,h.slice(0,i)+'</section>'):sheet('📣 Monday shoutout','<section>'+h.slice(i))}
@@ -1096,7 +1101,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=qDays()
   var tile=function(k,ic,lab,val,sub,p){return '<button type="button" class="rt" data-tile="'+k+'"><span class="eb">'+ic+' '+lab+'</span><b>'+val+'</b><small>'+sub+'</small><span class="lbar"><em style="width:'+Math.min(100,p*100).toFixed(0)+'%"></em></span></button>'};
   s.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>Streak & rewards</h1><span class="sp"></span></header>'+
     '<div class="rhead"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak · longest '+longest()+' · '+totalDays()+' mornings in all</small><span class="carry">Never resets with the season</span>'+weekHTML()+
-      '<button type="button" class="frl" data-tile="freeze">'+[0,1].map(function(i){return '<i class="'+(i<freezes()?'on':'')+'">🧊</i>'}).join('')+' '+freezes()+' of 2 freezes ready <em>›</em></button></div>'+
+      '<button type="button" class="frl" data-tile="freeze">'+[0,1].map(function(i){return '<i class="'+(i<freezes()?'on':'')+'">🧊</i>'}).join('')+' '+freezes()+' of 2 freezes ready <em>›</em></button>'+stkToday()+'</div>'+
     '<div class="rgrid">'+
       tile('free','🎁','Free days',fd,'of '+FD_MAX+' · for your Dec subscription',fd/FD_MAX)+
       tile('season','⭐','Season',v+' <span class="tier '+TIERS[ti][0]+'"><i></i>'+TIERS[ti][1]+'</span>',nx?(nx[2]-v)+' pts to '+nx[1]+' · #'+myRank():'#'+myRank()+' · top tier',nx?(v-TIERS[ti][2])/(nx[2]-TIERS[ti][2]):1)+
