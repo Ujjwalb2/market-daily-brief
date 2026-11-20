@@ -302,7 +302,7 @@ function mfHomeHTML(){var F=MFT.funds;
     '<div class="hlt mft2" data-noswipe aria-label="Top performing mutual funds, swipe for more">'+F.map(function(f){return fundCard(f,'a','#markets/mftop')}).join('')+'</div>'+
     '<div class="mdots mfd" aria-hidden="true">'+F.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
     '<a class="mfplan" href="#markets/mfgoal"><span aria-hidden="true">🎯</span><span><b>Plan a goal with a SIP</b><small>Child education, retirement, a house…</small></span><span class="go" aria-hidden="true">›</span></a></section>'}
-function homePreview(mid){mid=(mid||'')+chainCard('home');var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
+function homePreview(mid){mid=mid||'';var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
   return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
     '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
       '<span class="hk"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span><span>'+st(x.k)+'</span></span>'+
