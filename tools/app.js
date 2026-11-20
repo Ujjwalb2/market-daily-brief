@@ -486,13 +486,48 @@ function ixBlock(x,k){var last=x.d[x.d.length-1][1],m=(last/x.d[0][1]-1)*100,v=x
     '<div class="ixh"><b>'+num(last,2)+'</b><em class="'+(x.vix?'w':x.up?'u':'d')+'">'+(x.up?'▲ ':'▼ ')+x.pts+' ('+x.pct+')</em><small>'+(m>=0?'+':'−')+Math.abs(m).toFixed(1)+'% in a month · 11 Nov close</small></div>'+
     '<div class="ixc'+(k===''?' tapx':'')+'" id="ixc'+k+'">'+ixChart(x,k)+(k===''?'<button type="button" class="ixfs" data-act="ixfs" aria-label="Open the chart full screen">'+I('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',2)+'</button>':'')+'</div>'+ixDates(x)+
     '<div class="ixs"><div><small>Month high</small><b>'+num(hi,2)+'</b></div><div><small>Month low</small><b>'+num(lo,2)+'</b></div><div><small>From low</small><b class="u">+'+((last/lo-1)*100).toFixed(1)+'%</b></div></div></div>'}
+/* full-screen chart tools: day numbers, price alerts, notes, option chain (saved on this device) */
+var FNO={'Nifty 50':'NIFTY','Nifty Bank':'BANKNIFTY','Fin Services':'FINNIFTY','Nifty Next 50':'NIFTYNXT50'};
+function ixDay(x){var v=x.d.map(function(q){return q[1]}),n=v.length,last=v[n-1],prev=v[n-2],o=x.o,h=x.h,l=x.l,f=function(z){return z!=null?num(z,2):'<em>live soon</em>'};
+  return '<div class="ixday"><span><small>Open</small><b>'+f(o)+'</b></span><span><small>High</small><b>'+f(h)+'</b></span><span><small>Low</small><b>'+f(l)+'</b></span><span><small>Prev close</small><b>'+num(prev,2)+'</b></span></div>'+
+    (o==null?'<p class="ixn" style="margin-top:6px">Open, high and low fill in once the live price feed is connected; the brief stores closing prices only.</p>':'')}
+function ixAlerts(x){var A=store.get('ap-alerts',{})[x.n]||[],last=x.d[x.d.length-1][1];
+  return '<div class="ixal" id="ixAl"><div class="ixalf"><span class="seg ixad">'+[['above','Above'],['below','Below']].map(function(b,i){return '<button type="button" data-ad="'+b[0]+'" aria-pressed="'+(i===0)+'">'+b[1]+'</button>'}).join('')+'</span>'+
+    '<span class="rsi"><i>₹</i><input type="number" inputmode="decimal" id="ixAp" value="'+Math.round(last*1.01)+'" step="1" min="0" aria-label="Alert price"></span><button type="button" class="btn p s" data-act="ixalset">Set</button></div>'+
+    (A.length?'<div class="ixall2">'+A.map(function(a,i){return '<span class="ixac">🔔 '+(a[0]==='above'?'Above':'Below')+' '+num(a[1],0)+'<button type="button" data-alx="'+i+'" aria-label="Remove alert">✕</button></span>'}).join('')+'</div>':'<p class="ixn" style="margin-top:8px">No alerts yet for '+esc(ixShort(x.n))+'.</p>')+'</div>'}
+function ixNotes(x){var N=store.get('ap-ixnotes',{});return '<textarea class="ixnote" id="ixNote" rows="3" placeholder="Your notes on '+esc(ixShort(x.n))+': levels to watch, your view…">'+esc(N[x.n]||'')+'</textarea><p class="ixn" style="margin-top:6px">Saves on this device as you type.</p>'}
+function ixActs(x){var fno=FNO[x.n];
+  return '<div class="ixacts"><button type="button" data-ixgo="ixAlS">'+I('<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/>',2)+'<span>Set alert</span></button><button type="button" data-ixgo="ixNoS">'+I('<path d="M4 20h4L19 9l-4-4L4 16z"/>',2)+'<span>Notes</span></button>'+
+    (x.n==='Nifty 50'?'<button type="button" data-act="chain">'+I(ICO.studio,2)+'<span>Option chain</span></button>':fno?'<a href="'+L.studio+'" target="_blank" rel="noopener">'+I(ICO.studio,2)+'<span>'+fno+' chain ↗</span></a>':'<button type="button" disabled>'+I(ICO.studio,2)+'<span>No options</span></button>')+'</div>'}
+/* details for the charted index: its own returns and days, plus what matters for that index */
+function ixInfo(x){var d=x.d,v=d.map(function(q){return q[1]}),n=v.length,last=v[n-1],ch=[],up=0;for(var i=1;i<n;i++){var c=(v[i]/v[i-1]-1)*100;ch.push([d[i][0],c]);if(c>0)up++}
+  var best=ch.reduce(function(a,b){return b[1]>a[1]?b:a}),worst=ch.reduce(function(a,b){return b[1]<a[1]?b:a}),avg=ch.reduce(function(a,b){return a+Math.abs(b[1])},0)/ch.length,
+    r=function(k){return (last/v[Math.max(0,n-1-k)]-1)*100},pc=function(c){return '<b class="'+(x.vix?'':c>=0?'u':'d')+'">'+(c>=0?'+':'−')+Math.abs(c).toFixed(2)+'%</b>'},nf=IDX.filter(function(i){return i.n==='Nifty 50'})[0],nfm=(nf.d[n-1][1]/nf.d[0][1]-1)*100,m=r(n-1);
+  var h='<div class="h2"><h2>'+esc(ixShort(x.n))+' at a glance</h2></div><div class="ixq">'+
+    '<span><small>1 day</small>'+pc(r(1))+'</span><span><small>1 week</small>'+pc(r(5))+'</span><span><small>1 month</small>'+pc(m)+'</span>'+
+    '<span><small>Days up</small><b>'+up+' of '+ch.length+'</b></span><span><small>Best day · '+best[0]+'</small>'+pc(best[1])+'</span><span><small>Worst day · '+worst[0]+'</small>'+pc(worst[1])+'</span></div>'+
+    '<p class="ixn">It moved about '+avg.toFixed(2)+'% on an average day this month.'+(x.n!=='Nifty 50'&&!x.vix?' Over the month it '+(m>=nfm?'beat':'lagged')+' the Nifty 50 by '+Math.abs(m-nfm).toFixed(1)+' points ('+(m>=0?'+':'−')+Math.abs(m).toFixed(1)+'% vs '+(nfm>=0?'+':'−')+Math.abs(nfm).toFixed(1)+'%).':'')+'</p>';
+  var row=function(t,val){return '<div class="ixr"><span>'+t+'</span>'+pc(val)+'</div>'},sec=function(names){return SECS.filter(function(z){return names.indexOf(z.n)>=0})};
+  if(x.n==='Nifty 50')h+='<div class="h2"><h2>F&amp;O levels</h2><span class="sp"></span><small>'+esc(D.fo.exp)+'</small></div><div class="fo3">'+D.fo.k.map(function(k,i){return '<div class="'+['s','m','r'][i]+'"><span>'+esc(k[0])+'</span><b>'+esc(k[1])+'</b><small>'+esc(k[2])+'</small></div>'}).join('')+'</div>'+chainCard()+
+    '<div class="h2"><h2>Biggest movers today</h2><span class="sp"></span><small>Nifty 100</small></div><div class="card ixrl">'+MVS.map(function(z){return row(esc(z.n),z.v)}).join('')+'</div>';
+  else if(x.n==='Nifty Bank'||x.n==='Fin Services')h+='<div class="h2"><h2>Banks today</h2></div><div class="card ixrl">'+sec(['PSU Bank','Private Bank']).map(function(z){return row(z.n+' index',z.v)}).join('')+MVS.filter(function(z){return /Bank|Baroda|Finance/i.test(z.n)}).map(function(z){return row(esc(z.n),z.v)}).join('')+'</div>';
+  else if(x.n==='Nifty IT')h+='<div class="h2"><h2>Sectors today</h2></div><div class="card ixrl">'+SECS.map(function(z){return row(z.n+(z.n==='IT'?' · this index':''),z.v)}).join('')+'</div>';
+  else if(x.vix){var lvl=last<13?['Calm','Low fear: option premiums are cheap'] :last<20?['Normal','Usual fear: premiums are fairly priced']:['Nervous','High fear: big swings expected, premiums are costly'];
+    h+='<div class="h2"><h2>What this level means</h2></div><div class="card ixvx"><div class="ixvm"><i style="left:'+Math.min(100,last/30*100).toFixed(0)+'%"></i></div><div class="ixvl"><span>Calm &lt;13</span><span>Normal 13–20</span><span>Nervous &gt;20</span></div><p><b>'+lvl[0]+' at '+num(last,2)+'.</b> '+lvl[1]+'. VIX shows how much the market expects Nifty to move over the next 30 days.</p></div>';}
+  else h+='<div class="h2"><h2>Biggest movers today</h2><span class="sp"></span><small>Nifty 100</small></div><div class="card ixrl">'+MVS.map(function(z){return row(esc(z.n),z.v)}).join('')+'</div>';
+  return h}
 function ixFSBody(){var x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0];
   return '<div class="ixfsb">'+ixBlock(x,'F').replace('<button type="button" class="l" data-act="ixpick" data-slot="F" aria-haspopup="dialog">Change ⌄</button>','')+
-    '<div class="h2"><h2>Change index</h2></div><div class="ixgrid">'+IDX.map(function(i){var on=i.n===x.n;return '<button type="button" data-ixf="'+esc(i.n)+'" aria-pressed="'+on+'"><b>'+esc(ixShort(i.n))+'</b><small class="'+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</small></button>'}).join('')+'</div>'+
+    ixDay(x)+ixActs(x)+ixInfo(x)+'<div class="h2" id="ixAlS"><h2>Price alerts</h2></div>'+ixAlerts(x)+'<div class="h2" id="ixNoS"><h2>Notes</h2></div>'+ixNotes(x)+'<div class="h2"><h2>Change index</h2></div><div class="ixgrid">'+IDX.map(function(i){var on=i.n===x.n;return '<button type="button" data-ixf="'+esc(i.n)+'" aria-pressed="'+on+'"><b>'+esc(ixShort(i.n))+'</b><small class="'+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</small></button>'}).join('')+'</div>'+
     '<p class="ocn">Daily closes, '+x.d[0][0]+' to '+x.d[x.d.length-1][0]+'. Touch the chart to read a day. Data from NSE.</p></div>'}
 function openIxFS(){var x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0];
   openFS(esc(ixShort(x.n)),'1-month chart · 11 Nov close',ixFSBody(),null,function(m){wireChart(x,'F');
-    m.addEventListener('click',function(e){var b=e.target.closest('[data-ixf]');if(!b)return;ixSel=b.dataset.ixf;var y=$('#fsM').scrollTop;$('#fsM').innerHTML=ixFSBody();var nx=IDX.filter(function(i){return i.n===ixSel})[0];$('#fsT').innerHTML='<b>'+esc(ixShort(nx.n))+'</b><small>1-month chart · 11 Nov close</small>';wireChart(nx,'F');if(tab==='markets')rMarkets()})})}
+    m.addEventListener('input',function(e){if(e.target.id!=='ixNote')return;var N=store.get('ap-ixnotes',{});N[ixSel]=e.target.value;store.set('ap-ixnotes',N)});
+    m.addEventListener('click',function(e){var g=e.target.closest('[data-ixgo]');if(g){var t=$('#'+g.dataset.ixgo,m);if(t)$('#fsM').scrollTo({top:t.offsetTop-12,behavior:'smooth'});if(g.dataset.ixgo==='ixNoS')setTimeout(function(){var n=$('#ixNote',m);if(n)n.focus()},350);return}
+      var ad=e.target.closest('[data-ad]');if(ad){$$('[data-ad]',m).forEach(function(z){z.setAttribute('aria-pressed',String(z===ad))});return}
+      if(e.target.closest('[data-act="ixalset"]')){var pv=parseFloat($('#ixAp',m).value),dir=($('[data-ad][aria-pressed=true]',m)||{}).dataset;if(!(pv>0)){toast('Enter a price for the alert');return}var A=store.get('ap-alerts',{});(A[ixSel]=A[ixSel]||[]).push([dir?dir.ad:'above',pv]);store.set('ap-alerts',A);$('#ixAl',m).outerHTML=ixAlerts(IDX.filter(function(i){return i.n===ixSel})[0]);toast('Alert set: '+ixShort(ixSel)+' '+(dir&&dir.ad==='below'?'below':'above')+' '+num(pv,0));return}
+      var rx=e.target.closest('[data-alx]');if(rx){var A2=store.get('ap-alerts',{});(A2[ixSel]||[]).splice(+rx.dataset.alx,1);store.set('ap-alerts',A2);$('#ixAl',m).outerHTML=ixAlerts(IDX.filter(function(i){return i.n===ixSel})[0]);return}
+      var b=e.target.closest('[data-ixf]');if(!b)return;ixSel=b.dataset.ixf;var y=$('#fsM').scrollTop;$('#fsM').innerHTML=ixFSBody();var nx=IDX.filter(function(i){return i.n===ixSel})[0];$('#fsT').innerHTML='<b>'+esc(ixShort(nx.n))+'</b><small>1-month chart · 11 Nov close</small>';wireChart(nx,'F');if(tab==='markets')rMarkets()})})}
 function ixList(){return '<div class="h2 ixlh"><h2>All indices</h2><span class="sp"></span><small>tap one to chart it</small></div><div class="card ixall" style="padding:0 14px"><div class="list">'+
   IDX.map(function(i){var v=i.d[i.d.length-1][1],on=i.n===ixSel;return '<button type="button" class="row'+(on?' on':'')+'" data-ix="'+esc(i.n)+'"'+(on?' aria-current="true"':'')+'><span class="tx"><b>'+esc(ixShort(i.n))+'</b><small>'+num(v,2)+'</small></span><span class="ixsp">'+ovSpark(i)+'</span><span class="vl '+(i.vix?'w':i.up?'u':'d')+'">'+i.pct+'</span></button>'}).join('')+'</div></div>'}
 function rMarkets(){setTimeout(flFade,0);var s=$('#s-markets'),x=IDX.filter(function(i){return i.n===ixSel})[0]||IDX[0],last=x.d[x.d.length-1][1],m=(last/x.d[0][1]-1)*100;
@@ -924,7 +959,7 @@ document.addEventListener('click',function(e){if(e.target.closest('[data-ochx]')
   if(ds.act==='pro')return proSheet();
   if(ds.act==='ovw')return openOvw();
   if(ds.act==='ixfs'){e.stopPropagation();return openIxFS()}
-  if(ds.act==='chain'){closeOvw();return openChain(ds.seg)}
+  if(ds.act==='chain'){closeOvw();if(!$('#fs').hidden){closeFS();return setTimeout(function(){openChain(ds.seg)},320)}return openChain(ds.seg)}
   if(ds.act==='risk'){if(!$('#fs').hidden){closeFS();return setTimeout(openRisk,320)}return openRisk()}
   if(ds.act==='jrev')return jRevSheet();
   if(ds.act==='record'){e.preventDefault();return recSheet()}
