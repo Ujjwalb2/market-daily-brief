@@ -1431,3 +1431,13 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 /* the market strip (tap or pull for the overview) sits under the top bar on every tab */
 .scr .tick.tkf{position:sticky;top:56px;z-index:20;border-bottom:1px solid var(--border-decorative)}
 .scr .tick.tkf~.subbar{top:94px}
+
+/* Indices: tap the chart for full screen */
+.ixc.tapx{cursor:zoom-in}
+.ixfs{position:absolute;left:6px;top:4px;display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--surface-glass);border:1px solid var(--border-glass);color:var(--text-secondary)}.ixfs svg{width:16px;height:16px}
+.ixfsb .ixt{margin-top:0}.ixfsb .ixc{height:min(46vh,380px)}
+.ixgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ixgrid button{display:grid;gap:4px;padding:10px 8px;border-radius:12px;background:var(--surface-raised);border:1px solid var(--border-decorative);text-align:left;color:var(--text-primary)}
+.ixgrid button[aria-pressed=true]{border-color:var(--indigo-500);background:rgba(63,91,217,.18)}
+.ixgrid b{font:700 12.5px/1.2 var(--font-sans)}.ixgrid small{font:600 11px/1 var(--font-sans)}.ixgrid small.u{color:var(--up-text)}.ixgrid small.d{color:var(--slate-500)}.ixgrid small.w{color:var(--warn-text)}
+.ixfsb .ixt{display:none}.ixfsb .ixh{margin-top:0}
