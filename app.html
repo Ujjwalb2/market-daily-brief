@@ -1646,6 +1646,15 @@ html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 .fy-add span:not(.fyb){flex:1;display:grid;gap:3px;min-width:0}.fy-add b{font:600 14px/1.2 var(--font-sans)}.fy-add small{font:400 12px/1.3 var(--font-sans);color:var(--text-tertiary)}
 .fy-add em{font:600 13px/1 var(--font-sans);font-style:normal;color:var(--link);white-space:nowrap}
 #s-journal .jhide+.ins{margin-top:16px}
+
+/* Home: trading score card */
+.psc{display:flex;align-items:center;gap:14px;margin-top:16px;padding:14px 14px 14px 12px;border-radius:18px;background:var(--surface-raised);border:1px solid var(--border-decorative);color:var(--text-primary)}
+.psc .psr svg{width:52px;height:52px;display:block}.psc text{font:800 14px var(--font-sans);fill:var(--text-primary)}
+.psc .tx{flex:1;display:grid;gap:3px;min-width:0}.psc .eb{margin:0}.psc b{font:600 15px/1.25 var(--font-sans)}.psc small{font:400 12.5px/1.35 var(--font-sans);color:var(--text-tertiary)}
+.psc .go{color:var(--text-tertiary);font-size:20px}
+.psc.empty{background:radial-gradient(120% 90% at 0% 0%,rgba(63,91,217,.14),transparent 60%),var(--surface-raised);border-style:dashed;border-color:var(--border-control)}
+.psc.empty text{fill:var(--text-tertiary);font-size:18px}
+.psc em{font:600 13px/1 var(--font-sans);font-style:normal;color:var(--link);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -2065,6 +2074,15 @@ function mfHomeHTML(){var F=MFT.funds;
     '<div class="hlt mft2" data-noswipe aria-label="Top performing mutual funds, swipe for more">'+F.map(function(f){return fundCard(f,'a','#markets/mftop')}).join('')+'</div>'+
     '<div class="mdots mfd" aria-hidden="true">'+F.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>'+
     '<a class="mfplan" href="#markets/mfgoal"><span aria-hidden="true">🎯</span><span><b>Plan a goal with a SIP</b><small>Child education, retirement, a house…</small></span><span class="go" aria-hidden="true">›</span></a></section>'}
+/* Home: your trading score (plan rules kept, out of 5), or a nudge to start journaling */
+var JEMPTY=/[?&]nojournal/.test(location.search);
+function scoreHome(){var mo=MONTHS().slice(-1)[0],tr=JEMPTY?[]:ALL.filter(function(t){return t.d.slice(0,7)===mo}),C=2*Math.PI*21;
+  if(!tr.length)return '<a class="psc empty" href="#journal/overview"><span class="psr"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="21" fill="none" stroke="var(--border-decorative)" stroke-width="5" stroke-dasharray="4 5"/><text x="26" y="31" text-anchor="middle">?</text></svg></span>'+
+    '<span class="tx"><span class="eb">Your trading score</span><b>Start journaling today</b><small>Review each trade against 5 plan rules and get your score out of 5.</small></span><em>Start →</em></a>';
+  var st=stats(tr),sc=st.score,mist={};tr.forEach(function(t){(t.mistakes||[]).forEach(function(k){mist[k]=(mist[k]||0)+1})});var mk=Object.keys(mist).sort(function(a,b){return mist[b]-mist[a]});
+  var col=sc>=4?'var(--teal)':sc>=3?'var(--amber)':'var(--slate-500)',mname=dt(mo+'-01').toLocaleDateString('en-IN',{month:'long'});
+  return '<a class="psc" href="#journal/insights"><span class="psr"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="21" fill="none" stroke="var(--border-decorative)" stroke-width="5"/><circle cx="26" cy="26" r="21" fill="none" stroke="'+col+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+(sc/5*C).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 26 26)"/><text x="26" y="31" text-anchor="middle">'+sc.toFixed(1)+'</text></svg></span>'+
+    '<span class="tx"><span class="eb">Trading score · '+mname+'</span><b>'+sc.toFixed(1)+' of 5 plan rules kept</b><small>'+(mk.length?'Most missed: '+String(MISTAKE[mk[0]]||mk[0]).toLowerCase()+' · ':'')+tr.length+' trades</small></span><span class="go" aria-hidden="true">›</span></a>'}
 function homePreview(mid){mid=mid||'';var SL=spotSlides(),st=function(h){return String(h||'').replace(/<[^>]+>/g,'')};
   return (mid||'')+'<section class="pv hl"><div class="pvh"><b>Market highlights</b><small id="hlC">1 of '+SL.length+'</small></div>'+
     '<div class="hlt" data-noswipe aria-label="Market highlights, swipe for more">'+SL.map(function(x,i){return '<button type="button" class="hlc '+x.c+'" data-sub-go="spot" data-spot="'+i+'" aria-label="'+(i+1)+' of '+SL.length+': '+esc(st(x.t))+'">'+
@@ -2079,7 +2097,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     '<div class="hello"><h1>'+hi+', Trader</h1></div>'+
     morningHTML()+
 
-    homePreview(locked()?profitHTML('home'):liveHTML())+ipoHTML()+mfHomeHTML()+
+    homePreview((locked()?profitHTML('home'):liveHTML())+scoreHome())+ipoHTML()+mfHomeHTML()+
     '<div class="h2 sph"><h2>Spotlight</h2><small id="spC">'+SL.length+' today</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" id="spot-'+i+'" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
