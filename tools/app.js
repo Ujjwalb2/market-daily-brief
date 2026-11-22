@@ -1088,9 +1088,14 @@ function lbHTML(){var a=lbAll(),mi=a.findIndex(function(x){return x[0]==='You'})
     '<p class="note" style="margin-top:8px">Points reset on 1 Dec. Your streak, milestones, badges and free days carry over.</p>'}
 /* streak screen: what is left today to keep the streak */
 function stkToday(){var g=goals(),d=mDone(),left=g.length-d;
-  return '<div class="stt"><div class="stt-h"><b>'+(left?'Today · '+left+' left to keep the streak':'Today · all done, streak kept 🔥')+'</b><small>'+d+' of '+g.length+'</small></div>'+
-    g.map(function(k){var st=STEP[k],ok=st[2](),sub=typeof st[1]==='function'?st[1]():st[1],m=SLOOK[k],lis=st[3]==='@listen';
-      return '<a class="stt-r'+(ok?' ok':'')+'" href="'+(lis?'#today':st[3])+'"'+(lis&&!ok?' data-act="listen"':'')+'><span class="stt-c" aria-hidden="true">'+(ok?'✓':'')+'</span><span class="tx"><b>'+st[0]+'</b><small>'+sub+'</small></span>'+(ok?'<em class="dn">Done</em>':'<em>'+m[2]+' →</em>')+'</a>'}).join('')+'</div>'}
+  return '<div class="stt"><div class="stt-h"><b>'+(left?'Today · '+left+' left to keep the streak':'Today · all done, streak kept 🔥')+'</b><small>'+d+' of '+g.length+' done</small></div>'+
+    '<div class="stt-t" data-noswipe aria-label="Today’s steps, swipe for the next">'+g.map(function(k,n){var st=STEP[k],ok=st[2](),sub=typeof st[1]==='function'?st[1]():st[1],m=SLOOK[k],lis=st[3]==='@listen';
+      return '<a class="stt-s c-'+m[0]+(ok?' ok':'')+'" href="'+(lis?'#today':st[3])+'"'+(lis&&!ok?' data-act="listen"':'')+'><span class="stt-i" aria-hidden="true">'+(ok?I('<path d="m5 12 5 5 9-10"/>',2.6):I(ICO[m[1]],2))+'</span>'+
+        '<span class="tx"><em>Step '+(n+1)+' of '+g.length+(ok?' · done':'')+'</em><b>'+st[0]+'</b><small>'+sub+'</small></span><span class="stt-b">'+(ok?'Done ✓':m[2]+' →')+'</span></a>'}).join('')+'</div>'+
+    '<div class="stt-d" aria-hidden="true">'+g.map(function(k){return '<i class="'+(STEP[k][2]()?'ok':'')+'"></i>'}).join('')+'</div></div>'}
+function stkSlide(){var t=$('#s-rewards .stt-t');if(!t)return;var sl=$$('.stt-s',t),dots=$$('#s-rewards .stt-d i'),c=$('#sttC'),f=sl.findIndex(function(x){return !x.classList.contains('ok')});
+  var sync=function(){var i=Math.round(t.scrollLeft/(t.clientWidth||1));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});0};
+  if(f>0)t.scrollLeft=sl[f].offsetLeft-t.offsetLeft;sync();t.addEventListener('scroll',sync,{passive:true})}
 function tileSheet(k){
   if(k==='free')return sheet('🎁 Free days',strip(freeHTML()));
   if(k==='season'||k==='shout'){var h=strip(seasonHTML()),i=h.indexOf('<div class="card sho">');return k==='season'?sheet('⭐ '+SEASON.name,h.slice(0,i)+'</section>'):sheet('📣 Monday shoutout','<section>'+h.slice(i))}
@@ -1110,7 +1115,7 @@ function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=qDays()
     shoutCard()+lbHTML()+
     '<div class="h2"><h2>Badges</h2><span class="sp"></span><button type="button" class="l" data-tile="badges">See all</button></div><div class="brow">'+bs.map(function(b){var g=bGot(b);return '<button type="button" class="bc'+(g?' got':'')+'" data-badge="'+b[0]+'"><span aria-hidden="true">'+b[1]+'</span><small>'+b[2]+'</small></button>'}).join('')+'</div>'+
 
-    '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';}
+    '<p class="note">Rewards come from habits, never from profit or how much you trade.</p>';stkSlide()}
 function streakSheet(){var S=D.streak,lr=learned();sheet('\uD83D\uDD25 '+streakNow()+'-day streak','<p>Finish your morning on each market day to keep it going. Weekends and market holidays never count.</p><div class="wk" style="margin:6px 0 16px">'+S.week.map(function(d){return '<span class="'+d[1]+'"><i>'+(d[1]==='done'?'✓':'')+'</i>'+d[0]+'</span>'}).join('')+'</div>'+
   '<div class="facts"><div>Freezes<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Morning<b>'+mDone()+' of '+goals().length+'</b></div></div><a class="btn p full" style="margin-top:14px" href="#today" data-close data-act="tomorning">'+(mDone()===goals().length?'Morning done for today':'Finish your morning')+'</a><a class="btn g full" style="margin-top:8px" href="#rewards" data-close>Free days, badges and season</a>')}
 document.addEventListener('click',function(e){if(e.target.closest('[data-ochx]')){closeChain();return}if(e.target.closest('[data-fsx]')){ixMenu(false);closeFS();return}var dd=e.target.closest('[data-ixdd]');if(dd){ixMenu(!$('#ixMenu'));return}var ixf=e.target.closest('#ixMenu [data-ixf]');if(ixf){ixSwitch(ixf.dataset.ixf);return}if($('#ixMenu')&&!e.target.closest('#ixMenu'))ixMenu(false);var och=e.target.closest('[data-och]');if(och){ochSeg=och.dataset.och;ochBody();return}var a=e.target.closest('[data-act],[data-info],[data-jump],[data-ix],[data-mv],[data-fl],[data-jt],[data-tcf],[data-callx],[data-inv],[data-goal],[data-sc],[data-ct],[data-review],[data-trade],[data-day],[data-m],[data-lrn],[data-got],[data-theme-set],[data-tr],[data-cl],[data-badge],[data-tile],[data-back],[data-call],[data-sub-go]');if(!a)return;var ds=a.dataset;
