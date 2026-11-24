@@ -1735,6 +1735,7 @@ button.psc{width:100%;text-align:left}
 .cel>b{font:700 22px/1.2 var(--font-sans);margin-top:6px}.cel p{margin:0;font:400 14px/1.45 var(--font-sans);color:var(--text-secondary)}.cel .cel-r{color:var(--text-primary);font-weight:600}
 .cel .shb{width:100%}
 .shn input{box-shadow:inset 0 0 0 1.5px var(--slate-400)}.shn input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--indigo-500)}
+.jc-mid .btn svg{width:17px;height:17px;vertical-align:-3px;margin-right:4px}
 </style>
 </head>
 <body>
@@ -2182,7 +2183,7 @@ function jcStep(n,b){var m=$('#fsM'),mo=MONTHS().slice(-1)[0],tr=ALL.filter(func
     store.set('ap-jconn',{b:b,at:Date.now()});
     m.innerHTML=dots+'<div class="jc-mid"><span class="eb">Your trading score · '+mname(mo).split(' ')[0]+'</span><svg class="jc-ring" viewBox="0 0 100 100" aria-label="'+sc.toFixed(1)+' out of 5"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--border-decorative)" stroke-width="8"/><circle class="arc" cx="50" cy="50" r="44" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 '+C.toFixed(1)+'" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle">'+sc.toFixed(1)+'</text><text class="of" x="50" y="72" text-anchor="middle">out of 5</text></svg>'+
       '<h2 class="jc-h">'+(sc>=4?'Good discipline':sc>=3?'Room to tighten up':'Plenty to work on')+'</h2><p class="jc-p">Across '+tr.length+' trades this month you kept '+sc.toFixed(1)+' of your 5 plan rules on average.'+(mk.length?' The one you missed most: <b>'+String(MISTAKE[mk[0]]||mk[0]).toLowerCase()+'</b> ('+mist[mk[0]]+' times).':'')+'</p>'+
-      '<a class="btn p full" href="#journal/insights" data-fsx>See what to fix</a><button type="button" class="jc-back" data-fsx>Done</button></div>';
+      '<button type="button" class="btn p full" data-share="score">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+' Share my score</button><a class="btn g full" style="margin-top:8px" href="#journal/insights" data-fsx>See what to fix</a><button type="button" class="jc-back" data-fsx>Done</button></div>';
     requestAnimationFrame(function(){requestAnimationFrame(function(){var a=$('.jc-ring .arc',m);if(a)a.setAttribute('stroke-dasharray',(sc/5*C).toFixed(1)+' '+C.toFixed(1))})});
     if(tab==='today'){var y=scrollY;rToday();applySub('today','home');scrollTo(0,y)}}
   m.scrollTop=0}
@@ -2902,6 +2903,23 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
     var cws=chips.map(function(t){return c.measureText(t).width+60}),tot=cws[0]+cws[1]+20,cx=(W-tot)/2;
     chips.forEach(function(t,i){shRR(c,cx,cy2-48,cws[i],70,35);c.fillStyle='rgba(255,255,255,.08)';c.fill();c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=2;c.stroke();T(t,cx+cws[i]/2,cy2-3,F(700,30),'#F8FAFC','center');cx+=cws[i]+20});
     T(name+' · '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),W/2,fy-(st?70:40),F(500,28),'#8793A5','center');return}
+  if(SH.kind==='score'){var mo2=MONTHS().slice(-1)[0],tr2=ALL.filter(function(t){return t.d.slice(0,7)===mo2}),n2=tr2.length||1,sc2=tr2.length?stats(tr2).score:0,
+      gx2=W/2,gy2=st?720:465,gr2=st?250:165,lw2=st?44:32;
+    T('MY TRADING SCORE · '+mname(mo2).split(' ')[0].toUpperCase(),W/2,st?300:235,F(800,26),'#00C99A','center','5px');
+    glow(gx2,gy2,gr2*2.2,'rgba(0,201,154,.25)');
+    circ(gx2,gy2,gr2);c.strokeStyle='rgba(255,255,255,.10)';c.lineWidth=lw2;c.stroke();
+    var ag2;try{ag2=c.createConicGradient(-Math.PI/2-.35,gx2,gy2);ag2.addColorStop(0,'#00C99A');ag2.addColorStop(.7,'#3FD1B0');ag2.addColorStop(1,'#6E86FF')}catch(e){ag2='#00C99A'}
+    c.beginPath();c.arc(gx2,gy2,gr2,-Math.PI/2,-Math.PI/2+Math.PI*2*sc2/5);c.strokeStyle=ag2;c.lineCap='round';c.lineWidth=lw2;c.stroke();c.lineCap='butt';
+    for(var t2=0;t2<5;t2++){var an2=-Math.PI/2+t2/5*Math.PI*2;circ(gx2+Math.cos(an2)*(gr2+lw2/2+26),gy2+Math.sin(an2)*(gr2+lw2/2+26),5);c.fillStyle='rgba(255,255,255,.35)';c.fill()}
+    T(sc2.toFixed(1),gx2,gy2+(st?60:44),F(900,st?190:132),'#F8FAFC','center','-6px');T('OUT OF 5',gx2,gy2+(st?120:88),F(800,24),'#8793A5','center','5px');
+    var vy=gy2+gr2+(st?150:118);T(sc2>=4?'Good discipline':sc2>=3?'Room to tighten up':'Plenty to work on',W/2,vy,F(800,st?76:62),'#F8FAFC','center','-1px');
+    T(tr2.length+' trades checked against 5 plan rules',W/2,vy+(st?60:50),F(500,30),'#A9B4C6','center');
+    var ry2=vy+(st?150:105),rh=st?84:56,bx0=80,bw=W-160;
+    if(st)T('RULES KEPT',80,ry2-30,F(800,24),'#8793A5','left','4px');
+    RULES.forEach(function(r,i){var miss=tr2.filter(function(t){return (t.mistakes||[]).indexOf(MISTAKE[r[0]])>=0||(t.mistakes||[]).indexOf(r[0])>=0}).length,kp=Math.round((1-miss/n2)*100),y=ry2+i*rh+(st?20:0);
+      T(r[1],bx0,y,F(600,st?30:26),'#E2E8F0');T(kp+'%',bx0+bw,y,F(800,st?30:26),'#F8FAFC','right');
+      var yb=y+(st?18:12);shRR(c,bx0,yb,bw,st?12:9,6);c.fillStyle='rgba(255,255,255,.10)';c.fill();shRR(c,bx0,yb,Math.max(12,bw*kp/100),st?12:9,6);c.fillStyle=kp>=85?'#00C99A':kp>=70?'#3FD1B0':'#F0A04B';c.fill()});
+    T(name+' · '+(jConn()?'via '+jConn().b+' · ':'')+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),W/2,fy-(st?60:24),F(500,26),'#8793A5','center');return}
   /* profile: name + tier ribbon */
   var ny=st?320:250;T(name,80,ny,F(800,st?92:80),'#F8FAFC','left','-2px');c.font=F(800,st?92:80);ls('-2px');var nw=c.measureText(name).width;ls('0px');
   var tl=TIERS[ti][1].toUpperCase()+' · #'+myRank();c.font=F(800,24);ls('3px');var tw=c.measureText(tl).width+48;ls('0px');var tx=80+nw+28,tyy=ny-50;
@@ -2924,7 +2942,7 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
   c.fillStyle='rgba(255,255,255,.10)';c.fillRect(W/2+70,hy+50,2,hh-100);
   var sc=shScore(),gx=W/2+70+(W-120-(W/2+70-60))/2+30,gy=hy+(st?280:225),gr=st?150:128,frac=sc!=null?sc/5:Math.min(1,qDays()/60);
   circ(gx,gy,gr);c.strokeStyle='rgba(255,255,255,.10)';c.lineWidth=st?28:24;c.stroke();
-  var ag;try{ag=c.createConicGradient(-Math.PI/2,gx,gy);ag.addColorStop(0,'#00C99A');ag.addColorStop(.6,'#3FD1B0');ag.addColorStop(1,'#6E86FF')}catch(e){ag='#00C99A'}
+  var ag;try{ag=c.createConicGradient(-Math.PI/2-.35,gx,gy);ag.addColorStop(0,'#00C99A');ag.addColorStop(.6,'#3FD1B0');ag.addColorStop(1,'#6E86FF')}catch(e){ag='#00C99A'}
   c.beginPath();c.arc(gx,gy,gr,-Math.PI/2,-Math.PI/2+Math.PI*2*frac);c.strokeStyle=ag;c.lineCap='round';c.lineWidth=st?28:24;c.stroke();c.lineCap='butt';
   var big=sc!=null?sc.toFixed(1):String(qDays());T(big,gx,gy+(st?34:28),F(900,st?100:86),'#F8FAFC','center','-3px');T(sc!=null?'OUT OF 5':'OF ~62',gx,gy+(st?78:66),F(700,20),'#8793A5','center','3px');
   T(sc!=null?'TRADING SCORE':'MORNINGS · Q4',gx,gy+gr+(st?90:78),F(800,24),'#00C99A','center','4px');
@@ -2941,14 +2959,14 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
 function shRender(){var img=$('#shImg');if(!img)return;var cv=document.createElement('canvas');SH.cv=cv;var go=function(){shDraw(cv);img.src=cv.toDataURL('image/png');img.classList.toggle('story',SH.fmt==='story')};
   if(document.fonts&&document.fonts.load)Promise.all([document.fonts.load('800 50px Inter'),document.fonts.load('500 30px Inter')]).then(go,go);else go()}
 function shareSheet(kind,id){SH.kind=kind;SH.id=id||null;
-  sheet(kind==='badge'?'Share your badge':'Share your profile','<div class="shp"><img id="shImg" alt="Preview of your share card"></div>'+
+  sheet(kind==='badge'?'Share your badge':kind==='score'?'Share your trading score':'Share your profile','<div class="shp"><img id="shImg" alt="Preview of your share card"></div>'+
     '<div class="seg shfmt" role="group" aria-label="Size">'+[['post','Post'],['story','Story']].map(function(f){return '<button type="button" data-shf="'+f[0]+'" aria-pressed="'+(SH.fmt===f[0])+'">'+f[1]+'</button>'}).join('')+'</div>'+
     '<label class="shn"><span>Name on the card</span><input id="shName" maxlength="20" autocomplete="off" value="'+esc(shName())+'"></label>'+
     '<div class="shb"><button type="button" class="btn p full" data-shgo>Share</button><button type="button" class="btn g full" data-shsave>Save image</button></div>'+
     '<p class="cap">Only your habits go on the card. Never P&amp;L, returns or trade calls.</p>',function(pn){shRender();
     pn.addEventListener('input',function(e){if(e.target.id!=='shName')return;store.set('ap-share-name',e.target.value.trim()||'Trader');clearTimeout(SH.t);SH.t=setTimeout(shRender,250)})})}
 function shBlob(cb){if(!SH.cv)return;SH.cv.toBlob(function(b){cb(b)},'image/png')}
-function shFile(){return 'alphapad-'+(SH.kind==='badge'?(SH.id||'badge'):'profile')+'-'+SH.fmt+'.png'}
+function shFile(){return 'alphapad-'+(SH.kind==='badge'?(SH.id||'badge'):SH.kind)+'-'+SH.fmt+'.png'}
 function shSave(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=shFile();document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast('Image saved')}
 /* new badge → a small celebration with a share button (once per badge) */
 function celebrate(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;
@@ -2958,11 +2976,11 @@ function checkNewBadges(){var got=BADGES.filter(bGot).map(function(b){return b[0
   var nw=got.filter(function(k){return seen.indexOf(k)<0});if(!nw.length)return;if(!$('#sheet').hidden||!$('#fs').hidden||$('.onb'))return;store.set('ap-badges-seen',seen.concat(nw));celebrate(nw[0])}
 document.addEventListener('click',function(e){var t=e.target.closest('[data-share],[data-shf],[data-shgo],[data-shsave]');
   if(!t){setTimeout(checkNewBadges,700);return}var d=t.dataset;
-  if(d.share){e.preventDefault();return shareSheet(d.share,d.id)}
+  if(d.share){e.preventDefault();if(!$('#fs').hidden){closeFS();return setTimeout(function(){shareSheet(d.share,d.id)},320)}return shareSheet(d.share,d.id)}
   if(d.shf){SH.fmt=d.shf;$$('[data-shf]').forEach(function(z){z.setAttribute('aria-pressed',String(z===t))});return shRender()}
   if('shsave' in d)return shBlob(shSave);
   if('shgo' in d)return shBlob(function(b){var f=new File([b],shFile(),{type:'image/png'});
-    if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'AlphaPad',text:SH.kind==='badge'?'New badge on AlphaPad 🏅':'My trading habits on AlphaPad 🔥'}).catch(function(){});else shSave(b)})});
+    if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'AlphaPad',text:SH.kind==='badge'?'New badge on AlphaPad 🏅':SH.kind==='score'?'My trading score on AlphaPad 🎯':'My trading habits on AlphaPad 🔥'}).catch(function(){});else shSave(b)})});
 setTimeout(checkNewBadges,1500);
 function badgeSheet(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;var p=bp(b),g=p[0]>=p[1];
   sheet(b[1]+' '+b[2],'<p>'+b[3]+'.</p><div class="facts"><div>Progress<b>'+p[0]+' of '+p[1]+'</b></div><div>Status<b>'+(g?'Earned':'In progress')+'</b></div><div>Reward<b>'+(b[5]?'+'+b[5]+' free day':'Badge')+'</b></div></div>'+
