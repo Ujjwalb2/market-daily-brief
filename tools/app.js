@@ -396,7 +396,7 @@ function jcStep(n,b){var m=$('#fsM'),mo=MONTHS().slice(-1)[0],tr=ALL.filter(func
     store.set('ap-jconn',{b:b,at:Date.now()});
     m.innerHTML=dots+'<div class="jc-mid"><span class="eb">Your trading score · '+mname(mo).split(' ')[0]+'</span><svg class="jc-ring" viewBox="0 0 100 100" aria-label="'+sc.toFixed(1)+' out of 5"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--border-decorative)" stroke-width="8"/><circle class="arc" cx="50" cy="50" r="44" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 '+C.toFixed(1)+'" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle">'+sc.toFixed(1)+'</text><text class="of" x="50" y="72" text-anchor="middle">out of 5</text></svg>'+
       '<h2 class="jc-h">'+(sc>=4?'Good discipline':sc>=3?'Room to tighten up':'Plenty to work on')+'</h2><p class="jc-p">Across '+tr.length+' trades this month you kept '+sc.toFixed(1)+' of your 5 plan rules on average.'+(mk.length?' The one you missed most: <b>'+String(MISTAKE[mk[0]]||mk[0]).toLowerCase()+'</b> ('+mist[mk[0]]+' times).':'')+'</p>'+
-      '<button type="button" class="btn p full" data-share="score">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+' Share my score</button><a class="btn g full" style="margin-top:8px" href="#journal/insights" data-fsx>See what to fix</a><button type="button" class="jc-back" data-fsx>Done</button></div>';
+      '<a class="btn p full" href="#journal/insights" data-fsx>See what to fix</a><div class="jc-links"><button type="button" class="jc-back" data-share="score">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'Share my score</button><button type="button" class="jc-back" data-fsx>Done</button></div></div>';
     requestAnimationFrame(function(){requestAnimationFrame(function(){var a=$('.jc-ring .arc',m);if(a)a.setAttribute('stroke-dasharray',(sc/5*C).toFixed(1)+' '+C.toFixed(1))})});
     if(tab==='today'){var y=scrollY;rToday();applySub('today','home');scrollTo(0,y)}}
   m.scrollTop=0}
@@ -979,7 +979,7 @@ var LKEY='sp-learn-2026-11-12',lrnI=0;
 function learned(){return store.get(LKEY,[])}
 function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'light',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
   s.innerHTML=top('You')+
-    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small></div><button type="button" class="prof-sh" data-share="profile">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'Share</button></div>'+
+    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small></div></div>'+
     '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
     '<div class="h2" id="tools"><h2>Tools</h2></div><div class="card" style="padding:0 16px"><div class="list">'+
       '<button type="button" class="row" data-act="risk"><span class="ic t">'+I('<path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>')+'</span><span class="tx"><b>Risk Studio</b><small>How many shares to buy for your risk</small></span><span class="go" aria-hidden="true">›</span></button>'+
@@ -1197,7 +1197,7 @@ document.addEventListener('click',function(e){var t=e.target.closest('[data-shar
 setTimeout(checkNewBadges,1500);
 function badgeSheet(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;var p=bp(b),g=p[0]>=p[1];
   sheet(b[1]+' '+b[2],'<p>'+b[3]+'.</p><div class="facts"><div>Progress<b>'+p[0]+' of '+p[1]+'</b></div><div>Status<b>'+(g?'Earned':'In progress')+'</b></div><div>Reward<b>'+(b[5]?'+'+b[5]+' free day':'Badge')+'</b></div></div>'+
-    (g?'<button type="button" class="btn p full" style="margin-top:14px" data-share="badge" data-id="'+b[0]+'">Share this badge</button>':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
+    (g?'':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
 
 function boardSheet(){var all=lbAll();
   sheet('🏆 '+SEASON.name,'<p class="muted">Ranked by season points. Ends '+SEASON.ends+'; points reset on 1 Dec, your streak doesn’t. Gold 300+ · Silver 200+ · Bronze 100+.</p><div class="card lb">'+all.map(lbRow).join('')+'</div>'+

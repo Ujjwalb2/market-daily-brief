@@ -1726,3 +1726,4 @@ button.psc{width:100%;text-align:left}
 .cel .shb{width:100%}
 .shn input{box-shadow:inset 0 0 0 1.5px var(--slate-400)}.shn input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--indigo-500)}
 .jc-mid .btn svg{width:17px;height:17px;vertical-align:-3px;margin-right:4px}
+.jc-links{display:flex;gap:18px;justify-content:center;margin-top:4px}.jc-links .jc-back{display:inline-flex;align-items:center;gap:6px}.jc-links svg{width:16px;height:16px}
