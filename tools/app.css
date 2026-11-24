@@ -1728,3 +1728,4 @@ button.psc{width:100%;text-align:left}
 .jc-mid .btn svg{width:17px;height:17px;vertical-align:-3px;margin-right:4px}
 .jc-links{display:flex;gap:18px;justify-content:center;margin-top:4px}.jc-links .jc-back{display:inline-flex;align-items:center;gap:6px}.jc-links svg{width:16px;height:16px}
 .prof-link{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:0;font:600 13.5px/1 var(--font-sans);color:var(--link)}.prof-link svg{width:15px;height:15px}
+.sh-quiet{margin-top:14px}

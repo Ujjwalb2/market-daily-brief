@@ -931,7 +931,7 @@ function rJournal(){var s=$('#s-journal'),ms=MONTHS(),mi=ms.indexOf(jMonth);if(m
     scoreHome(jMonth,1)+'<div class="h2"><h2>Equity curve</h2><span class="sp"></span><small>running P&amp;L</small></div><div class="eq">'+equity(tr)+'</div>'+
     '<div class="h2"><h2>Calendar</h2><span class="sp"></span><small>tap a day</small></div>'+jcal(jMonth,tr)+
     (ins.length?'<div class="h2 jhide"><h2>Insights</h2></div><div class="ins">'+ins.map(function(x){return '<div class="'+x[0]+'">'+x[1]+'</div>'}).join('')+'</div>':'')+
-    '<div class="h2"><h2>Plan score</h2><span class="sp"></span><small>5 rules per trade</small></div><div class="card"><div class="score"><span class="big">'+st.score.toFixed(1)+'</span><small>out of 5 on average.<br>'+(mk.length?'Most missed: <b>'+mk[0].toLowerCase()+'</b>.':'Every rule kept.')+'</small></div>'+
+    '<div class="h2"><h2>Plan score</h2><span class="sp"></span><button type="button" class="prof-link" style="margin:0" data-share="score">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'Share</button></div><div class="card"><div class="score"><span class="big">'+st.score.toFixed(1)+'</span><small>out of 5 on average.<br>'+(mk.length?'Most missed: <b>'+mk[0].toLowerCase()+'</b>.':'Every rule kept.')+'</small></div>'+
       (mk.length?'<div class="bars mist" style="margin-top:14px">'+mk.map(function(k){return bar(k,mist[k]+'×',mist[k]/mmx*100,'a')}).join('')+'</div>':'')+'</div>'+
     '<div class="h2 jtr"><h2>Trades</h2><small>'+st.n+' this month · '+st.w+' won · '+st.l+' lost</small></div>'+
     '<div class="seg jtseg" role="group" aria-label="Show trades">'+[['all','All '+st.n],['win','Wins '+st.w],['loss','Losses '+st.l]].map(function(b){return '<button type="button" data-jt="'+b[0]+'" aria-pressed="'+(jTF===b[0])+'">'+b[1]+'</button>'}).join('')+'</div>'+
@@ -1093,7 +1093,7 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
   c.fillStyle='rgba(255,255,255,.045)';for(var gx=24;gx<W;gx+=36)for(var gy=24;gy<H;gy+=36){c.fillRect(gx,gy,2,2)}
   c.save();c.globalAlpha=.07;c.fillStyle='#fff';c.beginPath();c.moveTo(W*.55,0);c.lineTo(W*.75,0);c.lineTo(W*.35,H);c.lineTo(W*.15,H);c.closePath();c.fill();c.restore();
   c.textBaseline='alphabetic';
-  var name=shName(),v=seasonScore(),ti=tierOf(v),got=BADGES.filter(bGot),mo=new Date().toLocaleDateString('en-IN',{month:'short',year:'numeric'}).toUpperCase(),
+  var name=shName(),v=seasonScore(),ti=tierOf(v),got=BADGES.filter(bGot),mo=((SH.kind==='score'&&tab==='journal'&&jMonth)?new Date(jMonth+'-01T00:00:00'):new Date()).toLocaleDateString('en-IN',{month:'short',year:'numeric'}).toUpperCase(),
     TC={gold:['#F7D774','#E0A93B'],silver:['#F1F4F8','#AEB8C6'],bronze:['#E8B48A','#B7774A'],start:['#C9D3E1','#8793A5']}[TIERS[ti][0]]||['#F1F4F8','#AEB8C6'];
   /* header: logo + month pill */
   T('α',80,138,F(800,56),'#00C99A');var aw=(c.font=F(800,56),c.measureText('α').width);T('lphaPad',80+aw,138,F(800,56),'#F8FAFC');
@@ -1116,7 +1116,7 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
     var cws=chips.map(function(t){return c.measureText(t).width+60}),tot=cws[0]+cws[1]+20,cx=(W-tot)/2;
     chips.forEach(function(t,i){shRR(c,cx,cy2-48,cws[i],70,35);c.fillStyle='rgba(255,255,255,.08)';c.fill();c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=2;c.stroke();T(t,cx+cws[i]/2,cy2-3,F(700,30),'#F8FAFC','center');cx+=cws[i]+20});
     T(name+' · '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),W/2,fy-(st?70:40),F(500,28),'#8793A5','center');return}
-  if(SH.kind==='score'){var mo2=MONTHS().slice(-1)[0],tr2=ALL.filter(function(t){return t.d.slice(0,7)===mo2}),n2=tr2.length||1,sc2=tr2.length?stats(tr2).score:0,
+  if(SH.kind==='score'){var mo2=(tab==='journal'&&jMonth)?jMonth:MONTHS().slice(-1)[0],tr2=ALL.filter(function(t){return t.d.slice(0,7)===mo2}),n2=tr2.length||1,sc2=tr2.length?stats(tr2).score:0,
       gx2=W/2,gy2=st?720:465,gr2=st?250:165,lw2=st?44:32;
     T('MY TRADING SCORE · '+mname(mo2).split(' ')[0].toUpperCase(),W/2,st?300:235,F(800,26),'#00C99A','center','5px');
     glow(gx2,gy2,gr2*2.2,'rgba(0,201,154,.25)');
@@ -1197,7 +1197,7 @@ document.addEventListener('click',function(e){var t=e.target.closest('[data-shar
 setTimeout(checkNewBadges,1500);
 function badgeSheet(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;var p=bp(b),g=p[0]>=p[1];
   sheet(b[1]+' '+b[2],'<p>'+b[3]+'.</p><div class="facts"><div>Progress<b>'+p[0]+' of '+p[1]+'</b></div><div>Status<b>'+(g?'Earned':'In progress')+'</b></div><div>Reward<b>'+(b[5]?'+'+b[5]+' free day':'Badge')+'</b></div></div>'+
-    (g?'':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
+    (g?'<button type="button" class="prof-link sh-quiet" data-share="badge" data-id="'+b[0]+'">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'Share this badge</button>':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
 
 function boardSheet(){var all=lbAll();
   sheet('🏆 '+SEASON.name,'<p class="muted">Ranked by season points. Ends '+SEASON.ends+'; points reset on 1 Dec, your streak doesn’t. Gold 300+ · Silver 200+ · Bronze 100+.</p><div class="card lb">'+all.map(lbRow).join('')+'</div>'+
