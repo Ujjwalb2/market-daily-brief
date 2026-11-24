@@ -1082,41 +1082,76 @@ function shName(){return store.get('ap-share-name','Trader')||'Trader'}
 function shScore(){if(!jConn())return null;var mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(t){return t.d.slice(0,7)===mo});return tr.length?stats(tr).score:null}
 function shRR(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function shWrap(c,t,x,y,mw,lh){var w=String(t).split(' '),line='',n=0;for(var i=0;i<w.length;i++){var tst=line?line+' '+w[i]:w[i];if(c.measureText(tst).width>mw&&line){c.fillText(line,x,y+n*lh);n++;line=w[i]}else line=tst}if(line){c.fillText(line,x,y+n*lh);n++}return n}
-function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContext('2d'),F=function(w,z){return w+' '+z+'px Inter, system-ui, -apple-system, "Segoe UI", sans-serif'};cv.width=W;cv.height=H;
-  var g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0E1524');g.addColorStop(1,'#1B2540');c.fillStyle=g;c.fillRect(0,0,W,H);
-  [[W*.12,H*.08,760,'rgba(0,201,154,.22)'],[W*.95,H*.9,820,'rgba(63,91,217,.30)']].forEach(function(o){var r=c.createRadialGradient(o[0],o[1],0,o[0],o[1],o[2]);r.addColorStop(0,o[3]);r.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=r;c.fillRect(0,0,W,H)});
-  var ls=function(v){try{c.letterSpacing=v}catch(e){}};
-  /* logo + eyebrow */
-  c.textBaseline='alphabetic';c.textAlign='left';c.font=F(800,54);c.fillStyle='#00C99A';c.fillText('α',80,140);var aw=c.measureText('α').width;c.fillStyle='#F8FAFC';c.fillText('lphaPad',80+aw,140);
-  c.textAlign='right';c.font=F(700,24);ls('4px');c.fillStyle='#8793A5';c.fillText(SH.kind==='badge'?'BADGE EARNED':'MY TRADING HABITS',W-80,132);ls('0px');
-  /* footer */
-  c.strokeStyle='rgba(255,255,255,.12)';c.lineWidth=2;c.beginPath();c.moveTo(80,H-170);c.lineTo(W-80,H-170);c.stroke();
-  c.textAlign='left';c.font=F(500,27);c.fillStyle='#8793A5';c.fillText('Habits, not hype. Rewards never come from profit.',80,H-100);
-  c.textAlign='right';c.font=F(700,32);c.fillStyle='#00C99A';c.fillText('alphapad.in',W-80,H-98);
-  var name=shName(),v=seasonScore(),ti=tierOf(v),got=BADGES.filter(bGot),dt0=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
-  if(SH.kind==='badge'){var b=BADGES.filter(function(x){return x[0]===SH.id})[0]||got[0],cy=st?760:470,R=st?250:175;
-    var gl=c.createRadialGradient(W/2,cy,R*.3,W/2,cy,R*1.6);gl.addColorStop(0,'rgba(0,201,154,.35)');gl.addColorStop(1,'rgba(0,201,154,0)');c.fillStyle=gl;c.beginPath();c.arc(W/2,cy,R*1.6,0,7);c.fill();
-    c.fillStyle='rgba(255,255,255,.07)';c.beginPath();c.arc(W/2,cy,R,0,7);c.fill();c.strokeStyle='rgba(0,201,154,.75)';c.lineWidth=8;c.stroke();
-    c.textAlign='center';c.textBaseline='middle';c.font=F(400,st?230:160);c.fillStyle='#fff';c.fillText(b[1],W/2,cy+10);c.textBaseline='alphabetic';
-    var y=cy+R+(st?130:105);c.font=F(700,28);ls('5px');c.fillStyle='#00C99A';c.fillText('BADGE EARNED',W/2,y);ls('0px');
-    c.font=F(800,st?96:84);c.fillStyle='#F8FAFC';c.fillText(b[2],W/2,y+(st?120:105));
-    c.font=F(400,38);c.fillStyle='#CBD5E1';var nl=shWrap(c,b[3]+'.',W/2,y+(st?200:180),860,52);
-    c.font=F(500,30);c.fillStyle='#8793A5';c.fillText(name+' · '+dt0,W/2,y+(st?200:180)+nl*52+40);
-    var chip='🔥 '+streakNow()+'-day streak   ·   🏅 '+got.length+' of '+BADGES.length+' badges';c.font=F(600,32);var cw=c.measureText(chip).width+80,cyy=H-(st?330:265);
-    shRR(c,(W-cw)/2,cyy-50,cw,76,38);c.fillStyle='rgba(255,255,255,.08)';c.fill();c.fillStyle='#F8FAFC';c.fillText(chip,W/2,cyy);return}
-  /* profile */
-  var sc=shScore(),y0=st?400:290,ty=st?640:420,th=st?440:330,gap=30,tw=(W-160-gap)/2,rowg=st?480:360;
-  c.textAlign='left';c.font=F(800,st?100:88);c.fillStyle='#F8FAFC';c.fillText(name,80,y0);
-  c.font=F(500,34);c.fillStyle='#A9B4C6';c.fillText(SEASON.name+' · '+TIERS[ti][1]+' · #'+myRank()+' of '+SEASON.players,80,y0+62);
-  var tile=function(ix,iy,lab,val,sub,extra){var x=80+ix*(tw+gap),y=ty+iy*rowg;shRR(c,x,y,tw,th,36);c.fillStyle='rgba(255,255,255,.06)';c.fill();c.strokeStyle='rgba(255,255,255,.12)';c.lineWidth=2;c.stroke();
-    c.textAlign='left';c.font=F(700,24);ls('3px');c.fillStyle='#8793A5';c.fillText(lab,x+40,y+68);ls('0px');
-    c.font=F(800,108);c.fillStyle='#F8FAFC';c.fillText(val[0],x+36,y+(st?240:200));if(val[1]){var vw=c.measureText(val[0]).width;c.font=F(700,46);c.fillStyle='#8793A5';c.fillText(val[1],x+44+vw,y+(st?240:200))}
-    c.font=F(500,28);c.fillStyle='#CBD5E1';c.fillText(sub,x+40,y+(st?305:255));if(extra)extra(x,y)};
-  tile(0,0,'STREAK',['🔥'+streakNow()],'days in a row · longest '+longest());
-  if(sc!=null)tile(1,0,'TRADING SCORE',[sc.toFixed(1),'/5'],'plan rules kept',function(x,y){var by=y+th-50;shRR(c,x+40,by,tw-80,14,7);c.fillStyle='rgba(255,255,255,.12)';c.fill();shRR(c,x+40,by,(tw-80)*sc/5,14,7);c.fillStyle='#00C99A';c.fill()});
-  else tile(1,0,'THIS QUARTER',[String(qDays())],'market mornings done',function(x,y){var by=y+th-50;shRR(c,x+40,by,tw-80,14,7);c.fillStyle='rgba(255,255,255,.12)';c.fill();shRR(c,x+40,by,(tw-80)*Math.min(1,qDays()/60),14,7);c.fillStyle='#00C99A';c.fill()});
-  tile(0,1,'BADGES',[String(got.length),'/'+BADGES.length],'',function(x,y){c.font=F(400,64);c.fillStyle='#fff';c.fillText(got.slice(-4).map(function(b){return b[1]}).join(' '),x+40,y+(st?350:280))});
-  tile(1,1,'SEASON POINTS',[String(v)],TIERS[ti][1]+' tier · '+SEASON.left+' days left')}
+function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContext('2d');cv.width=W;cv.height=H;
+  var F=function(w,z){return w+' '+z+'px Inter, system-ui, -apple-system, "Segoe UI", sans-serif'},ls=function(v){try{c.letterSpacing=v}catch(e){}},
+    T=function(t,x,y,f,col,al,sp){c.font=f;c.fillStyle=col;c.textAlign=al||'left';ls(sp||'0px');c.fillText(t,x,y);ls('0px')},
+    circ=function(x,y,r){c.beginPath();c.arc(x,y,r,0,Math.PI*2)},
+    glow=function(x,y,r,col){var g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,col);g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.fillRect(0,0,W,H)};
+  /* background: deep navy, indigo and teal light, fine dot grid, one diagonal sheen */
+  c.fillStyle='#0A0F1E';c.fillRect(0,0,W,H);
+  glow(W*.92,H*.05,900,'rgba(63,91,217,.55)');glow(-60,H*.62,760,'rgba(0,201,154,.20)');glow(W*.6,H*1.02,700,'rgba(63,91,217,.30)');
+  c.fillStyle='rgba(255,255,255,.045)';for(var gx=24;gx<W;gx+=36)for(var gy=24;gy<H;gy+=36){c.fillRect(gx,gy,2,2)}
+  c.save();c.globalAlpha=.07;c.fillStyle='#fff';c.beginPath();c.moveTo(W*.55,0);c.lineTo(W*.75,0);c.lineTo(W*.35,H);c.lineTo(W*.15,H);c.closePath();c.fill();c.restore();
+  c.textBaseline='alphabetic';
+  var name=shName(),v=seasonScore(),ti=tierOf(v),got=BADGES.filter(bGot),mo=new Date().toLocaleDateString('en-IN',{month:'short',year:'numeric'}).toUpperCase(),
+    TC={gold:['#F7D774','#E0A93B'],silver:['#F1F4F8','#AEB8C6'],bronze:['#E8B48A','#B7774A'],start:['#C9D3E1','#8793A5']}[TIERS[ti][0]]||['#F1F4F8','#AEB8C6'];
+  /* header: logo + month pill */
+  T('α',80,138,F(800,56),'#00C99A');var aw=(c.font=F(800,56),c.measureText('α').width);T('lphaPad',80+aw,138,F(800,56),'#F8FAFC');
+  c.font=F(700,24);ls('4px');var mw=c.measureText(mo).width+44;ls('0px');shRR(c,W-80-mw,92,mw,58,29);c.strokeStyle='rgba(255,255,255,.28)';c.lineWidth=2;c.stroke();T(mo,W-80-mw/2,130,F(700,24),'#CBD5E1','center','4px');
+  /* footer band */
+  var fy=H-150;c.fillStyle='rgba(255,255,255,.06)';c.fillRect(0,fy,W,150);c.fillStyle='rgba(255,255,255,.12)';c.fillRect(0,fy,W,2);
+  T('Habits, not hype.',80,fy+66,F(800,34),'#F8FAFC');T('Rewards never come from profit.',80,fy+108,F(500,26),'#8793A5');
+  c.font=F(800,36);var lw=c.measureText('alphapad.in').width;shRR(c,W-80-lw-56,fy+42,lw+56,70,35);c.fillStyle='#00C99A';c.fill();T('alphapad.in',W-80-(lw+56)/2,fy+88,F(800,36),'#0A0F1E','center');
+  var medal=function(x,y,r,b,on){if(on){var g=c.createLinearGradient(x-r,y-r,x+r,y+r);g.addColorStop(0,'rgba(0,201,154,.38)');g.addColorStop(1,'rgba(63,91,217,.38)');circ(x,y,r);c.fillStyle=g;c.fill();c.strokeStyle='rgba(0,201,154,.9)';c.lineWidth=3;c.stroke();
+      c.font=F(400,r*1.05);c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';c.fillText(b[1],x,y+r*.06);c.textBaseline='alphabetic'}
+    else{circ(x,y,r);c.fillStyle='rgba(255,255,255,.05)';c.fill();c.setLineDash([6,8]);c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;c.stroke();c.setLineDash([])}};
+  if(SH.kind==='badge'){var b=BADGES.filter(function(x){return x[0]===SH.id})[0]||got[0],cy=st?800:480,R=st?240:170;
+    glow(W/2,cy,R*2.3,'rgba(0,201,154,.35)');
+    for(var k=0;k<24;k++){var an=k/24*Math.PI*2;c.strokeStyle='rgba(255,255,255,'+(k%2?.06:.12)+')';c.lineWidth=k%2?2:4;c.beginPath();c.moveTo(W/2+Math.cos(an)*(R+40),cy+Math.sin(an)*(R+40));c.lineTo(W/2+Math.cos(an)*(R+(k%2?90:140)),cy+Math.sin(an)*(R+(k%2?90:140)));c.stroke()}
+    medal(W/2,cy,R,b,true);
+    var y=cy+R+(st?170:120);T('NEW BADGE UNLOCKED',W/2,y,F(800,28),'#00C99A','center','6px');
+    T(b[2],W/2,y+(st?120:100),F(800,st?110:92),'#F8FAFC','center','-2px');
+    c.font=F(500,36);c.fillStyle='#CBD5E1';c.textAlign='center';var nl=shWrap(c,b[3]+'.',W/2,y+(st?200:170),820,50);
+    var cy2=y+(st?200:170)+nl*50+(st?90:50),chips=['🔥 '+streakNow()+'-day streak','🏅 '+got.length+'/'+BADGES.length+' badges'];c.font=F(700,30);
+    var cws=chips.map(function(t){return c.measureText(t).width+60}),tot=cws[0]+cws[1]+20,cx=(W-tot)/2;
+    chips.forEach(function(t,i){shRR(c,cx,cy2-48,cws[i],70,35);c.fillStyle='rgba(255,255,255,.08)';c.fill();c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=2;c.stroke();T(t,cx+cws[i]/2,cy2-3,F(700,30),'#F8FAFC','center');cx+=cws[i]+20});
+    T(name+' · '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),W/2,fy-(st?70:40),F(500,28),'#8793A5','center');return}
+  /* profile: name + tier ribbon */
+  var ny=st?320:250;T(name,80,ny,F(800,st?92:80),'#F8FAFC','left','-2px');c.font=F(800,st?92:80);ls('-2px');var nw=c.measureText(name).width;ls('0px');
+  var tl=TIERS[ti][1].toUpperCase()+' · #'+myRank();c.font=F(800,24);ls('3px');var tw=c.measureText(tl).width+48;ls('0px');var tx=80+nw+28,tyy=ny-50;
+  var tg=c.createLinearGradient(tx,0,tx+tw,0);tg.addColorStop(0,TC[0]);tg.addColorStop(1,TC[1]);shRR(c,tx,tyy,tw,52,26);c.fillStyle=tg;c.fill();T(tl,tx+tw/2,tyy+35,F(800,24),'#0A0F1E','center','3px');
+  T(SEASON.name.replace(' season','')+' season · '+v+' points · top '+Math.max(1,Math.round(myRank()/1284*100))+'% of '+SEASON.players,80,ny+(st?66:56),F(500,30),'#A9B4C6');
+  /* hero card: streak on the left, score gauge on the right */
+  var hy=st?470:350,hh=st?640:500;shRR(c,60,hy,W-120,hh,44);var hg=c.createLinearGradient(0,hy,0,hy+hh);hg.addColorStop(0,'rgba(255,255,255,.10)');hg.addColorStop(1,'rgba(255,255,255,.03)');c.fillStyle=hg;c.fill();c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=2;c.stroke();
+  c.save();shRR(c,60,hy,W-120,hh,44);c.clip();glow(240,hy+hh*.55,380,'rgba(240,160,75,.30)');c.restore();
+  T('DAY STREAK',110,hy+80,F(800,26),'#F0A04B','left','5px');
+  c.font=F(400,st?120:100);c.textAlign='left';c.fillText('🔥',104,hy+(st?240:200));
+  var sn=String(streakNow()),ng=c.createLinearGradient(0,hy+120,0,hy+(st?420:360));ng.addColorStop(0,'#FFFFFF');ng.addColorStop(1,'#FFD3A1');
+  c.font=F(900,st?320:250);ls('-12px');c.fillStyle=ng;c.fillText(sn,(st?240:220),hy+(st?410:320));ls('0px');
+  T('longest '+longest()+' · '+totalDays()+' mornings',110,hy+(st?480:375),F(600,28),'#CBD5E1');
+  var wk=D.streak.week,wx=110,wy=hy+hh-(st?70:56),wr=st?24:21,wgap=st?64:56;
+  wk.forEach(function(d,i){var stt=d[1];if(stt==='today'&&allDone())stt='done';var x=wx+i*wgap+wr;circ(x,wy,wr);
+    if(stt==='done'){c.fillStyle='#00C99A';c.fill();T('✓',x,wy+9,F(900,24),'#0A0F1E','center')}
+    else if(stt==='today'){c.strokeStyle='#00C99A';c.lineWidth=4;c.stroke();T(d[0],x,wy+9,F(800,22),'#00C99A','center')}
+    else if(stt==='hol'||stt==='off'){c.fillStyle='rgba(255,255,255,.06)';c.fill();T(d[0],x,wy+8,F(700,20),'rgba(255,255,255,.35)','center')}
+    else{c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;c.stroke();T(d[0],x,wy+8,F(700,20),'rgba(255,255,255,.6)','center')}});
+  c.fillStyle='rgba(255,255,255,.10)';c.fillRect(W/2+70,hy+50,2,hh-100);
+  var sc=shScore(),gx=W/2+70+(W-120-(W/2+70-60))/2+30,gy=hy+(st?280:225),gr=st?150:128,frac=sc!=null?sc/5:Math.min(1,qDays()/60);
+  circ(gx,gy,gr);c.strokeStyle='rgba(255,255,255,.10)';c.lineWidth=st?28:24;c.stroke();
+  var ag;try{ag=c.createConicGradient(-Math.PI/2,gx,gy);ag.addColorStop(0,'#00C99A');ag.addColorStop(.6,'#3FD1B0');ag.addColorStop(1,'#6E86FF')}catch(e){ag='#00C99A'}
+  c.beginPath();c.arc(gx,gy,gr,-Math.PI/2,-Math.PI/2+Math.PI*2*frac);c.strokeStyle=ag;c.lineCap='round';c.lineWidth=st?28:24;c.stroke();c.lineCap='butt';
+  var big=sc!=null?sc.toFixed(1):String(qDays());T(big,gx,gy+(st?34:28),F(900,st?100:86),'#F8FAFC','center','-3px');T(sc!=null?'OUT OF 5':'OF ~62',gx,gy+(st?78:66),F(700,20),'#8793A5','center','3px');
+  T(sc!=null?'TRADING SCORE':'MORNINGS · Q4',gx,gy+gr+(st?90:78),F(800,24),'#00C99A','center','4px');
+  T(sc!=null?'plan rules kept':'market days this quarter',gx,gy+gr+(st?132:116),F(500,26),'#CBD5E1','center');
+  /* stat row */
+  var ry=hy+hh+(st?120:78),cols=[[String(v),'SEASON POINTS'],['#'+myRank(),'RANK OF '+SEASON.players],[got.length+'/'+BADGES.length,'BADGES']],cw=(W-160)/3;
+  cols.forEach(function(x,i){var cx=80+cw*i+cw/2;T(x[0],cx,ry,F(900,st?72:62),'#F8FAFC','center','-2px');T(x[1],cx,ry+(st?48:42),F(700,20),'#8793A5','center','3px');if(i){c.fillStyle='rgba(255,255,255,.12)';c.fillRect(80+cw*i,ry-60,2,100)}});
+  /* badge strip */
+  var by=ry+(st?200:132),mr=st?46:38,n=Math.min(BADGES.length,st?8:9),gap2=(W-160-n*mr*2)/(n-1),order=got.concat(BADGES.filter(function(x){return !bGot(x)}));
+  if(st)T('BADGES EARNED',80,by-mr-30,F(800,24),'#8793A5','left','4px');
+  for(var i=0;i<n;i++){var bx=80+mr+i*(mr*2+gap2);if(i===n-1&&order.length>n){circ(bx,by,mr);c.fillStyle='rgba(255,255,255,.08)';c.fill();T('+'+(order.length-n+1),bx,by+10,F(800,28),'#CBD5E1','center')}else medal(bx,by,mr,order[i],bGot(order[i]))}
+  if(st){shRR(c,80,by+mr+70,W-160,170,36);c.fillStyle='rgba(255,255,255,.05)';c.fill();c.strokeStyle='rgba(255,255,255,.10)';c.lineWidth=2;c.stroke();
+    T('“',120,by+mr+175,F(900,120),'rgba(0,201,154,.6)');c.font=F(700,40);c.fillStyle='#F8FAFC';c.textAlign='left';shWrap(c,'Building the habit, one market morning at a time.',200,by+mr+140,W-320,54)}}
 function shRender(){var img=$('#shImg');if(!img)return;var cv=document.createElement('canvas');SH.cv=cv;var go=function(){shDraw(cv);img.src=cv.toDataURL('image/png');img.classList.toggle('story',SH.fmt==='story')};
   if(document.fonts&&document.fonts.load)Promise.all([document.fonts.load('800 50px Inter'),document.fonts.load('500 30px Inter')]).then(go,go);else go()}
 function shareSheet(kind,id){SH.kind=kind;SH.id=id||null;
