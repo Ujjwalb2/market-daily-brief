@@ -214,7 +214,7 @@ function fyLead(key){var nx=nextEv();
   if(key==='options')return fyShell('a',ICO.fo,'Your expiry · Nifty','<small class="fyc-r">'+esc(D.fo.exp.replace(/^Expiry\s*/,''))+'</small>',
     '<span class="fy-lv">'+D.fo.k.map(function(k,n){return '<span class="'+['u','w',''][n]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></span>'}).join('')+'</span>','#markets/fo','See F&amp;O levels →');
   if(key==='investor')return fyShell('t',ICO.bk,'Your baskets','',
-    '<span class="fyg2">'+D.baskets.slice(0,2).map(function(b){var m=BKMETA[b.n]||[];return '<span class="fybk"><b>'+esc(b.r)+'</b><span>'+esc(b.n)+'</span><small>'+(m[1]?m[1]+' stocks · '+m[2]:'Basket')+'</small></span>'}).join('')+'</span>','#ideas/baskets','See all baskets →');
+    '<span class="fyg2">'+D.baskets.slice(0,2).map(function(b){var m=BKMETA[b.n]||[];return '<span class="fybk"><b>'+esc(b.r)+'</b><span>'+esc(b.n)+'</span><small>'+esc(b.m||'Basket')+'</small></span>'}).join('')+'</span>','#ideas/baskets','See all baskets →');
   if(key==='picker'){var mx=Math.max.apply(null,MVS.slice(0,3).map(function(m){return Math.abs(m.v)}))||1;
     return fyShell('t',ICO.mv,'Your watch · top movers','',
     '<span class="fyg3">'+MVS.slice(0,3).map(function(m){return '<span class="fymv"><small>'+esc(m.n)+'</small><b>+'+m.v.toFixed(2)+'%</b><i style="width:'+(Math.abs(m.v)/mx*100).toFixed(0)+'%"></i></span>'}).join('')+'</span>','#markets/movers','All gainers and losers →')}
@@ -417,7 +417,7 @@ function rToday(){var s=$('#s-today'),nx=nextEv(),idx=IDX.filter(function(x){ret
     '<div class="hello"><h1>'+hi+', Trader</h1></div>'+
     morningHTML()+
 
-    homePreview((locked()?profitHTML('home'):liveHTML())+scoreHome())+ipoHTML()+mfHomeHTML()+
+    homePreview((locked()?profitHTML('home')+bkLockHTML():liveHTML()+bkLiveHTML())+scoreHome())+ipoHTML()+mfHomeHTML()+
     '<div class="h2 sph"><h2>Spotlight</h2><small id="spC">'+SL.length+' today</small></div>'+
     '<div class="spw"><div class="sp-tr" id="spTr" aria-label="Spotlight">'+SL.map(function(x,i){return '<article class="sl" id="spot-'+i+'" aria-label="'+(i+1)+' of '+SL.length+'"><div class="kr"><span class="ic '+x.c+'">'+I(ICO[x.ic],2)+'</span>'+x.k+'</div><div class="tt"><b>'+x.t+'</b>'+(x.v?'<span class="v">'+x.v+'</span>':'')+(x.d?'<span class="dd">'+x.d+'</span>':'')+'</div><p>'+x.sub+'</p>'+(beginner()&&x.tip?'<p class="tip">💡 '+x.tip+'</p>':'')+x.viz+'<div class="ac">'+x.a.map(function(l){return '<a href="'+l[0]+'">'+l[1]+' →</a>'}).join('')+'</div></article>'}).join('')+'</div><div class="dots" aria-hidden="true">'+SL.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div></div>'+
     forYou()+
@@ -836,10 +836,28 @@ function liveHTML(){var w=CL.filter(function(x){return x.ret>0}).length;
     (CALLS.length>1?'<div class="mdots lvd" aria-hidden="true">'+CALLS.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>':'')+
     '<a class="btn full pbc" href="#ideas/calls">Open all calls with levels →</a>'+
     '<p class="pbf">'+w+' of the last '+CL.length+' closed calls booked profit. Analysis, not investment advice.</p></section>'}
+/* Home: baskets card. Locked: a performance teaser with an unlock button (like the calls card). Premium: swipe cards. */
+function bkShort(n){return String(n).replace(/^Alphapad\s+/i,'').replace(/\s+Basket$/i,'')}
+function bkRisk(b){return String(b.m||'').split('·')[0].replace(/\s*risk\s*/i,'').trim()}
+function bkLockHTML(){var B=D.baskets,vals=B.map(function(b){return parseFloat(String(b.r).replace(/[^\d.-]/g,''))||0}),mx=Math.max.apply(null,vals.concat([1])),best=B[vals.indexOf(Math.max.apply(null,vals))];
+  return '<section class="pbk home bkh2" aria-label="Baskets on AlphaPad"><div class="pbh"><span class="eb">Baskets on AlphaPad</span><small>1-year returns</small></div>'+
+    '<div class="pbn"><b>'+B.length+'</b><span>ready-made baskets<small>Best: '+esc(bkShort(best.n))+' '+esc(best.r)+' in a year</small></span></div>'+
+    '<div class="pbb">'+B.map(function(b,i){return '<div><em>'+esc(b.r)+'</em><i style="height:'+(18+Math.max(0,vals[i])/mx*46).toFixed(0)+'px"></i><span>'+esc(bkShort(b.n).split(' ').slice(0,2).join(' '))+'</span></div>'}).join('')+'</div>'+
+    '<button type="button" class="btn full pbc" data-act="pro">Unlock all '+B.length+' baskets →</button>'+
+    '<p class="pbf">Past 1-year returns. Past results do not promise future returns.</p></section>'}
+function bkLiveHTML(){var B=D.baskets;
+  return '<section class="pbk home live bkh2" aria-label="Your baskets"><div class="pbh"><span class="eb">Baskets</span><small id="bkC">1 of '+B.length+'</small></div>'+
+    '<div class="bkl" data-noswipe aria-label="Baskets, swipe for more">'+B.map(function(b,i){var m=BKMETA[b.n]||[],st=(String(b.m||'').split('·')[1]||'').trim();
+      return '<a class="bks" href="#ideas/baskets"><span class="bks-h"><span class="ic t">'+I(ICO.bk,2)+'</span><b>'+esc(b.n)+'</b></span>'+
+        '<span class="bks-r"><b>'+esc(b.r)+'</b><small>1-year return'+(m[0]?' · '+esc(m[0]):'')+'</small></span>'+
+        '<span class="bks-x"><span><small>Risk</small><b>'+esc(bkRisk(b)||'–')+'</b></span><span><small>Stocks</small><b>'+esc(st.replace(/\s*stocks?/i,'')||'–')+'</b></span><span><small>Minimum</small><b>'+esc(m[4]||'–')+'</b></span></span></a>'}).join('')+'</div>'+
+    (B.length>1?'<div class="mdots bkd" aria-hidden="true">'+B.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join('')+'</div>':'')+
+    '<a class="btn full pbc" href="#ideas/baskets">Open all baskets →</a>'+
+    '<p class="pbf">Past 1-year returns. Analysis, not investment advice.</p></section>'}
 function slideSync(tq,dq,cq,sfx){var tr=$(tq);if(!tr||!tr.children.length)return;var n=tr.children.length,dots=$$(dq);
   var sync=function(){var i=Math.round(tr.scrollLeft/(tr.children[0].offsetWidth+12));dots.forEach(function(d,j){d.classList.toggle('on',j===i)});var c=$(cq);if(c)c.textContent=(i+1)+' of '+n+sfx};
   tr.addEventListener('scroll',sync,{passive:true});sync()}
-function liveSlide(){slideSync('#s-today .lvl','#s-today .lvd i','#lvC',' live');slideSync('#s-today .pv.hl .hlt','#s-today .hld i','#hlC','');slideSync('#s-today .ipt','#s-today .ipd i','#ipoC','');slideSync('#s-today .mft2','#s-today .mfd i','#mfC','')}
+function liveSlide(){slideSync('#s-today .lvl:not(.bkl)','#s-today .lvd i','#lvC',' live');slideSync('#s-today .bkl','#s-today .bkd i','#bkC','');slideSync('#s-today .pv.hl .hlt','#s-today .hld i','#hlC','');slideSync('#s-today .ipt','#s-today .ipd i','#ipoC','');slideSync('#s-today .mft2','#s-today .mfd i','#mfC','')}
 function flFade(){var l=$('#filings .list.fl');if(!l)return;var f=function(){l.classList.toggle('more',l.scrollHeight-l.clientHeight-l.scrollTop>=4)};l.addEventListener('scroll',f,{passive:true});f()}
 function lockedCard(c){var nm=String(c.n),e=rs(c.lv[0]),t=rs(c.lv[1]),l=rs(c.lv[3]),left=t-l,pc=left/l*100,done=Math.max(0,Math.min(100,(l-e)/(t-e)*100));
   return '<article class="tc lk" aria-label="Locked trade call"><div class="hd"><div><b class="lkn">••••••••</b><small>'+esc(c.k)+' · '+esc(c.when)+'</small></div><span class="tag">Active</span></div>'+
