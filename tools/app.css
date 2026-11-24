@@ -1707,3 +1707,21 @@ button.psc{width:100%;text-align:left}
 .bks-r small{font:500 12.5px/1.2 var(--font-sans);color:var(--text-tertiary)}
 .bks-x{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:10px;border-top:1px solid var(--border-decorative)}
 .bks-x span{display:grid;gap:3px;min-width:0}.bks-x small{font:500 11.5px/1 var(--font-sans);color:var(--text-tertiary)}.bks-x b{font:700 14px/1.2 var(--font-sans);font-variant-numeric:tabular-nums}
+
+/* share cards */
+.shp{display:grid;place-items:center;padding:12px;border-radius:16px;background:var(--surface-glass);border:1px solid var(--border-decorative)}
+.shp img{display:block;width:100%;max-width:300px;aspect-ratio:1080/1350;border-radius:12px;box-shadow:0 12px 32px rgba(16,24,39,.35);background:#0E1524}
+.shp img.story{max-width:210px;aspect-ratio:1080/1920}
+.shfmt{margin-top:12px}
+.shn{display:grid;gap:6px;margin-top:12px}.shn span{font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary)}
+.shn input{height:42px;padding:0 12px;border-radius:10px;border:1px solid var(--border-control);background:var(--surface-raised);color:var(--text-primary);font:500 15px/1 var(--font-sans)}
+.shb{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.shb .btn{margin:0}
+.shic{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--surface-glass);border:1px solid var(--border-glass);color:var(--text-primary)}.shic svg{width:18px;height:18px}
+.prof>div{flex:1;min-width:0}
+.prof-sh{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:9999px;background:var(--action-primary);color:#fff;font:600 13px/1 var(--font-sans);flex:none}.prof-sh svg{width:15px;height:15px}
+.cel{display:grid;justify-items:center;text-align:center;gap:6px;padding:4px 0 2px}
+.cel-b{display:grid;place-items:center;width:120px;height:120px;border-radius:50%;font-size:64px;background:radial-gradient(circle,var(--fin-positive-soft),transparent 70%);box-shadow:inset 0 0 0 3px var(--teal);animation:celIn .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes celIn{from{transform:scale(.4);opacity:0}}@media (prefers-reduced-motion:reduce){.cel-b{animation:none}}
+.cel>b{font:700 22px/1.2 var(--font-sans);margin-top:6px}.cel p{margin:0;font:400 14px/1.45 var(--font-sans);color:var(--text-secondary)}.cel .cel-r{color:var(--text-primary);font-weight:600}
+.cel .shb{width:100%}
+.shn input{box-shadow:inset 0 0 0 1.5px var(--slate-400)}.shn input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--indigo-500)}

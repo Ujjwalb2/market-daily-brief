@@ -979,7 +979,7 @@ var LKEY='sp-learn-2026-11-12',lrnI=0;
 function learned(){return store.get(LKEY,[])}
 function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'light',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
   s.innerHTML=top('You')+
-    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small></div></div>'+
+    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small></div><button type="button" class="prof-sh" data-share="profile">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'Share</button></div>'+
     '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
     '<div class="h2" id="tools"><h2>Tools</h2></div><div class="card" style="padding:0 16px"><div class="list">'+
       '<button type="button" class="row" data-act="risk"><span class="ic t">'+I('<path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>')+'</span><span class="tx"><b>Risk Studio</b><small>How many shares to buy for your risk</small></span><span class="go" aria-hidden="true">›</span></button>'+
@@ -1075,9 +1075,77 @@ function badgesHTML(){var got=BADGES.filter(bGot).length;
   return '<section class="sec" id="badges"><div class="h2"><h2>Badges</h2><span class="sp"></span><small>'+got+' of '+BADGES.length+'</small></div><div class="bdg">'+
     BADGES.map(function(b){var p=bp(b),g=p[0]>=p[1];return '<button type="button" class="bd'+(g?' got':'')+'" data-badge="'+b[0]+'" aria-label="'+esc(b[2])+(g?', earned':', '+p[0]+' of '+p[1])+'"><span class="be" aria-hidden="true">'+b[1]+'</span><b>'+b[2]+'</b>'+(g?'<small>Earned</small>':'<span class="lbar"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>')+'</button>'}).join('')+'</div></section>'}
 
+/* ---------------- share cards: branded images of your habits (never P&L, returns or calls) ----------------
+   Profile card (You, Streak & rewards) and badge card (badge sheet, new-badge pop-up). Post 1080×1350 or story 1080×1920. */
+var SH={kind:'profile',id:null,fmt:'post',cv:null};
+function shName(){return store.get('ap-share-name','Trader')||'Trader'}
+function shScore(){if(!jConn())return null;var mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(t){return t.d.slice(0,7)===mo});return tr.length?stats(tr).score:null}
+function shRR(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function shWrap(c,t,x,y,mw,lh){var w=String(t).split(' '),line='',n=0;for(var i=0;i<w.length;i++){var tst=line?line+' '+w[i]:w[i];if(c.measureText(tst).width>mw&&line){c.fillText(line,x,y+n*lh);n++;line=w[i]}else line=tst}if(line){c.fillText(line,x,y+n*lh);n++}return n}
+function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContext('2d'),F=function(w,z){return w+' '+z+'px Inter, system-ui, -apple-system, "Segoe UI", sans-serif'};cv.width=W;cv.height=H;
+  var g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0E1524');g.addColorStop(1,'#1B2540');c.fillStyle=g;c.fillRect(0,0,W,H);
+  [[W*.12,H*.08,760,'rgba(0,201,154,.22)'],[W*.95,H*.9,820,'rgba(63,91,217,.30)']].forEach(function(o){var r=c.createRadialGradient(o[0],o[1],0,o[0],o[1],o[2]);r.addColorStop(0,o[3]);r.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=r;c.fillRect(0,0,W,H)});
+  var ls=function(v){try{c.letterSpacing=v}catch(e){}};
+  /* logo + eyebrow */
+  c.textBaseline='alphabetic';c.textAlign='left';c.font=F(800,54);c.fillStyle='#00C99A';c.fillText('α',80,140);var aw=c.measureText('α').width;c.fillStyle='#F8FAFC';c.fillText('lphaPad',80+aw,140);
+  c.textAlign='right';c.font=F(700,24);ls('4px');c.fillStyle='#8793A5';c.fillText(SH.kind==='badge'?'BADGE EARNED':'MY TRADING HABITS',W-80,132);ls('0px');
+  /* footer */
+  c.strokeStyle='rgba(255,255,255,.12)';c.lineWidth=2;c.beginPath();c.moveTo(80,H-170);c.lineTo(W-80,H-170);c.stroke();
+  c.textAlign='left';c.font=F(500,27);c.fillStyle='#8793A5';c.fillText('Habits, not hype. Rewards never come from profit.',80,H-100);
+  c.textAlign='right';c.font=F(700,32);c.fillStyle='#00C99A';c.fillText('alphapad.in',W-80,H-98);
+  var name=shName(),v=seasonScore(),ti=tierOf(v),got=BADGES.filter(bGot),dt0=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  if(SH.kind==='badge'){var b=BADGES.filter(function(x){return x[0]===SH.id})[0]||got[0],cy=st?760:470,R=st?250:175;
+    var gl=c.createRadialGradient(W/2,cy,R*.3,W/2,cy,R*1.6);gl.addColorStop(0,'rgba(0,201,154,.35)');gl.addColorStop(1,'rgba(0,201,154,0)');c.fillStyle=gl;c.beginPath();c.arc(W/2,cy,R*1.6,0,7);c.fill();
+    c.fillStyle='rgba(255,255,255,.07)';c.beginPath();c.arc(W/2,cy,R,0,7);c.fill();c.strokeStyle='rgba(0,201,154,.75)';c.lineWidth=8;c.stroke();
+    c.textAlign='center';c.textBaseline='middle';c.font=F(400,st?230:160);c.fillStyle='#fff';c.fillText(b[1],W/2,cy+10);c.textBaseline='alphabetic';
+    var y=cy+R+(st?130:105);c.font=F(700,28);ls('5px');c.fillStyle='#00C99A';c.fillText('BADGE EARNED',W/2,y);ls('0px');
+    c.font=F(800,st?96:84);c.fillStyle='#F8FAFC';c.fillText(b[2],W/2,y+(st?120:105));
+    c.font=F(400,38);c.fillStyle='#CBD5E1';var nl=shWrap(c,b[3]+'.',W/2,y+(st?200:180),860,52);
+    c.font=F(500,30);c.fillStyle='#8793A5';c.fillText(name+' · '+dt0,W/2,y+(st?200:180)+nl*52+40);
+    var chip='🔥 '+streakNow()+'-day streak   ·   🏅 '+got.length+' of '+BADGES.length+' badges';c.font=F(600,32);var cw=c.measureText(chip).width+80,cyy=H-(st?330:265);
+    shRR(c,(W-cw)/2,cyy-50,cw,76,38);c.fillStyle='rgba(255,255,255,.08)';c.fill();c.fillStyle='#F8FAFC';c.fillText(chip,W/2,cyy);return}
+  /* profile */
+  var sc=shScore(),y0=st?400:290,ty=st?640:420,th=st?440:330,gap=30,tw=(W-160-gap)/2,rowg=st?480:360;
+  c.textAlign='left';c.font=F(800,st?100:88);c.fillStyle='#F8FAFC';c.fillText(name,80,y0);
+  c.font=F(500,34);c.fillStyle='#A9B4C6';c.fillText(SEASON.name+' · '+TIERS[ti][1]+' · #'+myRank()+' of '+SEASON.players,80,y0+62);
+  var tile=function(ix,iy,lab,val,sub,extra){var x=80+ix*(tw+gap),y=ty+iy*rowg;shRR(c,x,y,tw,th,36);c.fillStyle='rgba(255,255,255,.06)';c.fill();c.strokeStyle='rgba(255,255,255,.12)';c.lineWidth=2;c.stroke();
+    c.textAlign='left';c.font=F(700,24);ls('3px');c.fillStyle='#8793A5';c.fillText(lab,x+40,y+68);ls('0px');
+    c.font=F(800,108);c.fillStyle='#F8FAFC';c.fillText(val[0],x+36,y+(st?240:200));if(val[1]){var vw=c.measureText(val[0]).width;c.font=F(700,46);c.fillStyle='#8793A5';c.fillText(val[1],x+44+vw,y+(st?240:200))}
+    c.font=F(500,28);c.fillStyle='#CBD5E1';c.fillText(sub,x+40,y+(st?305:255));if(extra)extra(x,y)};
+  tile(0,0,'STREAK',['🔥'+streakNow()],'days in a row · longest '+longest());
+  if(sc!=null)tile(1,0,'TRADING SCORE',[sc.toFixed(1),'/5'],'plan rules kept',function(x,y){var by=y+th-50;shRR(c,x+40,by,tw-80,14,7);c.fillStyle='rgba(255,255,255,.12)';c.fill();shRR(c,x+40,by,(tw-80)*sc/5,14,7);c.fillStyle='#00C99A';c.fill()});
+  else tile(1,0,'THIS QUARTER',[String(qDays())],'market mornings done',function(x,y){var by=y+th-50;shRR(c,x+40,by,tw-80,14,7);c.fillStyle='rgba(255,255,255,.12)';c.fill();shRR(c,x+40,by,(tw-80)*Math.min(1,qDays()/60),14,7);c.fillStyle='#00C99A';c.fill()});
+  tile(0,1,'BADGES',[String(got.length),'/'+BADGES.length],'',function(x,y){c.font=F(400,64);c.fillStyle='#fff';c.fillText(got.slice(-4).map(function(b){return b[1]}).join(' '),x+40,y+(st?350:280))});
+  tile(1,1,'SEASON POINTS',[String(v)],TIERS[ti][1]+' tier · '+SEASON.left+' days left')}
+function shRender(){var img=$('#shImg');if(!img)return;var cv=document.createElement('canvas');SH.cv=cv;var go=function(){shDraw(cv);img.src=cv.toDataURL('image/png');img.classList.toggle('story',SH.fmt==='story')};
+  if(document.fonts&&document.fonts.load)Promise.all([document.fonts.load('800 50px Inter'),document.fonts.load('500 30px Inter')]).then(go,go);else go()}
+function shareSheet(kind,id){SH.kind=kind;SH.id=id||null;
+  sheet(kind==='badge'?'Share your badge':'Share your profile','<div class="shp"><img id="shImg" alt="Preview of your share card"></div>'+
+    '<div class="seg shfmt" role="group" aria-label="Size">'+[['post','Post'],['story','Story']].map(function(f){return '<button type="button" data-shf="'+f[0]+'" aria-pressed="'+(SH.fmt===f[0])+'">'+f[1]+'</button>'}).join('')+'</div>'+
+    '<label class="shn"><span>Name on the card</span><input id="shName" maxlength="20" autocomplete="off" value="'+esc(shName())+'"></label>'+
+    '<div class="shb"><button type="button" class="btn p full" data-shgo>Share</button><button type="button" class="btn g full" data-shsave>Save image</button></div>'+
+    '<p class="cap">Only your habits go on the card. Never P&amp;L, returns or trade calls.</p>',function(pn){shRender();
+    pn.addEventListener('input',function(e){if(e.target.id!=='shName')return;store.set('ap-share-name',e.target.value.trim()||'Trader');clearTimeout(SH.t);SH.t=setTimeout(shRender,250)})})}
+function shBlob(cb){if(!SH.cv)return;SH.cv.toBlob(function(b){cb(b)},'image/png')}
+function shFile(){return 'alphapad-'+(SH.kind==='badge'?(SH.id||'badge'):'profile')+'-'+SH.fmt+'.png'}
+function shSave(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=shFile();document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast('Image saved')}
+/* new badge → a small celebration with a share button (once per badge) */
+function celebrate(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;
+  sheet('🎉 New badge','<div class="cel"><span class="cel-b" aria-hidden="true">'+b[1]+'</span><b>'+b[2]+'</b><p>'+b[3]+'.</p>'+(b[5]?'<p class="cel-r">+'+b[5]+' free day added</p>':'')+
+    '<div class="shb"><button type="button" class="btn p full" data-share="badge" data-id="'+b[0]+'">Share it</button><button type="button" class="btn g full" data-close>Later</button></div></div>')}
+function checkNewBadges(){var got=BADGES.filter(bGot).map(function(b){return b[0]}),seen=store.get('ap-badges-seen',null);if(!seen){store.set('ap-badges-seen',got);return}
+  var nw=got.filter(function(k){return seen.indexOf(k)<0});if(!nw.length)return;if(!$('#sheet').hidden||!$('#fs').hidden||$('.onb'))return;store.set('ap-badges-seen',seen.concat(nw));celebrate(nw[0])}
+document.addEventListener('click',function(e){var t=e.target.closest('[data-share],[data-shf],[data-shgo],[data-shsave]');
+  if(!t){setTimeout(checkNewBadges,700);return}var d=t.dataset;
+  if(d.share){e.preventDefault();return shareSheet(d.share,d.id)}
+  if(d.shf){SH.fmt=d.shf;$$('[data-shf]').forEach(function(z){z.setAttribute('aria-pressed',String(z===t))});return shRender()}
+  if('shsave' in d)return shBlob(shSave);
+  if('shgo' in d)return shBlob(function(b){var f=new File([b],shFile(),{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'AlphaPad',text:SH.kind==='badge'?'New badge on AlphaPad 🏅':'My trading habits on AlphaPad 🔥'}).catch(function(){});else shSave(b)})});
+setTimeout(checkNewBadges,1500);
 function badgeSheet(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;var p=bp(b),g=p[0]>=p[1];
   sheet(b[1]+' '+b[2],'<p>'+b[3]+'.</p><div class="facts"><div>Progress<b>'+p[0]+' of '+p[1]+'</b></div><div>Status<b>'+(g?'Earned':'In progress')+'</b></div><div>Reward<b>'+(b[5]?'+'+b[5]+' free day':'Badge')+'</b></div></div>'+
-    (g?'':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
+    (g?'<button type="button" class="btn p full" style="margin-top:14px" data-share="badge" data-id="'+b[0]+'">Share this badge</button>':'<span class="lbar" style="margin-top:10px"><em style="width:'+(p[0]/p[1]*100).toFixed(0)+'%"></em></span>'))}
 
 function boardSheet(){var all=lbAll();
   sheet('🏆 '+SEASON.name,'<p class="muted">Ranked by season points. Ends '+SEASON.ends+'; points reset on 1 Dec, your streak doesn’t. Gold 300+ · Silver 200+ · Bronze 100+.</p><div class="card lb">'+all.map(lbRow).join('')+'</div>'+
@@ -1122,7 +1190,7 @@ function tileSheet(k){
   if(k==='freeze')return sheet('🧊 Streak freezes','<p>A missed market day uses a freeze, so your streak survives. You earn one every 7 days and can hold 2.</p><p>No freeze left? Do both mornings within 24 hours to repair the streak.</p><div class="facts"><div>Ready<b>'+freezes()+' of 2</b></div><div>Longest<b>'+longest()+' days</b></div><div>Counts<b>Market days</b></div></div>')}
 function rRewards(){var s=$('#s-rewards'),v=seasonScore(),ti=tierOf(v),t=qDays(),nm=MILES.filter(function(m){return t<m[0]})[0],fd=freeDays(),bs=BADGES.slice().sort(function(a,b){return bGot(b)-bGot(a)}),bg=BADGES.filter(bGot).length,nx=ti>0?TIERS[ti-1]:null;
   var tile=function(k,ic,lab,val,sub,p){return '<button type="button" class="rt" data-tile="'+k+'"><span class="eb">'+ic+' '+lab+'</span><b>'+val+'</b><small>'+sub+'</small><span class="lbar"><em style="width:'+Math.min(100,p*100).toFixed(0)+'%"></em></span></button>'};
-  s.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>Streak & rewards</h1><span class="sp"></span></header>'+
+  s.innerHTML='<header class="top"><a class="bk" href="#today" data-back aria-label="Back">‹</a><h1>Streak & rewards</h1><span class="sp"></span><button type="button" class="shic" data-share="profile" aria-label="Share your profile">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'</button></header>'+
     '<div class="rhead"><span class="fl" aria-hidden="true">🔥</span><b>'+streakNow()+'</b><small>day streak · longest '+longest()+' · '+totalDays()+' mornings in all</small><span class="carry">Never resets with the season</span>'+weekHTML()+
       '<button type="button" class="frl" data-tile="freeze">'+[0,1].map(function(i){return '<i class="'+(i<freezes()?'on':'')+'">🧊</i>'}).join('')+' '+freezes()+' of 2 freezes ready <em>›</em></button>'+stkToday()+'</div>'+
     '<div class="rgrid">'+
