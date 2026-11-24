@@ -979,7 +979,7 @@ var LKEY='sp-learn-2026-11-12',lrnI=0;
 function learned(){return store.get(LKEY,[])}
 function rYou(){var s=$('#s-you'),p=profile(),S=D.streak,lr=learned(),x=LEARN[lrnI],th=root.getAttribute('data-theme')||'light',got=lr.indexOf(x.id)>=0,all=lr.length>=LEARN.length;
   s.innerHTML=top('You')+
-    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small></div></div>'+
+    '<div class="prof"><span class="av">T</span><div><b>Trader</b><small>For you: '+fyFmtName(fyState())+' · <a class="l" style="color:var(--link);font-weight:600" href="#today/foryou">Change</a></small><button type="button" class="prof-link" data-share="profile">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'Share my profile</button></div></div>'+
     '<a class="card ylink" href="#rewards"><span class="fl" aria-hidden="true">🔥</span><span class="tx"><b>'+streakNow()+'-day streak</b><small>🎁 '+freeDays()+' free days · ⭐ '+seasonScore()+' pts · 🏅 '+BADGES.filter(bGot).length+' badges</small></span><span class="go" aria-hidden="true">›</span></a>'+
     '<div class="h2" id="tools"><h2>Tools</h2></div><div class="card" style="padding:0 16px"><div class="list">'+
       '<button type="button" class="row" data-act="risk"><span class="ic t">'+I('<path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>')+'</span><span class="tx"><b>Risk Studio</b><small>How many shares to buy for your risk</small></span><span class="go" aria-hidden="true">›</span></button>'+
