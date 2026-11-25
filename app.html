@@ -1739,6 +1739,7 @@ button.psc{width:100%;text-align:left}
 .jc-links{display:flex;gap:18px;justify-content:center;margin-top:4px}.jc-links .jc-back{display:inline-flex;align-items:center;gap:6px}.jc-links svg{width:16px;height:16px}
 .prof-link{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:0;font:600 13.5px/1 var(--font-sans);color:var(--link)}.prof-link svg{width:15px;height:15px}
 .sh-quiet{margin-top:14px}
+.shc{margin-top:12px}.shc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.shc-h span{font:500 12.5px/1 var(--font-sans);color:var(--text-tertiary)}.shc-cp{background:none;border:0;padding:4px 2px;color:var(--indigo-500);font:600 13px/1 var(--font-sans);cursor:pointer}.shc textarea{width:100%;box-sizing:border-box;resize:none;padding:10px 12px;border-radius:10px;border:0;box-shadow:inset 0 0 0 1.5px var(--slate-400);background:var(--surface-raised);color:var(--text-primary);font:400 14px/1.45 var(--font-sans)}.shc textarea:focus{outline:0;box-shadow:inset 0 0 0 2px var(--indigo-500)}
 </style>
 </head>
 <body>
@@ -2886,12 +2887,10 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
   var name=shName(),v=seasonScore(),ti=tierOf(v),got=BADGES.filter(bGot),mo=((SH.kind==='score'&&tab==='journal'&&jMonth)?new Date(jMonth+'-01T00:00:00'):new Date()).toLocaleDateString('en-IN',{month:'short',year:'numeric'}).toUpperCase(),
     TC={gold:['#F7D774','#E0A93B'],silver:['#F1F4F8','#AEB8C6'],bronze:['#E8B48A','#B7774A'],start:['#C9D3E1','#8793A5']}[TIERS[ti][0]]||['#F1F4F8','#AEB8C6'];
   /* header: logo + month pill */
-  T('α',80,138,F(800,56),'#00C99A');var aw=(c.font=F(800,56),c.measureText('α').width);T('lphaPad',80+aw,138,F(800,56),'#F8FAFC');
+  T('α',80,134,F(800,42),'#00C99A');var aw=(c.font=F(800,42),c.measureText('α').width);T('lphaPad',80+aw,134,F(800,42),'rgba(248,250,252,.85)');
   c.font=F(700,24);ls('4px');var mw=c.measureText(mo).width+44;ls('0px');shRR(c,W-80-mw,92,mw,58,29);c.strokeStyle='rgba(255,255,255,.28)';c.lineWidth=2;c.stroke();T(mo,W-80-mw/2,130,F(700,24),'#CBD5E1','center','4px');
-  /* footer band */
-  var fy=H-150;c.fillStyle='rgba(255,255,255,.06)';c.fillRect(0,fy,W,150);c.fillStyle='rgba(255,255,255,.12)';c.fillRect(0,fy,W,2);
-  T('Habits, not hype.',80,fy+66,F(800,34),'#F8FAFC');T('Rewards never come from profit.',80,fy+108,F(500,26),'#8793A5');
-  c.font=F(800,36);var lw=c.measureText('alphapad.in').width;shRR(c,W-80-lw-56,fy+42,lw+56,70,35);c.fillStyle='#00C99A';c.fill();T('alphapad.in',W-80-(lw+56)/2,fy+88,F(800,36),'#0A0F1E','center');
+  /* footer: one quiet domain line */
+  var fy=H-150;T('alphapad.in',W/2,H-62,F(600,24),'rgba(135,147,165,.8)','center','2px');
   var medal=function(x,y,r,b,on){if(on){var g=c.createLinearGradient(x-r,y-r,x+r,y+r);g.addColorStop(0,'rgba(0,201,154,.38)');g.addColorStop(1,'rgba(63,91,217,.38)');circ(x,y,r);c.fillStyle=g;c.fill();c.strokeStyle='rgba(0,201,154,.9)';c.lineWidth=3;c.stroke();
       c.font=F(400,r*1.05);c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';c.fillText(b[1],x,y+r*.06);c.textBaseline='alphabetic'}
     else{circ(x,y,r);c.fillStyle='rgba(255,255,255,.05)';c.fill();c.setLineDash([6,8]);c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;c.stroke();c.setLineDash([])}};
@@ -2965,25 +2964,37 @@ function shareSheet(kind,id){SH.kind=kind;SH.id=id||null;
   sheet(kind==='badge'?'Share your badge':kind==='score'?'Share your trading score':'Share your profile','<div class="shp"><img id="shImg" alt="Preview of your share card"></div>'+
     '<div class="seg shfmt" role="group" aria-label="Size">'+[['post','Post'],['story','Story']].map(function(f){return '<button type="button" data-shf="'+f[0]+'" aria-pressed="'+(SH.fmt===f[0])+'">'+f[1]+'</button>'}).join('')+'</div>'+
     '<label class="shn"><span>Name on the card</span><input id="shName" maxlength="20" autocomplete="off" value="'+esc(shName())+'"></label>'+
+    '<div class="shc"><div class="shc-h"><span>Caption for your post</span><button type="button" class="shc-cp" data-shcopy>Copy</button></div><textarea id="shCap" rows="4" maxlength="400">'+esc(shCaption())+'</textarea></div>'+
     '<div class="shb"><button type="button" class="btn p full" data-shgo>Share</button><button type="button" class="btn g full" data-shsave>Save image</button></div>'+
     '<p class="cap">Only your habits go on the card. Never P&amp;L, returns or trade calls.</p>',function(pn){shRender();
     pn.addEventListener('input',function(e){if(e.target.id!=='shName')return;store.set('ap-share-name',e.target.value.trim()||'Trader');clearTimeout(SH.t);SH.t=setTimeout(shRender,250)})})}
+function shCaption(){var tag='\n\n#TradingHabits';
+  if(SH.kind==='badge'){var b=BADGES.filter(function(x){return x[0]===SH.id})[0]||BADGES[0];
+    return 'Just earned the '+b[2]+' badge on AlphaPad '+b[1]+'\nBuilding the habit, one market morning at a time.'+tag}
+  if(SH.kind==='score'){var mo=(tab==='journal'&&jMonth)?jMonth:MONTHS().slice(-1)[0],tr=ALL.filter(function(t){return t.d.slice(0,7)===mo}),sc=tr.length?stats(tr).score:0;
+    return 'My trading score for '+mname(mo)+': '+sc.toFixed(1)+' out of 5 🎯\n'+tr.length+' trades checked against my 5 plan rules. Discipline over hype.'+tag.replace('#TradingHabits','#TradingDiscipline')}
+  var st=streakNow(),bg=BADGES.filter(bGot).length,ti=TIERS[tierOf(seasonScore())][1];
+  return st+'-day streak, '+ti+' tier and '+bg+' badge'+(bg===1?'':'s')+' on AlphaPad 🔥\nShowing up for the market every morning.'+tag}
+function shCopy(txt,msg){var ok=function(){if(msg!==false)toast(msg||'Caption copied')};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(txt).then(ok,function(){shCopyOld(txt);ok()})}catch(e){}shCopyOld(txt);ok()}
+function shCopyOld(txt){var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove()}
 function shBlob(cb){if(!SH.cv)return;SH.cv.toBlob(function(b){cb(b)},'image/png')}
 function shFile(){return 'alphapad-'+(SH.kind==='badge'?(SH.id||'badge'):SH.kind)+'-'+SH.fmt+'.png'}
-function shSave(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=shFile();document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast('Image saved')}
+function shSave(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=shFile();document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast('Image saved · caption copied')}
 /* new badge → a small celebration with a share button (once per badge) */
 function celebrate(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;
   sheet('🎉 New badge','<div class="cel"><span class="cel-b" aria-hidden="true">'+b[1]+'</span><b>'+b[2]+'</b><p>'+b[3]+'.</p>'+(b[5]?'<p class="cel-r">+'+b[5]+' free day added</p>':'')+
     '<div class="shb"><button type="button" class="btn p full" data-share="badge" data-id="'+b[0]+'">Share it</button><button type="button" class="btn g full" data-close>Later</button></div></div>')}
 function checkNewBadges(){var got=BADGES.filter(bGot).map(function(b){return b[0]}),seen=store.get('ap-badges-seen',null);if(!seen){store.set('ap-badges-seen',got);return}
   var nw=got.filter(function(k){return seen.indexOf(k)<0});if(!nw.length)return;if(!$('#sheet').hidden||!$('#fs').hidden||$('.onb'))return;store.set('ap-badges-seen',seen.concat(nw));celebrate(nw[0])}
-document.addEventListener('click',function(e){var t=e.target.closest('[data-share],[data-shf],[data-shgo],[data-shsave]');
+document.addEventListener('click',function(e){var t=e.target.closest('[data-share],[data-shf],[data-shgo],[data-shsave],[data-shcopy]');
   if(!t){setTimeout(checkNewBadges,700);return}var d=t.dataset;
   if(d.share){e.preventDefault();if(!$('#fs').hidden){closeFS();return setTimeout(function(){shareSheet(d.share,d.id)},320)}return shareSheet(d.share,d.id)}
   if(d.shf){SH.fmt=d.shf;$$('[data-shf]').forEach(function(z){z.setAttribute('aria-pressed',String(z===t))});return shRender()}
-  if('shsave' in d)return shBlob(shSave);
-  if('shgo' in d)return shBlob(function(b){var f=new File([b],shFile(),{type:'image/png'});
-    if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'AlphaPad',text:SH.kind==='badge'?'New badge on AlphaPad 🏅':SH.kind==='score'?'My trading score on AlphaPad 🎯':'My trading habits on AlphaPad 🔥'}).catch(function(){});else shSave(b)})});
+  if('shcopy' in d)return shCopy(($('#shCap')||{}).value||shCaption());
+  if('shsave' in d){shCopy(($('#shCap')||{}).value||shCaption(),false);return shBlob(shSave)}
+  if('shgo' in d){var cap=($('#shCap')||{}).value||shCaption();shCopy(cap,'Caption copied · paste it in your post');return shBlob(function(b){var f=new File([b],shFile(),{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'AlphaPad',text:cap}).catch(function(){});else shSave(b)})}});
 setTimeout(checkNewBadges,1500);
 function badgeSheet(id){var b=BADGES.filter(function(x){return x[0]===id})[0];if(!b)return;var p=bp(b),g=p[0]>=p[1];
   sheet(b[1]+' '+b[2],'<p>'+b[3]+'.</p><div class="facts"><div>Progress<b>'+p[0]+' of '+p[1]+'</b></div><div>Status<b>'+(g?'Earned':'In progress')+'</b></div><div>Reward<b>'+(b[5]?'+'+b[5]+' free day':'Badge')+'</b></div></div>'+
