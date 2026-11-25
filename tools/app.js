@@ -728,7 +728,7 @@ function wireChart(x,k){k=k||'';var box=$('#ixc'+k);if(!box)return;var svg=box.q
 var LTONE={term:'i',relation:'a',learning:'t'};
 function lvizOf(id){var v=(typeof LVIZ!=='undefined'&&LVIZ[id])||'';return v.replace(/<button class="linkbtn" data-go="markets">([^<]*)<\/button>/g,'<a class="lk" href="#markets/indices">$1</a>')}
 function learnHTML(){var lr=learned(),all=lr.length>=LEARN.length,first=Math.max(0,LEARN.findIndex(function(x){return lr.indexOf(x.id)<0}));
-  return '<section class="sec" id="learn"><div class="lnh"><span>Three short ideas a day · learn all 3 to keep your streak</span><small id="lnC">'+lr.length+' of '+LEARN.length+' done</small></div>'+
+  return '<section class="sec" id="learn"><div class="lnh"><span>Three short ideas a day · learn all 3 to keep your streak</span><small id="lnC">'+lr.length+' of '+LEARN.length+' done</small></div>'+(lr.length?'<button type="button" class="prof-link sh-quiet ln-sh" data-share="learn">'+I('<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',2)+'Share my learning</button>':'')+
     (all?'<div class="lnok">✓ All 3 ideas learned. Streak kept for today.</div>':'')+
     '<div class="lnt" aria-label="Ideas to learn">'+LEARN.map(function(x,i){var got=lr.indexOf(x.id)>=0,t=LTONE[x.id]||'i';
       return '<article class="lc '+t+'" aria-label="'+(i+1)+' of '+LEARN.length+': '+esc(x.h)+'"><div class="lck"><span class="ic '+t+'">'+I(ICO.learn,2)+'</span><span class="eb">'+esc(x.kind)+'</span>'+(got?'<span class="tag lgot">✓ Learned</span>':'')+'</div>'+
@@ -1078,6 +1078,7 @@ function badgesHTML(){var got=BADGES.filter(bGot).length;
 /* ---------------- share cards: branded images of your habits (never P&L, returns or calls) ----------------
    Profile card (You, Streak & rewards) and badge card (badge sheet, new-badge pop-up). Post 1080×1350 or story 1080×1920. */
 var SH={kind:'profile',id:null,fmt:'post',cv:null};
+function lrnStats(){var l=learned().length,all=l>=LEARN.length;return {today:l,days:9+(all?1:0),ideas:27+l}}
 function shName(){return store.get('ap-share-name','Trader')||'Trader'}
 function shScore(){if(!jConn())return null;var mo=MONTHS().slice(-1)[0],tr=ALL.filter(function(t){return t.d.slice(0,7)===mo});return tr.length?stats(tr).score:null}
 function shRR(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
@@ -1114,6 +1115,26 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
     var cws=chips.map(function(t){return c.measureText(t).width+60}),tot=cws[0]+cws[1]+20,cx=(W-tot)/2;
     chips.forEach(function(t,i){shRR(c,cx,cy2-48,cws[i],70,35);c.fillStyle='rgba(255,255,255,.08)';c.fill();c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=2;c.stroke();T(t,cx+cws[i]/2,cy2-3,F(700,30),'#F8FAFC','center');cx+=cws[i]+20});
     T(name+' · '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),W/2,fy-(st?70:40),F(500,28),'#8793A5','center');return}
+  if(SH.kind==='learn'){var ls2=lrnStats(),lr2=learned(),y0=st?300:235;
+    T('MY LEARNING · '+new Date().toLocaleDateString('en-IN',{month:'long'}).toUpperCase(),W/2,y0,F(800,26),'#00C99A','center','5px');
+    glow(W/2,y0+(st?260:180),st?520:420,'rgba(0,201,154,.22)');
+    T(String(ls2.ideas),W/2,y0+(st?280:200),F(900,st?240:180),'#F8FAFC','center','-6px');
+    T('MARKET IDEAS LEARNED THIS SEASON',W/2,y0+(st?350:258),F(800,24),'#8793A5','center','5px');
+    var py=y0+(st?420:305),rh2=st?150:112,ph=LEARN.length*rh2+(st?90:70);
+    shRR(c,80,py,W-160,ph,36);c.fillStyle='rgba(255,255,255,.05)';c.fill();c.strokeStyle='rgba(255,255,255,.10)';c.lineWidth=2;c.stroke();
+    T('TODAY · '+ls2.today+' OF '+LEARN.length,130,py+(st?62:52),F(800,22),'#8793A5','left','4px');
+    LEARN.forEach(function(x,i){var on=lr2.indexOf(x.id)>=0,ry=py+(st?100:78)+i*rh2,cx=152,cyy=ry+(st?52:40),r=st?28:24;
+      if(i){c.fillStyle='rgba(255,255,255,.08)';c.fillRect(130,ry-4,W-260,2)}
+      circ(cx,cyy,r);if(on){c.fillStyle='#00C99A';c.fill();c.strokeStyle='#0A0F1E';c.lineWidth=st?6:5;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(cx-r*.42,cyy+r*.02);c.lineTo(cx-r*.1,cyy+r*.34);c.lineTo(cx+r*.45,cyy-r*.3);c.stroke();c.lineCap='butt'}
+      else{c.setLineDash([5,6]);c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=2;c.stroke();c.setLineDash([])}
+      T(x.kind.toUpperCase(),cx+r+28,cyy-(st?14:10),F(700,st?21:19),on?'#00C99A':'#8793A5','left','3px');
+      T(x.h,cx+r+28,cyy+(st?34:28),F(700,st?38:32),on?'#F8FAFC':'rgba(248,250,252,.55)')});
+    var by2=py+ph+(st?110:80),bw2=W-160,pr=Math.min(1,ls2.days/10);
+    T('📚 Learner badge',80,by2,F(700,st?32:28),'#F8FAFC');T(ls2.days>=10?'Earned':ls2.days+' of 10 days',80+bw2,by2,F(700,st?30:26),ls2.days>=10?'#00C99A':'#CBD5E1','right');
+    shRR(c,80,by2+22,bw2,st?14:12,7);c.fillStyle='rgba(255,255,255,.10)';c.fill();shRR(c,80,by2+22,Math.max(14,bw2*pr),st?14:12,7);c.fillStyle='#00C99A';c.fill();
+    if(st){var qy=by2+100;shRR(c,80,qy,W-160,170,36);c.fillStyle='rgba(255,255,255,.05)';c.fill();c.strokeStyle='rgba(255,255,255,.10)';c.lineWidth=2;c.stroke();
+      T('“',120,qy+105,F(900,120),'rgba(0,201,154,.6)');c.font=F(700,40);c.fillStyle='#F8FAFC';c.textAlign='left';shWrap(c,'Three short ideas, every market morning.',200,qy+70,W-320,54)}
+    T(name+' · '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),W/2,fy-(st?20:40),F(500,28),'#8793A5','center');return}
   if(SH.kind==='score'){var mo2=(tab==='journal'&&jMonth)?jMonth:MONTHS().slice(-1)[0],tr2=ALL.filter(function(t){return t.d.slice(0,7)===mo2}),n2=tr2.length||1,sc2=tr2.length?stats(tr2).score:0,
       gx2=W/2,gy2=st?720:465,gr2=st?250:165,lw2=st?44:32;
     T('MY TRADING SCORE · '+mname(mo2).split(' ')[0].toUpperCase(),W/2,st?300:235,F(800,26),'#00C99A','center','5px');
@@ -1170,7 +1191,7 @@ function shDraw(cv){var W=1080,st=SH.fmt==='story',H=st?1920:1350,c=cv.getContex
 function shRender(){var img=$('#shImg');if(!img)return;var cv=document.createElement('canvas');SH.cv=cv;var go=function(){shDraw(cv);img.src=cv.toDataURL('image/png');img.classList.toggle('story',SH.fmt==='story')};
   if(document.fonts&&document.fonts.load)Promise.all([document.fonts.load('800 50px Inter'),document.fonts.load('500 30px Inter')]).then(go,go);else go()}
 function shareSheet(kind,id){SH.kind=kind;SH.id=id||null;
-  sheet(kind==='badge'?'Share your badge':kind==='score'?'Share your trading score':'Share your profile','<div class="shp"><img id="shImg" alt="Preview of your share card"></div>'+
+  sheet(kind==='badge'?'Share your badge':kind==='score'?'Share your trading score':kind==='learn'?'Share your learning':'Share your profile','<div class="shp"><img id="shImg" alt="Preview of your share card"></div>'+
     '<div class="seg shfmt" role="group" aria-label="Size">'+[['post','Post'],['story','Story']].map(function(f){return '<button type="button" data-shf="'+f[0]+'" aria-pressed="'+(SH.fmt===f[0])+'">'+f[1]+'</button>'}).join('')+'</div>'+
     '<label class="shn"><span>Name on the card</span><input id="shName" maxlength="20" autocomplete="off" value="'+esc(shName())+'"></label>'+
     '<div class="shc"><div class="shc-h"><span>Caption for your post</span><button type="button" class="shc-cp" data-shcopy>Copy</button></div><textarea id="shCap" rows="4" maxlength="400">'+esc(shCaption())+'</textarea></div>'+
@@ -1182,6 +1203,8 @@ function shCaption(){var tag='\n\n#TradingHabits';
     return 'Just earned the '+b[2]+' badge on AlphaPad '+b[1]+'\nBuilding the habit, one market morning at a time.'+tag}
   if(SH.kind==='score'){var mo=(tab==='journal'&&jMonth)?jMonth:MONTHS().slice(-1)[0],tr=ALL.filter(function(t){return t.d.slice(0,7)===mo}),sc=tr.length?stats(tr).score:0;
     return 'My trading score for '+mname(mo)+': '+sc.toFixed(1)+' out of 5 🎯\n'+tr.length+' trades checked against my 5 plan rules. Discipline over hype.'+tag.replace('#TradingHabits','#TradingDiscipline')}
+  if(SH.kind==='learn'){var L2=lrnStats(),hs=LEARN.filter(function(x){return learned().indexOf(x.id)>=0}).map(function(x){return x.h});
+    return 'Learned '+L2.today+' market idea'+(L2.today===1?'':'s')+' today on AlphaPad 📚\n'+hs.join(' · ')+'\n'+L2.ideas+' ideas this season, one market morning at a time.'+tag}
   var st=streakNow(),bg=BADGES.filter(bGot).length,ti=TIERS[tierOf(seasonScore())][1];
   return st+'-day streak, '+ti+' tier and '+bg+' badge'+(bg===1?'':'s')+' on AlphaPad 🔥\nShowing up for the market every morning.'+tag}
 function shCopy(txt,msg){var ok=function(){if(msg!==false)toast(msg||'Caption copied')};
